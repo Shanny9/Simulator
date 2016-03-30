@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="AjaxCurdjTableServlet">
+	<persistence-unit name="Simulator">
 		<class>com.model.TblSupplier</class>
+		<class>com.model.TblAffected_CI</class>
+		<class>com.model.TblAffected_CIPK</class>
+		<class>com.model.TblCI</class>
+		<class>com.model.TblCI_Department</class>
+		<class>com.model.TblCI_DepartmentPK</class>
+		<class>com.model.TblCI_Division</class>
+		<class>com.model.TblCI_DivisionPK</class>
+		<class>com.model.TblChange</class>
+		<class>com.model.TblCourse</class>
+		<class>com.model.TblDepartment</class>
+		<class>com.model.TblDepartmentPK</class>
+		<class>com.model.TblDivision</class>
+		<class>com.model.TblGeneral_parameter</class>
+		<class>com.model.TblIncident</class>
+		<class>com.model.TblPriority</class>
+		<class>com.model.TblResolution</class>
+		<class>com.model.TblResolutionPK</class>
+		<class>com.model.TblResource</class>
+		<class>com.model.TblResource_CI</class>
+		<class>com.model.TblResource_CIPK</class>
+		<class>com.model.TblResource_Change</class>
+		<class>com.model.TblResource_ChangePK</class>
 	</persistence-unit>
 </persistence>

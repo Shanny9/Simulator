@@ -81,6 +81,5 @@ public class HomeController extends HttpServlet {
 		
 		response.getWriter().print(clocks);
 		
-		
 	}
 }

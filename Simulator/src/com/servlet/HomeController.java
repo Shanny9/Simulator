@@ -80,5 +80,6 @@ public class HomeController extends HttpServlet {
 		clocks.put("remainingClock", clockManager.getRemainingClock());
 		
 		response.getWriter().print(clocks);
+		
 	}
 }

@@ -9,6 +9,7 @@ public class ClockManager implements Runnable {
 	private Date finishRound;
 	private int round;
 
+	@SuppressWarnings("deprecation")
 	public ClockManager(int runTime, int roundTime, int currentRound) {
 
 		elapsedClock = new Date(2016, 3, 30, 0, 0, 0);
@@ -28,6 +29,7 @@ public class ClockManager implements Runnable {
 		return round;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		while (elapsedClock.before(finishRound)) {

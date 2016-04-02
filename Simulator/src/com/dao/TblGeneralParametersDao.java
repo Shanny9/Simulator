@@ -5,13 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.jdbc.DBUtility;
-import com.model.TblCI;
 import com.model.TblGeneral_parameter;
-import com.model.TblIncident;
 
 public class TblGeneralParametersDao {
 		

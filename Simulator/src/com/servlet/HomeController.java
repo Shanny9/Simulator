@@ -63,14 +63,16 @@ public class HomeController extends HttpServlet {
 		return timesMap;
 	}
 	
-	public void startSimulator(String courseName){
-		int runTime=(int) getTimes().get("runTime");
-		int roundTime = (int) getTimes().get("roundTime");
-		
-		TblCourseDao dao = new TblCourseDao();	
-		int currentRound = dao.getCourseById(courseName).getLastRoundDone();
-		clockManager = new ClockManager(runTime, roundTime, currentRound);
-		clockManager.run();
+	public void startSimulator(String courseName){		
+		TblCourseDao dao = new TblCourseDao();
+		TblCourse course = dao.getCourseById(courseName);
+		if(course!=null){
+			int currentRound = course.getLastRoundDone();
+			int runTime=(int) getTimes().get("runTime");
+			int roundTime = (int) getTimes().get("roundTime");
+			clockManager = new ClockManager(runTime, roundTime, currentRound);
+			clockManager.run();
+		}
 	}
 	
 	protected void getServerClocks (HttpServletResponse response) throws IOException{

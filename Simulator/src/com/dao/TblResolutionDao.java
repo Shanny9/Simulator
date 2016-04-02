@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jdbc.DBUtility;
+import com.model.TblIncident;
 import com.model.TblResolution;
 import com.model.TblResolutionPK;
-import com.model.TblSupplier;
 
 public class TblResolutionDao {
 	
@@ -92,60 +92,88 @@ public class TblResolutionDao {
 			System.err.println(e.getMessage());
 		}
 	}
-//TODO
-	public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage) {
-		List<TblSupplier> suppliers = new ArrayList<TblSupplier>();
-		
-		String query = "SELECT * FROM tblSupplier ORDER BY supplier_name\n"
-		+"limit "+startPageIndex + "," +recordsPerPage;
-
-		try {
-			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
-				TblSupplier supplier = new TblSupplier();
-
-				supplier.setSupplierName(rs.getString("supplier_name"));
-				supplier.setSolutionCost(rs.getDouble("solution_cost"));
-				supplier.setIsActive(rs.getByte("isActive"));
-				suppliers.add(supplier);
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-		return suppliers;
-	  }
-
-	public List<TblSupplier> getAllSuppliers()
+	
+	public List<TblResolution> getAllResolutions()
 	{
-		List<TblSupplier> suppliers = new ArrayList<TblSupplier>();
+		List<TblResolution> resolutions = new ArrayList<TblResolution>();
 		
-		String query = "SELECT * FROM tblSupplier ORDER BY supplier_name";
+		String query = "SELECT * FROM TblResolution ";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
-				TblSupplier supplier = new TblSupplier();
-
-				supplier.setSupplierName(rs.getString("supplier_name"));
-				supplier.setSolutionCost(rs.getDouble("solution_cost"));
-				supplier.setIsActive(rs.getByte("isActive"));
-				suppliers.add(supplier);
+				byte incidentId = 0;
+				TblResolution res = new TblResolution();
+				TblResolutionPK pk = new TblResolutionPK();
+				incidentId = rs.getByte("incident_ID");
+				pk.setIncident_ID(incidentId);
+				pk.setCourse(rs.getString("course"));
+				res.setId(pk);
+				
+				res.setIsPurchasedA(rs.getByte("isPurchasedA"));
+				res.setIsPurchasedB(rs.getByte("isPurchasedB"));
+				res.setIsResolvedA(rs.getByte("isResolvedA"));
+				res.setIsResolvedB(rs.getByte("isResolvedB"));
+				res.setResolution_timeA(rs.getTime("resolution_timeA"));
+				res.setResolution_timeB(rs.getTime("resolution_timeB"));
+				
+				TblIncident in = new TblIncident();
+				in.setIncident_ID(incidentId);
+				res.setTblIncident(in);
+				
+				resolutions.add(res);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
-		return suppliers;
+		return resolutions;
+	}
+	
+	public List<TblResolution> getAllResolutions(int startPageIndex, int recordsPerPage)
+	{
+		List<TblResolution> resolutions = new ArrayList<TblResolution>();
+		
+		String query = "SELECT * FROM TblResolution " +"limit "+startPageIndex + "," +recordsPerPage;
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				byte incidentId = 0;
+				TblResolution res = new TblResolution();
+				TblResolutionPK pk = new TblResolutionPK();
+				incidentId = rs.getByte("incident_ID");
+				pk.setIncident_ID(incidentId);
+				pk.setCourse(rs.getString("course"));
+				res.setId(pk);
+				
+				res.setIsPurchasedA(rs.getByte("isPurchasedA"));
+				res.setIsPurchasedB(rs.getByte("isPurchasedB"));
+				res.setIsResolvedA(rs.getByte("isResolvedA"));
+				res.setIsResolvedB(rs.getByte("isResolvedB"));
+				res.setResolution_timeA(rs.getTime("resolution_timeA"));
+				res.setResolution_timeB(rs.getTime("resolution_timeB"));
+				
+				TblIncident in = new TblIncident();
+				in.setIncident_ID(incidentId);
+				res.setTblIncident(in);
+				
+				resolutions.add(res);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return resolutions;
 	}
 
-	public int getSupplierCount()
+	public int getResoltionCount()
 	{
 	        int count=0;
 	        try 
 	        {
 	           Statement stmt = dbConnection.createStatement();
-	           ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblSupplier;");
+	           ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.TblResolution;");
 	           while (rs.next()) 
 	           {
 	                count=rs.getInt("COUNT");

@@ -1,19 +1,21 @@
 <!DOCTYPE>
+<%@page contentType="text/html; charset=UTF-8"%>
 <html>
 <head>
 <title>CRUD operations using jTable in J2EE</title>
+<meta charset="utf-8">
 <!-- Include one of jTable styles. -->
 <link href="css/metro/blue/jtable.css" rel="stylesheet" type="text/css" />
 <link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
 <!-- Include jTable script file. -->
-<script src="js/jquery-1.8.2.js" type="text/javascript"></script>
-<script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript"></script>
-<script src="js/jquery.jtable.js" type="text/javascript"></script>
-<script src="js/jquery.jtable.editinline.js" type="text/javascript"></script>
-<script src="js/jquery.jtable.toolbarsearch.js" type="text/javascript"></script>
-<script src="js/exportToExcel.js" type="text/javascript"></script>
+<script src="js/jquery-1.8.2.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.editinline.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.toolbarsearch.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/exportToExcel.js" type="text/javascript" charset="utf-8"></script>
 
-<script type="text/javascript">
+<script type="text/javascript" charset="utf-8">
 	$(document).ready(function() {
 		$('#SupplierTableContainer').jtable({
 			title : 'Suppliers List',
@@ -112,6 +114,7 @@
 
 		<h4>AJAX based CRUD operations using jTable in J2ee</h4>
 		<div id="SupplierTableContainer"></div>
+		
 	</div>
 </body>
 </html>

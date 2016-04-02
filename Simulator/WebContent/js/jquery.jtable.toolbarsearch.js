@@ -1,4 +1,4 @@
-/** JTABLE Multiple toolbar search extension 
+﻿/** JTABLE Multiple toolbar search extension 
 
 **/
 (function ($) {

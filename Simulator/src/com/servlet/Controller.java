@@ -33,10 +33,13 @@ public class Controller extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+	    response.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json");
+		
 		String action = request.getParameter("action");
 		List<TblSupplier> supList = new ArrayList<TblSupplier>();
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		response.setContentType("application/json");
 
 		if (action != null) {
 			try {

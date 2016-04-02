@@ -1,4 +1,4 @@
-/** JTABLE editinline extension 
+﻿/** JTABLE editinline extension 
  by : nubuntu
 **/
 

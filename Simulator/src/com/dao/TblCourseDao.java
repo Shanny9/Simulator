@@ -119,16 +119,14 @@ public class TblCourseDao {
 	public TblCourse getCourseById(String courseName) {
 		TblCourse course = null;
 		
-		String query = "SELECT * FROM tblCourse Where course_name=?\n";
+		String query = "SELECT * FROM tblCourse Where course_name = ?";
 		try {
-			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
+			pStmt = dbConnection.prepareStatement(query);
+			pStmt.setString(1, courseName);
+			ResultSet rs = pStmt.executeQuery();
 			if (rs.next()) {
 				course = new TblCourse();
 				course.setCourseName(rs.getString("course_name"));
-				course.setDate(rs.getDate("date")); //TODO check for exceptions
-				course.setIsActive(rs.getByte("isActive"));
-				course.setLastRoundDone(rs.getByte("lastRoundDone"));
 
 			}
 		} catch (SQLException e) {

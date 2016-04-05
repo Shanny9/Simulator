@@ -1,20 +1,22 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import utils.ClockManager;
-
 import com.dao.TblCourseDao;
 import com.dao.TblGeneralParametersDao;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
+
+import utils.TimerManager;
 
 /**
  * Servlet implementation class HomeController
@@ -22,8 +24,6 @@ import com.model.TblCourse;
 @WebServlet("/HomeController")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext application = getServletConfig().getServletContext();
-	private ClockManager clockManager;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -47,6 +47,15 @@ public class HomeController extends HttpServlet {
 	    response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+		String action = request.getParameter("action");
+		if (action.equals("getTime")){   	
+	    	HashMap<String,Object> clocks = TimerManager.getClocks();
+	    	clocks.put("serverTime", new Date());
+	    	Gson gson = new GsonBuilder().setPrettyPrinting().create();	
+			response.getWriter().print(gson.toJson(clocks));
+		} else if (action.equals("startSimulator")){
+			startSimulator("IDF-AMAM-01");
+		}
 	}
 	
 	protected HashMap<String,Object> getTimes() 
@@ -68,21 +77,11 @@ public class HomeController extends HttpServlet {
 		TblCourseDao dao = new TblCourseDao();
 		TblCourse course = dao.getCourseById(courseName);
 		if(course!=null){
-			int currentRound = course.getLastRoundDone();
 			int runTime=(int) getTimes().get("runTime");
 			int roundTime = (int) getTimes().get("roundTime");
-			clockManager = new ClockManager(runTime, roundTime, currentRound);
-			clockManager.run();
-		}
-	}
-	
-	protected void getServerClocks (HttpServletResponse response) throws IOException{
-		
-		HashMap<String, Object> clocks = new HashMap<String, Object>();
-		clocks.put("elapsedClock", clockManager.getElapsedClock());
-		clocks.put("remainingClock", clockManager.getRemainingClock());
-		
-		response.getWriter().print(clocks);
-		
+			int currentRound = course.getLastRoundDone();
+			TimerManager.startSimulator(runTime,roundTime,currentRound);
+//			System.out.println("HomeController: started simulator");
+			}
 	}
 }

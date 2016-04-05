@@ -133,7 +133,7 @@ public class TblGeneralParametersDao {
 			
 			roundTime = sessionTime*gp.getSessionsPerRound();
 		}
-		
 		return  roundTime;
+		
 	}
 }

@@ -24,72 +24,74 @@ import utils.TimerManager;
 @WebServlet("/HomeController")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public HomeController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public HomeController() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		doPost(request, response);
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//General settings
-	    response.setCharacterEncoding("UTF-8");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// General settings
+		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
-    	Gson gson = new GsonBuilder().setPrettyPrinting().create();	
-    	
-    	//get the action
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		// get the action
 		String action = request.getParameter("action");
-		
-		
-		if (action.equals("getTime")){   	
-	    	HashMap<String,Object> clocks = TimerManager.getClocks();
-	    	clocks.put("serverTime", new Date());
-			response.getWriter().print(gson.toJson(clocks));
-			
-			
-		} else if (action.equals("startSimulator")){
-			startSimulator("IDF-AMAM-01");
+
+		if (action.equals("getTime")) {
+
+			TblCourseDao dao = new TblCourseDao();
+			TblCourse course = dao.getCourseById("IDF-AMAM-01");
+			if (course != null) {
+				int runTime = (int) getTimes().get("runTime");
+				int roundTime = (int) getTimes().get("roundTime");
+				int currentRound = course.getLastRoundDone();
+				
+				HashMap<String, Object> clocks = TimerManager.getClocks(runTime, roundTime, currentRound);
+				clocks.put("serverTime", new Date());
+				response.getWriter().print(gson.toJson(clocks));
+			}
+
+		} else if (action.equals("startSimulator")) {
+			startSimulator();
 			response.getWriter().print("OK");
 		}
 	}
-	
-	protected HashMap<String,Object> getTimes() 
-	{
+
+	protected HashMap<String, Object> getTimes() {
 		TblGeneralParametersDao dao = new TblGeneralParametersDao();
 		HashMap<String, Object> timesMap = new HashMap<String, Object>();
-		
+
 		timesMap.put("sessionTime", dao.getSessionTime());
 		timesMap.put("roundTime", dao.getRoundTime());
 		timesMap.put("numOfRounds", dao.getGeneralParameters().getNumOfRounds());
 		timesMap.put("pauseTime", dao.getGeneralParameters().getPauseTime());
 		timesMap.put("runTime", dao.getGeneralParameters().getRunTime());
 		timesMap.put("sessionsPerRound", dao.getGeneralParameters().getSessionsPerRound());
-		
 		return timesMap;
 	}
-	
-	public void startSimulator(String courseName){		
-		TblCourseDao dao = new TblCourseDao();
-		TblCourse course = dao.getCourseById(courseName);
-		if(course!=null){
-			int runTime=(int) getTimes().get("runTime");
-			int roundTime = (int) getTimes().get("roundTime");
-			int currentRound = course.getLastRoundDone();
-			TimerManager.startSimulator(runTime,roundTime,currentRound);
-//			System.out.println("HomeController: started simulator");
-			}
+
+	public void startSimulator() {
+		TimerManager.startSimulator();
+
 	}
 }

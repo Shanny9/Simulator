@@ -1,10 +1,13 @@
-﻿var flag = true;
-var client_time;
+﻿var client_time;
+var real_time;
 var offset;
+var runTime;
+var pauseTime;
+var gp;
 
 $(document).ready(function(){
-	startSimulator();
-	setInterval(getTime, 1000);
+	$("#startSimulator").click(startSimulator);
+	console.log(isRunning);
 });
 
 /**
@@ -28,13 +31,30 @@ function getIncidents()
     });
 }
 
+function getGP(){
+	$.ajax({
+        url: "HomeController?action=getGP", 
+        dataType: "json",
+        success: function(data) {
+        	$.each(data, function(j, item) {
+				//TODO: save data to gp var
+        	});
+        },
+        error: function(e) {
+			console.log("js:startSimulator: Error in starting simulator.");
+        }
+    });
+}
+
 function startSimulator()
 {
     $.ajax({
         url: "HomeController?action=startSimulator", 
-      //  type: "GET",
         dataType: "text",
         success: function(data) {
+        	getGP();
+        	getTime();
+    		setInterval(incrementClock, 1000);
         	console.log("js:startSimulator: Success.");
         },
         error: function(e) {
@@ -51,38 +71,26 @@ function getTime()
         success: function(data) {
         		
         		//alert(data.elapsedClock);
-        		var elapsedClock  = new Date(data.elapsedClock);
+        		var remainingClock = new Date(data.remainingClock);
         		var serverTime  = new Date(data.serverTime);
-
-        		if (flag){
-        			client_time = new Date();
-        			offset = client_time.getTime()-serverTime.getTime();
-        			flag = false;
-        		}
         		
-        		console.log(offset)
-        		var real_time = new Date(elapsedClock.getTime()-offset);
-        		console.log("realTime: " + real_time);
-        		var rTime= dateFormat(real_time, "HH:MM:ss");
-        		console.log("formatted realTime: " + real_time);
-        		$('#main-time').html(rTime);
-  
-//        		var temp = data.runtime;
-//        		var hour = data.runTime%3600;
-//        		temp = temp - hour*3600;
-//        		var min = temp%60;
-//        		temp = temp - min*60;
-//        		var sec = temp;
-        		
-//        		var simulator_clock = new Date(2016,3,2,0,0,0);
-//        		var remaining_clock = new Date (2016,3,2,hour,min,sec);
-//			});
-			 
+        		client_time = new Date();
+    			offset = client_time.getTime()-serverTime.getTime();
+    			if (offset < 0){
+    				offset = offset*-1;
+    			}
+        		real_time = new Date(remainingClock.getTime()+offset);
         },
         error: function(e) {
 			console.log("js:getTime: Error in getting time.");
-        	
-//			$('#main-time').html(e.responseText);
         }
     });
 }
+
+function incrementClock(){
+	//TODO: update clock according to gp
+	var rTime= dateFormat(real_time, "HH:MM:ss");
+	$('#main-time').html(rTime);
+	real_time.setSeconds(real_time.getSeconds()-1);
+}
+

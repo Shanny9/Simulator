@@ -28,14 +28,13 @@ public class TimerManager implements ServletContextListener {
 		scheduler.shutdownNow();
 	}
 
-	public static HashMap<String, Object> getClocks() {
-		return ClockIncrementor.getClocks();
+	public static HashMap<String, Object> getClocks(int runTime, int roundTime, int round) {
+		return ClockIncrementor.getClocks(runTime, roundTime, round);
 	}
 
-	public static void startSimulator(int runTime, int roundTime, int round) {
-		ci = new ClockIncrementor(runTime, roundTime, round);
+	public static void startSimulator() {
+		ci = new ClockIncrementor();
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-//		System.out.println("TimerManager: started scheduler");
 	}
 
 }

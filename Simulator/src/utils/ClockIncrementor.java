@@ -28,7 +28,8 @@ public class ClockIncrementor implements Runnable {
 	public void run(){
 //		System.out.println("ClockIncrementor: started running");
 		while (elapsedClock.before(finishRound)) {
-			
+			System.out.println("elapsedClock: "+elapsedClock);
+			System.out.println("finishRound: "+ finishRound);
 				synchronized (this) {
 					try {
 						wait(1000);

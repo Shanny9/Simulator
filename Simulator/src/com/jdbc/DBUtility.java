@@ -17,8 +17,8 @@ public class DBUtility {
 			try {
 			Class.forName("com.mysql.jdbc.Driver");
 			// set the url, username and password for the database
-			System.out.println("blabla");
 			connection = DriverManager.getConnection(dbUrl, "ts2016", "n227u31");
+			System.out.println("DBUtility: connected successfully.");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

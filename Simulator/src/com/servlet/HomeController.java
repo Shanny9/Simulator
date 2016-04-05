@@ -44,17 +44,25 @@ public class HomeController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//General settings
 	    response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();	
+    	
+    	//get the action
 		String action = request.getParameter("action");
+		
+		
 		if (action.equals("getTime")){   	
 	    	HashMap<String,Object> clocks = TimerManager.getClocks();
 	    	clocks.put("serverTime", new Date());
-	    	Gson gson = new GsonBuilder().setPrettyPrinting().create();	
 			response.getWriter().print(gson.toJson(clocks));
+			
+			
 		} else if (action.equals("startSimulator")){
 			startSimulator("IDF-AMAM-01");
+			response.getWriter().print("OK");
 		}
 	}
 	

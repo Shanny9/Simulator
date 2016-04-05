@@ -23,7 +23,7 @@ function getIncidents()
 			 
         },
         error: function(e) {
-			alert("error in getting incidents.");
+			console.log("js:getIncidents: Error in getting incidents.");
         }
     });
 }
@@ -31,13 +31,14 @@ function getIncidents()
 function startSimulator()
 {
     $.ajax({
-        url: "HomeController?action=startSimulator",     
-        dataType: "json",
+        url: "HomeController?action=startSimulator", 
+      //  type: "GET",
+        dataType: "text",
         success: function(data) {
-        	alert("success");
+        	console.log("js:startSimulator: Success.");
         },
         error: function(e) {
-			alert("error in starting simulator");
+			console.log("js:startSimulator: Error in starting simulator.");
         }
     });
 }
@@ -79,7 +80,7 @@ function getTime()
 			 
         },
         error: function(e) {
-			console.log("js: error in getting time!");
+			console.log("js:getTime: Error in getting time.");
         	
 //			$('#main-time').html(e.responseText);
         }

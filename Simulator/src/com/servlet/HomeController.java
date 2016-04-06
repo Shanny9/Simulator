@@ -74,6 +74,8 @@ public class HomeController extends HttpServlet {
 		} else if (action.equals("startSimulator")) {
 			startSimulator();
 			response.getWriter().print("OK");
+		} else if(action.equals("getGP")){
+			response.getWriter().print(gson.toJson(getTimes()));
 		}
 	}
 

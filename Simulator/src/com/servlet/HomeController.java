@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblCourseDao;
-import com.dao.TblGeneralParametersDao;
+import com.dao.TblCourseDaoImpl;
+import com.dao.TblGeneralParametersDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
@@ -59,7 +59,7 @@ public class HomeController extends HttpServlet {
 
 		if (action.equals("getTime")) {
 
-			TblCourseDao dao = new TblCourseDao();
+			TblCourseDaoImpl dao = new TblCourseDaoImpl();
 			TblCourse course = dao.getCourseById("IDF-AMAM-01");
 			if (course != null) {
 				int runTime = (int) getTimes().get("runTime");
@@ -80,7 +80,7 @@ public class HomeController extends HttpServlet {
 	}
 
 	protected HashMap<String, Object> getTimes() {
-		TblGeneralParametersDao dao = new TblGeneralParametersDao();
+		TblGeneralParametersDaoImpl dao = new TblGeneralParametersDaoImpl();
 		HashMap<String, Object> timesMap = new HashMap<String, Object>();
 
 		timesMap.put("sessionTime", dao.getSessionTime());

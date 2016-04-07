@@ -12,7 +12,6 @@ import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblIncident;
 
-import TblIncidentDaoImpl.TblIncidentDao;
 
 public class TblIncidentDaoImpl implements TblIncidentDao {
 

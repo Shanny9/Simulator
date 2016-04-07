@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblSupplierDao;
+import com.dao.TblSupplierDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblSupplier;
@@ -19,10 +19,10 @@ public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private HashMap<String, Object> JSONROOT = new HashMap<String, Object>();
 
-	private TblSupplierDao dao;
+	private TblSupplierDaoImpl dao;
 
 	public Controller() {
-		dao = new TblSupplierDao();
+		dao = new TblSupplierDaoImpl();
 	}
 
 	protected void doGet(HttpServletRequest request,

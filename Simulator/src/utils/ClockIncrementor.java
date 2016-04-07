@@ -10,17 +10,17 @@ public class ClockIncrementor implements Runnable {
 	private static int round;
 	
 	public ClockIncrementor () {
-		
+		super();
 	}
 	
 	@SuppressWarnings("deprecation")
 	public static HashMap<String, Object> getClocks(int runTime, int roundTime, int currentRound){
-		elapsedClock = new Date(1970, 0, 1, 0, 0, 0);
-
-		
-		remainingClock = GeneralMethods.secToDate(runTime);
-		finishRound = GeneralMethods.secToDate(roundTime*(currentRound + 1));
 		round = currentRound;
+		
+		elapsedClock = new Date(1970, 0, 1, 0, 0, 0);
+		remainingClock = GeneralMethods.secToDate(runTime);
+		finishRound = GeneralMethods.secToDate(roundTime*(round + 1));
+		
 		
 		HashMap<String,Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock", elapsedClock);
@@ -36,7 +36,6 @@ public class ClockIncrementor implements Runnable {
 					try {
 						wait(1000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

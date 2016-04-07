@@ -17,6 +17,7 @@ public class TimerManager implements ServletContextListener {
 
 	private static ScheduledExecutorService scheduler;
 	private static ClockIncrementor ci;
+	private static MoneyCalculator mc;
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
@@ -31,10 +32,16 @@ public class TimerManager implements ServletContextListener {
 	public static HashMap<String, Object> getClocks(int runTime, int roundTime, int round) {
 		return ClockIncrementor.getClocks(runTime, roundTime, round);
 	}
+	
+	public static HashMap<String, Object> getProfits() {
+		return mc.getProfits();
+	}
 
 	public static void startSimulator() {
 		ci = new ClockIncrementor();
+		mc = new MoneyCalculator(0/*initProfit*/);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);
 	}
 
 }

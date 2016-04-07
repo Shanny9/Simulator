@@ -12,15 +12,18 @@ import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblIncident;
 
-public class TblIncidentDao {
+import TblIncidentDaoImpl.TblIncidentDao;
+
+public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	private Connection dbConnection;
 	private PreparedStatement pStmt;
 
-	public TblIncidentDao() {
+	public TblIncidentDaoImpl() {
 		dbConnection = DBUtility.getConnection();
 	}
 
+	@Override
 	public void addIncident(TblIncident incident) {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident` (`incident_ID`,`time_`,`priority_`,`root_service_ID`,`isActive`) "
 				+ " VALUES (?,?,?,?,?);";
@@ -37,6 +40,7 @@ public class TblIncidentDao {
 		}
 	}
 
+	@Override
 	public void deleteIncident(Byte id) {
 		String deleteQuery = "DELETE FROM tblIncident WHERE incident_ID = ?";
 		try {
@@ -48,11 +52,12 @@ public class TblIncidentDao {
 		}
 	}
 
-	public void updateSupplier(TblIncident incident)  {
-		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident` SET `incident_ID` =?, `time_` =?, `priority_` = ?,\n" +
-				" `root_service_ID` =?, `isActive` =? WHERE `incident_ID` =?;";
+	@Override
+	public void updateSupplier(TblIncident incident) {
+		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident` SET `incident_ID` =?, `time_` =?, `priority_` = ?,\n"
+				+ " `root_service_ID` =?, `isActive` =? WHERE `incident_ID` =?;";
 		try {
-			pStmt = dbConnection.prepareStatement(updateQuery);		
+			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, incident.getIncident_ID());
 			pStmt.setTime(2, incident.getTime());
 			pStmt.setByte(3, incident.getPriority());
@@ -66,11 +71,11 @@ public class TblIncidentDao {
 		}
 	}
 
+	@Override
 	public List<TblIncident> getAllIncidents(int startPageIndex, int recordsPerPage) {
 		List<TblIncident> incidents = new ArrayList<TblIncident>();
-		
-		String query = "SELECT * FROM tblIncident \n"
-		+"limit "+startPageIndex + "," +recordsPerPage;
+
+		String query = "SELECT * FROM tblIncident \n" + "limit " + startPageIndex + "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -81,11 +86,11 @@ public class TblIncidentDao {
 				incident.setIncident_ID(rs.getByte("incident_ID"));
 				incident.setTime(rs.getTime("time_"));
 				incident.setPriority(rs.getByte("priority_"));
-				
+
 				TblCI tblci = new TblCI();
 				tblci.setService_ID(rs.getByte("root_service_ID"));
 				incident.setTblCi(tblci);
-				
+
 				incident.setIsActive(rs.getByte("isActive"));
 				incidents.add(incident);
 			}
@@ -93,11 +98,12 @@ public class TblIncidentDao {
 			System.err.println(e.getMessage());
 		}
 		return incidents;
-	  }
+	}
 
+	@Override
 	public List<TblIncident> getAllIncidents() {
 		List<TblIncident> incidents = new ArrayList<TblIncident>();
-		
+
 		String query = "SELECT * FROM tblIncident";
 
 		try {
@@ -109,11 +115,11 @@ public class TblIncidentDao {
 				incident.setIncident_ID(rs.getByte("incident_ID"));
 				incident.setTime(rs.getTime("time_"));
 				incident.setPriority(rs.getByte("priority_"));
-				
+
 				TblCI tblci = new TblCI();
 				tblci.setService_ID(rs.getByte("root_service_ID"));
 				incident.setTblCi(tblci);
-				
+
 				incident.setIsActive(rs.getByte("isActive"));
 				incidents.add(incident);
 			}
@@ -121,25 +127,21 @@ public class TblIncidentDao {
 			System.err.println(e.getMessage());
 		}
 		return incidents;
-	  }
-
-	public int getIncidentCount()
-	{
-	        int count=0;
-	        try 
-	        {
-	           Statement stmt = dbConnection.createStatement();
-	           ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblIncident;");
-	           while (rs.next()) 
-	           {
-	                count=rs.getInt("COUNT");
-	           }
-	        } 
-	        catch (SQLException e) 
-	        {
-	                System.err.println(e.getMessage());
-	        }
-	        return count;
 	}
-	
+
+	@Override
+	public int getIncidentCount() {
+		int count = 0;
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblIncident;");
+			while (rs.next()) {
+				count = rs.getInt("COUNT");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return count;
+	}
+
 }

@@ -1,128 +1,15 @@
 package com.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.jdbc.DBUtility;
 import com.model.TblSupplier;
 
-public class TblSupplierDao {
-
-private Connection dbConnection;
-private PreparedStatement pStmt;
-
-public TblSupplierDao() {
-	dbConnection = DBUtility.getConnection();
-}
-
-public void addSupplier(TblSupplier supplier) {
-	String insertQuery = "INSERT INTO tblSupplier(supplier_name, solution_cost, " +
-			"isActive) VALUES (?,?,?)";
-	try {
-		pStmt = dbConnection.prepareStatement(insertQuery);
-		pStmt.setString(1, supplier.getSupplierName());
-		pStmt.setDouble(2, supplier.getSolutionCost());
-		pStmt.setByte(3, supplier.getIsActive());
-		pStmt.executeUpdate();
-	} catch (SQLException e) {
-		System.err.println(e.getMessage());
-	}
-}
-
-public void deleteSupplier(String name) {
-	String deleteQuery = "DELETE FROM tblSupplier WHERE supplier_name = ?";
-	try {
-		pStmt = dbConnection.prepareStatement(deleteQuery);
-		pStmt.setString(1, name);
-		pStmt.executeUpdate();
-	} catch (SQLException e) {
-		System.err.println(e.getMessage());
-	}
-}
-
-public void updateSupplier(TblSupplier supplier)  {
-	String updateQuery = "UPDATE tblSupplier SET \n " +
-			"solution_cost = ?, isActive = ? WHERE supplier_name = ?";
-	try {
-		pStmt = dbConnection.prepareStatement(updateQuery);		
-		pStmt.setDouble(1, supplier.getSolutionCost());
-		pStmt.setByte(2, supplier.getIsActive());
-		pStmt.setString(3, supplier.getSupplierName());
-		pStmt.executeUpdate();
-
-	} catch (SQLException e) {
-		System.err.println(e.getMessage());
-	}
-}
-
-public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage) {
-	List<TblSupplier> suppliers = new ArrayList<TblSupplier>();
+public interface TblSupplierDao {
 	
-	String query = "SELECT * FROM tblSupplier ORDER BY supplier_name\n"
-	+"limit "+startPageIndex + "," +recordsPerPage;
-
-	try {
-		Statement stmt = dbConnection.createStatement();
-		ResultSet rs = stmt.executeQuery(query);
-		while (rs.next()) {
-			TblSupplier supplier = new TblSupplier();
-
-			supplier.setSupplierName(rs.getString("supplier_name"));
-			supplier.setSolutionCost(rs.getDouble("solution_cost"));
-			supplier.setIsActive(rs.getByte("isActive"));
-			suppliers.add(supplier);
-		}
-	} catch (SQLException e) {
-		System.err.println(e.getMessage());
-	}
-	return suppliers;
-  }
-
-public List<TblSupplier> getAllSuppliers()
-{
-	List<TblSupplier> suppliers = new ArrayList<TblSupplier>();
-	
-	String query = "SELECT * FROM tblSupplier ORDER BY supplier_name";
-
-	try {
-		Statement stmt = dbConnection.createStatement();
-		ResultSet rs = stmt.executeQuery(query);
-		while (rs.next()) {
-			TblSupplier supplier = new TblSupplier();
-
-			supplier.setSupplierName(rs.getString("supplier_name"));
-			supplier.setSolutionCost(rs.getDouble("solution_cost"));
-			supplier.setIsActive(rs.getByte("isActive"));
-			suppliers.add(supplier);
-		}
-	} catch (SQLException e) {
-		System.err.println(e.getMessage());
-	}
-	return suppliers;
+	public void addSupplier(TblSupplier supplier);
+	public void deleteSupplier(String name);
+	public void updateSupplier(TblSupplier supplier);
+	public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage);
+	public List<TblSupplier> getAllSuppliers();
+	public int getSupplierCount();
 }
-
-public int getSupplierCount()
-{
-        int count=0;
-        try 
-        {
-           Statement stmt = dbConnection.createStatement();
-           ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblSupplier;");
-           while (rs.next()) 
-           {
-                count=rs.getInt("COUNT");
-           }
-        } 
-        catch (SQLException e) 
-        {
-                System.err.println(e.getMessage());
-        }
-        return count;
-}
-
-}//end

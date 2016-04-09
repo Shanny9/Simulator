@@ -4,10 +4,19 @@ var offset;
 var runTime;
 var pauseTime;
 var showTime;
+var elapsedTime = 0;
+var remainingTime = 0;
+var session = 0;
+var round = 1;
+var isRunTime = true;
 var gp = new Object();
+var incidentsData; //initialize by getIncidents()
 
 $(document).ready(function() {
 	$("#startSimulator").click(startSimulator);
+	$("#startSimulator").click(getIncidents);
+	
+
 });
 
 /**
@@ -18,14 +27,24 @@ function getIncidents() {
 		url : "HomeController?action=getIncidents",
 		dataType : "json",
 		success : function(data) {
-
-			$.each(data, function(j, item) {
-				// .....
-			});
-
+			incidentsData = data;
 		},
 		error : function(e) {
 			console.log("js:getIncidents: Error in getting incidents.");
+		}
+	});
+}
+
+//after calling getIncidents
+function showIncidentsInTime(elapsedTime) {
+	$.each(incidentsData, function(i, item) {
+		if( elapsedTime==item.time){ 
+			var str =  "<tr class='danger'>"
+			+"	<td>"+item.event+"</td>"
+			+"	<td>"+item.time+"</td>"
+			+"</tr>";
+			$(".event-tbl").append(str);
+			console.log("showIncidentsInTime:eventID: "+ item.event);
 		}
 	});
 }
@@ -39,7 +58,7 @@ function getGP() {
 				gp[key] = value;
 
 			});
-			console.log("gp: " + gp);
+//			console.log("gp: " + gp);
 		},
 		error : function(e) {
 			console.log("js:getGP: Error in getGP: " + e.message);
@@ -57,25 +76,6 @@ function startSimulator() {
 			getGP();
 			getTime();
 			console.log("sessionsPerRound: " + gp["sessionsPerRound"]);
-			for (var s = 0; s < gp["sessionsPerRound"]; s++) {
-				console.log("session: " + s);
-				if (showTime == 0){
-					console.log("starting run time");
-					showTime = gp["runTime"];
-				}
-				for (var rTime = 0; rTime < gp["runTime"]; rTime++) {
-					setTimeout(incrementClock(),1000);
-				}
-				console.log("finished run time. showTime:" + showTime);
-				if (showTime == 0){
-					console.log("starting pause time");
-					showTime = gp["pauseTime"];
-				}
-				for (var pTime = 0; pTime < gp["pauseTime"]; pTime++) {
-					setTimeout(incrementClock(),1000);
-				}
-				console.log("finished pause time. showTime:" + showTime);
-			}
 			setInterval(incrementClock, 1000);
 			// console.log("js:startSimulator: Success.");
 		},
@@ -101,7 +101,7 @@ function getTime() {
 			if (offset < 0) {
 				offset = offset * -1;
 			}
-			showTime = (remainingClock.getTime() + offset)/1000;
+			showTime = new Date(remainingClock.getTime() + offset);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");
@@ -110,9 +110,32 @@ function getTime() {
 }
 
 function incrementClock() {
-	var d = new Date(showTime*1000);
-	var fShowTime = dateFormat(d, "HH:MM:ss");
+	var fShowTime = dateFormat(showTime, "HH:MM:ss");
 	$('#main-time').html(fShowTime);
-	// console.log("real_time: " + real_time);
-	showTime--;
+	//
+	showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
+	//
+	showTime.setSeconds(showTime.getSeconds()-1);
+	elapsedTime++;
+	
+	console.log('elapsedTime % gp["sessionTime"]=' + elapsedTime+1 % gp["sessionTime"]);
+	if (elapsedTime % gp["sessionTime"]==0){
+		session++;
+		$('#session').html(session);
+		console.log('elapsedTime % gp["roundTime"]=' + elapsedTime+1 % gp["roundTime"]);
+		if (elapsedTime % gp["roundTime"]==0){
+			round++;
+			$('#round').html(round);
+		}
+	}
+	
+	if ((elapsedTime+gp["pauseTime"])%(gp["sessionTime"])==0){
+		// finished runTime
+		isRunTime = false;
+		showTime = secToDate(gp["pauseTime"]);
+	} else if (elapsedTime % (gp["sessionTime"]) == 0){
+		// finished pause time
+		isRunTime = true;
+		showTime = secToDate(gp["runTime"]);
+	}
 }

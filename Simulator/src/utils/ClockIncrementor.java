@@ -25,6 +25,7 @@ public class ClockIncrementor implements Runnable {
 		HashMap<String,Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock", elapsedClock);
 		clocks.put("remainingClock", remainingClock);
+	//	System.out.println("Server: remainingClock: "+ remainingClock);
 		return clocks;
 	}
 	

@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 
+import utils.HomeData;
 import utils.TimerManager;
 
 /**
@@ -71,11 +72,21 @@ public class HomeController extends HttpServlet {
 				response.getWriter().print(gson.toJson(clocks));
 			}
 
-		} else if (action.equals("startSimulator")) {
+		} 
+		
+		else if (action.equals("startSimulator")) {
 			startSimulator();
 			response.getWriter().print("OK");
-		} else if(action.equals("getGP")){
+		} 
+		
+		else if(action.equals("getGP")){
 			response.getWriter().print(gson.toJson(getTimes()));
+		}
+		
+		else if(action.equals("getIncidents"))
+		{
+			response.getWriter().print(new HomeData().getIncidents());
+			
 		}
 	}
 
@@ -96,4 +107,5 @@ public class HomeController extends HttpServlet {
 		TimerManager.startSimulator();
 
 	}
+	
 }

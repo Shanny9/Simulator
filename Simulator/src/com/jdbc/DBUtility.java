@@ -6,10 +6,12 @@ import java.sql.DriverManager;
 public class DBUtility {
 	private static Connection connection = null;
 
-	public static Connection getConnection() {
-		if (connection != null)
+	public synchronized static Connection getConnection() {
+		if (connection != null){
 			return connection;
+		}
 		else {
+			System.out.println("DBUtility: Thread number "+ Thread.currentThread().getId());
 			// Store the database URL in a string
 			/*String serverName = "132.75.252.108";
 			String portNumber = "3306";*/

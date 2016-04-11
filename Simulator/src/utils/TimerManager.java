@@ -29,19 +29,20 @@ public class TimerManager implements ServletContextListener {
 		scheduler.shutdownNow();
 	}
 
-	public static HashMap<String, Object> getClocks(int runTime, int roundTime, int round) {
-		return ClockIncrementor.getClocks(runTime, roundTime, round);
+	public static HashMap<String, Object> getClocks() {
+		return ClockIncrementor.getClocks();
 	}
 	
 	public static HashMap<String, Object> getProfits() {
 		return mc.getProfits();
 	}
 
-	public static void startSimulator() {
-		ci = new ClockIncrementor();
-		mc = new MoneyCalculator(0/*initProfit*/);
+	public static void startSimulator(int runTime, int roundTime, int round) {
+		System.out.println("TimerManager: starting simulator");
+		ci = new ClockIncrementor(runTime, roundTime, round);
+//		mc = new MoneyCalculator(0/*initProfit*/);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);
+//		scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);
 	}
 
 }

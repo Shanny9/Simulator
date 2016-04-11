@@ -115,13 +115,14 @@ public class TblCourseDaoImpl implements TblCourseDao {
 	@Override
 	public TblCourse getCourseById(String courseName) {
 		TblCourse course = null;
-
+		System.out.println("entered method getCourseById: courseName=" +courseName);
 		String query = "SELECT * FROM tblCourse Where course_name = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(query);
 			pStmt.setString(1, courseName);
 			ResultSet rs = pStmt.executeQuery();
 			if (rs.next()) {
+				System.out.println("course " + courseName + "found");
 				course = new TblCourse();
 				course.setCourseName(rs.getString("course_name"));
 
@@ -129,6 +130,7 @@ public class TblCourseDaoImpl implements TblCourseDao {
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
+		System.out.println("course: " + course);
 		return course;
 	}
 

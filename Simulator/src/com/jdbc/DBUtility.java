@@ -11,7 +11,7 @@ public class DBUtility {
 			return connection;
 		}
 		else {
-			System.out.println("DBUtility: Thread number "+ Thread.currentThread().getId());
+//			System.out.println("DBUtility: Thread number "+ Thread.currentThread().getId());
 			// Store the database URL in a string
 			/*String serverName = "132.75.252.108";
 			String portNumber = "3306";*/
@@ -20,7 +20,7 @@ public class DBUtility {
 			Class.forName("com.mysql.jdbc.Driver");
 			// set the url, username and password for the database
 			connection = DriverManager.getConnection(dbUrl, "ts2016", "n227u31");
-			System.out.println("DBUtility: connected successfully.");
+//			System.out.println("DBUtility: connected successfully.");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

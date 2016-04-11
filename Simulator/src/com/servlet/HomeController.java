@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dao.TblCourseDao;
 import com.dao.TblCourseDaoImpl;
+import com.dao.TblGeneralParametersDao;
 import com.dao.TblGeneralParametersDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +27,7 @@ import utils.TimerManager;
 @WebServlet("/HomeController")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private String courseName;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -57,55 +60,55 @@ public class HomeController extends HttpServlet {
 
 		// get the action
 		String action = request.getParameter("action");
-
 		if (action.equals("getTime")) {
+			HashMap<String, Object> clocks = TimerManager.getClocks();
+			clocks.put("serverTime", new Date());
+			response.getWriter().print(gson.toJson(clocks));
 
-			TblCourseDaoImpl dao = new TblCourseDaoImpl();
-			TblCourse course = dao.getCourseById("IDF-AMAM-01");
+		} else if (action.equals("startSimulator")) {
+			courseName = request.getParameter("courseName");
+			TblCourse course = new TblCourseDaoImpl().getCourseById(courseName);
 			if (course != null) {
-				int runTime = (int) getTimes().get("runTime");
-				int roundTime = (int) getTimes().get("roundTime");
+				int runTime = (int) getTimes(courseName).get("runTime");
+				int roundTime = (int) getTimes(courseName).get("roundTime");
 				int currentRound = course.getLastRoundDone();
-				
-				HashMap<String, Object> clocks = TimerManager.getClocks(runTime, roundTime, currentRound);
-				clocks.put("serverTime", new Date());
-				response.getWriter().print(gson.toJson(clocks));
-			}
 
-		} 
-		
-		else if (action.equals("startSimulator")) {
-			startSimulator();
-			response.getWriter().print("OK");
-		} 
-		
-		else if(action.equals("getGP")){
-			response.getWriter().print(gson.toJson(getTimes()));
+				startSimulator(runTime, roundTime, currentRound);
+				response.getWriter().print("OK");
+			}
 		}
-		
-		else if(action.equals("getIncidents"))
-		{
+
+		else if (action.equals("getGP")) {
+			courseName = request.getParameter("courseName");
+			response.getWriter().print(gson.toJson(getTimes(courseName)));
+		}
+
+		else if (action.equals("getIncidents")) {
 			response.getWriter().print(new HomeData().getIncidents());
-			
+
 		}
 	}
 
-	protected HashMap<String, Object> getTimes() {
-		TblGeneralParametersDaoImpl dao = new TblGeneralParametersDaoImpl();
+	protected HashMap<String, Object> getTimes(String courseName) {
+		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		HashMap<String, Object> timesMap = new HashMap<String, Object>();
-
-		timesMap.put("sessionTime", dao.getSessionTime());
-		timesMap.put("roundTime", dao.getRoundTime());
-		timesMap.put("numOfRounds", dao.getGeneralParameters().getNumOfRounds());
-		timesMap.put("pauseTime", dao.getGeneralParameters().getPauseTime());
-		timesMap.put("runTime", dao.getGeneralParameters().getRunTime());
-		timesMap.put("sessionsPerRound", dao.getGeneralParameters().getSessionsPerRound());
+		
+		TblCourseDaoImpl daoCourse = new TblCourseDaoImpl();
+		TblCourse course = daoCourse.getCourseById(courseName);
+		int round = course.getLastRoundDone()+1;
+		
+		timesMap.put("sessionTime", daoGP.getSessionTime());
+		timesMap.put("roundTime", daoGP.getRoundTime());
+		timesMap.put("numOfRounds", daoGP.getGeneralParameters().getNumOfRounds());
+		timesMap.put("pauseTime", daoGP.getGeneralParameters().getPauseTime());
+		timesMap.put("runTime", daoGP.getGeneralParameters().getRunTime());
+		timesMap.put("sessionsPerRound", daoGP.getGeneralParameters().getSessionsPerRound());
+		timesMap.put("totalTime", daoGP.getGeneralParameters().getTotalTime());
+		timesMap.put("currentRound", round/*new TblCourseDaoImpl().getCourseById(courseName).getLastRoundDone()+1*/);
 		return timesMap;
 	}
 
-	public void startSimulator() {
-		TimerManager.startSimulator();
-
+	public void startSimulator(int runTime, int roundTime, int currentRound) {
+		TimerManager.startSimulator(runTime, roundTime, currentRound);
 	}
-	
 }

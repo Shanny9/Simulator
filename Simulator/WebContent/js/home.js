@@ -6,17 +6,18 @@ var pauseTime;
 var showTime;
 var elapsedTime = 0;
 var remainingTime = 0;
-var session = 0;
+var session = 1;
 var round = 1;
 var isRunTime = true;
 var gp = new Object();
-var incidentsData; //initialize by getIncidents()
+var incidentsData; // initialize by getIncidents()
+var finishRound;
+var courseName = 'IDF-AMAM-01';
+var clockInterval;
 
 $(document).ready(function() {
 	$("#startSimulator").click(startSimulator);
 	$("#startSimulator").click(getIncidents);
-	
-
 });
 
 /**
@@ -35,30 +36,29 @@ function getIncidents() {
 	});
 }
 
-//after calling getIncidents
+// after calling getIncidents
 function showIncidentsInTime(elapsedTime) {
 	$.each(incidentsData, function(i, item) {
-		if( elapsedTime==item.time){ 
-			var str =  "<tr class='danger'>"
-			+"	<td>"+item.event+"</td>"
-			+"	<td>"+item.time+"</td>"
-			+"</tr>";
+		if (elapsedTime == item.time) {
+			var str = "<tr class='danger'>" + "	<td>" + item.event + "</td>"
+					+ "	<td>" + item.time + "</td>" + "</tr>";
 			$(".event-tbl").append(str);
-			console.log("showIncidentsInTime:eventID: "+ item.event);
+			console.log("showIncidentsInTime:eventID: " + item.event);
 		}
 	});
 }
 
 function getGP() {
+
 	$.ajax({
-		url : "HomeController?action=getGP",
+		url : "HomeController?action=getGP&courseName=" + courseName,
 		dataType : "json",
+		async : false,
 		success : function(data) {
 			$.each(data, function(key, value) {
 				gp[key] = value;
-
+				// console.log("key= " + key + ", value= " + value);
 			});
-//			console.log("gp: " + gp);
 		},
 		error : function(e) {
 			console.log("js:getGP: Error in getGP: " + e.message);
@@ -67,16 +67,21 @@ function getGP() {
 }
 
 function startSimulator() {
-	console.log("method startSimulator started");
 	$.ajax({
-		url : "HomeController?action=startSimulator",
+		url : "HomeController?action=startSimulator&courseName=" + courseName,
 		dataType : "text",
+		async : false,
 		success : function(data) {
-
-			getGP();
+			getGP(courseName);
+			finishRound = gp["roundTime"] * (gp["currentRound"] + 1)
 			getTime();
-			console.log("sessionsPerRound: " + gp["sessionsPerRound"]);
-			setInterval(incrementClock, 1000);
+			// console.log("roundTime.= " + gp["roundTime"]);
+			// console.log("currentRound= " + gp["currentRound"]);
+			// console.log("elapsedTime= " + elapsedTime);
+			// console.log("finishRound= " + finishRound);
+			// while (elapsedTime < finishRound) {
+			clockInterval = setInterval(incrementClock, 1000);
+			// }
 			// console.log("js:startSimulator: Success.");
 		},
 		error : function(e) {
@@ -110,32 +115,41 @@ function getTime() {
 }
 
 function incrementClock() {
-	var fShowTime = dateFormat(showTime, "HH:MM:ss");
-	$('#main-time').html(fShowTime);
+	console.log("incrementClock: elapsed time=" + elapsedTime)
+	$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
+	// console.log("fShowTime: " + fShowTime);
 	//
 	showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
 	//
-	showTime.setSeconds(showTime.getSeconds()-1);
+	showTime.setSeconds(showTime.getSeconds() - 1);
 	elapsedTime++;
-	
-	console.log('elapsedTime % gp["sessionTime"]=' + elapsedTime+1 % gp["sessionTime"]);
-	if (elapsedTime % gp["sessionTime"]==0){
-		session++;
-		$('#session').html(session);
-		console.log('elapsedTime % gp["roundTime"]=' + elapsedTime+1 % gp["roundTime"]);
-		if (elapsedTime % gp["roundTime"]==0){
-			round++;
-			$('#round').html(round);
-		}
-	}
-	
-	if ((elapsedTime+gp["pauseTime"])%(gp["sessionTime"])==0){
+
+	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
 		// finished runTime
 		isRunTime = false;
 		showTime = secToDate(gp["pauseTime"]);
-	} else if (elapsedTime % (gp["sessionTime"]) == 0){
+
+	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
 		showTime = secToDate(gp["runTime"]);
+
+		if (elapsedTime % gp["sessionTime"] == 0) {
+			// finished session
+			if (session < gp["sessionsPerRound"]){
+				session++;
+			};
+			console.log("session: " + session);
+			$('#session').html(session);
+
+			if (elapsedTime % gp["roundTime"] == 0) {
+				// finished round
+				console.log("finished");
+				$('#main-time').html("00:00:00");
+//				showTime.setSeconds(showTime.getSeconds() - 1);
+//				$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
+				clearInterval(clockInterval);
+			}
+		}
 	}
 }

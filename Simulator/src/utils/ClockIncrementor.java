@@ -3,7 +3,10 @@ package utils;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+
 public class ClockIncrementor implements Runnable {
+	private static volatile boolean stopThread = false;
 	private static Date elapsedClock;
 	private static Date remainingClock;
 	private static Date finishRound;
@@ -31,7 +34,7 @@ public class ClockIncrementor implements Runnable {
 	
 	@SuppressWarnings("deprecation")
 	public void run(){
-		while (elapsedClock.before(finishRound)) {
+		while (!stopThread && elapsedClock.before(finishRound)) {
 				synchronized (this) {
 					try {
 						System.out.println("elapsedClock: " + elapsedClock);
@@ -45,5 +48,13 @@ public class ClockIncrementor implements Runnable {
 				elapsedClock.setSeconds(elapsedClock.getSeconds() + 1);
 				remainingClock.setSeconds(remainingClock.getSeconds() - 1);
 		}
+	}
+	
+	public static void pause(){
+		stopThread = true;
+	}
+	
+	public static void resume(){
+		stopThread = false;
 	}
 }

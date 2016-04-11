@@ -18,6 +18,8 @@ var clockInterval;
 $(document).ready(function() {
 	$("#startSimulator").click(startSimulator);
 	$("#startSimulator").click(getIncidents);
+	$("#pause").click(pauseSimulator);
+	$("#resume").click(resumeSimulator);
 });
 
 /**
@@ -40,16 +42,15 @@ function getIncidents() {
 function showIncidentsInTime(elapsedTime) {
 	$.each(incidentsData, function(i, item) {
 		if (elapsedTime == item.time) {
-			var str = "<tr class='danger'>" + "	<td>" + item.event + "</td>"
-					+ "	<td>" + item.time + "</td>" + "</tr>";
-			$(".event-tbl").append(str);
-			console.log("showIncidentsInTime:eventID: " + item.event);
+			console.log("i= " + i + ", showIncidentsInTime:eventID: " + item.event);
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ")").addClass("danger");
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.event)
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time)
 		}
 	});
 }
 
 function getGP() {
-
 	$.ajax({
 		url : "HomeController?action=getGP&courseName=" + courseName,
 		dataType : "json",
@@ -75,14 +76,7 @@ function startSimulator() {
 			getGP(courseName);
 			finishRound = gp["roundTime"] * (gp["currentRound"] + 1)
 			getTime();
-			// console.log("roundTime.= " + gp["roundTime"]);
-			// console.log("currentRound= " + gp["currentRound"]);
-			// console.log("elapsedTime= " + elapsedTime);
-			// console.log("finishRound= " + finishRound);
-			// while (elapsedTime < finishRound) {
 			clockInterval = setInterval(incrementClock, 1000);
-			// }
-			// console.log("js:startSimulator: Success.");
 		},
 		error : function(e) {
 			console.log("js:startSimulator: Error in starting simulator... "
@@ -110,6 +104,34 @@ function getTime() {
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");
+		}
+	});
+}
+
+function pauseSimulator(){
+	$.ajax({
+		url : "HomeController?action=pauseSimulator",
+		dataType : "text",
+		async : false,
+		success : function(data) {
+			clearInterval(clockInterval);
+		},
+		error : function(e) {
+			console.log("js:pauseSimulator: Error in pauseSimulator.");
+		}
+	});
+}
+
+function resumeSimulator(){
+	$.ajax({
+		url : "HomeController?action=resumeSimulator",
+		dataType : "text",
+		async : false,
+		success : function(data) {
+			clockInterval = setInterval(incrementClock, 1000);
+		},
+		error : function(e) {
+			console.log("js:resumeSimulator: Error in resumeSimulator.");
 		}
 	});
 }
@@ -146,8 +168,6 @@ function incrementClock() {
 				// finished round
 				console.log("finished");
 				$('#main-time').html("00:00:00");
-//				showTime.setSeconds(showTime.getSeconds() - 1);
-//				$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
 				clearInterval(clockInterval);
 			}
 		}

@@ -32,7 +32,7 @@ public class TimerManager implements ServletContextListener {
 	public static HashMap<String, Object> getClocks() {
 		return ClockIncrementor.getClocks();
 	}
-	
+
 	public static HashMap<String, Object> getProfits() {
 		return mc.getProfits();
 	}
@@ -40,9 +40,20 @@ public class TimerManager implements ServletContextListener {
 	public static void startSimulator(int runTime, int roundTime, int round) {
 		System.out.println("TimerManager: starting simulator");
 		ci = new ClockIncrementor(runTime, roundTime, round);
-//		mc = new MoneyCalculator(0/*initProfit*/);
+		// mc = new MoneyCalculator(0/*initProfit*/);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-//		scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);
+		// scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);
+	}
+
+	public static void pauseSimulator() {
+		System.err.println("TimerManager: pausing clock...");
+		ClockIncrementor.pause();
+	}
+
+	public static void resumeSimulator() {
+		System.err.println("TimerManager: pausing clock...");
+		ClockIncrementor.resume();
+
 	}
 
 }

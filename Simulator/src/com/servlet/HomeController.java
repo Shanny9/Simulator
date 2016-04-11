@@ -76,9 +76,13 @@ public class HomeController extends HttpServlet {
 				startSimulator(runTime, roundTime, currentRound);
 				response.getWriter().print("OK");
 			}
-		}
-
-		else if (action.equals("getGP")) {
+		} else if (action.equals("pauseSimulator")){
+			pauseSimulator();
+			
+		} else if (action.equals("resumeSimulator")){
+			resumeSimulator();
+			
+		} else if (action.equals("getGP")) {
 			courseName = request.getParameter("courseName");
 			response.getWriter().print(gson.toJson(getTimes(courseName)));
 		}
@@ -110,5 +114,13 @@ public class HomeController extends HttpServlet {
 
 	public void startSimulator(int runTime, int roundTime, int currentRound) {
 		TimerManager.startSimulator(runTime, roundTime, currentRound);
+	}
+	
+	public void pauseSimulator(){
+		TimerManager.pauseSimulator();
+	}
+	
+	public void resumeSimulator(){
+		TimerManager.resumeSimulator();
 	}
 }

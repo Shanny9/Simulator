@@ -100,6 +100,7 @@
 				isActive : {
 					title : 'Active?',
 					width : '30%',
+					options: { '1': 'Yes', '0': 'No'},
 					edit : true
 				}
 			}

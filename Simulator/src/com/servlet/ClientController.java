@@ -1,7 +1,8 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,9 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblCIDao;
 import com.dao.TblCIDaoImpl;
-import com.model.TblCI;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.model.TblResolution;
 
 /**
  * Servlet implementation class ClientController
@@ -19,6 +21,7 @@ import com.model.TblCI;
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static ArrayList<TblResolution> resolutions = new ArrayList<TblResolution>();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -45,19 +48,20 @@ public class ClientController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 		
+		
 		// get the action
 		String action = request.getParameter("action");
 		
 		if (action.equals("getSolutions")){
-			getSolutions(request.getParameter("team"));
+			getSolutions(request.getParameter("team"), response);
 		}
 	}
 
-	private void getSolutions(String team) {
-		TblCIDao ciDao = new TblCIDaoImpl();
-		List<TblCI> solTbl = ciDao.getAllCIs();
-		//TODO: complete
-//		HashMap<Integer>
+	private void getSolutions(String team, HttpServletResponse response) throws IOException {
+		TblCIDaoImpl ciDao = new TblCIDaoImpl();
+		response.getWriter().print(ciDao.getSolutions(team));
+
+
 	}
 
 

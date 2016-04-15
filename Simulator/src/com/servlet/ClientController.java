@@ -1,7 +1,7 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.Time;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dao.TblCIDaoImpl;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.model.TblIncident;
 import com.model.TblResolution;
+import com.model.TblResolutionPK;
 
 /**
  * Servlet implementation class ClientController
@@ -21,7 +21,7 @@ import com.model.TblResolution;
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static ArrayList<TblResolution> resolutions = new ArrayList<TblResolution>();
+	private static HashMap<TblResolutionPK,TblResolution> resolutions = new HashMap<>();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -60,9 +60,57 @@ public class ClientController extends HttpServlet {
 	private void getSolutions(String team, HttpServletResponse response) throws IOException {
 		TblCIDaoImpl ciDao = new TblCIDaoImpl();
 		response.getWriter().print(ciDao.getSolutions(team));
-
-
+	}
+	
+	
+	private void addResolution(HttpServletRequest request){
+		byte incidentID, isPurchased;
+		Time time;
+		String course, team;
+		TblResolutionPK pk = new TblResolutionPK();
+		
+		incidentID = Byte.valueOf(request.getParameter("incident"));
+		course = request.getParameter("course"); 
+		isPurchased = Byte.valueOf(request.getParameter("isPurchased"));
+		time = new Time(Long.valueOf(request.getParameter("time")));
+		team = request.getParameter("team");
+		pk.setCourse(course);
+		pk.setIncident_ID(incidentID);
+		TblResolution res;
+		
+		//update existing row
+		if(resolutions.containsKey(pk))
+		{
+			res = resolutions.get(pk);
+		}
+		//add new row
+		else
+		{
+			res = new TblResolution();
+			res.setId(pk);
+			TblIncident in = new TblIncident();
+			in.setIncident_ID(incidentID);
+			res.setTblIncident(in);
+		}
+		
+		if(team.equals("Marom"))
+		{
+			res.setIsPurchasedA(isPurchased);
+			res.setIsResolvedA(new Byte("1"));
+			res.setResolution_timeA(time);	
+		}
+		else
+		{
+			res.setIsPurchasedB(isPurchased);
+			res.setIsResolvedB(new Byte("1"));
+			res.setResolution_timeB(time);	
+		}
+		resolutions.put(pk, res);
+		
 	}
 
 
+	
+	
 }
+

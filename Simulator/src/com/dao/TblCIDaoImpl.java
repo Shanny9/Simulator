@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gson.JsonObject;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
-import com.model.TblSupplier;
 
 public class TblCIDaoImpl implements TblCIDao{
 	
@@ -64,8 +64,8 @@ public class TblCIDaoImpl implements TblCIDao{
 		return 0;
 	}
 	
-	public HashMap<Integer,Integer> getSolutions(String team){
-		HashMap<Integer,Integer> solutions = new HashMap<>();
+	public List<JsonObject> getSolutions(String team){
+		List<JsonObject> solutions = new ArrayList<JsonObject>();
 		
 		String teamInDb;
 		if (team.equals("Marom")){
@@ -74,13 +74,17 @@ public class TblCIDaoImpl implements TblCIDao{
 			teamInDb = "B";
 		}
 		
-		String query = "SELECT event_ID, soultion_" + teamInDb + " FROM tblCI";
+		String query = "SELECT CI_ID, solution_" + teamInDb + " FROM tblCI";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
-				solutions.put(rs.getInt("event_ID"), rs.getInt("soultion_"+teamInDb));
+				JsonObject row = new JsonObject();
+				row.addProperty("ciID", rs.getInt("CI_ID"));
+				row.addProperty("solution", rs.getInt("solution_"+teamInDb));
+				
+				solutions.add(row);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

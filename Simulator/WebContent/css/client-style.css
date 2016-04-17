@@ -189,7 +189,7 @@ img {
 }
 
 .form-bottom {
-	padding: 25px 25px 30px 25px;
+	padding: 10px 25px 30px 25px;
 	background: #444;
 	background: rgba(0, 0, 0, 0.3);
 	-moz-border-radius: 0 0 4px 4px;
@@ -267,4 +267,15 @@ img {
 	margin-top: 4vw;
 	color: white;
 	font-size: 8vw;
+}
+
+#feedback{
+	text-align: center;
+	font-size: 18px;
+}
+.correct{
+	color:#53ae64;
+}
+.wrong{
+	color:#de615e;
 }

@@ -30,7 +30,7 @@ public class HomeData {
 			while (rs.next()) {
 				JsonObject row = new JsonObject();
 				Time time = new Time(rs.getTime("time_").getTime());
-				row.addProperty("event", rs.getInt("event_ID"));
+				row.addProperty("ciID", rs.getInt("CI_ID"));
 				row.addProperty("time", time.toString());
 				
 				incidents.add(row);
@@ -43,27 +43,4 @@ public class HomeData {
 		return incidents;
 	}
 	
-public List<JsonObject> getSolutions(){
-		
-		List<JsonObject> solutions = new ArrayList<JsonObject>();
-		
-		String query = Queries.incidentsForHomeTable;
-		try {
-			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
-				JsonObject row = new JsonObject();
-				Time time = new Time(rs.getTime("time_").getTime());
-				row.addProperty("event", rs.getInt("event_ID"));
-				row.addProperty("time", time.toString());
-				
-				solutions.add(row);
-				
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-	//	System.out.println("HomeData:getIncidents(): "+incidents);
-		return solutions;
-	}
 }

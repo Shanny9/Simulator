@@ -20,6 +20,7 @@ $(document).ready(function() {
 	$("#startSimulator").click(getIncidents);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
+	console.log("END Document ready");
 });
 
 /**
@@ -42,10 +43,10 @@ function getIncidents() {
 function showIncidentsInTime(elapsedTime) {
 	$.each(incidentsData, function(i, item) {
 		if (elapsedTime == item.time) {
-			console.log("i= " + i + ", showIncidentsInTime:eventID: " + item.event);
+			console.log("i= " + i + ", showIncidentsInTime:ciID: " + item.ciID);
 			$(".score-tbl tbody tr:nth-child(" + i+1 + ")").addClass("danger");
-			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.event)
-			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time)
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.ciID);
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time);
 		}
 	});
 }
@@ -74,7 +75,7 @@ function startSimulator() {
 		async : false,
 		success : function(data) {
 			getGP(courseName);
-			finishRound = gp["roundTime"] * (gp["currentRound"] + 1)
+			finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
 		},
@@ -92,15 +93,17 @@ function getTime() {
 		async : false,
 		success : function(data) {
 
-			var remainingClock = new Date(data.remainingClock);
+			var remainingClock = data.remainingClock;
 			var serverTime = new Date(data.serverTime);
 
 			client_time = new Date();
-			offset = client_time.getTime() - serverTime.getTime();
+			offset = (client_time.getTime() - serverTime.getTime())/1000;
 			if (offset < 0) {
 				offset = offset * -1;
 			}
-			showTime = new Date(remainingClock.getTime() + offset);
+			showTime = (remainingClock + offset)
+			console.log("remainingClock " +remainingClock);
+			console.log("offset: "+ offset);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");
@@ -137,24 +140,24 @@ function resumeSimulator(){
 }
 
 function incrementClock() {
-	console.log("incrementClock: elapsed time=" + elapsedTime)
-	$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
+	console.log("incrementClock: elapsed time=" + elapsedTime);
+	$('#main-time').html(dateFormat(secToDate(showTime), "HH:MM:ss"));
 	// console.log("fShowTime: " + fShowTime);
 	//
-	showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
+	//showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
 	//
-	showTime.setSeconds(showTime.getSeconds() - 1);
+	showTime = (showTime - 1);
 	elapsedTime++;
 
 	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
 		// finished runTime
 		isRunTime = false;
-		showTime = secToDate(gp["pauseTime"]);
+		showTime = gp["pauseTime"];
 
 	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
-		showTime = secToDate(gp["runTime"]);
+		showTime = gp["runTime"];
 
 		if (elapsedTime % gp["sessionTime"] == 0) {
 			// finished session
@@ -171,5 +174,5 @@ function incrementClock() {
 				clearInterval(clockInterval);
 			}
 		}
-	}
+	}//
 }

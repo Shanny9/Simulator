@@ -3,36 +3,79 @@
  */
 
 var solutionsData;
-var team = "Marom";
+var team = "Marom"; //TODO: change this
+//var courseName = 'IDF-AMAM-01'; //TODO: change this
 
 $(document).ready(function() {
+    /*
+    initialize page
+    */
+	$.backstretch("./css/home_images/airplane-login.jpg"); //Fullscreen background
+    $('.login-form input[type="text"], .login-form textarea').on('focus', function() {
+    	$(this).removeClass('input-error');
+    });
+	getSolutions(); // init solutionsData
 	$("#submit").click(sendSolution);
+	startSimulator();
+	
 });
 
 function sendSolution (){
-	var eventID;
-	var sol;
+	var ciID = $('#ciID').val();
+	var sol = $('#solution').val();
+	var isCorrect = false;
 	
-	$.ajax({
-		url : "ClientController?action=sendSolution",
-		dataType : "json",
-		data: {eventID: eventID, solution: sol},
-		success : function(data) {
+	if(ciID != "" && sol!=""){
+		$.each(solutionsData, function(i, item) {
+			if(item.ciID == ciID && item.solution == sol){
+				isCorrect = true;
+				return false; // << break
+			}
 			
-		},
-		error : function(e) {
-			console.log("js:sendSolution: Error in sendSolution.");
+		});//end for each
+		
+		if(isCorrect){
+			$.ajax({
+				url : "ClientController?action=sendSolution",
+				dataType : "json",
+				data: {team: team, ciID: ciID, time: elapsedTime},
+				success : function(msg) {
+					console.log(msg);
+				},
+				error : function(e) {
+					console.log("js:sendSolution: Error in sendSolution.");
+				}
+			});
+
 		}
-	});
+		else{	    	
+			$("#feedback").addClass('wrong');
+			$("#feedback").html("Wrong");
+			return false;
+		}
+	}//end <if fields are empty>	
+	else{
+    	if( ciID == "" ) {
+    		$('#ciID').addClass('input-error');
+    	}
+    	if( sol == "" ) {
+    		$('#solution').addClass('input-error');
+    	}
+
+    	return false;
+	}
 }
 
 function getSolutions() {
 	$.ajax({
+		async: false,
 		url : "ClientController?action=getSolutions",
 		dataType : "json",
+		
 		data: {team: team},
 		success : function(data) {
 			solutionsData = data;
+			console.log("js:getSolutions: Success!");
 		},
 		error : function(e) {
 			console.log("js:getSolutions: Error in getSolutions.");

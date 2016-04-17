@@ -28,7 +28,6 @@ public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String courseName;
 
-
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */

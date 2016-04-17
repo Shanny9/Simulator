@@ -70,9 +70,11 @@ public class HomeController extends HttpServlet {
 			if (course != null) {
 				int runTime = (int) getTimes(courseName).get("runTime");
 				int roundTime = (int) getTimes(courseName).get("roundTime");
+				int pauseTime = (int) getTimes(courseName).get("pauseTime");
+				int sessionTime = (int) getTimes(courseName).get("sessionTime");
 				int currentRound = course.getLastRoundDone();
 
-				startSimulator(runTime, roundTime, currentRound);
+				startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
 				response.getWriter().print("OK");
 			}
 		} else if (action.equals("pauseSimulator")){
@@ -111,8 +113,8 @@ public class HomeController extends HttpServlet {
 		return timesMap;
 	}
 
-	public void startSimulator(int runTime, int roundTime, int currentRound) {
-		TimerManager.startSimulator(runTime, roundTime, currentRound);
+	public void startSimulator(int runTime, int roundTime, int currentRound, int pauseTime, int sessionTime) {
+		TimerManager.startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
 	}
 	
 	public void pauseSimulator(){

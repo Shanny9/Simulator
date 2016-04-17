@@ -37,9 +37,9 @@ public class TimerManager implements ServletContextListener {
 		return mc.getProfits();
 	}
 
-	public static void startSimulator(int runTime, int roundTime, int round) {
+	public static void startSimulator(int runTime, int roundTime, int round, int pauseTime ,int sessionTime) {
 		System.out.println("TimerManager: starting simulator");
-		ci = new ClockIncrementor(runTime, roundTime, round);
+		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, sessionTime);
 		// mc = new MoneyCalculator(0/*initProfit*/);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
 		// scheduler.scheduleAtFixedRate(mc, 0, 1, TimeUnit.SECONDS);

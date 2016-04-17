@@ -93,15 +93,16 @@ function getTime() {
 		async : false,
 		success : function(data) {
 
-			var remainingClock = new Date(data.remainingClock);
+			var remainingClock = data.remainingClock;
 			var serverTime = new Date(data.serverTime);
 
 			client_time = new Date();
-			offset = client_time.getTime() - serverTime.getTime();
+			offset = (client_time.getTime() - serverTime.getTime())/1000;
 			if (offset < 0) {
 				offset = offset * -1;
 			}
-			showTime = new Date(remainingClock.getTime() + offset);
+			showTime = (remainingClock + offset)
+			console.log("remainingClock " +remainingClock);
 			console.log("offset: "+ offset);
 		},
 		error : function(e) {
@@ -140,23 +141,23 @@ function resumeSimulator(){
 
 function incrementClock() {
 	console.log("incrementClock: elapsed time=" + elapsedTime);
-	$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
+	$('#main-time').html(dateFormat(secToDate(showTime), "HH:MM:ss"));
 	// console.log("fShowTime: " + fShowTime);
 	//
-	showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
+	//showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
 	//
-	showTime.setSeconds(showTime.getSeconds() - 1);
+	showTime = (showTime - 1);
 	elapsedTime++;
 
 	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
 		// finished runTime
 		isRunTime = false;
-		showTime = secToDate(gp["pauseTime"]);
+		showTime = gp["pauseTime"];
 
 	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
-		showTime = secToDate(gp["runTime"]);
+		showTime = gp["runTime"];
 
 		if (elapsedTime % gp["sessionTime"] == 0) {
 			// finished session
@@ -173,5 +174,5 @@ function incrementClock() {
 				clearInterval(clockInterval);
 			}
 		}
-	}
+	}//
 }

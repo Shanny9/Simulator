@@ -112,12 +112,6 @@ public class HomeController extends HttpServlet {
 		timesMap.put("currentRound", round/*new TblCourseDaoImpl().getCourseById(courseName).getLastRoundDone()+1*/);
 		return timesMap;
 	}
-	
-//	public void addLogItem(String team, int ci_id, int time){
-//		if (team.equals("Marom")){
-//			marom.getCiLog().add(ci_id, time);
-//		}
-//	}
 
 	public void startSimulator(int runTime, int roundTime, int currentRound) {
 		TimerManager.startSimulator(runTime, roundTime, currentRound);

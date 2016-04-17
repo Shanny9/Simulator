@@ -20,13 +20,13 @@ $(document).ready(function() {
 });
 
 function sendSolution (){
-	var eventID = $('#eventID').val();
+	var ciID = $('#ciID').val();
 	var sol = $('#solution').val();
 	var isCorrect = false;
 	
-	if(eventID != "" && sol!=""){
+	if(ciID != "" && sol!=""){
 		$.each(solutionsData, function(i, item) {
-			if(item.event == eventID && item.solution == sol){
+			if(item.ciID == ciID && item.solution == sol){
 				isCorrect = true;
 				return false; // << break
 			}
@@ -37,7 +37,7 @@ function sendSolution (){
 	/*		$.ajax({
 				url : "ClientController?action=sendSolution",
 				dataType : "json",
-				data: {team: team, course: courseName, eventID: eventID, solution: sol},
+				data: {team: team, course: courseName, ciID: ciID, solution: sol},
 				success : function(data) {
 					
 				},
@@ -45,20 +45,22 @@ function sendSolution (){
 					console.log("js:sendSolution: Error in sendSolution.");
 				}
 			});*/
-			console.log("Correct!");
+
 		}
 		else{	    	
-
+			$("#feedback").addClass('wrong');
+			$("#feedback").html("Wrong");
 			return false;
 		}
 	}//end <if fields are empty>	
 	else{
-    	if( eventID == "" ) {
-    		$('#eventID').addClass('input-error');
+    	if( ciID == "" ) {
+    		$('#ciID').addClass('input-error');
     	}
     	if( sol == "" ) {
     		$('#solution').addClass('input-error');
     	}
+
     	return false;
 	}
 }

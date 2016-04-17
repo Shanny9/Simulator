@@ -42,10 +42,10 @@ function getIncidents() {
 function showIncidentsInTime(elapsedTime) {
 	$.each(incidentsData, function(i, item) {
 		if (elapsedTime == item.time) {
-			console.log("i= " + i + ", showIncidentsInTime:eventID: " + item.event);
+			console.log("i= " + i + ", showIncidentsInTime:ciID: " + item.ciID);
 			$(".score-tbl tbody tr:nth-child(" + i+1 + ")").addClass("danger");
-			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.event)
-			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time)
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.ciID);
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time);
 		}
 	});
 }

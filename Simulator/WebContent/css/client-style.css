@@ -268,3 +268,14 @@ img {
 	color: white;
 	font-size: 8vw;
 }
+
+#feedback{
+	text-align: center;
+	font-size: 18px;
+}
+.correct{
+	color:#53ae64;
+}
+.wrong{
+	color:#de615e;
+}

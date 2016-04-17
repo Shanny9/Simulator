@@ -30,7 +30,7 @@ public class HomeData {
 			while (rs.next()) {
 				JsonObject row = new JsonObject();
 				Time time = new Time(rs.getTime("time_").getTime());
-				row.addProperty("event", rs.getInt("event_ID"));
+				row.addProperty("ciID", rs.getInt("CI_ID"));
 				row.addProperty("time", time.toString());
 				
 				incidents.add(row);

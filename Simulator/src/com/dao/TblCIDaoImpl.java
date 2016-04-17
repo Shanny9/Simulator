@@ -74,14 +74,14 @@ public class TblCIDaoImpl implements TblCIDao{
 			teamInDb = "B";
 		}
 		
-		String query = "SELECT event_ID, solution_" + teamInDb + " FROM tblCI";
+		String query = "SELECT CI_ID, solution_" + teamInDb + " FROM tblCI";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				JsonObject row = new JsonObject();
-				row.addProperty("event", rs.getInt("event_ID"));
+				row.addProperty("ciID", rs.getInt("CI_ID"));
 				row.addProperty("solution", rs.getInt("solution_"+teamInDb));
 				
 				solutions.add(row);

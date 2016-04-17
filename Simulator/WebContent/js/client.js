@@ -4,7 +4,7 @@
 
 var solutionsData;
 var team = "Marom"; //TODO: change this
-var courseName = 'IDF-AMAM-01'; //TODO: change this
+//var courseName = 'IDF-AMAM-01'; //TODO: change this
 
 $(document).ready(function() {
     /*
@@ -16,6 +16,7 @@ $(document).ready(function() {
     });
 	getSolutions(); // init solutionsData
 	$("#submit").click(sendSolution);
+	startSimulator();
 	
 });
 
@@ -34,17 +35,17 @@ function sendSolution (){
 		});//end for each
 		
 		if(isCorrect){
-	/*		$.ajax({
+			$.ajax({
 				url : "ClientController?action=sendSolution",
 				dataType : "json",
-				data: {team: team, course: courseName, ciID: ciID, solution: sol},
-				success : function(data) {
-					
+				data: {team: team, ciID: ciID, time: elapsedTime},
+				success : function(msg) {
+					console.log(msg);
 				},
 				error : function(e) {
 					console.log("js:sendSolution: Error in sendSolution.");
 				}
-			});*/
+			});
 
 		}
 		else{	    	

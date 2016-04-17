@@ -20,6 +20,7 @@ $(document).ready(function() {
 	$("#startSimulator").click(getIncidents);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
+	console.log("END Document ready");
 });
 
 /**
@@ -74,7 +75,7 @@ function startSimulator() {
 		async : false,
 		success : function(data) {
 			getGP(courseName);
-			finishRound = gp["roundTime"] * (gp["currentRound"] + 1)
+			finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
 		},
@@ -101,6 +102,7 @@ function getTime() {
 				offset = offset * -1;
 			}
 			showTime = new Date(remainingClock.getTime() + offset);
+			console.log("offset: "+ offset);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");
@@ -137,7 +139,7 @@ function resumeSimulator(){
 }
 
 function incrementClock() {
-	console.log("incrementClock: elapsed time=" + elapsedTime)
+	console.log("incrementClock: elapsed time=" + elapsedTime);
 	$('#main-time').html(dateFormat(showTime, "HH:MM:ss"));
 	// console.log("fShowTime: " + fShowTime);
 	//

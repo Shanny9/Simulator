@@ -16,38 +16,54 @@ public class TblIncident implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	private byte incident_ID;
+	@Column(name="incident_id")
+	private byte incidentId;
+
+	@Column(name="ci_id")
+	private byte ciId;
+
+	private int incidentTime;
 
 	private byte isActive;
-
-	@Column(name="priority_")
-	private byte priority;
-
-	@Column(name="time_")
-	private Time time;
 
 	//bi-directional many-to-one association to TblChange
 	@OneToMany(mappedBy="tblIncident")
 	private List<TblChange> tblChanges;
 
-	//bi-directional many-to-one association to TblCI
-	@ManyToOne
-	@JoinColumn(name="root_CI_ID")
-	private TblCI tblCi;
-
-	//bi-directional many-to-one association to TblResolution
+	//bi-directional many-to-one association to TblEvent
 	@OneToMany(mappedBy="tblIncident")
-	private List<TblResolution> tblResolutions;
+	private List<TblEvent> tblEvents;
+
+	//bi-directional many-to-one association to TblSolution
+	@ManyToOne
+	@JoinColumn(name="solution_id")
+	private TblSolution tblSolution;
 
 	public TblIncident() {
 	}
 
-	public byte getIncident_ID() {
-		return this.incident_ID;
+	public byte getIncidentId() {
+		return this.incidentId;
 	}
 
-	public void setIncident_ID(byte incident_ID) {
-		this.incident_ID = incident_ID;
+	public void setIncidentId(byte incidentId) {
+		this.incidentId = incidentId;
+	}
+
+	public byte getCiId() {
+		return this.ciId;
+	}
+
+	public void setCiId(byte ciId) {
+		this.ciId = ciId;
+	}
+
+	public int getIncidentTime() {
+		return this.incidentTime;
+	}
+
+	public void setIncidentTime(int incidentTime) {
+		this.incidentTime = incidentTime;
 	}
 
 	public byte getIsActive() {
@@ -56,22 +72,6 @@ public class TblIncident implements Serializable {
 
 	public void setIsActive(byte isActive) {
 		this.isActive = isActive;
-	}
-
-	public byte getPriority() {
-		return this.priority;
-	}
-
-	public void setPriority(byte priority) {
-		this.priority = priority;
-	}
-
-	public Time getTime() {
-		return this.time;
-	}
-
-	public void setTime(Time time) {
-		this.time = time;
 	}
 
 	public List<TblChange> getTblChanges() {
@@ -96,34 +96,34 @@ public class TblIncident implements Serializable {
 		return tblChange;
 	}
 
-	public TblCI getTblCi() {
-		return this.tblCi;
+	public List<TblEvent> getTblEvents() {
+		return this.tblEvents;
 	}
 
-	public void setTblCi(TblCI tblCi) {
-		this.tblCi = tblCi;
+	public void setTblEvents(List<TblEvent> tblEvents) {
+		this.tblEvents = tblEvents;
 	}
 
-	public List<TblResolution> getTblResolutions() {
-		return this.tblResolutions;
+	public TblEvent addTblEvent(TblEvent tblEvent) {
+		getTblEvents().add(tblEvent);
+		tblEvent.setTblIncident(this);
+
+		return tblEvent;
 	}
 
-	public void setTblResolutions(List<TblResolution> tblResolutions) {
-		this.tblResolutions = tblResolutions;
+	public TblEvent removeTblEvent(TblEvent tblEvent) {
+		getTblEvents().remove(tblEvent);
+		tblEvent.setTblIncident(null);
+
+		return tblEvent;
 	}
 
-	public TblResolution addTblResolution(TblResolution tblResolution) {
-		getTblResolutions().add(tblResolution);
-		tblResolution.setTblIncident(this);
-
-		return tblResolution;
+	public TblSolution getTblSolution() {
+		return this.tblSolution;
 	}
 
-	public TblResolution removeTblResolution(TblResolution tblResolution) {
-		getTblResolutions().remove(tblResolution);
-		tblResolution.setTblIncident(null);
-
-		return tblResolution;
+	public void setTblSolution(TblSolution tblSolution) {
+		this.tblSolution = tblSolution;
 	}
 
 }

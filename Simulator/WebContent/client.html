@@ -35,17 +35,17 @@
 	href="assets/ico/apple-touch-icon-72-precomposed.png">
 <link rel="apple-touch-icon-precomposed"
 	href="assets/ico/apple-touch-icon-57-precomposed.png">
-	
-		<!-- Javascript -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script
-		src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<script src="js/jquery.backstretch.min.js"></script>
-	<script src="js/date.format.js"></script>
-	<script src="js/utils.js"></script>
-	<script src="js/home.js"></script>
-	<script src="js/client.js"></script>
+
+<!-- Javascript -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="js/jquery.backstretch.min.js"></script>
+<script src="js/date.format.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/home.js"></script>
+<script src="js/client.js"></script>
 
 </head>
 
@@ -65,12 +65,11 @@
 					<br>
 					<div class="col-sm-8 col-sm-offset-2 text">
 						<div id="main-time" class="txt-score regular center">
-							00:00:00
-						</div>
-						
+							00:00:00</div>
+
 					</div>
 				</div>
-				<div class="row minHeight" >
+				<div class="row minHeight">
 					<div id="teamName">
 						<strong>Marom</strong>
 					</div>
@@ -80,63 +79,39 @@
 						<div class="form-top">
 							<div class="form-top-left">
 								<h3>Enter Solution</h3>
-					<!--			<p>Enter configuration item and solution number:</p> -->
+								<!--			<p>Enter configuration item and solution number:</p> -->
 							</div>
 							<div class="form-top-right">
 								<i class=""></i>
 							</div>
 						</div>
 						<div class="form-bottom">
-							<form role="form" onsubmit="return sendSolution()" action="" method="post" class="login-form">
+							<form role="form" onsubmit="return sendSolution()" action=""
+								method="post" class="login-form">
 								<div class="form-group">
 									<label class="sr-only" for="ciID">Configuration Item</label> <input
 										type="text" name="ciID" placeholder="Configuration Item #"
 										class="form-username form-control" id="ciID">
 								</div>
-								<div class="form-group">
-									<label class="sr-only" for="solution">Solution
-										Number</label> <input type="text" name="solution"
-										placeholder="Solution #"
-										class="form-password form-control" id="solution">
+								<button class="btn btn-green disabled" data-toggle="collapse" data-target="#solutionDiv">Solve!</button>
+								<div id="solutionDiv" class="collapse">
+									<div class="form-group">
+										<label class="sr-only" for="solution">Solution Number</label>
+										<input type="text" name="solution" placeholder="Solution #"
+											class="form-password form-control" id="solution">
+									</div>
+									<button id="submit" type="submit" class="btn btn-green">Send Solution</button>
 								</div>
-								<button id="submit" type="submit" class="btn btn-green">Solve!</button>
-								<center><p>Or</p></center>
+								<center>Or</center>
 								<button id="buy" class="btn btn-red">Purchase Solution!</button>
-								<div  id="feedback">
-								
-								</div>
 							</form>
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3 social-login">
-						<!--	<h3>...or login with:</h3>
-                        	<div class="social-login-buttons">
-	                        	<a class="btn btn-link-2" href="#">
-	                        		<i class="fa fa-facebook"></i> Facebook
-	                        	</a>
-	                        	<a class="btn btn-link-2" href="#">
-	                        		<i class="fa fa-twitter"></i> Twitter
-	                        	</a>
-	                        	<a class="btn btn-link-2" href="#">
-	                        		<i class="fa fa-google-plus"></i> Google Plus
-	                        	</a>
-                        	</div>-->
-					</div>
-				</div>
 			</div>
 		</div>
-
 	</div>
-
-
-
-
-	<!--[if lt IE 10]>
-            <script src="assets/js/placeholder.js"></script>
-        <![endif]-->
-
+	</div>
 </body>
 
 </html>

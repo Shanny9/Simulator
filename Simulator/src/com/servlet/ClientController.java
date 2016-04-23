@@ -1,8 +1,6 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.sql.Time;
-import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,11 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.daoImpl.TblCIDaoImpl;
-import com.model.TblIncident;
-import com.model.TblResolution;
-import com.model.TblResolutionPK;
 
-import log.Log;
+import log.SimulationLog;
 import utils.TimerManager;
 
 /**
@@ -24,7 +19,7 @@ import utils.TimerManager;
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static HashMap<TblResolutionPK, TblResolution> resolutions = new HashMap<>();
+//	private static HashMap<TblResolutionPK, TblResolution> resolutions = new HashMap<>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -68,7 +63,7 @@ public class ClientController extends HttpServlet {
 			String team = request.getParameter("team");
 			int ci_id = Integer.valueOf(request.getParameter("ciID"));
 			int time = Integer.valueOf(TimerManager.getClocks().get("elapsedClock").toString());
-			Log.getInstance().updateCILog(team, ci_id, time, isBaught);
+			SimulationLog.getInstance().updateCILog(team, ci_id, time, isBaught);
 			break;
 }
 	}
@@ -78,45 +73,45 @@ public class ClientController extends HttpServlet {
 		response.getWriter().print(ciDao.getSolutions(team));
 	}
 
-	private void addResolution(HttpServletRequest request) {
-		byte incidentID, isPurchased;
-		Time time;
-		String course, team;
-		TblResolutionPK pk = new TblResolutionPK();
-
-		incidentID = Byte.valueOf(request.getParameter("incident"));
-		course = request.getParameter("course");
-		isPurchased = Byte.valueOf(request.getParameter("isPurchased"));
-		time = new Time(Long.valueOf(request.getParameter("time")));
-		team = request.getParameter("team");
-		pk.setCourse(course);
-		pk.setIncident_ID(incidentID);
-		TblResolution res;
-
-		// update existing row
-		if (resolutions.containsKey(pk)) {
-			res = resolutions.get(pk);
-		}
-		// add new row
-		else {
-			res = new TblResolution();
-			res.setId(pk);
-			TblIncident in = new TblIncident();
-			in.setIncident_ID(incidentID);
-			res.setTblIncident(in);
-		}
-
-		if (team.equals("Marom")) {
-			res.setIsPurchasedA(isPurchased);
-			res.setIsResolvedA(new Byte("1"));
-			res.setResolution_timeA(time);
-		} else {
-			res.setIsPurchasedB(isPurchased);
-			res.setIsResolvedB(new Byte("1"));
-			res.setResolution_timeB(time);
-		}
-		resolutions.put(pk, res);
-
-	}
+//	private void addResolution(HttpServletRequest request) {
+//		byte incidentID, isPurchased;
+//		Time time;
+//		String course, team;
+//		TblResolutionPK pk = new TblResolutionPK();
+//
+//		incidentID = Byte.valueOf(request.getParameter("incident"));
+//		course = request.getParameter("course");
+//		isPurchased = Byte.valueOf(request.getParameter("isPurchased"));
+//		time = new Time(Long.valueOf(request.getParameter("time")));
+//		team = request.getParameter("team");
+//		pk.setCourse(course);
+//		pk.setIncident_ID(incidentID);
+//		TblResolution res;
+//
+//		// update existing row
+//		if (resolutions.containsKey(pk)) {
+//			res = resolutions.get(pk);
+//		}
+//		// add new row
+//		else {
+//			res = new TblResolution();
+//			res.setId(pk);
+//			TblIncident in = new TblIncident();
+//			in.setIncident_ID(incidentID);
+//			res.setTblIncident(in);
+//		}
+//
+//		if (team.equals("Marom")) {
+//			res.setIsPurchasedA(isPurchased);
+//			res.setIsResolvedA(new Byte("1"));
+//			res.setResolution_timeA(time);
+//		} else {
+//			res.setIsPurchasedB(isPurchased);
+//			res.setIsResolvedB(new Byte("1"));
+//			res.setResolution_timeB(time);
+//		}
+//		resolutions.put(pk, res);
+//
+//	}
 
 }

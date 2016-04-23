@@ -20,27 +20,24 @@ public class HomeData {
 	}
 	
 	//TODO: complete
-	public List<JsonObject> getIncidents(){
+	public List<JsonObject> getEvents(){
 		
-		List<JsonObject> incidents = new ArrayList<JsonObject>();
-		String query = Queries.incidentsForHomeTable;
+		List<JsonObject> events = new ArrayList<JsonObject>();
+		String query = Queries.eventsForHomeTable;
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				JsonObject row = new JsonObject();
-				Time time = new Time(rs.getTime("time_").getTime());
-				row.addProperty("ciID", rs.getInt("CI_ID"));
-				row.addProperty("time", time.toString());
-				
-				incidents.add(row);
-				
+				row.addProperty("time", rs.getInt("incidentTime"));
+				row.addProperty("event_id", rs.getInt("event_id"));
+				events.add(row);	
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
 	//	System.out.println("HomeData:getIncidents(): "+incidents);
-		return incidents;
+		return events;
 	}
 	
 }

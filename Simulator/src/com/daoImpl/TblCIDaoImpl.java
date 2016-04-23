@@ -52,7 +52,7 @@ public class TblCIDaoImpl implements TblCIDao{
 	public List<TblCI> getAllCIs() {
 		List<TblCI> cis = new ArrayList<TblCI>();
 
-		String query = "SELECT * FROM tblCI ORDER BY CI_ID";
+		String query = "SELECT * FROM tblCI";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -60,16 +60,11 @@ public class TblCIDaoImpl implements TblCIDao{
 			while (rs.next()) {
 				TblCI ci = new TblCI();
 
-				ci.setCI_code(rs.getString("CI_code"));
-				ci.setCI_name(rs.getString("CI_name"));
 				ci.setCiId(rs.getByte("CI_ID"));
+				ci.setCI_name(rs.getString("CI_name"));
+				ci.setSupplierLevel2(rs.getString("supplier_level2"));
+				ci.setSupplierLevel3(rs.getString("supplier_level3"));
 				ci.setIsActive(rs.getByte("isActive"));
-				ci.setSolution_A(rs.getInt("Solution_A"));
-				ci.setSolution_B(rs.getInt("Solution_B"));
-				//TODO: what to do?
-//				ci.setTblServices(rs.getString(""));
-//				ci.setTblSupplier1(rs.getString(""));
-//				ci.setTblSupplier2(rs.getString(""));
 				cis.add(ci);
 			}
 		} catch (SQLException e) {
@@ -114,21 +109,6 @@ public class TblCIDaoImpl implements TblCIDao{
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
-		}
-		return solutions;
-	}
-	
-	public HashMap<Integer,Double> getSolutionCosts(){
-		HashMap<Integer,Double> solutions = new HashMap<>();
-		String query = "select CI_ID, P.cost from SIMULATOR.tblCI CI join SIMULATOR.tblPriority P on CI.priority = P.priority_number";
-		try{
-			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
-				solutions.put( rs.getInt("CI_ID"), rs.getDouble("cost"));
-			}
-		} catch (SQLException e){
-			e.printStackTrace();
 		}
 		return solutions;
 	}

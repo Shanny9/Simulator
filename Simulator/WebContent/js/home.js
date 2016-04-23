@@ -10,13 +10,13 @@ var session = 1;
 var round = 1;
 var isRunTime = true;
 var gp = new Object();
-var incidentsData; // initialize by getIncidents()
+var eventsData;
 var finishRound;
 var courseName = 'IDF-AMAM-01';
 var clockInterval;
 
 $(document).ready(function() {
-	$("#startSimulator").click(getIncidents);
+	$("#startSimulator").click(getEvents);
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
@@ -26,28 +26,25 @@ $(document).ready(function() {
 /**
  * 
  */
-function getIncidents() {
+function getEvents() {
 	$.ajax({
-		url : "HomeController?action=getIncidents",
+		url : "HomeController?action=getEvents",
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			incidentsData = data;
-			console.log(incidentsData);
+			eventsData = data;
 		},
 		error : function(e) {
-			console.log("js:getIncidents: Error in getting incidents.");
+			console.log("js:getIncidents: Error in getting events.");
 		}
 	});
 }
 
-// after calling getIncidents
-function showIncidentsInTime(elapsedTime) {
-	$.each(incidentsData, function(i, item) {
+function showEventsInTime(elapsedTime) {
+	$.each(eventsData, function(i, item) {
 		if (elapsedTime == item.time) {
-			console.log("i= " + i + ", showIncidentsInTime:ciID: " + item.ciID);
 			$(".score-tbl tbody tr:nth-child(" + i+1 + ")").addClass("danger");
-			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.ciID);
+			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(1)").html(item.event_id.toHHMMSS());
 			$(".score-tbl tbody tr:nth-child(" + i+1 + ") td:nth-child(2)").html(item.time);
 		}
 	});
@@ -143,11 +140,7 @@ function resumeSimulator(){
 
 function incrementClock() {
 	console.log("incrementClock: elapsed time=" + elapsedTime);
-	$('#main-time').html(dateFormat(secToDate(showTime), "HH:MM:ss"));
-	// console.log("fShowTime: " + fShowTime);
-	//
-	//showIncidentsInTime(dateFormat(secToDate(elapsedTime), "HH:MM:ss"));
-	//
+	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;
 
@@ -177,4 +170,17 @@ function incrementClock() {
 			}
 		}
 	}//
+}
+
+Number.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
 }

@@ -10,4 +10,6 @@ public interface TblGeneralParametersDao {
 	public TblGeneral_parameter getGeneralParameters();
 	public int getSessionTime();
 	public int getRoundTime();
+	public int getTotalTime();
+	public int getRoundTotalRunTime();
 }

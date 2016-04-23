@@ -8,51 +8,55 @@ import java.util.HashSet;
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblGeneralParametersDaoImpl;
 
-public class Log implements Runnable, Serializable {
+public class SimulationLog implements Runnable, Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/*
+	 * key=ci_id, value=set of affected services
+	 */
 	private HashMap<Integer, HashSet<Integer>> affecting_cis;
+	/*
+	 * key=service_id, value=set of affecting CIs
+	 */
 	private HashMap<Integer, HashSet<Integer>> affected_services;
-	private HashMap<Integer, Double> ciSolutionCosts;
-	private static Log instance;
-
+	/*
+	 * key=ci_id, value=solution cost
+	 */
+	private HashMap<Integer, Double> ciSolCosts;
+	
+	private static SimulationLog instance;
 	private TeamLog marom;
 	private TeamLog golan;
 	/*
 	 * False if simulator is running
 	 */
 	private static boolean stopThread;
+	
+	private int roundTotalRunTime;
 
 	/**
 	 * @param cis
-	 * @param services
+	 * @param servicesItems
 	 */
-	Log() {
+	SimulationLog() {
 		super();
 		affecting_cis = LogUtils.getDBAffectingCIs();
 		affected_services = LogUtils.getDBAffectedServices();
-		ciSolutionCosts = new TblCIDaoImpl().getSolutionCosts();
-		double initCapital = new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital();
+		roundTotalRunTime = new TblGeneralParametersDaoImpl().getRoundTotalRunTime();
+		ciSolCosts = LogUtils.getCISolCosts();
 		
-		HashMap<Integer, CILogItem> ciItems = LogUtils.getDBSCIItems();
-		HashMap<Integer, ServiceLogItem> serviceItems = LogUtils.getDBServiceItems();
-		
-		marom = new TeamLog(initCapital, ciItems, serviceItems);
-		golan = new TeamLog(initCapital, ciItems, serviceItems);
+		marom = new TeamLog();
+		golan = new TeamLog();
 	}
 
-	public static Log getInstance() {
+	public static SimulationLog getInstance() {
 		if (instance == null) {
 			System.out.println("Log is created");
-			instance = new Log();
+			instance = new SimulationLog();
 		}
 		return instance;
-	}
-
-	public double getCISoultionCost(int ci_id) {
-		return ciSolutionCosts.get(ci_id);
 	}
 
 	public TeamLog getTeam(String team) {
@@ -64,38 +68,33 @@ public class Log implements Runnable, Serializable {
 		return null;
 	}
 
-	public HashMap<Integer, HashSet<Integer>> getAffectingCis() {
+	HashMap<Integer, HashSet<Integer>> getAffectingCis() {
 		return affecting_cis;
 	}
 
-	public HashMap<Integer, HashSet<Integer>> getAffectedServices() {
+	HashMap<Integer, HashSet<Integer>> getAffectedServices() {
 		return affected_services;
 	}
 
-	/**
-	 * @return the cis
-	 */
-	public Collection<Integer> getServices(int ci) {
-		return affected_services.keySet();
+	double getCISolutionCost(int ci_id){
+		return ciSolCosts.get(ci_id);
 	}
-
-	/**
-	 * @return the services
-	 */
-	public Collection<Integer> getCis(int service) {
-		return affecting_cis.keySet();
-	}
-
+	
 	public void updateCILog(String team, int ci_id, int time, boolean isBaught) {
 		getTeam(team).updateCI(ci_id, time, isBaught);
 	}
 
 	public static void pause() {
 		stopThread = true;
+		log.LogUtils.saveLog();
 	}
 
 	public static void resume() {
 		stopThread = false;
+	}
+	
+	int getRoundTotalRunTime(){
+		return roundTotalRunTime;
 	}
 
 	@Override

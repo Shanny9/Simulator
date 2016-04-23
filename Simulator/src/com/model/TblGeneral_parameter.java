@@ -83,8 +83,4 @@ public class TblGeneral_parameter implements Serializable {
 		this.sessionsPerRound = sessionsPerRound;
 	}
 
-	public int getTotalTime() {
-		return (runTime+pauseTime)*sessionsPerRound*numOfRounds;
-	}
-
 }

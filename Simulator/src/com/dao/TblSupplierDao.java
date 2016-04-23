@@ -11,5 +11,6 @@ public interface TblSupplierDao {
 	public void updateSupplier(TblSupplier supplier);
 	public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage);
 	public List<TblSupplier> getAllSuppliers();
+	public TblSupplier getSupplierById(String name);
 	public int getSupplierCount();
 }

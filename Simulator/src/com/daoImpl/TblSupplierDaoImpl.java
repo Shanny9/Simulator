@@ -110,6 +110,27 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 	}
 
 	@Override
+	public TblSupplier getSupplierById(String name) {
+		TblSupplier supplier = null;
+		String query = "SELECT * FROM tblSupplier WHERE supplier_name = ?";
+
+		try {
+			pStmt = dbConnection.prepareStatement(query);
+			pStmt.setString(1, name);
+			ResultSet rs = pStmt.executeQuery();
+			rs.next();
+			supplier = new TblSupplier();
+			supplier.setSupplierName(rs.getString("supplier_name"));
+			supplier.setSolutionCost(rs.getDouble("solution_cost"));
+			supplier.setIsActive(rs.getByte("isActive"));
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return supplier;
+	}
+
+	@Override
 	public int getSupplierCount() {
 		int count = 0;
 		try {
@@ -123,5 +144,4 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 		}
 		return count;
 	}
-
 }// end

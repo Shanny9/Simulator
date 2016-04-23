@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 
-import log.Log;
+import log.SimulationLog;
 import log.TeamLog;
 import utils.HomeData;
 import utils.TimerManager;
@@ -77,7 +77,7 @@ public class HomeController extends HttpServlet {
 				int sessionTime = (int) getTimes(courseName).get("sessionTime");
 				int currentRound = course.getLastRoundDone();
 
-				log.Log.getInstance();
+				log.SimulationLog.getInstance();
 				TimerManager.startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
 				response.getWriter().print("OK");
 			}
@@ -92,8 +92,8 @@ public class HomeController extends HttpServlet {
 			courseName = request.getParameter("courseName");
 			response.getWriter().print(gson.toJson(getTimes(courseName)));
 			break;
-		case "getIncidents":
-			response.getWriter().print(new HomeData().getIncidents());
+		case "getEvents":
+			response.getWriter().print(new HomeData().getEvents());
 			break;
 		}
 	}
@@ -112,7 +112,7 @@ public class HomeController extends HttpServlet {
 		timesMap.put("pauseTime", daoGP.getGeneralParameters().getPauseTime());
 		timesMap.put("runTime", daoGP.getGeneralParameters().getRunTime());
 		timesMap.put("sessionsPerRound", daoGP.getGeneralParameters().getSessionsPerRound());
-		timesMap.put("totalTime", daoGP.getGeneralParameters().getTotalTime());
+		timesMap.put("totalTime", daoGP.getTotalTime());
 		timesMap.put("currentRound", round/*new TblCourseDaoImpl().getCourseById(courseName).getLastRoundDone()+1*/);
 		return timesMap;
 	}

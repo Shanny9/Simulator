@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+
+import com.daoImpl.TblCIDaoImpl;
+import com.daoImpl.TblGeneralParametersDaoImpl;
+import com.daoImpl.TblServiceDaoImpl;
+import com.model.TblCI;
+import com.model.TblGeneral_parameter;
+import com.model.TblService;
 
 public class TeamLog implements Serializable {
 	/**
@@ -12,13 +20,13 @@ public class TeamLog implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	/*
-	 * The team's configuration items' logs
+	 * The team's CI statuses: key=ci_id, value=isUP
 	 */
-	private HashMap<Integer, CILogItem> ci_logs;
+	private HashMap<Integer, Boolean> cis;
 	/*
 	 * The team's services' logs
 	 */
-	private HashMap<Integer, ServiceLogItem> service_logs;
+	private HashMap<Integer, ServiceLog> service_logs;
 	/*
 	 * The team's list of purchases: key=time, value=ci_id
 	 */
@@ -31,33 +39,59 @@ public class TeamLog implements Serializable {
 	 * The team's profit gain per second (not including solution purchases)
 	 */
 	private double diff;
+	/*
+	 * The status of the log
+	 */
+	private boolean isFinished;
 
 	/**
 	 * @param initProfit
 	 *            The team's initial profit
 	 */
-	public TeamLog(double initProfit, HashMap<Integer, CILogItem> ci_logs, HashMap<Integer, ServiceLogItem> service_logs) {
+	TeamLog() {
 		super();
-		this.profits.add(initProfit);
-		this.ci_logs = ci_logs;
-		this.service_logs = service_logs;
+		this.profits = new ArrayList<>();
+		this.service_logs = new HashMap<>();
+		this.purchases = new HashMap<>();
+		this.isFinished = false;
+		this.cis = new HashMap<>();
+		
+		this.profits.add(new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital());
+		
+		for (TblCI ci : new TblCIDaoImpl().getAllCIs()) {
+			this.cis.put((int) ci.getCiId(), true);
+		}
+
+		List<TblService> services = new TblServiceDaoImpl().getAllServices();
+		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
+
+		for (TblService service : services) {
+			int service_id = service.getServiceId();
+			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
+					serviceDownTimeCosts.get(service_id)));
+			this.diff += service_logs.get(service_id).getDiff();
+		}
 	}
 
-	public synchronized void updateCI(int ci_id, int time, boolean isBaught) {
+	synchronized void updateCI(int ci_id, int time, boolean isBaught) {
+
+		if (isFinished) {
+			return;
+		}
 
 		long start = new Date().getTime();
-		CILogItem cili = ci_logs.get(ci_id);
-		cili.update(time);
-		HashSet<Integer> affectedServices = Log.getInstance().getAffectedServices().get(ci_id);
-		
+		cis.put(ci_id, !cis.get(ci_id));
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
+
 		for (Integer service_id : affectedServices) {
-			ServiceLogItem affectedService = service_logs.get(service_id);
-			diff += affectedService.ciUpdate(cili.isUp(),time);	
+			ServiceLog affectedService = service_logs.get(service_id);
+			diff += affectedService.ciUpdate(cis.get(ci_id), time);
 		}
-		if (isBaught){
+		if (isBaught) {
 			purchases.put(time, ci_id);
-			// reduces the solution cost from the team's profit at the given @time
-			profits.set(time, getProfit(time) - Log.getInstance().getCISoultionCost(ci_id));
+			// reduces the solution cost from the team's profit at the given
+			// @time
+			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
 		}
 		long end = new Date().getTime();
 		// checks if the calculation takes less than a second as it should
@@ -68,29 +102,30 @@ public class TeamLog implements Serializable {
 		return profits.get(profits.size() - 1);
 	}
 
-	public synchronized double getProfit(int time) {
+	synchronized double getProfit(int time) {
 		return profits.get(time);
 	}
 
-	public synchronized void updateProfit() {
-		profits.add(getCurrentProfit() + diff);
-	}
+	synchronized void updateProfit() {
 
-	/**
-	 * @return the ci_logs
-	 */
-	public synchronized HashMap<Integer, CILogItem> getCi_logs() {
-		return ci_logs;
+		if (isFinished) {
+			return;
+		}
+		profits.add(getCurrentProfit() + diff);
 	}
 
 	/**
 	 * @return the service_logs
 	 */
-	public synchronized HashMap<Integer, ServiceLogItem> getService_logs() {
+	synchronized HashMap<Integer, ServiceLog> getService_logs() {
 		return service_logs;
 	}
 
-	public HashMap<Integer, Integer> getPurchaces() {
+	HashMap<Integer, Integer> getPurchaces() {
 		return purchases;
+	}
+
+	synchronized void finish() {
+		this.isFinished = true;
 	}
 }

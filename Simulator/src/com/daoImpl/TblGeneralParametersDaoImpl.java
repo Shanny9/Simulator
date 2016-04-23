@@ -118,4 +118,14 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 		}
 		return roundTime;
 	}
+
+	@Override
+	public int getTotalTime() {
+		return getRoundTime() * gp.getNumOfRounds();
+	}
+
+	@Override
+	public int getRoundTotalRunTime() {
+		return getRoundTime() * gp.getSessionsPerRound();
+	}
 }

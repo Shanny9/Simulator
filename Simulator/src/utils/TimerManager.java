@@ -37,27 +37,24 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static double getTeamProfits(String teamName) {
-		return log.Log.getInstance().getTeam(teamName).getCurrentProfit();
+		return log.SimulationLog.getInstance().getTeam(teamName).getCurrentProfit();
 	}
 
 	public static void startSimulator(int runTime, int roundTime, int round, int pauseTime ,int sessionTime) {
 		System.out.println("TimerManager: starting simulator");
 		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, sessionTime);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(log.Log.getInstance(), 0, 1, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(log.SimulationLog.getInstance(), 0, 1, TimeUnit.SECONDS);
 	}
 
 	public static void pauseSimulator() {
 		System.err.println("TimerManager: pausing clock...");
 		ClockIncrementor.pause();
-		log.Log.pause();
-		log.LogUtils.saveLog();
 	}
 
 	public static void resumeSimulator() {
 		System.err.println("TimerManager: pausing clock...");
 		ClockIncrementor.resume();
-		log.Log.resume();
 	}
 
 }

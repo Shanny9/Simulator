@@ -11,5 +11,6 @@ public interface TblIncidentDao {
 	public void updateSupplier(TblIncident incident);
 	public List<TblIncident> getAllIncidents(int startPageIndex, int recordsPerPage);
 	public List<TblIncident> getAllIncidents();
+	public TblIncident getIncidentById(int id);
 	public int getIncidentCount();
 }

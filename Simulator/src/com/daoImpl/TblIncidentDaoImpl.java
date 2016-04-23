@@ -12,6 +12,7 @@ import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblIncident;
+import com.model.TblSolution;
 
 
 public class TblIncidentDaoImpl implements TblIncidentDao {
@@ -25,15 +26,21 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	@Override
 	public void addIncident(TblIncident incident) {
-		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident` (`incident_ID`,`time_`,`priority_`,`root_CI_ID`,`isActive`) "
-				+ " VALUES (?,?,?,?,?);";
+		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident`\r\n" + 
+				"(`incident_id`,\r\n" + 
+				"`incidentTime`,\r\n" + 
+				"`ci_id`,\r\n" + 
+				"`isActive`,\r\n" + 
+				"`solution_id`)\r\n" + 
+				"VALUES\r\n" + 
+				"(?,?,?,?,?)";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, incident.getIncident_ID());
-			pStmt.setTime(2, incident.getTime());
-			pStmt.setByte(3, incident.getPriority());
-			pStmt.setByte(4, incident.getTblCi().getCiId());
+			pStmt.setByte(1, incident.getIncidentId());
+			pStmt.setInt(2, incident.getIncidentTime());
+			pStmt.setByte(4, incident.getCiId());
 			pStmt.setByte(5, incident.getIsActive());
+			pStmt.setInt(5, incident.getTblSolution().getSolutionId());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -42,7 +49,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	@Override
 	public void deleteIncident(Byte id) {
-		String deleteQuery = "DELETE FROM tblIncident WHERE incident_ID = ?";
+		String deleteQuery = "DELETE FROM tblIncident WHERE incident_id = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, id);
@@ -54,16 +61,22 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	@Override
 	public void updateSupplier(TblIncident incident) {
-		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident` SET `incident_ID` =?, `time_` =?, `priority_` = ?,\n"
-				+ " `root_CI_ID` =?, `isActive` =? WHERE `incident_ID` =?;";
+		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident`\r\n" + 
+				"SET\r\n" + 
+				"`incident_id` = ?,\r\n" + 
+				"`incidentTime` = ?,\r\n" + 
+				"`ci_id` = ?,\r\n" + 
+				"`isActive` = ?,\r\n" + 
+				"`solution_id` = ?\r\n" + 
+				"WHERE `incident_id` = ?;";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setByte(1, incident.getIncident_ID());
-			pStmt.setTime(2, incident.getTime());
-			pStmt.setByte(3, incident.getPriority());
-			pStmt.setByte(4, incident.getTblCi().getCiId());
+			pStmt.setByte(1, incident.getIncidentId());
+			pStmt.setInt(2, incident.getIncidentTime());
+			pStmt.setByte(4, incident.getCiId());
 			pStmt.setByte(5, incident.getIsActive());
-			pStmt.setByte(6, incident.getIncident_ID());
+			pStmt.setInt(5, incident.getTblSolution().getSolutionId());
+			pStmt.setByte(6, incident.getIncidentId());
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -83,15 +96,13 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			while (rs.next()) {
 				TblIncident incident = new TblIncident();
 
-				incident.setIncident_ID(rs.getByte("incident_ID"));
-				incident.setTime(rs.getTime("time_"));
-				incident.setPriority(rs.getByte("priority_"));
-
-				TblCI tblci = new TblCI();
-				tblci.setCiId(rs.getByte("root_CI_ID"));
-				incident.setTblCi(tblci);
-
+				incident.setIncidentId(rs.getByte("incident_id"));
+				incident.setCiId(rs.getByte("ci_id"));
+				incident.setIncidentTime(rs.getInt("incidentTime"));
 				incident.setIsActive(rs.getByte("isActive"));
+				TblSolution sol = new TblSolution();
+				sol.setSolutionId(rs.getInt(rs.getInt("solution_id")));
+				incident.setTblSolution(sol);				
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -112,21 +123,25 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			while (rs.next()) {
 				TblIncident incident = new TblIncident();
 
-				incident.setIncident_ID(rs.getByte("incident_ID"));
-				incident.setTime(rs.getTime("time_"));
-				incident.setPriority(rs.getByte("priority_"));
-
-				TblCI tblci = new TblCI();
-				tblci.setCiId(rs.getByte("root_CI_ID"));
-				incident.setTblCi(tblci);
-
+				incident.setIncidentId(rs.getByte("incident_id"));
+				incident.setCiId(rs.getByte("ci_id"));
+				incident.setIncidentTime(rs.getInt("incidentTime"));
 				incident.setIsActive(rs.getByte("isActive"));
+				TblSolution sol = new TblSolution();
+				sol.setSolutionId(rs.getInt(rs.getInt("solution_id")));
+				incident.setTblSolution(sol);				
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
 		return incidents;
+	}
+	
+	@Override
+	public TblIncident getIncidentById(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -143,5 +158,4 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		}
 		return count;
 	}
-
 }

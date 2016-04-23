@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +11,7 @@ import java.util.List;
 import com.dao.TblPriorityDao;
 import com.jdbc.DBUtility;
 import com.model.TblPriority;
+import com.model.TblPriorityPK;
 
 public class TblPriorityDaoImpl implements TblPriorityDao {
 
@@ -24,14 +24,17 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 
 	@Override
 	public void addPriority(TblPriority priority) {
-		String insertQuery = "INSERT INTO `SIMULATOR`.`tblPriority`\r\n" + "(`priority_number`,\r\n"
-				+ "`priority_name`,\r\n" + "`cost`,\r\n" + "`isActive`)\r\n" + "VALUES\r\n" + "(?,?,?,?);\r\n";
+		String insertQuery = "INSERT INTO `SIMULATOR`.`tblPriority`\r\n" + 
+				"(`urgency`,\r\n" + 
+				"`impact`,\r\n" + 
+				"`priorityName`)\r\n" + 
+				"VALUES\r\n" + 
+				"(?,?,?);";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, priority.getPriorityNumber());
-			pStmt.setString(2, priority.getPriorityName());
-			pStmt.setDouble(3, priority.getCost());
-			pStmt.setByte(4, priority.getIsActive());
+			pStmt.setString(1, priority.getId().getUrgency());
+			pStmt.setString(2, priority.getId().getImpact());
+			pStmt.setString(3, priority.getPriorityName());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -39,11 +42,12 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	}
 
 	@Override
-	public void deletePriority(byte id) {
-		String deleteQuery = "DELETE FROM tblPriority WHERE priority_number = ?";
+	public void deletePriority(TblPriorityPK pk) {
+		String deleteQuery = "DELETE FROM tblPriority WHERE urgency = ? and impact = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(deleteQuery);
-			pStmt.setByte(1, id);
+			pStmt.setString(1, pk.getUrgency());
+			pStmt.setString(1, pk.getImpact());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -52,16 +56,19 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 
 	@Override
 	public void updatePriority(TblPriority priority) {
-		String updateQuery = "UPDATE `SIMULATOR`.`tblPriority`\r\n" + "SET\r\n" + "`priority_number` = ?,\r\n"
-				+ "`priority_name` = ?,\r\n" + "`cost` = ?,\r\n" + "`isActive` = ?\r\n" + "WHERE `priority_number` =?;";
+		String updateQuery = "UPDATE `SIMULATOR`.`tblPriority`\r\n" + 
+				"SET\r\n" + 
+				"`urgency` = ?,\r\n" + 
+				"`impact` = ?,\r\n" + 
+				"`priorityName` = ?\r\n" + 
+				"WHERE `urgency` = ? AND `impact` = ?;";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setByte(1, priority.getPriorityNumber());
-			pStmt.setString(2, priority.getPriorityName());
-			pStmt.setDouble(3, priority.getCost());
-			pStmt.setByte(4, priority.getIsActive());
-
-			pStmt.setByte(5, priority.getPriorityNumber());
+			pStmt.setString(1, priority.getId().getUrgency());
+			pStmt.setString(2, priority.getId().getImpact());
+			pStmt.setString(3, priority.getPriorityName());
+			pStmt.setString(4, priority.getId().getUrgency());
+			pStmt.setString(5, priority.getId().getImpact());
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -73,7 +80,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	public List<TblPriority> getAllPriorities(int startPageIndex, int recordsPerPage) {
 		List<TblPriority> priorities = new ArrayList<TblPriority>();
 
-		String query = "SELECT * FROM tblPriority ORDER BY priority_name\n" + "limit " + startPageIndex + ","
+		String query = "SELECT * FROM tblPriority " + "limit " + startPageIndex + ","
 				+ recordsPerPage;
 
 		try {
@@ -81,11 +88,11 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority pr = new TblPriority();
-
-				pr.setPriorityNumber(rs.getByte("priority_number"));
-				pr.setPriorityName(rs.getString("priority_name"));
-				pr.setCost(rs.getDouble("cost"));
-				pr.setIsActive(rs.getByte("isActive"));
+				TblPriorityPK pk = new TblPriorityPK();
+				pk.setImpact(pr.getId().getImpact());
+				pk.setUrgency(pr.getId().getUrgency());
+				pr.setId(pk);
+				pr.setPriorityName(pr.getPriorityName());
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -98,24 +105,30 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	public List<TblPriority> getAllPriorities() {
 		List<TblPriority> priorities = new ArrayList<TblPriority>();
 
-		String query = "SELECT * FROM tblPriority ORDER BY priority_name\n";
+		String query = "SELECT * FROM tblPriority";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority pr = new TblPriority();
-
-				pr.setPriorityNumber(rs.getByte("priority_number"));
-				pr.setPriorityName(rs.getString("priority_name"));
-				pr.setCost(rs.getDouble("cost"));
-				pr.setIsActive(rs.getByte("isActive"));
+				TblPriorityPK pk = new TblPriorityPK();
+				pk.setImpact(pr.getId().getImpact());
+				pk.setUrgency(pr.getId().getUrgency());
+				pr.setId(pk);
+				pr.setPriorityName(pr.getPriorityName());
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
 		return priorities;
+	}
+	
+	@Override
+	public TblPriority getPriorityById(String name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -131,5 +144,5 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			System.err.println(e.getMessage());
 		}
 		return count;
-	}
+	}	
 }

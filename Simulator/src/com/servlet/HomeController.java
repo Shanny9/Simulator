@@ -10,13 +10,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblCourseDaoImpl;
 import com.dao.TblGeneralParametersDao;
-import com.dao.TblGeneralParametersDaoImpl;
+import com.daoImpl.TblCourseDaoImpl;
+import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 
+import log.Log;
+import log.TeamLog;
 import utils.HomeData;
 import utils.TimerManager;
 
@@ -57,14 +59,15 @@ public class HomeController extends HttpServlet {
 		response.setContentType("application/json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-		// get the action
 		String action = request.getParameter("action");
-		if (action.equals("getTime")) {
+		switch (action){
+		
+		case "getTime":
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
 			response.getWriter().print(gson.toJson(clocks));
-
-		} else if (action.equals("startSimulator")) {
+			break;
+		case "startSimulator":
 			courseName = request.getParameter("courseName");
 			TblCourse course = new TblCourseDaoImpl().getCourseById(courseName);
 			if (course != null) {
@@ -74,23 +77,24 @@ public class HomeController extends HttpServlet {
 				int sessionTime = (int) getTimes(courseName).get("sessionTime");
 				int currentRound = course.getLastRoundDone();
 
-				startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
+				log.Log.getInstance();
+				TimerManager.startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
 				response.getWriter().print("OK");
 			}
-		} else if (action.equals("pauseSimulator")){
-			pauseSimulator();
-			
-		} else if (action.equals("resumeSimulator")){
-			resumeSimulator();
-			
-		} else if (action.equals("getGP")) {
+			break;
+		case "pauseSimulator":
+			TimerManager.pauseSimulator();
+			break;
+		case "resumeSimulator":
+			TimerManager.resumeSimulator();
+			break;
+		case "getGP":
 			courseName = request.getParameter("courseName");
 			response.getWriter().print(gson.toJson(getTimes(courseName)));
-		}
-
-		else if (action.equals("getIncidents")) {
+			break;
+		case "getIncidents":
 			response.getWriter().print(new HomeData().getIncidents());
-
+			break;
 		}
 	}
 
@@ -111,17 +115,5 @@ public class HomeController extends HttpServlet {
 		timesMap.put("totalTime", daoGP.getGeneralParameters().getTotalTime());
 		timesMap.put("currentRound", round/*new TblCourseDaoImpl().getCourseById(courseName).getLastRoundDone()+1*/);
 		return timesMap;
-	}
-
-	public void startSimulator(int runTime, int roundTime, int currentRound, int pauseTime, int sessionTime) {
-		TimerManager.startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
-	}
-	
-	public void pauseSimulator(){
-		TimerManager.pauseSimulator();
-	}
-	
-	public void resumeSimulator(){
-		TimerManager.resumeSimulator();
 	}
 }

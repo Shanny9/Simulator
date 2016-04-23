@@ -1,4 +1,4 @@
-package com.dao;
+package com.daoImpl;
 
 import java.net.Socket;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dao.TblPriorityDao;
 import com.jdbc.DBUtility;
 import com.model.TblPriority;
 

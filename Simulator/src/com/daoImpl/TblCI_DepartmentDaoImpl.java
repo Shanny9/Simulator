@@ -1,43 +1,44 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
-import com.model.TblChange;
+import com.dao.TblCI_DepartmentDao;
+import com.model.TblDepartment;
 
-public class TblChangeDaoImpl implements TblChangeDao{
+public class TblCI_DepartmentDaoImpl implements TblCI_DepartmentDao{
 
 	@Override
-	public void addChange(TblChange Change) {
+	public void addDepartment(TblDepartment Department) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteChange(String name) {
+	public void deleteDepartment(String name) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateChange(TblChange Change) {
+	public void updateDepartment(TblDepartment Department) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<TblChange> getAllChanges(int startPageIndex, int recordsPerPage) {
+	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TblChange> getAllChanges() {
+	public List<TblDepartment> getAllDepartments() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TblChange getChangeById(String ChangeName) {
+	public TblDepartment getDepartmentById(String DepartmentName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

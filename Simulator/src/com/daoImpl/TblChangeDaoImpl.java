@@ -1,43 +1,44 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
-import com.model.TblCI_Division;
+import com.dao.TblChangeDao;
+import com.model.TblChange;
 
-public class TblCI_DivisionDaoImpl implements TblCI_DivisionDao{
+public class TblChangeDaoImpl implements TblChangeDao{
 
 	@Override
-	public void addCI_Division(TblCI_Division CI_Division) {
+	public void addChange(TblChange Change) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteCI_Division(String name) {
+	public void deleteChange(String name) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateCI_Division(TblCI_Division CI_Division) {
+	public void updateChange(TblChange Change) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<TblCI_Division> getAllCI_Divisions(int startPageIndex, int recordsPerPage) {
+	public List<TblChange> getAllChanges(int startPageIndex, int recordsPerPage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TblCI_Division> getAllCI_Divisions() {
+	public List<TblChange> getAllChanges() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TblCI_Division getCI_DivisionById(String CI_DivisionName) {
+	public TblChange getChangeById(String ChangeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

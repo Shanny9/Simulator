@@ -1,4 +1,4 @@
-package com.dao;
+package com.daoImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblIncident;
@@ -24,14 +25,14 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	@Override
 	public void addIncident(TblIncident incident) {
-		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident` (`incident_ID`,`time_`,`priority_`,`root_service_ID`,`isActive`) "
+		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident` (`incident_ID`,`time_`,`priority_`,`root_CI_ID`,`isActive`) "
 				+ " VALUES (?,?,?,?,?);";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, incident.getIncident_ID());
 			pStmt.setTime(2, incident.getTime());
 			pStmt.setByte(3, incident.getPriority());
-			pStmt.setByte(4, incident.getTblCi().getService_ID());
+			pStmt.setByte(4, incident.getTblCi().getCiId());
 			pStmt.setByte(5, incident.getIsActive());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
@@ -54,13 +55,13 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	@Override
 	public void updateSupplier(TblIncident incident) {
 		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident` SET `incident_ID` =?, `time_` =?, `priority_` = ?,\n"
-				+ " `root_service_ID` =?, `isActive` =? WHERE `incident_ID` =?;";
+				+ " `root_CI_ID` =?, `isActive` =? WHERE `incident_ID` =?;";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, incident.getIncident_ID());
 			pStmt.setTime(2, incident.getTime());
 			pStmt.setByte(3, incident.getPriority());
-			pStmt.setByte(4, incident.getTblCi().getService_ID());
+			pStmt.setByte(4, incident.getTblCi().getCiId());
 			pStmt.setByte(5, incident.getIsActive());
 			pStmt.setByte(6, incident.getIncident_ID());
 			pStmt.executeUpdate();
@@ -87,7 +88,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setPriority(rs.getByte("priority_"));
 
 				TblCI tblci = new TblCI();
-				tblci.setService_ID(rs.getByte("root_service_ID"));
+				tblci.setCiId(rs.getByte("root_CI_ID"));
 				incident.setTblCi(tblci);
 
 				incident.setIsActive(rs.getByte("isActive"));
@@ -116,7 +117,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setPriority(rs.getByte("priority_"));
 
 				TblCI tblci = new TblCI();
-				tblci.setService_ID(rs.getByte("root_service_ID"));
+				tblci.setCiId(rs.getByte("root_CI_ID"));
 				incident.setTblCi(tblci);
 
 				incident.setIsActive(rs.getByte("isActive"));

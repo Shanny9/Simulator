@@ -1,4 +1,4 @@
-package com.dao;
+package com.daoImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.dao.TblCIDao;
 import com.google.gson.JsonObject;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
+import com.model.TblSupplier;
 
 public class TblCIDaoImpl implements TblCIDao{
 	
@@ -48,8 +50,32 @@ public class TblCIDaoImpl implements TblCIDao{
 
 	@Override
 	public List<TblCI> getAllCIs() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TblCI> cis = new ArrayList<TblCI>();
+
+		String query = "SELECT * FROM tblCI ORDER BY CI_ID";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblCI ci = new TblCI();
+
+				ci.setCI_code(rs.getString("CI_code"));
+				ci.setCI_name(rs.getString("CI_name"));
+				ci.setCiId(rs.getByte("CI_ID"));
+				ci.setIsActive(rs.getByte("isActive"));
+				ci.setSolution_A(rs.getInt("Solution_A"));
+				ci.setSolution_B(rs.getInt("Solution_B"));
+				//TODO: what to do?
+//				ci.setTblServices(rs.getString(""));
+//				ci.setTblSupplier1(rs.getString(""));
+//				ci.setTblSupplier2(rs.getString(""));
+				cis.add(ci);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return cis;
 	}
 
 	@Override
@@ -91,5 +117,19 @@ public class TblCIDaoImpl implements TblCIDao{
 		}
 		return solutions;
 	}
-
+	
+	public HashMap<Integer,Double> getSolutionCosts(){
+		HashMap<Integer,Double> solutions = new HashMap<>();
+		String query = "select CI_ID, P.cost from SIMULATOR.tblCI CI join SIMULATOR.tblPriority P on CI.priority = P.priority_number";
+		try{
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				solutions.put( rs.getInt("CI_ID"), rs.getDouble("cost"));
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+		return solutions;
+	}
 }

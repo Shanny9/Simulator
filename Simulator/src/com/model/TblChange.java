@@ -34,11 +34,6 @@ public class TblChange implements Serializable {
 	@Column(name="varient_income")
 	private double varientIncome;
 
-	//bi-directional many-to-one association to TblCI
-	@ManyToOne
-	@JoinColumn(name="CI_ID")
-	private TblCI tblCi;
-
 	//bi-directional many-to-many association to TblChange
 	@ManyToMany
 	@JoinTable(
@@ -60,6 +55,11 @@ public class TblChange implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="affectedIncident")
 	private TblIncident tblIncident;
+
+	//bi-directional many-to-one association to TblService
+	@ManyToOne
+	@JoinColumn(name="service_ID")
+	private TblService tblService;
 
 	//bi-directional many-to-one association to TblResource_Change
 	@OneToMany(mappedBy="tblChange")
@@ -132,14 +132,6 @@ public class TblChange implements Serializable {
 		this.varientIncome = varientIncome;
 	}
 
-	public TblCI getTblCi() {
-		return this.tblCi;
-	}
-
-	public void setTblCi(TblCI tblCi) {
-		this.tblCi = tblCi;
-	}
-
 	public List<TblChange> getTblChanges1() {
 		return this.tblChanges1;
 	}
@@ -162,6 +154,14 @@ public class TblChange implements Serializable {
 
 	public void setTblIncident(TblIncident tblIncident) {
 		this.tblIncident = tblIncident;
+	}
+
+	public TblService getTblService() {
+		return this.tblService;
+	}
+
+	public void setTblService(TblService tblService) {
+		this.tblService = tblService;
 	}
 
 	public List<TblResource_Change> getTblResourceChanges() {

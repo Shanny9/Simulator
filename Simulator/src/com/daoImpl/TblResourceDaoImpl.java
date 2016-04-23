@@ -1,43 +1,44 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
-import com.model.TblDepartment;
+import com.dao.TblResourceDao;
+import com.model.TblResource;
 
-public class TblCI_DepartmentDaoImpl implements TblCI_DepartmentDao{
+public class TblResourceDaoImpl implements TblResourceDao{
 
 	@Override
-	public void addDepartment(TblDepartment Department) {
+	public void addResource(TblResource Resource) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteDepartment(String name) {
+	public void delete(String name) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateDepartment(TblDepartment Department) {
+	public void updateResource(TblResource Resource) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage) {
+	public List<TblResource> getAllResources(int startPageIndex, int recordsPerPage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TblDepartment> getAllDepartments() {
+	public List<TblResource> getAllResources() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TblDepartment getDepartmentById(String DepartmentName) {
+	public TblResource getResourceById(String ResourceName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

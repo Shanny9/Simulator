@@ -1,10 +1,16 @@
 package log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-class CILogItem {
+class CILogItem implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int upDuration;
 	private int downDuration;
+	private int lastDuration;
 	private int id;
 	/*
 	 * even cells = UP, odd cells = DOWN
@@ -41,15 +47,7 @@ class CILogItem {
 	public int getDownDuration() {
 		return downDuration;
 	}
-
-	public void addUpDuration(int duration) {
-		upDuration += duration;
-	}
-
-	public void addDownDuration(int duration) {
-		downDuration += duration;
-	}
-
+	
 	public boolean isUp() {
 		return times.size() % 2 != 0;
 	}
@@ -57,17 +55,23 @@ class CILogItem {
 	public int getLastTime() {
 		return this.times.get(times.size() - 1);
 	}
-
-	void updateStatus(int time) {
+	
+	void updateStatus(int time){
 		getTimes().add(time);
 		int timesSize = getTimes().size();
-		if (isUp()) {
-			// last time is up - updated downLength
-			addDownDuration(getTimes().get(timesSize - 1) - getTimes().get(timesSize - 2));
-		} else {
-			// last time is down - updated upLength
-			addUpDuration(getTimes().get(timesSize - 1) - getTimes().get(timesSize - 2));
+		this.lastDuration = getTimes().get(timesSize - 1) - getTimes().get(timesSize - 2);
+		if (isUp()){
+			upDuration+=getLastDuaration();
+		} else{
+			downDuration+=getLastDuaration();
 		}
 	}
-
+	
+	int getLastDuaration(){
+		return lastDuration;
+	}
+	
+	public void update(int time){
+		updateStatus(time);
+	}
 }

@@ -1,4 +1,4 @@
-package com.dao;
+package com.daoImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.dao.TblGeneralParametersDao;
 import com.jdbc.DBUtility;
 import com.model.TblGeneral_parameter;
 

@@ -25,6 +25,10 @@ public class TblCourse implements Serializable {
 
 	private byte lastRoundDone;
 
+	private int profitA;
+
+	private int profitB;
+
 	public TblCourse() {
 	}
 
@@ -58,6 +62,22 @@ public class TblCourse implements Serializable {
 
 	public void setLastRoundDone(byte lastRoundDone) {
 		this.lastRoundDone = lastRoundDone;
+	}
+
+	public int getProfitA() {
+		return this.profitA;
+	}
+
+	public void setProfitA(int profitA) {
+		this.profitA = profitA;
+	}
+
+	public int getProfitB() {
+		return this.profitB;
+	}
+
+	public void setProfitB(int profitB) {
+		this.profitB = profitB;
 	}
 
 }

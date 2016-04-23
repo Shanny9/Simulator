@@ -7,6 +7,10 @@ body {
 	text-align: center;
 }
 
+p{
+	opacity: 0.8;
+    color: #fff;
+}
 strong {
 	font-weight: 500;
 }
@@ -278,4 +282,11 @@ img {
 }
 .wrong{
 	color:#de615e;
+}
+
+button.btn-red{
+	background: #EC644B;
+}
+button.btn-green{
+	background: #2ECC71;
 }

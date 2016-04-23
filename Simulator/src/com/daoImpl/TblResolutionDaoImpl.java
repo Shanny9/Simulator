@@ -1,4 +1,4 @@
-package com.dao;
+package com.daoImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dao.TblResolutionDao;
 import com.jdbc.DBUtility;
 import com.model.TblIncident;
 import com.model.TblResolution;

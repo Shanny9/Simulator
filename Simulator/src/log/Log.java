@@ -1,48 +1,75 @@
 package log;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class Log {
-	private static HashMap<Integer, HashSet<Integer>> affecting_cis;
-	private static HashMap<Integer, HashSet<Integer>> affected_services;
+import com.daoImpl.TblCIDaoImpl;
+import com.daoImpl.TblGeneralParametersDaoImpl;
 
+public class Log implements Runnable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private HashMap<Integer, HashSet<Integer>> affecting_cis;
+	private HashMap<Integer, HashSet<Integer>> affected_services;
+	private HashMap<Integer, Double> ciSolutionCosts;
 	private static Log instance;
 
-	private Team marom;
-	private Team golan;
+	private TeamLog marom;
+	private TeamLog golan;
+	/*
+	 * False if simulator is running
+	 */
+	private static boolean stopThread;
 
 	/**
 	 * @param cis
 	 * @param services
 	 */
-	public Log(Team marom, Team golan) {
+	Log() {
 		super();
-		this.marom = marom;
-		this.golan = golan;
+		affecting_cis = LogUtils.getDBAffectingCIs();
+		affected_services = LogUtils.getDBAffectedServices();
+		ciSolutionCosts = new TblCIDaoImpl().getSolutionCosts();
+		double initCapital = new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital();
+		
+		HashMap<Integer, CILogItem> ciItems = LogUtils.getDBSCIItems();
+		HashMap<Integer, ServiceLogItem> serviceItems = LogUtils.getDBServiceItems();
+		
+		marom = new TeamLog(initCapital, ciItems, serviceItems);
+		golan = new TeamLog(initCapital, ciItems, serviceItems);
 	}
 
 	public static Log getInstance() {
+		if (instance == null) {
+			System.out.println("Log is created");
+			instance = new Log();
+		}
 		return instance;
 	}
 
-	public HashMap<Integer,CILogItem> getCILogs(String team) {
-		if (team.equals("Marom")){
-			return marom.getCi_logs();
-		} else if (team.equals("Golan")){
-			return golan.getCi_logs();
+	public double getCISoultionCost(int ci_id) {
+		return ciSolutionCosts.get(ci_id);
+	}
+
+	public TeamLog getTeam(String team) {
+		if (team.equals("Marom")) {
+			return marom;
+		} else if (team.equals("Golan")) {
+			return golan;
 		}
 		return null;
 	}
 
-	public HashMap<Integer,ServiceLogItem> getServiceLogs(String team) {
-		if (team.equals("Marom")){
-			return marom.getService_logs();
-		} else if (team.equals("Golan")){
-			return golan.getService_logs();
-		}
-		return null;
+	public HashMap<Integer, HashSet<Integer>> getAffectingCis() {
+		return affecting_cis;
+	}
+
+	public HashMap<Integer, HashSet<Integer>> getAffectedServices() {
+		return affected_services;
 	}
 
 	/**
@@ -59,33 +86,24 @@ public class Log {
 		return affecting_cis.keySet();
 	}
 
-	public void updateCILog(String team, int ci_id, int time) {
-		
-		CILogItem cili = getCILogs(team).get(ci_id);
-		cili.updateStatus(time);
-		for (Integer service_id : affecting_cis.get(ci_id)) {
-			ServiceLogItem affectedService = getServiceLogs(team).get(service_id);
-			// check if service goes down
-			if (affectedService.isUp()) {
-				 if (!cili.isUp()){
-					 affectedService.updateStatus(time);
-				 }
-			} else{
-				// check if service goes up
-				if (cili.isUp()){
-					boolean allAffectingAreUp = true;
-					for (Integer ci : affected_services.get(service_id)){
-						CILogItem affecting = getCILogs(team).get(ci);
-						if (!affecting.isUp()){
-							allAffectingAreUp = false;
-							break;
-						}
-					}
-					if (allAffectingAreUp){
-						affectedService.updateStatus(time);
-					}
-				}
-			}
+	public void updateCILog(String team, int ci_id, int time, boolean isBaught) {
+		getTeam(team).updateCI(ci_id, time, isBaught);
+	}
+
+	public static void pause() {
+		stopThread = true;
+	}
+
+	public static void resume() {
+		stopThread = false;
+	}
+
+	@Override
+	public void run() {
+		while (!stopThread) {
+			// should occur every second
+			marom.updateProfit();
+			golan.updateProfit();
 		}
 	}
 

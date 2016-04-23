@@ -19,14 +19,14 @@ public class TblDepartment implements Serializable {
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblCI_Department
-	@OneToMany(mappedBy="tblDepartment")
-	private List<TblCI_Department> tblCiDepartments;
-
 	//bi-directional many-to-one association to TblDivision
 	@ManyToOne
 	@JoinColumn(name="devision_name")
 	private TblDivision tblDivision;
+
+	//bi-directional many-to-one association to TblService_Department
+	@OneToMany(mappedBy="tblDepartment")
+	private List<TblService_Department> tblServiceDepartments;
 
 	public TblDepartment() {
 	}
@@ -47,34 +47,34 @@ public class TblDepartment implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public List<TblCI_Department> getTblCiDepartments() {
-		return this.tblCiDepartments;
-	}
-
-	public void setTblCiDepartments(List<TblCI_Department> tblCiDepartments) {
-		this.tblCiDepartments = tblCiDepartments;
-	}
-
-	public TblCI_Department addTblCiDepartment(TblCI_Department tblCiDepartment) {
-		getTblCiDepartments().add(tblCiDepartment);
-		tblCiDepartment.setTblDepartment(this);
-
-		return tblCiDepartment;
-	}
-
-	public TblCI_Department removeTblCiDepartment(TblCI_Department tblCiDepartment) {
-		getTblCiDepartments().remove(tblCiDepartment);
-		tblCiDepartment.setTblDepartment(null);
-
-		return tblCiDepartment;
-	}
-
 	public TblDivision getTblDivision() {
 		return this.tblDivision;
 	}
 
 	public void setTblDivision(TblDivision tblDivision) {
 		this.tblDivision = tblDivision;
+	}
+
+	public List<TblService_Department> getTblServiceDepartments() {
+		return this.tblServiceDepartments;
+	}
+
+	public void setTblServiceDepartments(List<TblService_Department> tblServiceDepartments) {
+		this.tblServiceDepartments = tblServiceDepartments;
+	}
+
+	public TblService_Department addTblServiceDepartment(TblService_Department tblServiceDepartment) {
+		getTblServiceDepartments().add(tblServiceDepartment);
+		tblServiceDepartment.setTblDepartment(this);
+
+		return tblServiceDepartment;
+	}
+
+	public TblService_Department removeTblServiceDepartment(TblService_Department tblServiceDepartment) {
+		getTblServiceDepartments().remove(tblServiceDepartment);
+		tblServiceDepartment.setTblDepartment(null);
+
+		return tblServiceDepartment;
 	}
 
 }

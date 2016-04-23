@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblSupplierDaoImpl;
+import com.daoImpl.TblSupplierDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblSupplier;

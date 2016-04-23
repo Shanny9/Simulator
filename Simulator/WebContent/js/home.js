@@ -16,8 +16,8 @@ var courseName = 'IDF-AMAM-01';
 var clockInterval;
 
 $(document).ready(function() {
-	$("#startSimulator").click(startSimulator);
 	$("#startSimulator").click(getIncidents);
+	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
 	console.log("END Document ready");
@@ -30,8 +30,10 @@ function getIncidents() {
 	$.ajax({
 		url : "HomeController?action=getIncidents",
 		dataType : "json",
+		async : false,
 		success : function(data) {
 			incidentsData = data;
+			console.log(incidentsData);
 		},
 		error : function(e) {
 			console.log("js:getIncidents: Error in getting incidents.");

@@ -1,7 +1,8 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
+import com.dao.TblAffected_CIDao;
 import com.model.TblAffected_CI;
 
 public class TblAffected_CIDaoImpl implements TblAffected_CIDao{

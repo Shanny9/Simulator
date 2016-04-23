@@ -20,13 +20,13 @@ public class TblDivision implements Serializable {
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblCI_Division
-	@OneToMany(mappedBy="tblDivision")
-	private List<TblCI_Division> tblCiDivisions;
-
 	//bi-directional many-to-one association to TblDepartment
 	@OneToMany(mappedBy="tblDivision")
 	private List<TblDepartment> tblDepartments;
+
+	//bi-directional many-to-one association to TblService_Division
+	@OneToMany(mappedBy="tblDivision")
+	private List<TblService_Division> tblServiceDivisions;
 
 	public TblDivision() {
 	}
@@ -45,28 +45,6 @@ public class TblDivision implements Serializable {
 
 	public void setIsActive(byte isActive) {
 		this.isActive = isActive;
-	}
-
-	public List<TblCI_Division> getTblCiDivisions() {
-		return this.tblCiDivisions;
-	}
-
-	public void setTblCiDivisions(List<TblCI_Division> tblCiDivisions) {
-		this.tblCiDivisions = tblCiDivisions;
-	}
-
-	public TblCI_Division addTblCiDivision(TblCI_Division tblCiDivision) {
-		getTblCiDivisions().add(tblCiDivision);
-		tblCiDivision.setTblDivision(this);
-
-		return tblCiDivision;
-	}
-
-	public TblCI_Division removeTblCiDivision(TblCI_Division tblCiDivision) {
-		getTblCiDivisions().remove(tblCiDivision);
-		tblCiDivision.setTblDivision(null);
-
-		return tblCiDivision;
 	}
 
 	public List<TblDepartment> getTblDepartments() {
@@ -89,6 +67,28 @@ public class TblDivision implements Serializable {
 		tblDepartment.setTblDivision(null);
 
 		return tblDepartment;
+	}
+
+	public List<TblService_Division> getTblServiceDivisions() {
+		return this.tblServiceDivisions;
+	}
+
+	public void setTblServiceDivisions(List<TblService_Division> tblServiceDivisions) {
+		this.tblServiceDivisions = tblServiceDivisions;
+	}
+
+	public TblService_Division addTblServiceDivision(TblService_Division tblServiceDivision) {
+		getTblServiceDivisions().add(tblServiceDivision);
+		tblServiceDivision.setTblDivision(this);
+
+		return tblServiceDivision;
+	}
+
+	public TblService_Division removeTblServiceDivision(TblService_Division tblServiceDivision) {
+		getTblServiceDivisions().remove(tblServiceDivision);
+		tblServiceDivision.setTblDivision(null);
+
+		return tblServiceDivision;
 	}
 
 }

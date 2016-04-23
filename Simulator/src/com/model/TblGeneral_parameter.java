@@ -84,7 +84,6 @@ public class TblGeneral_parameter implements Serializable {
 	}
 
 	public int getTotalTime() {
-		// TODO Auto-generated method stub
 		return (runTime+pauseTime)*sessionsPerRound*numOfRounds;
 	}
 

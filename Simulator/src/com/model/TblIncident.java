@@ -26,17 +26,13 @@ public class TblIncident implements Serializable {
 	@Column(name="time_")
 	private Time time;
 
-	//bi-directional many-to-one association to TblAffected_CI
-	@OneToMany(mappedBy="tblIncident")
-	private List<TblAffected_CI> tblAffectedCis;
-
 	//bi-directional many-to-one association to TblChange
 	@OneToMany(mappedBy="tblIncident")
 	private List<TblChange> tblChanges;
 
 	//bi-directional many-to-one association to TblCI
 	@ManyToOne
-	@JoinColumn(name="root_service_ID")
+	@JoinColumn(name="root_CI_ID")
 	private TblCI tblCi;
 
 	//bi-directional many-to-one association to TblResolution
@@ -76,28 +72,6 @@ public class TblIncident implements Serializable {
 
 	public void setTime(Time time) {
 		this.time = time;
-	}
-
-	public List<TblAffected_CI> getTblAffectedCis() {
-		return this.tblAffectedCis;
-	}
-
-	public void setTblAffectedCis(List<TblAffected_CI> tblAffectedCis) {
-		this.tblAffectedCis = tblAffectedCis;
-	}
-
-	public TblAffected_CI addTblAffectedCi(TblAffected_CI tblAffectedCi) {
-		getTblAffectedCis().add(tblAffectedCi);
-		tblAffectedCi.setTblIncident(this);
-
-		return tblAffectedCi;
-	}
-
-	public TblAffected_CI removeTblAffectedCi(TblAffected_CI tblAffectedCi) {
-		getTblAffectedCis().remove(tblAffectedCi);
-		tblAffectedCi.setTblIncident(null);
-
-		return tblAffectedCi;
 	}
 
 	public List<TblChange> getTblChanges() {

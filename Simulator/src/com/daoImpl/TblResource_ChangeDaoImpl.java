@@ -1,13 +1,14 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
-import com.model.TblResource_CI;
+import com.dao.TblResource_ChangeDao;
+import com.model.TblResource_Change;
 
-public class TblResource_CIDaoImpl implements TblResource_CIDao{
+public class TblResource_ChangeDaoImpl implements TblResource_ChangeDao{
 
 	@Override
-	public void addResource_CI(TblResource_CI Resource_CI) {
+	public void addResource_Change(TblResource_Change Resource_Change) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -19,25 +20,25 @@ public class TblResource_CIDaoImpl implements TblResource_CIDao{
 	}
 
 	@Override
-	public void updateResource_CI(TblResource_CI Resource_CI) {
+	public void updateResource_Change(TblResource_Change Resource_Change) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<TblResource_CI> getAllResource_CIs(int startPageIndex, int recordsPerPage) {
+	public List<TblResource_Change> getAllResource_Changes(int startPageIndex, int recordsPerPage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TblResource_CI> getAllResource_CIs() {
+	public List<TblResource_Change> getAllResource_Changes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TblResource_CI getResource_CIById(String Resource_CIName) {
+	public TblResource_Change getResource_ChangeById(String Resource_ChangeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

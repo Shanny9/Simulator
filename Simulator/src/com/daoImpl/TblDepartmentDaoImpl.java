@@ -1,43 +1,44 @@
-package com.dao;
+package com.daoImpl;
 
 import java.util.List;
 
-import com.model.TblDivision;
+import com.dao.TblDepartmentDao;
+import com.model.TblDepartment;
 
-public class TblDivisionDaoImpl implements TblDivisionDao{
+public class TblDepartmentDaoImpl implements TblDepartmentDao{
 
 	@Override
-	public void addDivision(TblDivision Division) {
+	public void addDepartment(TblDepartment Department) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void delete(String name) {
+	public void deleteDepartment(String name) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateDivision(TblDivision Division) {
+	public void updateDepartment(TblDepartment Department) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<TblDivision> getAllDivisions(int startPageIndex, int recordsPerPage) {
+	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TblDivision> getAllDivisions() {
+	public List<TblDepartment> getAllDepartments() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TblDivision getDivisionById(String DivisionName) {
+	public TblDepartment getDepartmentById(String DepartmentName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

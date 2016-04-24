@@ -45,6 +45,10 @@ img {
 	max-width: 100%;
 }
 
+#purchaseTxt{
+	color: #555;
+}
+
 ::-moz-selection {
 	background: #4c7a8f;
 	color: #fff;
@@ -284,9 +288,17 @@ img {
 	color:#de615e;
 }
 
+#no-padding{
+	padding: 0px 0px;
+}
 button.btn-red{
 	background: #EC644B;
+	display: block;
+	width: 100%;
 }
 button.btn-green{
 	background: #2ECC71;
+	display: block;
+	width: 100%;
 }
+

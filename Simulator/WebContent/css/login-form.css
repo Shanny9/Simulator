@@ -1,5 +1,6 @@
 
-input[type="text"], 
+input[type="text"],
+input[type="number"], 
 input[type="password"], 
 textarea, 
 textarea.form-control {
@@ -17,6 +18,13 @@ textarea.form-control {
     -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
     -moz-box-shadow: none; -webkit-box-shadow: none; box-shadow: none;
     -o-transition: all .3s; -moz-transition: all .3s; -webkit-transition: all .3s; -ms-transition: all .3s; transition: all .3s;
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 textarea, 
@@ -25,13 +33,12 @@ textarea.form-control {
 	padding-bottom: 10px;
 	line-height: 30px;
 }
-
+input[type="number"]:focus, 
 input[type="text"]:focus, 
 input[type="password"]:focus, 
 textarea:focus, 
 textarea.form-control:focus {
-	outline: 0;
-	background: #fff;
+	outline: none;
     border: 3px solid #fff;
     -moz-box-shadow: none; -webkit-box-shadow: none; box-shadow: none;
 }

@@ -13,7 +13,9 @@ import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblCI;
 import com.model.TblGeneral_parameter;
 import com.model.TblService;
-
+/*
+ * TeamLog records the team's services, purchases and profits throughout the simulation
+ */
 public class TeamLog implements Serializable {
 	/**
 	 * 
@@ -125,7 +127,10 @@ public class TeamLog implements Serializable {
 		return purchases;
 	}
 
-	synchronized void finish() {
+	synchronized void Stop(int time) {
+		for (ServiceLog service : service_logs.values()){
+			service.stop(time);
+		}
 		this.isFinished = true;
 	}
 }

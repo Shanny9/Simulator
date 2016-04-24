@@ -33,7 +33,7 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	public void run() {
-		while (!stopThread && elapsedClock < (finishRound)) {
+		while (!stopThread && elapsedClock < finishRound) {
 			synchronized (this) {
 				try {
 					System.out.println("elapsedClock: " + elapsedClock);
@@ -45,21 +45,21 @@ public class ClockIncrementor implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			elapsedClock = (elapsedClock + 1);
-			remainingClock = (remainingClock - 1);
+			elapsedClock += 1;
+			remainingClock -= 1;
 
-			if ((elapsedClock + pauseTime) % (sessionTime) == 0) {
+			if ((elapsedClock + pauseTime) % sessionTime == 0) {
 				// finished runTime
 				log.SimulationLog.pause();
 				remainingClock = pauseTime;
 
-			} else if (elapsedClock % (sessionTime) == 0) {
+			} else if (elapsedClock % sessionTime == 0) {
 				// finished pause time
 				log.SimulationLog.resume();
 				remainingClock = runTime_;
 			}
-
 		}
+		log.SimulationLog.Stop(elapsedClock);
 	}
 
 	public static void pause() {

@@ -53,7 +53,7 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static void resumeSimulator() {
-		System.err.println("TimerManager: pausing clock...");
+		System.err.println("TimerManager: resuming clock...");
 		ClockIncrementor.resume();
 	}
 

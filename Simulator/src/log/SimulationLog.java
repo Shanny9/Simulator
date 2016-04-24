@@ -1,12 +1,8 @@
 package log;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import com.daoImpl.TblCIDaoImpl;
-import com.daoImpl.TblGeneralParametersDaoImpl;
 
 public class SimulationLog implements Runnable, Serializable {
 	/**
@@ -27,15 +23,13 @@ public class SimulationLog implements Runnable, Serializable {
 	private HashMap<Integer, Double> ciSolCosts;
 	
 	private static SimulationLog instance;
-	private TeamLog marom;
-	private TeamLog golan;
+	private static TeamLog marom;
+	private static TeamLog rakia;
 	/*
 	 * False if simulator is running
 	 */
 	private static boolean stopThread;
 	
-	private int roundTotalRunTime;
-
 	/**
 	 * @param cis
 	 * @param servicesItems
@@ -44,11 +38,10 @@ public class SimulationLog implements Runnable, Serializable {
 		super();
 		affecting_cis = LogUtils.getDBAffectingCIs();
 		affected_services = LogUtils.getDBAffectedServices();
-		roundTotalRunTime = new TblGeneralParametersDaoImpl().getRoundTotalRunTime();
 		ciSolCosts = LogUtils.getCISolCosts();
 		
 		marom = new TeamLog();
-		golan = new TeamLog();
+		rakia = new TeamLog();
 	}
 
 	public static SimulationLog getInstance() {
@@ -62,8 +55,8 @@ public class SimulationLog implements Runnable, Serializable {
 	public TeamLog getTeam(String team) {
 		if (team.equals("Marom")) {
 			return marom;
-		} else if (team.equals("Golan")) {
-			return golan;
+		} else if (team.equals("Rakia")) {
+			return rakia;
 		}
 		return null;
 	}
@@ -93,8 +86,11 @@ public class SimulationLog implements Runnable, Serializable {
 		stopThread = false;
 	}
 	
-	int getRoundTotalRunTime(){
-		return roundTotalRunTime;
+	public static void Stop(int time){
+		pause();
+		marom.Stop(time);
+		rakia.Stop(time);
+		System.out.println("Log stopped");
 	}
 
 	@Override
@@ -102,7 +98,7 @@ public class SimulationLog implements Runnable, Serializable {
 		while (!stopThread) {
 			// should occur every second
 			marom.updateProfit();
-			golan.updateProfit();
+			rakia.updateProfit();
 		}
 	}
 

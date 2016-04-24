@@ -17,6 +17,8 @@ public class TblSupplier implements Serializable {
 	@Column(name="supplier_name")
 	private String supplierName;
 
+	private String currency;
+
 	private byte isActive;
 
 	@Column(name="solution_cost")
@@ -31,6 +33,14 @@ public class TblSupplier implements Serializable {
 
 	public void setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
+	}
+
+	public String getCurrency() {
+		return this.currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public byte getIsActive() {

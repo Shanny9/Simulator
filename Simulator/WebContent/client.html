@@ -5,7 +5,7 @@
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Simulator</title>
 
 <!-- CSS -->
@@ -66,45 +66,51 @@
 					<div class="col-sm-8 col-sm-offset-2 text">
 						<div id="main-time" class="txt-score regular center">
 							00:00:00</div>
-
-					</div>
-				</div>
-				<div class="row minHeight">
-					<div id="teamName">
-						<strong>Marom</strong>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm-6 col-sm-offset-3 form-box">
 						<div class="form-top">
 							<div class="form-top-left">
-								<h3>Enter Solution</h3>
-								<!--			<p>Enter configuration item and solution number:</p> -->
+								<h3>Enter incident ID</h3>
 							</div>
-							<div class="form-top-right">
-								<i class=""></i>
-							</div>
-						</div>
-						<div class="form-bottom">
-							<form role="form" onsubmit="return sendSolution()" action=""
-								method="post" class="login-form">
-								<div class="form-group">
-									<label class="sr-only" for="ciID">Configuration Item</label> <input
-										type="text" name="ciID" placeholder="Configuration Item #"
-										class="form-username form-control" id="ciID">
-								</div>
-								<button class="btn btn-green disabled" data-toggle="collapse" data-target="#solutionDiv">Solve!</button>
-								<div id="solutionDiv" class="collapse">
-									<div class="form-group">
-										<label class="sr-only" for="solution">Solution Number</label>
-										<input type="text" name="solution" placeholder="Solution #"
-											class="form-password form-control" id="solution">
+							<input type="number" pattern="[0-9]*" name="incidentID" placeholder="Incident #"
+								class="form-username form-control" id="incidentID">
+							<div class="row minHeight"></div>
+							<div class="panel-group" id="accordion">
+								<div class="panel panel-default">
+									<div id="no-padding" class="panel-heading">
+										<h4 class="panel-title">
+											<a id = "solveMenu" data-parent="#accordion"
+												href="#collapse1"><button 
+													class="btn btn-green">Solve!</button></a>
+										</h4>
 									</div>
-									<button id="submit" type="submit" class="btn btn-green">Send Solution</button>
+									<div id="collapse1" class="panel-collapse collapse">
+										<div class="panel-body">
+											<input type="number" pattern="[0-9]*" name="solutionID"
+												placeholder="Solution #"
+												class="form-username form-control" id="solutionID">
+											<button id="submitSol" class="btn btn-green">Submit Solution</button>
+										</div>
+									</div>
 								</div>
-								<center>Or</center>
-								<button id="buy" class="btn btn-red">Purchase Solution!</button>
-							</form>
+								<div class="panel panel-default">
+									<div id="no-padding" class="panel-heading">
+										<h4 class="panel-title">
+											<a id = "purchaseMenu" data-toggle="collapse" data-parent="#accordion"
+												href="#collapse2"><button class="btn btn-red">Purchase!</button></a>
+										</h4>
+									</div>
+									<div id="collapse2" class="panel-collapse collapse">
+										<div class="panel-body">
+											The solution cost is <span id="solCost">10 </span><i
+												class="fa fa-ils" style="font-size: 16px"></i>
+											<button id="buy" class="btn btn-red">Purchase!</button>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

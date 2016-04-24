@@ -46,7 +46,10 @@ body::before {
 
 .scoreboard{
 	padding:20px;
-	background: url(home_images/chalkboard.png) no-repeat center center fixed;
+	background-image: url(home_images/chalkboard.png);
+	packground-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
 	--background-color:#333333;
 	box-shadow: 3px 3px 10px #888888;
 	border: 2px solid #d5d5d5;

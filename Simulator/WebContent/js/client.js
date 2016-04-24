@@ -17,14 +17,33 @@ $(document).ready(
 						$(this).removeClass('input-error');
 					});
 			getSolutions(); // init solutionsData
-			$("#submit").click(sendSolution);
+			
+			$("#incidentID").on('keyup', function () {
+			    if ($('#incidentID').val()==""){
+			    	$("#solveMenu").removeAttr('data-toggle');
+			    } else{
+			    	$("#solveMenu").attr('data-toggle',"collapse");
+			    }
+			});
+			
+			$("#solveMenu").click(function () {
+				var isReadOnly = ($('#incidentID').attr('readonly'));
+				if (isReadOnly != undefined){
+					$('#incidentID').removeAttr('readonly');
+				} else{
+					$('#incidentID').attr('readonly', 'readonly');
+				}
+			});
+
+			$("#submitSol").click(sendSolution);
 			$("#buy").click(buySolution);
 			startSimulator();
 
 		});
 
 function sendSolution() {
-	var ciID = $('#ciID').val();
+	console.log("client.js: sent solution");
+	var ciID = $('#incidentID').val();
 	var sol = $('#solution').val();
 	var isCorrect = false;
 
@@ -60,16 +79,16 @@ function sendSolution() {
 			return false;
 		}
 	}// end <if fields are empty>
-	else {
-		if (ciID == "") {
-			$('#ciID').addClass('input-error');
-		}
-		if (sol == "") {
-			$('#solution').addClass('input-error');
-		}
-
+//	else {
+//		if (ciID == "") {
+//			$('#ciID').addClass('input-error');
+//		}
+//		if (sol == "") {
+//			$('#solution').addClass('input-error');
+//		}
+//
 		return false;
-	}
+//	}
 }
 
 function buySolution() {

@@ -18,48 +18,59 @@ $(document).ready(
 					});
 			getSolutions();
 			
-			// lets toggle the solve menu only if there is an incident id
+			// when a key released in the incident field - updates if the menus could toggle
 			$("#incidentID").on('keyup', function () {
+				// checks if incident field is empty
 			    if ($('#incidentID').val()==""){
-			    	$(".collapse-menu").removeAttr('data-toggle');
+			    	$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
 			    } else{
-			    	//TODO: check if the incident is open right now
-			    	$(".collapse-menu").attr('data-toggle',"collapse");
+			    	$(".collapse-menu").attr('data-toggle',"collapse"); //enables toggle
 			    }
 			});
 			
-			// locks the incident input field when solve menu is open
+			// when the solve menu is clicked - handles the event 
 			$("#solveMenu").click(function () {
+				// checks if incident field is empty
 				if ($("#incidentID").val() == ""){
-					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
+					$("#noIncId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
+				// checks if incident is currently open
+				if (checkIncident()==false){
+					$("#wrongIncId").slideToggle("slow").delay(2000).slideToggle("slow");
+					return;
+				}
+				
+				//checks if the menu is going to expand
 				var willExpand = $("#solveMenu").attr("aria-expanded") != 'true';
 				if (willExpand){
-					$('#incidentID').attr('readonly', 'readonly');
-					$('#solutionID').val("");
-					$('#submitSol').attr('disabled');
+					$('#incidentID').attr('readonly', 'readonly'); //locks the incident field
+					$('#solutionID').val(""); //empties the solution field
+					$('#submitSol').attr('disabled'); //disables the submit button
 				} else{
-					$('#incidentID').removeAttr('readonly');
+					$('#incidentID').removeAttr('readonly'); //unlocks the incident field
 				}
 			});
 			
-			// locks the incident input field when purchase menu is open
+			// when the purchase menu is clicked - handles the event 
 			$("#purchaseMenu").click(function () {
+				// checks if incident field is empty
 				if ($("#incidentID").val() == ""){
 					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
+				
+				//checks if the menu is going to expand
 				var willExpand = $("#purchaseMenu").attr("aria-expanded") != 'true';
 				if (willExpand){
-					$('#incidentID').attr('readonly', 'readonly');
+					$('#incidentID').attr('readonly', 'readonly');//locks the incident field
 					showPrice();
 				} else{
-					$('#incidentID').removeAttr('readonly');
+					$('#incidentID').removeAttr('readonly'); //unlocks the incident field
 				}
 			});
 			
-			// enables sending solution only when solution id is not empty
+			// when a key released in the solution field - updates if the submit button will be enabled
 			$("#solutionID").on('keyup', function () {
 				if ($('#solutionID').val() != ""){
 					$('#submitSol').removeAttr('disabled');
@@ -70,33 +81,31 @@ $(document).ready(
 			
 			// submitting solution
 			$("#submitSol").click(function(){
-//				var isCorrect = checkSolution();
-				isCorrect = true;
-				var id = (isCorrect)? "#success" : "failure";
+				var id = (checkSolution())? "#success" : "#failure";
 				$("#gif").slideToggle("slow").css("display","block").delay(1000).slideToggle("slow");
-				$(id).delay(3000).slideToggle("slow").delay(3000).slideToggle("slow");
+				$(id).delay(3000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success/failure message
 				setTimeout(function () {
-					$('.panel-collapse.in').collapse('hide');
-					$('#incidentID').val("");
-					$("#solveMenu").removeAttr('data-toggle');
-					$('#incidentID').removeAttr('readonly');
+					$('.panel-collapse.in').collapse('hide'); //collapses the menu
+					$('#incidentID').val(""); //empties the incident field
+					$('#incidentID').removeAttr('readonly'); // unlocks the incident field 
+					$("#solveMenu").removeAttr('data-toggle'); //disables solve menu to toggle 
 				}, 3000);
 				
 			});
 			
-//			$("#buy").click(buySolution);
-//			startSimulator();
+			$("#buy").click(buySolution);
+			startSimulator();
 
 		});
 
 function showPrice(){
-	var incID = $('#incidentID').val();
+	var inc_id = $('#incidentID').val();
 	var cost;
 	var currency;
 	var currencyTag;
 	
 	$.each(solutionsData, function(i, item) {
-		if (i == item.incID) {
+		if (i == item.incident_id) {
 			cost = item.solution_cost;
 			currency = item.currency;
 			switch (currency){
@@ -112,11 +121,45 @@ function showPrice(){
 	});
 }
 
+function checkIncident(){
+	var inc_id = $('#incidentID').val();
+	
+	// first check - does the incident exist
+	$.each(solutionsData, function(i, item) {
+		if (i == item.incident_id) {
+			return true;
+			}
+	});
+	
+	// second check - is the incident currently open
+	$.ajax({
+		url : "ClientController?action=checkIncident",
+		dataType : "json",
+		data : {
+			team : team,
+			inc_id : inc_id,
+			time : elapsedTime
+		},
+		async : false,
+		success : function(data) {
+			if (data=="true"){
+				return true;
+			}
+			return false;
+		},
+		error : function(e) {
+			console.log("js:checkIncident: Error in checking incidents.");
+		}
+	});
+	return false;
+}
+
+// checks if the solution is correct
 function checkSolution(){
-	var incID = $('#incidentID').val();
+	var inc_id = $('#incidentID').val();
 	var sol = $('#solutionID').val();
 	$.each(solutionsData, function(i, item) {
-		if (i == item.incID) {
+		if (i == item.incident_id) {
 			if (team == "Marom" && item.solution_marom == sol){
 				return true;
 			} else if (team == "Rakia" && item.solution_rakia == sol){
@@ -127,6 +170,7 @@ function checkSolution(){
 	return false;
 }
 
+// gets the solutions from the server
 function getSolutions() {
 	$.ajax({
 		url : "ClientController?action=getSolutions",
@@ -141,8 +185,9 @@ function getSolutions() {
 	});
 }
 
+//sends the solution to the server
 function sendSolution() {
-	var incID = $('#incidentID').val();
+	var inc_id = $('#incidentID').val();
 	var sol = $('#solutionID').val();
 
 	$.ajax({
@@ -150,7 +195,7 @@ function sendSolution() {
 		dataType : "json",
 		data : {
 			team : team,
-			incID : ciID,
+			inc_id : inc_id,
 			time : elapsedTime
 		},
 		success : function(msg) {
@@ -160,63 +205,26 @@ function sendSolution() {
 			console.log("js:sendSolution: Error in sendSolution.");
 		}
 	});
-
-		
 		return false;
-//	}
 }
 
+// sends the purchase to the server
 function buySolution() {
 
-	if (ciID != "") {
-		$.each(solutionsData, function(i, item) {
-			if (item.ciID == ciID) {
-				isCorrect = true; // TODO: is necessary?
-				return false; // << break
-			}
-
-		});// end for each
-
-	}
-
-	if (isCorrect) {
-		$.ajax({
-			url : "ClientController?action=buySolution",
-			dataType : "json",
-			data : {
-				team : team,
-				ciID : ciID,
-				time : elapsedTime
-			},
-			success : function(msg) {
-				console.log(msg);
-			},
-			error : function(e) {
-				console.log("js:sendSolution: Error in buySolution.");
-			}
-		});
-	}// end <if fields are empty>
-	else {
-		$('#ciID').addClass('input-error');
-		return false;
-	}
-}
-
-function getSolutions() {
 	$.ajax({
-		async : false,
-		url : "ClientController?action=getSolutions",
+		url : "ClientController?action=buySolution",
 		dataType : "json",
-
 		data : {
-			team : team
+			team : team,
+			inc_id : inc_id,
+			time : elapsedTime
 		},
-		success : function(data) {
-			solutionsData = data;
-			console.log("js:getSolutions: Success!");
+		success : function(msg) {
+			$('#success').delay(3000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message
 		},
 		error : function(e) {
-			console.log("js:getSolutions: Error in getSolutions.");
+			console.log("js:sendSolution: Error in buySolution.");
 		}
 	});
+
 }

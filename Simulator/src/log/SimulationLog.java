@@ -10,6 +10,10 @@ public class SimulationLog implements Runnable, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	/*
+	 * key=start_time, value=incident_id
+	 */
+	private HashMap<Integer, Integer> incident_times;
+	/*
 	 * key=ci_id, value=set of affected services
 	 */
 	private HashMap<Integer, HashSet<Integer>> affecting_cis;
@@ -21,15 +25,24 @@ public class SimulationLog implements Runnable, Serializable {
 	 * key=ci_id, value=solution cost
 	 */
 	private HashMap<Integer, Double> ciSolCosts;
+	/*
+	 * The log of team Marom
+	 */
+	private static TeamLog marom;
+	/*
+	 * The log of team Rakia
+	 */
+	private static TeamLog rakia;
 	
 	private static SimulationLog instance;
-	private static TeamLog marom;
-	private static TeamLog rakia;
 	/*
 	 * False if simulator is running
 	 */
 	private static boolean stopThread;
-	
+	/*
+	 * The run_time elapsed since the simulation started
+	 */
+	private int elapsed_time;
 	/**
 	 * @param cis
 	 * @param servicesItems
@@ -39,6 +52,7 @@ public class SimulationLog implements Runnable, Serializable {
 		affecting_cis = LogUtils.getDBAffectingCIs();
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
+		incident_times = LogUtils.getIncidentTimes();
 		
 		marom = new TeamLog();
 		rakia = new TeamLog();
@@ -73,8 +87,8 @@ public class SimulationLog implements Runnable, Serializable {
 		return ciSolCosts.get(ci_id);
 	}
 	
-	public void updateCILog(String team, int ci_id, int time, boolean isBaught) {
-		getTeam(team).updateCI(ci_id, time, isBaught);
+	public void incidentSolved(String team, int inc_id, int time, boolean isBaught) {
+		getTeam(team).incidentSolved(inc_id, time, isBaught);
 	}
 
 	public static void pause() {
@@ -97,9 +111,19 @@ public class SimulationLog implements Runnable, Serializable {
 	public void run() {
 		while (!stopThread) {
 			// should occur every second
+			elapsed_time++;
+			Integer inc_id  = incident_times.get(elapsed_time);
+			if (inc_id != null){
+				marom.incidentStarted(inc_id, elapsed_time);
+				rakia.incidentStarted(inc_id, elapsed_time);
+			}
 			marom.updateProfit();
 			rakia.updateProfit();
 		}
+	}
+
+	public boolean checkIncident(String team, int inc_id, int time) {
+		return getTeam(team).isIncidentOpen(inc_id, time);
 	}
 
 }

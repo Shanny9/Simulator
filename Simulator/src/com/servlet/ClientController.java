@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,20 +13,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.daoImpl.TblCIDaoImpl;
 import com.google.gson.GsonBuilder;
 import com.jdbc.DBUtility;
 
 import log.SimulationLog;
 import utils.Queries;
 import utils.SolutionElement;
-import utils.TimerManager;
 
 /**
  * Servlet implementation class ClientController
  */
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
+	private String team;
+	private int inc_id;
+	private int time;
 	private static final long serialVersionUID = 1L;
 	// private static HashMap<TblResolutionPK, TblResolution> resolutions = new
 	// HashMap<>();
@@ -66,13 +68,20 @@ public class ClientController extends HttpServlet {
 		case "getSolutions":
 			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
 			break;
+		case "checkIncident":
+			team = request.getParameter("team");
+			inc_id = Integer.valueOf(request.getParameter("inc_id"));
+			time = Integer.valueOf(request.getParameter("time"));
+			boolean isGood = SimulationLog.getInstance().checkIncident(team, inc_id, time);
+			response.getWriter().print(isGood);
+			break;
 		case "buySolution":
 			isBaught = true;
 		case "sendSolution":
-			String team = request.getParameter("team");
-			int ci_id = Integer.valueOf(request.getParameter("incID"));
-			int time = Integer.valueOf(request.getParameter("time"));
-			SimulationLog.getInstance().updateCILog(team, ci_id, time, isBaught);
+			team = request.getParameter("team");
+			inc_id = Integer.valueOf(request.getParameter("inc_id"));
+			time = Integer.valueOf(request.getParameter("time"));
+			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
 			break;
 		}
 	}
@@ -93,5 +102,4 @@ public class ClientController extends HttpServlet {
 		}
 		return null;
 	}
-
 }

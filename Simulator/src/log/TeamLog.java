@@ -22,11 +22,11 @@ public class TeamLog implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	/*
-	 * The team's CI statuses: key=ci_id, value=isUP
+	 * The team's incident logs
 	 */
-	private HashMap<Integer, Boolean> cis;
+	private HashMap<Integer, IncidentLog> incident_logs;
 	/*
-	 * The team's services' logs
+	 * The team's service logs
 	 */
 	private HashMap<Integer, ServiceLog> service_logs;
 	/*
@@ -56,13 +56,8 @@ public class TeamLog implements Serializable {
 		this.service_logs = new HashMap<>();
 		this.purchases = new HashMap<>();
 		this.isFinished = false;
-		this.cis = new HashMap<>();
 		
 		this.profits.add(new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital());
-		
-		for (TblCI ci : new TblCIDaoImpl().getAllCIs()) {
-			this.cis.put((int) ci.getCiId(), true);
-		}
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
@@ -73,31 +68,47 @@ public class TeamLog implements Serializable {
 					serviceDownTimeCosts.get(service_id)));
 			this.diff += service_logs.get(service_id).getDiff();
 		}
+		incident_logs = LogUtils.getIncidentLogs();
 	}
 
-	synchronized void updateCI(int ci_id, int time, boolean isBaught) {
+	synchronized void incidentSolved(int inc_id, int time, boolean isBaught) {
 
 		if (isFinished) {
 			return;
 		}
-
+		IncidentLog incLog = incident_logs.get(inc_id);
+		incLog.setEnd_time(time);
+		int ci_id = incLog.getRoot_ci();
+		
 		long start = new Date().getTime();
-		cis.put(ci_id, !cis.get(ci_id));
 		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
 
 		for (Integer service_id : affectedServices) {
-			ServiceLog affectedService = service_logs.get(service_id);
-			diff += affectedService.ciUpdate(cis.get(ci_id), time);
+			diff += service_logs.get(service_id).ciUpdate(true, time);
 		}
+		
 		if (isBaught) {
 			purchases.put(time, ci_id);
-			// reduces the solution cost from the team's profit at the given
-			// @time
+			// reduces the solution cost from the team's profit at the given @time
 			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
 		}
 		long end = new Date().getTime();
 		// checks if the calculation takes less than a second as it should
 		System.out.println("updateCI calculation time: " + (end - start) / 1000 + "seconds");
+	}
+	
+	synchronized void incidentStarted(int inc_id, int time) {
+
+		if (isFinished) {
+			return;
+		}
+		
+		int ci_id = incident_logs.get(inc_id).getRoot_ci();
+				
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
+		for (Integer service_id : affectedServices) {
+			diff += service_logs.get(service_id).ciUpdate(false, time);
+		}
 	}
 
 	public synchronized double getCurrentProfit() {
@@ -132,5 +143,9 @@ public class TeamLog implements Serializable {
 			service.stop(time);
 		}
 		this.isFinished = true;
+	}
+	
+	boolean isIncidentOpen(int inc_id, int time){
+		return incident_logs.get(inc_id).isOpen(time);
 	}
 }

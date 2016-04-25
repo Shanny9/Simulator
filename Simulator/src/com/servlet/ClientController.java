@@ -1,6 +1,10 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,8 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.daoImpl.TblCIDaoImpl;
+import com.google.gson.GsonBuilder;
+import com.jdbc.DBUtility;
 
 import log.SimulationLog;
+import utils.Queries;
+import utils.SolutionElement;
 import utils.TimerManager;
 
 /**
@@ -19,7 +27,8 @@ import utils.TimerManager;
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-//	private static HashMap<TblResolutionPK, TblResolution> resolutions = new HashMap<>();
+	// private static HashMap<TblResolutionPK, TblResolution> resolutions = new
+	// HashMap<>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -55,63 +64,34 @@ public class ClientController extends HttpServlet {
 		boolean isBaught = false;
 		switch (action) {
 		case "getSolutions":
-			getSolutions(request.getParameter("team"), response);
+			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
 			break;
 		case "buySolution":
 			isBaught = true;
 		case "sendSolution":
 			String team = request.getParameter("team");
-			int ci_id = Integer.valueOf(request.getParameter("ciID"));
-			int time = Integer.valueOf(TimerManager.getClocks().get("elapsedClock").toString());
+			int ci_id = Integer.valueOf(request.getParameter("incID"));
+			int time = Integer.valueOf(request.getParameter("time"));
 			SimulationLog.getInstance().updateCILog(team, ci_id, time, isBaught);
 			break;
-}
+		}
 	}
 
-	private void getSolutions(String team, HttpServletResponse response) throws IOException {
-		TblCIDaoImpl ciDao = new TblCIDaoImpl();
-		response.getWriter().print(ciDao.getSolutions(team));
+	private HashMap<Integer, SolutionElement> getSolutions() {
+		HashMap<Integer, SolutionElement> solutions = new HashMap<>();
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(Queries.solutionsForClient);
+			while (rs.next()) {
+				solutions.put(rs.getInt("incident_id"),
+						new SolutionElement(rs.getInt("incident_id"), rs.getInt("solution_marom"),
+								rs.getInt("solution_rakia"), rs.getDouble("solution_cost"), rs.getString("currency")));
+			}
+			return solutions;
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return null;
 	}
-
-//	private void addResolution(HttpServletRequest request) {
-//		byte incidentID, isPurchased;
-//		Time time;
-//		String course, team;
-//		TblResolutionPK pk = new TblResolutionPK();
-//
-//		incidentID = Byte.valueOf(request.getParameter("incident"));
-//		course = request.getParameter("course");
-//		isPurchased = Byte.valueOf(request.getParameter("isPurchased"));
-//		time = new Time(Long.valueOf(request.getParameter("time")));
-//		team = request.getParameter("team");
-//		pk.setCourse(course);
-//		pk.setIncident_ID(incidentID);
-//		TblResolution res;
-//
-//		// update existing row
-//		if (resolutions.containsKey(pk)) {
-//			res = resolutions.get(pk);
-//		}
-//		// add new row
-//		else {
-//			res = new TblResolution();
-//			res.setId(pk);
-//			TblIncident in = new TblIncident();
-//			in.setIncident_ID(incidentID);
-//			res.setTblIncident(in);
-//		}
-//
-//		if (team.equals("Marom")) {
-//			res.setIsPurchasedA(isPurchased);
-//			res.setIsResolvedA(new Byte("1"));
-//			res.setResolution_timeA(time);
-//		} else {
-//			res.setIsPurchasedB(isPurchased);
-//			res.setIsResolvedB(new Byte("1"));
-//			res.setResolution_timeB(time);
-//		}
-//		resolutions.put(pk, res);
-//
-//	}
 
 }

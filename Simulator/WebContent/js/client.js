@@ -16,77 +16,152 @@ $(document).ready(
 					'focus', function() {
 						$(this).removeClass('input-error');
 					});
-			getSolutions(); // init solutionsData
+			getSolutions();
 			
+			// lets toggle the solve menu only if there is an incident id
 			$("#incidentID").on('keyup', function () {
 			    if ($('#incidentID').val()==""){
-			    	$("#solveMenu").removeAttr('data-toggle');
+			    	$(".collapse-menu").removeAttr('data-toggle');
 			    } else{
-			    	$("#solveMenu").attr('data-toggle',"collapse");
+			    	//TODO: check if the incident is open right now
+			    	$(".collapse-menu").attr('data-toggle',"collapse");
 			    }
 			});
 			
+			// locks the incident input field when solve menu is open
 			$("#solveMenu").click(function () {
-				var isReadOnly = ($('#incidentID').attr('readonly'));
-				if (isReadOnly != undefined){
-					$('#incidentID').removeAttr('readonly');
-				} else{
+				if ($("#incidentID").val() == ""){
+					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
+					return;
+				}
+				var willExpand = $("#solveMenu").attr("aria-expanded") != 'true';
+				if (willExpand){
 					$('#incidentID').attr('readonly', 'readonly');
+					$('#solutionID').val("");
+					$('#submitSol').attr('disabled');
+				} else{
+					$('#incidentID').removeAttr('readonly');
 				}
 			});
-
-			$("#submitSol").click(sendSolution);
-			$("#buy").click(buySolution);
-			startSimulator();
+			
+			// locks the incident input field when purchase menu is open
+			$("#purchaseMenu").click(function () {
+				if ($("#incidentID").val() == ""){
+					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
+					return;
+				}
+				var willExpand = $("#purchaseMenu").attr("aria-expanded") != 'true';
+				if (willExpand){
+					$('#incidentID').attr('readonly', 'readonly');
+					showPrice();
+				} else{
+					$('#incidentID').removeAttr('readonly');
+				}
+			});
+			
+			// enables sending solution only when solution id is not empty
+			$("#solutionID").on('keyup', function () {
+				if ($('#solutionID').val() != ""){
+					$('#submitSol').removeAttr('disabled');
+				} else{
+					$('#submitSol').attr('disabled');
+				}	
+			});
+			
+			// submitting solution
+			$("#submitSol").click(function(){
+//				var isCorrect = checkSolution();
+				isCorrect = true;
+				var id = (isCorrect)? "#success" : "failure";
+				$("#gif").slideToggle("slow").css("display","block").delay(1000).slideToggle("slow");
+				$(id).delay(3000).slideToggle("slow").delay(3000).slideToggle("slow");
+				setTimeout(function () {
+					$('.panel-collapse.in').collapse('hide');
+					$('#incidentID').val("");
+					$("#solveMenu").removeAttr('data-toggle');
+					$('#incidentID').removeAttr('readonly');
+				}, 3000);
+				
+			});
+			
+//			$("#buy").click(buySolution);
+//			startSimulator();
 
 		});
 
-function sendSolution() {
-	console.log("client.js: sent solution");
-	var ciID = $('#incidentID').val();
-	var sol = $('#solution').val();
-	var isCorrect = false;
-
-	if (ciID != "" && sol != "") {
-		$.each(solutionsData, function(i, item) {
-			if (item.ciID == ciID && item.solution == sol) {
-				isCorrect = true; // TODO: is necessary?
-				return false; // << break
+function showPrice(){
+	var incID = $('#incidentID').val();
+	var cost;
+	var currency;
+	var currencyTag;
+	
+	$.each(solutionsData, function(i, item) {
+		if (i == item.incID) {
+			cost = item.solution_cost;
+			currency = item.currency;
+			switch (currency){
+			case "NIS": currencyTag = 'ils';
+				break;
+			case "USD": currencyTag = 'dollar';
+				break;
+			case "EUR": currencyTag = 'euro';
+				break;
 			}
-
-		});// end for each
-
-		if (isCorrect) {
-			$.ajax({
-				url : "ClientController?action=sendSolution",
-				dataType : "json",
-				data : {
-					team : team,
-					ciID : ciID,
-					time : elapsedTime
-				},
-				success : function(msg) {
-					console.log(msg);
-				},
-				error : function(e) {
-					console.log("js:sendSolution: Error in sendSolution.");
-				}
-			});
-
-		} else {
-			$("#feedback").addClass('wrong');
-			$("#feedback").html("Wrong");
-			return false;
+			$('solCost').html(solution_cost + ' <i class="fa fa-' + currencyTag + '></i>')
 		}
-	}// end <if fields are empty>
-//	else {
-//		if (ciID == "") {
-//			$('#ciID').addClass('input-error');
-//		}
-//		if (sol == "") {
-//			$('#solution').addClass('input-error');
-//		}
-//
+	});
+}
+
+function checkSolution(){
+	var incID = $('#incidentID').val();
+	var sol = $('#solutionID').val();
+	$.each(solutionsData, function(i, item) {
+		if (i == item.incID) {
+			if (team == "Marom" && item.solution_marom == sol){
+				return true;
+			} else if (team == "Rakia" && item.solution_rakia == sol){
+				return true;
+			}
+		}
+	});
+	return false;
+}
+
+function getSolutions() {
+	$.ajax({
+		url : "ClientController?action=getSolutions",
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			solutionsData = data;
+		},
+		error : function(e) {
+			console.log("js:getSolutions: Error in getting solutions.");
+		}
+	});
+}
+
+function sendSolution() {
+	var incID = $('#incidentID').val();
+	var sol = $('#solutionID').val();
+
+	$.ajax({
+		url : "ClientController?action=sendSolution",
+		dataType : "json",
+		data : {
+			team : team,
+			incID : ciID,
+			time : elapsedTime
+		},
+		success : function(msg) {
+			console.log(msg);
+		},
+		error : function(e) {
+			console.log("js:sendSolution: Error in sendSolution.");
+		}
+	});
+
+		
 		return false;
 //	}
 }

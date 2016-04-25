@@ -123,6 +123,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			supplier.setSupplierName(rs.getString("supplier_name"));
 			supplier.setSolutionCost(rs.getDouble("solution_cost"));
 			supplier.setIsActive(rs.getByte("isActive"));
+			supplier.setCurrency(rs.getString("currency"));
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

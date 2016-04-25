@@ -50,7 +50,7 @@ public class ClockIncrementor implements Runnable {
 
 			if ((elapsedClock + pauseTime) % sessionTime == 0) {
 				// finished runTime
-				log.SimulationLog.pause();
+//				log.SimulationLog.pause();
 				remainingClock = pauseTime;
 
 			} else if (elapsedClock % sessionTime == 0) {
@@ -59,7 +59,7 @@ public class ClockIncrementor implements Runnable {
 				remainingClock = runTime_;
 			}
 		}
-		log.SimulationLog.Stop(elapsedClock);
+//		log.SimulationLog.Stop(elapsedClock);
 	}
 
 	public static void pause() {

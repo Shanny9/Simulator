@@ -2,6 +2,7 @@ package com.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -21,11 +22,23 @@ public class TblCI implements Serializable {
 
 	private byte isActive;
 
-	@Column(name="supplier_level2")
-	private String supplierLevel2;
+	//bi-directional many-to-one association to TblSupplier
+	@ManyToOne
+	@JoinColumn(name="supplier_level2")
+	private TblSupplier tblSupplier1;
 
-	@Column(name="supplier_level3")
-	private String supplierLevel3;
+	//bi-directional many-to-one association to TblSupplier
+	@ManyToOne
+	@JoinColumn(name="supplier_level3")
+	private TblSupplier tblSupplier2;
+
+	//bi-directional many-to-one association to TblResource_CI
+	@OneToMany(mappedBy="tblCi")
+	private List<TblResource_CI> tblResourceCis;
+
+	//bi-directional many-to-many association to TblService
+	@ManyToMany(mappedBy="tblCis")
+	private List<TblService> tblServices;
 
 	public TblCI() {
 	}
@@ -54,20 +67,50 @@ public class TblCI implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public String getSupplierLevel2() {
-		return this.supplierLevel2;
+	public TblSupplier getTblSupplier1() {
+		return this.tblSupplier1;
 	}
 
-	public void setSupplierLevel2(String supplierLevel2) {
-		this.supplierLevel2 = supplierLevel2;
+	public void setTblSupplier1(TblSupplier tblSupplier1) {
+		this.tblSupplier1 = tblSupplier1;
 	}
 
-	public String getSupplierLevel3() {
-		return this.supplierLevel3;
+	public TblSupplier getTblSupplier2() {
+		return this.tblSupplier2;
 	}
 
-	public void setSupplierLevel3(String supplierLevel3) {
-		this.supplierLevel3 = supplierLevel3;
+	public void setTblSupplier2(TblSupplier tblSupplier2) {
+		this.tblSupplier2 = tblSupplier2;
+	}
+
+	public List<TblResource_CI> getTblResourceCis() {
+		return this.tblResourceCis;
+	}
+
+	public void setTblResourceCis(List<TblResource_CI> tblResourceCis) {
+		this.tblResourceCis = tblResourceCis;
+	}
+
+	public TblResource_CI addTblResourceCi(TblResource_CI tblResourceCi) {
+		getTblResourceCis().add(tblResourceCi);
+		tblResourceCi.setTblCi(this);
+
+		return tblResourceCi;
+	}
+
+	public TblResource_CI removeTblResourceCi(TblResource_CI tblResourceCi) {
+		getTblResourceCis().remove(tblResourceCi);
+		tblResourceCi.setTblCi(null);
+
+		return tblResourceCi;
+	}
+
+	public List<TblService> getTblServices() {
+		return this.tblServices;
+	}
+
+	public void setTblServices(List<TblService> tblServices) {
+		this.tblServices = tblServices;
 	}
 
 }

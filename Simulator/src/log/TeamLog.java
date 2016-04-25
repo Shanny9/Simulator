@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblGeneralParametersDaoImpl;
@@ -58,10 +59,9 @@ public class TeamLog implements Serializable {
 		this.isFinished = false;
 		
 		this.profits.add(new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital());
-
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
-
+		
 		for (TblService service : services) {
 			int service_id = service.getServiceId();
 			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
@@ -147,5 +147,21 @@ public class TeamLog implements Serializable {
 	
 	boolean isIncidentOpen(int inc_id, int time){
 		return incident_logs.get(inc_id).isOpen(time);
+	}
+	
+	public String toString(){
+		String str = "Team Log\n========\n\nIncidents\n--------\n";
+		for (IncidentLog il : incident_logs.values()){
+			str +=il.toString() +"\n";
+		}
+		str+="\nServices\n--------\n";
+		for (ServiceLog sl : service_logs.values()){
+			str+=sl.toString() + "\n";
+		}
+		str+="\nPurchases\n--------\n";
+		for (Map.Entry<Integer, Integer> entry : purchases.entrySet()){
+			str+="Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
+		}
+		return str;
 	}
 }

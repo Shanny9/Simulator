@@ -66,6 +66,7 @@ public class ClientController extends HttpServlet {
 		boolean isBaught = false;
 		switch (action) {
 		case "getSolutions":
+			System.out.println("ClientController: getSolutions= " + getSolutions());
 			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
 			break;
 		case "checkIncident":

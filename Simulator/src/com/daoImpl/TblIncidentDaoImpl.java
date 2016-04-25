@@ -128,12 +128,12 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setIncidentTime(rs.getInt("incidentTime"));
 				incident.setIsActive(rs.getByte("isActive"));
 				TblSolution sol = new TblSolution();
-				sol.setSolutionId(rs.getInt(rs.getInt("solution_id")));
+				sol.setSolutionId(rs.getInt("solution_id"));
 				incident.setTblSolution(sol);				
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
+			System.err.println("getAllIncidents: " + e.getMessage());
 		}
 		return incidents;
 	}

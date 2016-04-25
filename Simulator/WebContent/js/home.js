@@ -58,7 +58,6 @@ function getGP() {
 		success : function(data) {
 			$.each(data, function(key, value) {
 				gp[key] = value;
-				// console.log("key= " + key + ", value= " + value);
 			});
 		},
 		error : function(e) {

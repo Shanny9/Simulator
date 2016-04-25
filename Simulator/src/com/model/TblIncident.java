@@ -2,7 +2,6 @@ package com.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.sql.Time;
 import java.util.List;
 
 

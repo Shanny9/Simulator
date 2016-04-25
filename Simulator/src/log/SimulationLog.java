@@ -53,9 +53,10 @@ public class SimulationLog implements Runnable, Serializable {
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
 		incident_times = LogUtils.getIncidentTimes();
-		
+	
 		marom = new TeamLog();
 		rakia = new TeamLog();
+		System.out.println(marom);
 	}
 
 	public static SimulationLog getInstance() {

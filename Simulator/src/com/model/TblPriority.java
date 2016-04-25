@@ -18,6 +18,16 @@ public class TblPriority implements Serializable {
 
 	private String priorityName;
 
+	//bi-directional many-to-one association to TblLevel
+	@ManyToOne
+	@JoinColumn(name="urgency")
+	private TblLevel tblLevel1;
+
+	//bi-directional many-to-one association to TblLevel
+	@ManyToOne
+	@JoinColumn(name="impact")
+	private TblLevel tblLevel2;
+
 	public TblPriority() {
 	}
 
@@ -35,6 +45,22 @@ public class TblPriority implements Serializable {
 
 	public void setPriorityName(String priorityName) {
 		this.priorityName = priorityName;
+	}
+
+	public TblLevel getTblLevel1() {
+		return this.tblLevel1;
+	}
+
+	public void setTblLevel1(TblLevel tblLevel1) {
+		this.tblLevel1 = tblLevel1;
+	}
+
+	public TblLevel getTblLevel2() {
+		return this.tblLevel2;
+	}
+
+	public void setTblLevel2(TblLevel tblLevel2) {
+		this.tblLevel2 = tblLevel2;
 	}
 
 }

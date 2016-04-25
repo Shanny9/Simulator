@@ -1,9 +1,16 @@
 /**
  * 
  */
-
+var finishRound;
 var solutionsData;
+var clockInterval;
+var isRunTime;
+var showTime;
+var session;
+var elapsedTime;
+var gp = new Object();
 var team = "Marom"; // TODO: change this
+var courseName = 'IDF-AMAM-01';
 
 $(document).ready(
 		function() {
@@ -121,6 +128,61 @@ function showPrice(){
 	});
 }
 
+function getGP() {
+	$.ajax({
+		url : "HomeController?action=getGP&courseName=" + courseName,
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			$.each(data, function(key, value) {
+				gp[key] = value;
+			});
+		},
+		error : function(e) {
+			console.log("js:getGP: Error in getGP: " + e.message);
+		}
+	});
+}
+
+function incrementClock() {
+//	console.log("incrementClock: elapsed time=" + elapsedTime);
+	$('#main-time').html(showTime.toHHMMSS());
+	showTime = (showTime - 1);
+	elapsedTime++;
+
+	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
+		// finished runTime
+		isRunTime = false;
+		showTime = gp["pauseTime"];
+
+	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+		// finished pause time
+		isRunTime = true;
+		showTime = gp["runTime"];
+
+		if (elapsedTime % gp["sessionTime"] == 0) {
+			// finished session
+			if (session < gp["sessionsPerRound"]){
+				session++;
+			};
+
+			if (elapsedTime % gp["roundTime"] == 0) {
+				// finished round
+				console.log("finished");
+				$('#main-time').html("00:00:00");
+				clearInterval(clockInterval);
+			}
+		}
+	}
+}
+
+function startSimulator() {
+	getGP(courseName);
+	finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
+	getTime();
+	clockInterval = setInterval(incrementClock, 1000);
+}
+
 function checkIncident(){
 	var inc_id = $('#incidentID').val();
 	
@@ -177,7 +239,9 @@ function getSolutions() {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			solutionsData = data;
+			$.each(data, function(key, value) {
+				solutionsData[key] = value;
+			});
 		},
 		error : function(e) {
 			console.log("js:getSolutions: Error in getting solutions.");
@@ -226,5 +290,17 @@ function buySolution() {
 			console.log("js:sendSolution: Error in buySolution.");
 		}
 	});
+}
 
+Number.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
 }

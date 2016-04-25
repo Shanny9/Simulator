@@ -52,7 +52,7 @@ public class TblCIDaoImpl implements TblCIDao{
 	public List<TblCI> getAllCIs() {
 		List<TblCI> cis = new ArrayList<TblCI>();
 
-		String query = "SELECT * FROM tblCI";
+		String query = "SELECT * FROM SIMULATOR.tblCI";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -62,8 +62,11 @@ public class TblCIDaoImpl implements TblCIDao{
 
 				ci.setCiId(rs.getByte("CI_ID"));
 				ci.setCI_name(rs.getString("CI_name"));
-				ci.setSupplierLevel2(rs.getString("supplier_level2"));
-				ci.setSupplierLevel3(rs.getString("supplier_level3"));
+				TblSupplier sup = new TblSupplier();
+				sup.setSupplierName(rs.getString("supplier_level2"));
+				ci.setTblSupplier1(sup);
+				sup.setSupplierName(rs.getString("supplier_level3"));
+				ci.setTblSupplier2(sup);
 				ci.setIsActive(rs.getByte("isActive"));
 				cis.add(ci);
 			}

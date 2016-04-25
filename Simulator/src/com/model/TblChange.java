@@ -51,19 +51,19 @@ public class TblChange implements Serializable {
 	@ManyToMany(mappedBy="tblChanges1")
 	private List<TblChange> tblChanges2;
 
-	//bi-directional many-to-one association to TblIncident
-	@ManyToOne
-	@JoinColumn(name="affectedIncident")
-	private TblIncident tblIncident;
+	//bi-directional many-to-one association to TblResource_Change
+	@OneToMany(mappedBy="tblChange")
+	private List<TblResource_Change> tblResourceChanges;
 
 	//bi-directional many-to-one association to TblService
 	@ManyToOne
 	@JoinColumn(name="service_ID")
 	private TblService tblService;
 
-	//bi-directional many-to-one association to TblResource_Change
-	@OneToMany(mappedBy="tblChange")
-	private List<TblResource_Change> tblResourceChanges;
+	//bi-directional many-to-one association to TblIncident
+	@ManyToOne
+	@JoinColumn(name="affectedIncident")
+	private TblIncident tblIncident;
 
 	public TblChange() {
 	}
@@ -148,22 +148,6 @@ public class TblChange implements Serializable {
 		this.tblChanges2 = tblChanges2;
 	}
 
-	public TblIncident getTblIncident() {
-		return this.tblIncident;
-	}
-
-	public void setTblIncident(TblIncident tblIncident) {
-		this.tblIncident = tblIncident;
-	}
-
-	public TblService getTblService() {
-		return this.tblService;
-	}
-
-	public void setTblService(TblService tblService) {
-		this.tblService = tblService;
-	}
-
 	public List<TblResource_Change> getTblResourceChanges() {
 		return this.tblResourceChanges;
 	}
@@ -184,6 +168,22 @@ public class TblChange implements Serializable {
 		tblResourceChange.setTblChange(null);
 
 		return tblResourceChange;
+	}
+
+	public TblService getTblService() {
+		return this.tblService;
+	}
+
+	public void setTblService(TblService tblService) {
+		this.tblService = tblService;
+	}
+
+	public TblIncident getTblIncident() {
+		return this.tblIncident;
+	}
+
+	public void setTblIncident(TblIncident tblIncident) {
+		this.tblIncident = tblIncident;
 	}
 
 }

@@ -2,13 +2,14 @@ package utils;
 
 import java.util.HashMap;
 
+import log.SimulationLog;
+
 public class ClockIncrementor implements Runnable {
 	private static volatile boolean stopThread = false;
 	private static int elapsedClock;
 	private static int remainingClock;
 	private static int finishRound;
 	private static int round;
-
 	private static int pauseTime;
 	private static int sessionTime;
 	private static int runTime_;
@@ -33,18 +34,19 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	public void run() {
-		while (!stopThread && elapsedClock < finishRound) {
-			synchronized (this) {
-				try {
-					System.out.println("elapsedClock: " + elapsedClock);
-					System.out.println("finishRound: " + finishRound);
-					System.out.println("remaining: " + remainingClock);
-					System.out.println("----------------------");
-					wait(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+		if (!stopThread && elapsedClock < finishRound) {
+//			synchronized (this) {
+//				try {
+//					System.out.println("elapsedClock: " + elapsedClock);
+//					System.out.println("finishRound: " + finishRound);
+//					System.out.println("remaining: " + remainingClock);
+//					System.out.println("----------------------");
+//					wait(1000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+			
 			elapsedClock += 1;
 			remainingClock -= 1;
 
@@ -55,7 +57,6 @@ public class ClockIncrementor implements Runnable {
 
 			} else if (elapsedClock % sessionTime == 0) {
 				// finished pause time
-				log.SimulationLog.resume();
 				remainingClock = runTime_;
 			}
 		}
@@ -64,11 +65,9 @@ public class ClockIncrementor implements Runnable {
 
 	public static void pause() {
 		stopThread = true;
-		log.SimulationLog.pause();
 	}
 
 	public static void resume() {
 		stopThread = false;
-		log.SimulationLog.resume();
 	}
 }

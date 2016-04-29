@@ -29,8 +29,6 @@ public class ClientController extends HttpServlet {
 	private int inc_id;
 	private int time;
 	private static final long serialVersionUID = 1L;
-	// private static HashMap<TblResolutionPK, TblResolution> resolutions = new
-	// HashMap<>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -66,7 +64,7 @@ public class ClientController extends HttpServlet {
 		boolean isBaught = false;
 		switch (action) {
 		case "getSolutions":
-			System.out.println("ClientController: getSolutions= " + getSolutions());
+//			System.out.println("ClientController: getSolutions= " + getSolutions());
 			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
 			break;
 		case "checkIncident":
@@ -83,6 +81,7 @@ public class ClientController extends HttpServlet {
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = Integer.valueOf(request.getParameter("time"));
 			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
+			response.getWriter().print("OK");
 			break;
 		}
 	}

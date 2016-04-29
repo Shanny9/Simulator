@@ -16,12 +16,20 @@ var courseName = 'IDF-AMAM-01';
 var clockInterval;
 
 $(document).ready(function() {
+//	setSource();
 	$("#startSimulator").click(getEvents);
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
 	console.log("END Document ready");
 });
+
+//function setSource() {
+//    var eventSource = new EventSource("ScoreController");
+//    eventSource.onmessage = function(event) {
+//        document.getElementById('marom-score').innerHTML = event.data;
+//    };
+//}
 
 /**
  * 
@@ -99,7 +107,7 @@ function getTime() {
 			if (offset < 0) {
 				offset = offset * -1;
 			}
-			showTime = (remainingClock + offset)
+			showTime = Math.floor(remainingClock + offset);
 			console.log("remainingClock " +remainingClock);
 			console.log("offset: "+ offset);
 		},
@@ -138,7 +146,7 @@ function resumeSimulator(){
 }
 
 function incrementClock() {
-	console.log("incrementClock: elapsed time=" + elapsedTime);
+	console.log("incrementClock: show time=" + showTime);
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;

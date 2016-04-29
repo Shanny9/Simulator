@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class SimulationLog implements Runnable, Serializable {
+public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * 
 	 */
@@ -35,14 +35,6 @@ public class SimulationLog implements Runnable, Serializable {
 	private static TeamLog rakia;
 	
 	private static SimulationLog instance;
-	/*
-	 * False if simulator is running
-	 */
-	private static boolean stopThread;
-	/*
-	 * The run_time elapsed since the simulation started
-	 */
-	private int elapsed_time;
 	/**
 	 * @param cis
 	 * @param servicesItems
@@ -56,7 +48,6 @@ public class SimulationLog implements Runnable, Serializable {
 	
 		marom = new TeamLog();
 		rakia = new TeamLog();
-		System.out.println(marom);
 	}
 
 	public static SimulationLog getInstance() {
@@ -92,39 +83,12 @@ public class SimulationLog implements Runnable, Serializable {
 		getTeam(team).incidentSolved(inc_id, time, isBaught);
 	}
 
-	public static void pause() {
-		stopThread = true;
-		log.LogUtils.saveLog();
-	}
-
-	public static void resume() {
-		stopThread = false;
-	}
-	
-	public static void Stop(int time){
-		pause();
-		marom.Stop(time);
-		rakia.Stop(time);
-		System.out.println("Log stopped");
-	}
-
-	@Override
-	public void run() {
-		while (!stopThread) {
-			// should occur every second
-			elapsed_time++;
-			Integer inc_id  = incident_times.get(elapsed_time);
-			if (inc_id != null){
-				marom.incidentStarted(inc_id, elapsed_time);
-				rakia.incidentStarted(inc_id, elapsed_time);
-			}
-			marom.updateProfit();
-			rakia.updateProfit();
-		}
-	}
-
 	public boolean checkIncident(String team, int inc_id, int time) {
 		return getTeam(team).isIncidentOpen(inc_id, time);
+	}
+	
+	public HashMap<Integer, Integer> getIncidentTimes(){
+		return incident_times;
 	}
 
 }

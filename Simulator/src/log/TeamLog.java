@@ -14,6 +14,7 @@ import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblCI;
 import com.model.TblGeneral_parameter;
 import com.model.TblService;
+
 /*
  * TeamLog records the team's services, purchases and profits throughout the simulation
  */
@@ -57,11 +58,11 @@ public class TeamLog implements Serializable {
 		this.service_logs = new HashMap<>();
 		this.purchases = new HashMap<>();
 		this.isFinished = false;
-		
+
 		this.profits.add(new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital());
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
-		
+
 		for (TblService service : services) {
 			int service_id = service.getServiceId();
 			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
@@ -79,33 +80,29 @@ public class TeamLog implements Serializable {
 		IncidentLog incLog = incident_logs.get(inc_id);
 		incLog.setEnd_time(time);
 		int ci_id = incLog.getRoot_ci();
-		
-		long start = new Date().getTime();
+
 		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
 
-		for (Integer service_id : affectedServices) {
-			diff += service_logs.get(service_id).ciUpdate(true, time);
+		if (affectedServices != null) {
+			for (Integer service_id : affectedServices) {
+				diff += service_logs.get(service_id).ciUpdate(true, time);
+			}
 		}
-		
+
 		if (isBaught) {
 			purchases.put(time, ci_id);
-			// reduces the solution cost from the team's profit at the given @time
+			// reduces the solution cost from the team's profit at the given
+			// @time
 			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
 		}
-		long end = new Date().getTime();
-		// checks if the calculation takes less than a second as it should
-		System.out.println("updateCI calculation time: " + (end - start) / 1000 + "seconds");
 	}
-	
-	synchronized void incidentStarted(int inc_id, int time) {
 
+	void incidentStarted(int inc_id, int time) {
 		if (isFinished) {
 			return;
 		}
-		
 		int ci_id = incident_logs.get(inc_id).getRoot_ci();
-				
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 		for (Integer service_id : affectedServices) {
 			diff += service_logs.get(service_id).ciUpdate(false, time);
 		}
@@ -138,29 +135,30 @@ public class TeamLog implements Serializable {
 		return purchases;
 	}
 
-	synchronized void Stop(int time) {
-		for (ServiceLog service : service_logs.values()){
+	public synchronized void Stop(int time) {
+		for (ServiceLog service : service_logs.values()) {
 			service.stop(time);
 		}
 		this.isFinished = true;
 	}
-	
-	boolean isIncidentOpen(int inc_id, int time){
+
+	boolean isIncidentOpen(int inc_id, int time) {
+		System.out.println("TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
 		return incident_logs.get(inc_id).isOpen(time);
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		String str = "Team Log\n========\n\nIncidents\n--------\n";
-		for (IncidentLog il : incident_logs.values()){
-			str +=il.toString() +"\n";
+		for (IncidentLog il : incident_logs.values()) {
+			str += il.toString() + "\n";
 		}
-		str+="\nServices\n--------\n";
-		for (ServiceLog sl : service_logs.values()){
-			str+=sl.toString() + "\n";
+		str += "\nServices\n--------\n";
+		for (ServiceLog sl : service_logs.values()) {
+			str += sl.toString() + "\n";
 		}
-		str+="\nPurchases\n--------\n";
-		for (Map.Entry<Integer, Integer> entry : purchases.entrySet()){
-			str+="Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
+		str += "\nPurchases\n--------\n";
+		for (Map.Entry<Integer, Integer> entry : purchases.entrySet()) {
+			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
 		}
 		return str;
 	}

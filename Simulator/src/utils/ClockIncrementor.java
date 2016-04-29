@@ -5,7 +5,7 @@ import java.util.HashMap;
 import log.SimulationLog;
 
 public class ClockIncrementor implements Runnable {
-	private static volatile boolean stopThread = false;
+	private static volatile boolean isRunning = false;
 	private static int elapsedClock;
 	private static int remainingClock;
 	private static int finishRound;
@@ -23,6 +23,7 @@ public class ClockIncrementor implements Runnable {
 		pauseTime = pause;
 		sessionTime = sessionT;
 		runTime_ = runTime;
+		isRunning = true;
 	}
 
 	public static HashMap<String, Object> getClocks() {
@@ -34,18 +35,7 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	public void run() {
-		if (!stopThread && elapsedClock < finishRound) {
-//			synchronized (this) {
-//				try {
-//					System.out.println("elapsedClock: " + elapsedClock);
-//					System.out.println("finishRound: " + finishRound);
-//					System.out.println("remaining: " + remainingClock);
-//					System.out.println("----------------------");
-//					wait(1000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
+		if (isRunning && elapsedClock < finishRound) {
 			
 			elapsedClock += 1;
 			remainingClock -= 1;
@@ -64,10 +54,14 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	public static void pause() {
-		stopThread = true;
+		isRunning = false;
 	}
 
 	public static void resume() {
-		stopThread = false;
+		isRunning = true;
+	}
+	
+	public static boolean isRunning(){
+		return isRunning;
 	}
 }

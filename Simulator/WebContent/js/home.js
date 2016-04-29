@@ -15,6 +15,9 @@ var finishRound;
 var courseName = 'IDF-AMAM-01';
 var clockInterval;
 
+var runPercentage;
+var pausePercentage;
+
 $(document).ready(function() {
 //	setSource();
 	$("#startSimulator").click(getEvents);
@@ -146,10 +149,24 @@ function resumeSimulator(){
 }
 
 function incrementClock() {
+	
 	console.log("incrementClock: show time=" + showTime);
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;
+	
+	if (isRunTime){
+		runPercentage = (gp["runTime"] - showTime) / gp["sessionTime"] * 100;
+	} else{
+		pausePercentage = (gp["pauseTime"] - showTime) / gp["sessionTime"] * 100;
+	}
+	
+	var idRun = '.progress-bar-success';
+	var idPause = '.progress-bar-danger';
+	
+	$(idRun).css('width', runPercentage+'%').attr('aria-valuenow', runPercentage);
+	$(idPause).css('width', pausePercentage+'%').attr('aria-valuenow', pausePercentage);
+	console.log(runPercentage);
 
 	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
 		// finished runTime
@@ -163,6 +180,8 @@ function incrementClock() {
 
 		if (elapsedTime % gp["sessionTime"] == 0) {
 			// finished session
+			runPercentage = 0;
+			pausePercentage = 0;
 			if (session < gp["sessionsPerRound"]){
 				session++;
 			};

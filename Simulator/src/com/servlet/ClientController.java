@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.jdbc.DBUtility;
 
 import log.SimulationLog;
+import utils.ClockIncrementor;
 import utils.Queries;
 import utils.SolutionElement;
 
@@ -82,6 +83,18 @@ public class ClientController extends HttpServlet {
 			time = Integer.valueOf(request.getParameter("time"));
 			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
 			response.getWriter().print("OK");
+			break;
+		case "checkSimulator":
+			while (!ClockIncrementor.isRunning()){
+				synchronized (this) {
+			        try {
+			            wait(1000);
+			        } catch (Throwable e) {
+			            e.printStackTrace();
+			        }
+			    }
+			}
+			response.getWriter().print(true);
 			break;
 		}
 	}

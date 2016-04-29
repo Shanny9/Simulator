@@ -117,7 +117,8 @@ $(document).ready(
 			});
 			
 			$("#buy").click(buySolution);
-			startSimulator();
+			checkSimulator();
+//			startSimulator();
 
 		});
 
@@ -309,6 +310,21 @@ function sendSolution() {
 		},
 		success : function(msg) {
 			console.log(msg);
+		},
+		error : function(e) {
+			console.log("js:sendSolution: Error in sendSolution.");
+		}
+	});
+}
+
+//checks if the simulator has started
+function checkSimulator() {
+
+	$.ajax({
+		url : "ClientController?action=checkSimulator",
+		dataType : "json",
+		success : function(msg) {
+			startSimulator();
 		},
 		error : function(e) {
 			console.log("js:sendSolution: Error in sendSolution.");

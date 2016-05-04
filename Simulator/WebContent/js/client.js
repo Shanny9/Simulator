@@ -327,7 +327,7 @@ function checkSimulator() {
 			startSimulator();
 		},
 		error : function(e) {
-			console.log("js:sendSolution: Error in sendSolution.");
+			console.log("js:checkSimulator: Error in checkSimulator.");
 		}
 	});
 }

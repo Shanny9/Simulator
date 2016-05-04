@@ -3,6 +3,7 @@ package com.servlet;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,8 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 
-import log.SimulationLog;
-import log.TeamLog;
+import log.SolutionLog;
 import utils.HomeData;
 import utils.TimerManager;
 
@@ -60,8 +60,8 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
-		switch (action){
-		
+		switch (action) {
+
 		case "getTime":
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
@@ -95,17 +95,35 @@ public class HomeController extends HttpServlet {
 		case "getEvents":
 			response.getWriter().print(new HomeData().getEvents());
 			break;
+		case "solutionStream":
+			// content type must be set to text/event-stream
+			response.setContentType("text/event-stream");
+
+			// encoding must be set to UTF-8
+			response.setCharacterEncoding("UTF-8");
+
+			PriorityQueue<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
+			if (!solutionQueue.isEmpty()) {
+				String json = gson.toJson(solutionQueue.poll());
+				String[] rows = json.split("\n");
+				for (int i= 0 ; i <rows.length ; i++){
+					rows[i] = "data: " + rows[i];
+				}
+				String streamMessage = String.join("\n", rows);
+				response.getWriter().write(streamMessage + "\n\n");
+			}
+			break;
 		}
 	}
 
 	protected HashMap<String, Object> getTimes(String courseName) {
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		HashMap<String, Object> timesMap = new HashMap<String, Object>();
-		
+
 		TblCourseDaoImpl daoCourse = new TblCourseDaoImpl();
 		TblCourse course = daoCourse.getCourseById(courseName);
-		int round = course.getLastRoundDone()+1;
-		
+		int round = course.getLastRoundDone() + 1;
+
 		timesMap.put("sessionTime", daoGP.getSessionTime());
 		timesMap.put("roundTime", daoGP.getRoundTime());
 		timesMap.put("numOfRounds", daoGP.getGeneralParameters().getNumOfRounds());
@@ -113,7 +131,24 @@ public class HomeController extends HttpServlet {
 		timesMap.put("runTime", daoGP.getGeneralParameters().getRunTime());
 		timesMap.put("sessionsPerRound", daoGP.getGeneralParameters().getSessionsPerRound());
 		timesMap.put("totalTime", daoGP.getTotalTime());
-		timesMap.put("currentRound", round/*new TblCourseDaoImpl().getCourseById(courseName).getLastRoundDone()+1*/);
+		timesMap.put("currentRound",
+				round/*
+						 * new TblCourseDaoImpl().getCourseById(courseName).
+						 * getLastRoundDone()+1
+						 */);
 		return timesMap;
 	}
+
+	// private String toJSON(SolutionLog sl){
+	// String team = "\"" + sl.getTeam() + "\"";
+	// String events = "\"events\":[";
+	// for (Integer event_id : sl.getEvents()){
+	// events+="{\"event_id\":" + "\"" + event_id + "\"" + "}";
+	// }
+	// events+="]";
+	//// HashSet<Integer> events = "\"" + sl.getEvents() + "\"";;
+	//
+	// String message = "data: {\ndata: \"team\": " + team + ",\ndata:
+	// \"inc_id\": " + inc_id + "\ndata: }\n\n";
+	// }
 }

@@ -1,11 +1,11 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.jdbc.DBUtility;
 
 import log.SimulationLog;
+import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.Queries;
 import utils.SolutionElement;
@@ -65,7 +66,8 @@ public class ClientController extends HttpServlet {
 		boolean isBaught = false;
 		switch (action) {
 		case "getSolutions":
-//			System.out.println("ClientController: getSolutions= " + getSolutions());
+			// System.out.println("ClientController: getSolutions= " +
+			// getSolutions());
 			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
 			break;
 		case "checkIncident":
@@ -82,17 +84,18 @@ public class ClientController extends HttpServlet {
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = Integer.valueOf(request.getParameter("time"));
 			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
-			response.getWriter().print("OK");
+			log.SimulationLog.getInstance().getSolutionQueue().offer(new SolutionLog(team, inc_id));
+			response.getWriter().print(true);
 			break;
 		case "checkSimulator":
-			while (!ClockIncrementor.isRunning()){
+			while (!ClockIncrementor.isRunning()) {
 				synchronized (this) {
-			        try {
-			            wait(1000);
-			        } catch (Throwable e) {
-			            e.printStackTrace();
-			        }
-			    }
+					try {
+						wait(1000);
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			response.getWriter().print(true);
 			break;

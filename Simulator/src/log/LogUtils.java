@@ -47,7 +47,7 @@ public class LogUtils {
 			FileInputStream fileIn = new FileInputStream("log.ser");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
-			in.close();
+			in.close(); 
 			fileIn.close();
 			return log;
 		} catch (IOException i) {

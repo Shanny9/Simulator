@@ -2,8 +2,6 @@ package com.model;
 
 import java.io.Serializable;
 
-import javax.persistence.EmbeddedId;
-
 
 /**
  * The persistent class for the tblCMDB database table.
@@ -13,7 +11,6 @@ import javax.persistence.EmbeddedId;
 public class TblCMDB implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
 	private TblCMDBPK id;
 
 	public TblCMDB() {

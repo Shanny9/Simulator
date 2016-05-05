@@ -9,23 +9,16 @@ import java.util.List;
  * The persistent class for the tblSolution database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblSolution.findAll", query="SELECT t FROM TblSolution t")
+
 public class TblSolution implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="solution_id")
 	private int solutionId;
 
-	@Column(name="solution_marom")
 	private int solutionMarom;
 
-	@Column(name="solution_rakia")
 	private int solutionRakia;
 
-	//bi-directional many-to-one association to TblIncident
-	@OneToMany(mappedBy="tblSolution")
 	private List<TblIncident> tblIncidents;
 
 	public TblSolution() {

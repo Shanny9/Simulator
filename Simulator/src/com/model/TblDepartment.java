@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
 
 
@@ -9,23 +8,18 @@ import java.util.List;
  * The persistent class for the tblDepartment database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblDepartment.findAll", query="SELECT t FROM TblDepartment t")
+
 public class TblDepartment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
 	private TblDepartmentPK id;
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblDivision
-	@ManyToOne
-	@JoinColumn(name="devision_name")
+
 	private TblDivision tblDivision;
 
-	//bi-directional many-to-one association to TblService_Department
-	@OneToMany(mappedBy="tblDepartment")
+
 	private List<TblService_Department> tblServiceDepartments;
 
 	public TblDepartment() {

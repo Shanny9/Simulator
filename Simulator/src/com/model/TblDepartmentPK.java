@@ -1,21 +1,20 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * The primary key class for the tblDepartment database table.
  * 
  */
-@Embeddable
+
 public class TblDepartmentPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="devision_name", insertable=false, updatable=false)
+
 	private String devisionName;
 
-	@Column(name="department_name")
+
 	private String departmentName;
 
 	public TblDepartmentPK() {

@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
 
 
@@ -9,35 +8,26 @@ import java.util.List;
  * The persistent class for the tblCI database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblCI.findAll", query="SELECT t FROM TblCI t")
+
 public class TblCI implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="CI_ID")
 	private byte ciId;
 
 	private String CI_name;
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblSupplier
-	@ManyToOne
-	@JoinColumn(name="supplier_level2")
+
 	private TblSupplier tblSupplier1;
 
-	//bi-directional many-to-one association to TblSupplier
-	@ManyToOne
-	@JoinColumn(name="supplier_level3")
+
 	private TblSupplier tblSupplier2;
 
-	//bi-directional many-to-one association to TblResource_CI
-	@OneToMany(mappedBy="tblCi")
+
 	private List<TblResource_CI> tblResourceCis;
 
-	//bi-directional many-to-many association to TblService
-	@ManyToMany(mappedBy="tblCis")
+
 	private List<TblService> tblServices;
 
 	public TblCI() {

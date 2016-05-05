@@ -1,26 +1,21 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.sql.Time;
 import java.util.List;
-
 
 /**
  * The persistent class for the tblChange database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblChange.findAll", query="SELECT t FROM TblChange t")
+
 public class TblChange implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	private double change_ID;
 
 	private Time avbTime;
 
-	@Column(name="fixed_cost")
 	private double fixedCost;
 
 	private Time incidentFreq;
@@ -31,38 +26,16 @@ public class TblChange implements Serializable {
 
 	private Time rcmdTime;
 
-	@Column(name="varient_income")
 	private double varientIncome;
 
-	//bi-directional many-to-many association to TblChange
-	@ManyToMany
-	@JoinTable(
-		name="tblAffected_Change"
-		, joinColumns={
-			@JoinColumn(name="affecting")
-			}
-		, inverseJoinColumns={
-			@JoinColumn(name="affected")
-			}
-		)
 	private List<TblChange> tblChanges1;
 
-	//bi-directional many-to-many association to TblChange
-	@ManyToMany(mappedBy="tblChanges1")
 	private List<TblChange> tblChanges2;
 
-	//bi-directional many-to-one association to TblIncident
-	@ManyToOne
-	@JoinColumn(name="affectedIncident")
 	private TblIncident tblIncident;
 
-	//bi-directional many-to-one association to TblService
-	@ManyToOne
-	@JoinColumn(name="service_ID")
 	private TblService tblService;
 
-	//bi-directional many-to-one association to TblResource_Change
-	@OneToMany(mappedBy="tblChange")
 	private List<TblResource_Change> tblResourceChanges;
 
 	public TblChange() {

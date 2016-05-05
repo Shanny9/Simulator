@@ -7,15 +7,13 @@ import javax.persistence.*;
  * The primary key class for the tblPriority database table.
  * 
  */
-@Embeddable
+
 public class TblPriorityPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(insertable=false, updatable=false)
 	private String urgency;
 
-	@Column(insertable=false, updatable=false)
 	private String impact;
 
 	public TblPriorityPK() {

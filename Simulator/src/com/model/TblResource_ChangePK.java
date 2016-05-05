@@ -1,21 +1,17 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * The primary key class for the tblResource_Change database table.
  * 
  */
-@Embeddable
 public class TblResource_ChangePK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(insertable=false, updatable=false)
 	private String resourceName;
 
-	@Column(insertable=false, updatable=false)
 	private double changeID;
 
 	public TblResource_ChangePK() {

@@ -1,41 +1,28 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
-
 
 /**
  * The persistent class for the tblIncident database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblIncident.findAll", query="SELECT t FROM TblIncident t")
+
 public class TblIncident implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="incident_id")
 	private byte incidentId;
 
-	@Column(name="ci_id")
 	private byte ciId;
 
 	private int incidentTime;
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblChange
-	@OneToMany(mappedBy="tblIncident")
 	private List<TblChange> tblChanges;
 
-	//bi-directional many-to-one association to TblEvent
-	@OneToMany(mappedBy="tblIncident")
 	private List<TblEvent> tblEvents;
 
-	//bi-directional many-to-one association to TblSolution
-	@ManyToOne
-	@JoinColumn(name="solution_id")
 	private TblSolution tblSolution;
 
 	public TblIncident() {

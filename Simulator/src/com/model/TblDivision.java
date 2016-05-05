@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
 
 
@@ -9,23 +8,17 @@ import java.util.List;
  * The persistent class for the tblDivision database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblDivision.findAll", query="SELECT t FROM TblDivision t")
+
 public class TblDivision implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="division_name")
+
 	private String divisionName;
 
 	private byte isActive;
 
-	//bi-directional many-to-one association to TblDepartment
-	@OneToMany(mappedBy="tblDivision")
 	private List<TblDepartment> tblDepartments;
 
-	//bi-directional many-to-one association to TblService_Division
-	@OneToMany(mappedBy="tblDivision")
 	private List<TblService_Division> tblServiceDivisions;
 
 	public TblDivision() {

@@ -9,28 +9,20 @@ import java.util.List;
  * The persistent class for the tblSupplier database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblSupplier.findAll", query="SELECT t FROM TblSupplier t")
+
 public class TblSupplier implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="supplier_name")
 	private String supplierName;
 
 	private String currency;
 
 	private byte isActive;
 
-	@Column(name="solution_cost")
 	private double solutionCost;
 
-	//bi-directional many-to-one association to TblCI
-	@OneToMany(mappedBy="tblSupplier1")
 	private List<TblCI> tblCis1;
 
-	//bi-directional many-to-one association to TblCI
-	@OneToMany(mappedBy="tblSupplier2")
 	private List<TblCI> tblCis2;
 
 	public TblSupplier() {

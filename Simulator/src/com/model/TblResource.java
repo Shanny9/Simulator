@@ -9,22 +9,17 @@ import java.util.List;
  * The persistent class for the tblResource database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblResource.findAll", query="SELECT t FROM TblResource t")
 public class TblResource implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	private String resourceName;
 
 	private double pricePerUnit;
 
 	//bi-directional many-to-one association to TblResource_CI
-	@OneToMany(mappedBy="tblResource")
 	private List<TblResource_CI> tblResourceCis;
 
 	//bi-directional many-to-one association to TblResource_Change
-	@OneToMany(mappedBy="tblResource")
 	private List<TblResource_Change> tblResourceChanges;
 
 	public TblResource() {

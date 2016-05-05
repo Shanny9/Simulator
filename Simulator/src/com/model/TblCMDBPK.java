@@ -1,21 +1,20 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * The primary key class for the tblCMDB database table.
  * 
  */
-@Embeddable
+
 public class TblCMDBPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="ci_id", insertable=false, updatable=false)
+
 	private byte ciId;
 
-	@Column(name="service_id", insertable=false, updatable=false)
+
 	private byte serviceId;
 
 	public TblCMDBPK() {

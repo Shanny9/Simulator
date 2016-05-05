@@ -1,21 +1,18 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * The primary key class for the tblService_Division database table.
  * 
  */
-@Embeddable
+
 public class TblService_DivisionPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(insertable=false, updatable=false)
 	private byte service_ID;
 
-	@Column(name="division_name", insertable=false, updatable=false)
 	private String divisionName;
 
 	public TblService_DivisionPK() {

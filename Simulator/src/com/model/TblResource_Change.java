@@ -1,31 +1,23 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 
 /**
  * The persistent class for the tblResource_Change database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblResource_Change.findAll", query="SELECT t FROM TblResource_Change t")
 public class TblResource_Change implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
 	private TblResource_ChangePK id;
 
 	private int quantity;
 
 	//bi-directional many-to-one association to TblChange
-	@ManyToOne
-	@JoinColumn(name="changeID")
 	private TblChange tblChange;
 
 	//bi-directional many-to-one association to TblResource
-	@ManyToOne
-	@JoinColumn(name="resourceName")
 	private TblResource tblResource;
 
 	public TblResource_Change() {

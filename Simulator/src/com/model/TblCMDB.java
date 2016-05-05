@@ -1,15 +1,15 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.EmbeddedId;
 
 
 /**
  * The persistent class for the tblCMDB database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblCMDB.findAll", query="SELECT t FROM TblCMDB t")
+
 public class TblCMDB implements Serializable {
 	private static final long serialVersionUID = 1L;
 

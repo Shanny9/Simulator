@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
 
 
@@ -9,16 +8,12 @@ import java.util.Date;
  * The persistent class for the tblCourse database table.
  * 
  */
-@Entity
-@NamedQuery(name="TblCourse.findAll", query="SELECT t FROM TblCourse t")
+
 public class TblCourse implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="course_name")
 	private String courseName;
 
-	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	private byte isActive;

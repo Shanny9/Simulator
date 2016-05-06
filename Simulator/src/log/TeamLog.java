@@ -63,11 +63,13 @@ public class TeamLog implements Serializable {
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
 
-		for (TblService service : services) {
-			int service_id = service.getServiceId();
-			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
-					serviceDownTimeCosts.get(service_id)));
-			this.diff += service_logs.get(service_id).getDiff();
+		if(serviceDownTimeCosts!=null && !serviceDownTimeCosts.isEmpty()){ //TODO: check this...
+			for (TblService service : services) {
+				int service_id = service.getServiceId();
+				service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
+						serviceDownTimeCosts.get(service_id)));
+				this.diff += service_logs.get(service_id).getDiff();
+			}
 		}
 		incident_logs = LogUtils.getIncidentLogs();
 	}

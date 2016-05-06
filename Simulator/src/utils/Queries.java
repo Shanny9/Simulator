@@ -7,13 +7,13 @@ public class Queries {
 			"join SIMULATOR.tblEvent E\r\n" + 
 			"on I.incident_id = E.incident_ID";
 	
-	public static final String serviceDownCosts = "select S.service_id, PC.cost as 'down_cost'\r\n" + 
+	public static final String serviceDownCosts = "select S.service_id, PC.pCost as 'down_cost'\r\n" + 
 			"from SIMULATOR.tblService S \r\n" + 
 			"join SIMULATOR.tblPriority P\r\n" + 
 			"on S.urgency = P.urgency\r\n" + 
 			"and S.impact = P.impact\r\n" + 
-			"join SIMULATOR.tblPriorityCost PC\r\n" + 
-			"on P.priorityName = PC.priorityName";
+			"join SIMULATOR.tblPriority_Cost PC\r\n" + 
+			"on P.priorityName = PC.pName";
 	
 	public static final String solutionsForClient = "select I.incident_id, \r\n" + 
 			"Sol.solution_marom,\r\n" + 

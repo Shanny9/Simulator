@@ -2,6 +2,7 @@ package log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,18 +64,19 @@ public class TeamLog implements Serializable {
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
 
-		if(serviceDownTimeCosts!=null && !serviceDownTimeCosts.isEmpty()){ //TODO: check this...
-			for (TblService service : services) {
-				int service_id = service.getServiceId();
-				service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
-						serviceDownTimeCosts.get(service_id)));
-				this.diff += service_logs.get(service_id).getDiff();
-			}
+		// if (serviceDownTimeCosts != null && !serviceDownTimeCosts.isEmpty())
+		// { // TODO: check this...
+		for (TblService service : services) {
+			int service_id = service.getServiceId();
+			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
+					serviceDownTimeCosts.get(service_id)));
+			this.diff += service_logs.get(service_id).getDiff();
 		}
+		// }
 		incident_logs = LogUtils.getIncidentLogs();
 	}
 
-	synchronized void incidentSolved(int inc_id, int time, boolean isBaught) {
+	void incidentSolved(int inc_id, int time, boolean isBaught) {
 
 		if (isFinished) {
 			return;
@@ -105,21 +107,22 @@ public class TeamLog implements Serializable {
 		}
 		int ci_id = incident_logs.get(inc_id).getRoot_ci();
 		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
-		for (Integer service_id : affectedServices) {
-			diff += service_logs.get(service_id).ciUpdate(false, time);
+		if (affectedServices != null) {
+			for (Integer service_id : affectedServices) {
+				diff += service_logs.get(service_id).ciUpdate(false, time);
+			}
 		}
 	}
 
-	public synchronized double getCurrentProfit() {
+	public double getCurrentProfit() {
 		return profits.get(profits.size() - 1);
 	}
 
-	synchronized double getProfit(int time) {
+	double getProfit(int time) {
 		return profits.get(time);
 	}
 
-	synchronized void updateProfit() {
-
+	void updateProfit() {
 		if (isFinished) {
 			return;
 		}
@@ -129,7 +132,7 @@ public class TeamLog implements Serializable {
 	/**
 	 * @return the service_logs
 	 */
-	synchronized HashMap<Integer, ServiceLog> getService_logs() {
+	HashMap<Integer, ServiceLog> getService_logs() {
 		return service_logs;
 	}
 
@@ -137,7 +140,7 @@ public class TeamLog implements Serializable {
 		return purchases;
 	}
 
-	public synchronized void Stop(int time) {
+	public void Stop(int time) {
 		for (ServiceLog service : service_logs.values()) {
 			service.stop(time);
 		}
@@ -145,7 +148,8 @@ public class TeamLog implements Serializable {
 	}
 
 	boolean isIncidentOpen(int inc_id, int time) {
-		System.out.println("TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
+		System.out.println(
+				"TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
 		return incident_logs.get(inc_id).isOpen(time);
 	}
 
@@ -163,5 +167,11 @@ public class TeamLog implements Serializable {
 			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
 		}
 		return str;
+	}
+
+	public void fixAllIncidents(int time) {
+		for (int inc_id : incident_logs.keySet()){
+			incidentSolved(inc_id,time,true);
+		}
 	}
 }

@@ -34,7 +34,7 @@ public class LogUpdater implements Runnable {
 		if (threadRunning) {
 			// should occur every second
 			elapsed_time++;
-			if (simLog.getIncidentTimes().containsKey(elapsed_time) && elapsed_time != 10) {
+			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
 				int inc_id = simLog.getIncidentTimes().get(elapsed_time);
 				simLog.getTeam("Marom").incidentStarted(inc_id, elapsed_time);
 				simLog.getTeam("Rakia").incidentStarted(inc_id, elapsed_time);

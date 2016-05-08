@@ -123,7 +123,6 @@ public class LogUtils {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.serviceDownCosts);
 			while (rs.next()) {
-				System.out.println(rs);
 				serviceCosts.put(rs.getInt("service_id"), rs.getDouble("down_cost"));
 			}
 			return serviceCosts;

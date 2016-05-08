@@ -101,4 +101,10 @@ public class SimulationLog extends Thread implements Serializable {
 		return solutionQueue;
 	}
 
+	public void fixAllIncidents(int time) {
+		marom.fixAllIncidents(time);
+		rakia.fixAllIncidents(time);
+		
+	}
+
 }

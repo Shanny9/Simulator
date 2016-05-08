@@ -168,7 +168,7 @@ public class TeamLog implements Serializable {
 		}
 		return str;
 	}
-
+   
 	public void fixAllIncidents(int time) {
 		for (int inc_id : incident_logs.keySet()){
 			incidentSolved(inc_id,time,true);

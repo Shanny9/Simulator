@@ -3,6 +3,7 @@ package log;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 public class SimulationLog extends Thread implements Serializable {
@@ -37,7 +38,7 @@ public class SimulationLog extends Thread implements Serializable {
 	/*
 	 * An updating queue of current solutions
 	 */
-	private PriorityQueue<SolutionLog> solutionQueue;
+	private LinkedList<SolutionLog> solutionQueue;
 	
 	private static SimulationLog instance;
 	/**
@@ -50,7 +51,7 @@ public class SimulationLog extends Thread implements Serializable {
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
 		incident_times = LogUtils.getIncidentTimes();
-		solutionQueue = new PriorityQueue<>();
+		solutionQueue = new LinkedList<>();
 		
 		marom = new TeamLog();
 		rakia = new TeamLog();
@@ -97,14 +98,13 @@ public class SimulationLog extends Thread implements Serializable {
 		return incident_times;
 	}
 	
-	public PriorityQueue<SolutionLog> getSolutionQueue(){
+	public LinkedList<SolutionLog> getSolutionQueue(){
 		return solutionQueue;
 	}
 
 	public void fixAllIncidents(int time) {
 		marom.fixAllIncidents(time);
 		rakia.fixAllIncidents(time);
-		
 	}
 
 }

@@ -20,7 +20,7 @@ body {
 }
 
 body::before {
-	background: url(home_images/runway.jpg) no-repeat center center fixed;
+	//background: url(home_images/runway.jpg) no-repeat center center fixed;
 	content: '';
 	z-index: -1;
 	width: 100%;
@@ -38,7 +38,7 @@ body::before {
 }
 
 .headline {
-	font-size: 36px;
+	font-size: 35px;
 	font-family: "Segoe UI", Arial, sans-serif;
 	font-weight: 400;
 	margin-top: 150px;

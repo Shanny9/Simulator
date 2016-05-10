@@ -19,7 +19,7 @@ var runPercentage;
 var pausePercentage;
 
 $(document).ready(function() {
-	
+	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
 	
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
@@ -76,6 +76,15 @@ function showEventsInTime() {
 			incidentsOnScreen++;
 		}
 	});
+}
+
+function clearEvents(){
+	for(var row=1; row<12; row++)
+		{
+			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html("&nbsp");
+			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)").html("&nbsp");
+			incidentsOnScreen =0;
+		}
 }
 
 function getGP() {
@@ -203,6 +212,7 @@ function incrementClock() {
 			// finished session
 			runPercentage = 0;
 			pausePercentage = 0;
+			clearEvents();
 			if (session < gp["sessionsPerRound"]){
 				session++;
 			};

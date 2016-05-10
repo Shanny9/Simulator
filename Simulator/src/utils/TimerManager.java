@@ -40,9 +40,9 @@ public class TimerManager implements ServletContextListener {
 		return ClockIncrementor.getClocks();
 	}
 
-	public static double getTeamProfits(String teamName) {
-		return log.SimulationLog.getInstance().getTeam(teamName).getCurrentProfit();
-	}
+//	public static double getTeamProfits(String teamName) {
+//		return log.SimulationLog.getInstance().getTeam(teamName).getProfit(ci.get);
+//	}
 
 	public static void startSimulator(int runTime, int roundTime, int round, int pauseTime ,int sessionTime) {
 		System.out.println("TimerManager: starting simulator");

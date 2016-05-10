@@ -40,7 +40,7 @@ $(document).ready(
 			$("#solveMenu").click(function () {
 				// checks if incident field is empty
 				if ($("#incidentID").val() == ""){
-					$("#noIncId").slideToggle("slow").delay(2000).slideToggle("slow");
+					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
 				// checks if incident is currently open
@@ -63,19 +63,20 @@ $(document).ready(
 			
 			// when the purchase menu is clicked - handles the event 
 			$("#purchaseMenu").click(function () {
-
-				// checks if incident is currently open
-				if (checkIncident()==false){
-					$("#wrongIncId").slideToggle("slow").delay(2000).slideToggle("slow");
-					$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
-					return;
-				}
+				
 				// checks if incident field is empty
 				if ($("#incidentID").val() == ""){
 					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
 				
+				// checks if incident is currently open
+				if (checkIncident()==false){
+					$("#wrongIncId").slideToggle("slow").delay(2000).slideToggle("slow");
+					$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
+					return;
+				}
+
 				//checks if the menu is going to expand
 				var willExpand = $("#purchaseMenu").attr("aria-expanded") != 'true';
 				if (willExpand){

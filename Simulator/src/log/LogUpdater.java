@@ -32,15 +32,21 @@ public class LogUpdater implements Runnable {
 	@Override
 	public void run() {
 		if (threadRunning) {
+			TeamLog marom = simLog.getTeam("Marom");
+			TeamLog rakia = simLog.getTeam("Rakia");
 			// should occur every second
 			elapsed_time++;
 			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
 				int inc_id = simLog.getIncidentTimes().get(elapsed_time);
-				simLog.getTeam("Marom").incidentStarted(inc_id, elapsed_time);
-				simLog.getTeam("Rakia").incidentStarted(inc_id, elapsed_time);
+				marom.incidentStarted(inc_id, elapsed_time);
+				rakia.incidentStarted(inc_id, elapsed_time);
 			}
-			simLog.getTeam("Marom").updateProfit();
-			simLog.getTeam("Rakia").updateProfit();
+			marom.updateProfit(elapsed_time);
+			rakia.updateProfit(elapsed_time);
+			
+			System.out.println("Marom: " + marom.getProfits());
+			System.out.println("Rakia: " + rakia.getProfits());
+			System.out.println("");
 		}
 	}
 }

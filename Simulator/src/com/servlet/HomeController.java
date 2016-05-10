@@ -3,6 +3,7 @@ package com.servlet;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import javax.servlet.ServletException;
@@ -102,7 +103,7 @@ public class HomeController extends HttpServlet {
 			// encoding must be set to UTF-8
 			response.setCharacterEncoding("UTF-8");
 
-			PriorityQueue<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
+			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
 				String json = gson.toJson(solutionQueue.poll());
 				String[] rows = json.split("\n");

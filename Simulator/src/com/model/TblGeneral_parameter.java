@@ -21,6 +21,9 @@ public class TblGeneral_parameter implements Serializable {
 	private int runTime;
 
 	private byte sessionsPerRound;
+	
+	private String homePass;
+
 
 	public TblGeneral_parameter() {
 	}
@@ -72,5 +75,14 @@ public class TblGeneral_parameter implements Serializable {
 	public void setSessionsPerRound(byte sessionsPerRound) {
 		this.sessionsPerRound = sessionsPerRound;
 	}
+	
+	public String getHomePass() {
+		return homePass;
+	}
+
+	public void setHomePass(String homePass) {
+		this.homePass = homePass;
+	}
+
 
 }

@@ -18,9 +18,11 @@ import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
+import com.model.TblGeneral_parameter;
 
 import log.SolutionLog;
 import utils.HomeData;
+import utils.PasswordAuthentication;
 import utils.TimerManager;
 
 /**
@@ -63,6 +65,10 @@ public class HomeController extends HttpServlet {
 		String action = request.getParameter("action");
 		switch (action) {
 
+		case "authenticate":
+			response.getWriter().print(authenticate(request));
+			break;
+		
 		case "getTime":
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
@@ -138,6 +144,25 @@ public class HomeController extends HttpServlet {
 						 * getLastRoundDone()+1
 						 */);
 		return timesMap;
+	}
+	
+	/**
+	 * uses utils.PasswordAuthentication to verify password from the client
+	 * @param response
+	 */
+	protected boolean authenticate(HttpServletRequest request)
+	{
+		char[] pass = request.getParameter("pass").toCharArray();
+		request.removeAttribute("pass"); //for security
+		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
+		TblGeneral_parameter gp = daoGP.getGeneralParameters();
+		
+		PasswordAuthentication au =  new PasswordAuthentication(); //default cost is 16
+		boolean result = au.authenticate(pass, gp.getHomePass());
+		for(int i=0; i<pass.length;i++)
+			pass[i] = 0;
+		return result;
+				
 	}
 
 	// private String toJSON(SolutionLog sl){

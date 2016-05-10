@@ -90,6 +90,8 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 				gp.setPk(rs.getInt("pk"));
 				gp.setRunTime(rs.getInt("run_time"));
 				gp.setSessionsPerRound(rs.getByte("sessions_per_round"));
+				
+				gp.setHomePass(rs.getString("home_pass"));
 
 			}
 		} catch (SQLException e) {

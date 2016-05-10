@@ -16,8 +16,6 @@ import javax.crypto.spec.PBEKeySpec;
  * 
  * Instances of this class can be used concurrently by multiple threads.
  * 
- * @author erickson
- * @see <a href="http://stackoverflow.com/a/2861125/3474">StackOverflow</a>
  */
 public final class PasswordAuthentication {
 

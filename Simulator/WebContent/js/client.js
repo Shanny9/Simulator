@@ -168,12 +168,16 @@ function incrementClock() {
 		// finished runTime
 		isRunTime = false;
 		showTime = gp["pauseTime"];
+		disablePurchase(true);
+		disableSolve(true);
 
 	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
 		showTime = gp["runTime"];
-
+		disablePurchase(false);
+		disableSolve(false);
+		
 		if (elapsedTime % gp["sessionTime"] == 0) {
 			// finished session
 			if (session < gp["sessionsPerRound"]){
@@ -367,6 +371,28 @@ function buySolution() {
 			console.log("js:sendSolution: Error in buySolution.");
 		}
 	});
+}
+
+function disablePurchase(dis){
+	if(dis){
+		$(".btn-red").attr("disabled", true);
+		$(".btn-red").css("background", "#727778");
+	}
+	else{
+		$(".btn-red").attr("disabled", false);
+		$(".btn-red").css("background", "#EC644B");
+	}
+}
+
+function disableSolve(dis){
+	if(dis){
+		$(".btn-green").attr("disabled", true);
+		$(".btn-green").css("background", "#727778");
+	}
+	else{
+		$(".btn-green").attr("disabled", false);
+		$(".btn-green").css("background", "#2ECC71");
+	}
 }
 
 Number.prototype.toHHMMSS = function () {

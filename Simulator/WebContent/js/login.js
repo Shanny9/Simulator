@@ -51,6 +51,7 @@ function authenticate(password){
 			if(msg){
 			//	console.log("Password OK.");
 				isCorrect = true;
+			//	window.open("index.html","_self");
 			}
 			else
 			{

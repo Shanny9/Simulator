@@ -2,7 +2,7 @@
 <%@page contentType="text/html; charset=UTF-8"%>
 <html>
 <head>
-<title>CRUD operations using jTable in J2EE</title>
+<title>Database management</title>
 <meta charset="utf-8">
 <!-- Include one of jTable styles. -->
 <link href="css/metro/blue/jtable.css" rel="stylesheet" type="text/css" />
@@ -113,7 +113,7 @@
 <body>
 <div style="width: 60%; margin-right: 10%; margin-left: 20%; text-align: center;">
 
-		<h4>AJAX based CRUD operations using jTable in J2ee</h4>
+		<h4>Manage Data</h4>
 		<div id="SupplierTableContainer"></div>
 		
 	</div>

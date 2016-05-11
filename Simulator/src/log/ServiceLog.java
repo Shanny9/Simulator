@@ -62,9 +62,9 @@ public class ServiceLog implements Serializable {
 		}
 		times.add(time);
 		
-		int timesSize = times.size();
-		this.lastDuration = times.get(timesSize - 1) - times.get(timesSize - 2);
-		diff = lastDuration * ((isUp()) ? (-fixed_cost - down_cost) : (fixed_income - fixed_cost));
+//		int timesSize = times.size();
+//		this.lastDuration = times.get(timesSize - 1) - times.get(timesSize - 2);
+		diff = ((isUp()) ? (fixed_income - fixed_cost) : (-fixed_cost - down_cost));
 
 	}
 	
@@ -156,7 +156,7 @@ public class ServiceLog implements Serializable {
 			}
 			this.cisDown++;
 		}
-		return diff - oldDiff;
+		return oldDiff + diff;
 	}
 	
 	int getId(){

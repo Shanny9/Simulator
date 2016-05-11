@@ -2,18 +2,13 @@ package log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
-import com.model.TblCI;
-import com.model.TblGeneral_parameter;
 import com.model.TblService;
 
 /*
@@ -145,9 +140,19 @@ public class TeamLog implements Serializable {
 	}
 
 	boolean isIncidentOpen(int inc_id, int time) {
+		if (time < 0 || inc_id <= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		IncidentLog il = incident_logs.get(inc_id);
+		if (il == null) {
+			throw new IllegalArgumentException("Incident does not exist.");
+		}
+		
 		System.out.println(
 				"TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
 		return incident_logs.get(inc_id).isOpen(time);
+
 	}
 
 	public String toString() {

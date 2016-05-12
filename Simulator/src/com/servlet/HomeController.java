@@ -66,7 +66,13 @@ public class HomeController extends HttpServlet {
 		switch (action) {
 
 		case "authenticate":
-			response.getWriter().print(authenticate(request));
+		//	response.getWriter().print(authenticate(request));
+			response.setContentType("text/html");
+			if(authenticate(request) == true){
+				response.sendRedirect("index.html");
+			}
+			else
+				response.sendRedirect("login.jsp?err=1");
 			break;
 		
 		case "getTime":
@@ -152,8 +158,9 @@ public class HomeController extends HttpServlet {
 	 */
 	protected boolean authenticate(HttpServletRequest request)
 	{
-		char[] pass = request.getParameter("pass").toCharArray();
-		request.removeAttribute("pass"); //for security
+		//char[] pass = request.getParameter("pass").toCharArray();
+		char[] pass = request.getParameter("form-password").toCharArray();
+		request.removeAttribute("form-password"); //for security
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
 		

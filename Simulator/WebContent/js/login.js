@@ -27,13 +27,13 @@ jQuery(document).ready(function() {
     		}
     	});
     	
-    	if(isEmtpy == 0 ) {
+/*    	if(isEmtpy == 0 ) {
     		authenticate($("#form-password").val());
     		console.log(isCorrect);
     		e.preventDefault();
     	}
     	else
-    		isEmtpy = 0;
+    		isEmtpy = 0;*/
     	
     });
     
@@ -60,8 +60,12 @@ function authenticate(password){
 			}
 		},
 		error : function(e) {
-			console.log("js:authenticate: Incorrect Password.");
+			console.log("js:authenticate: Error.");
 		}
 	});
 
+}
+
+function inputError(){
+	alert("Wrong user or password");
 }

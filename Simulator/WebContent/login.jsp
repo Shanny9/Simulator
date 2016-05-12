@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 
     <head>
@@ -53,15 +53,15 @@
                         <div class="col-sm-6 col-sm-offset-3 form-box">
                         	<div class="form-top">
                         		<div class="form-top-left">
-                        			<h3>Login to our site</h3>
-                            		<p>Enter your username and password to log on:</p>
+                        			<h3>Login to Simulator</h3>
+                            		<p>Enter your username and password to log in:</p>
                         		</div>
                         		<div class="form-top-right">
                         			<i class="fa fa-lock"></i>
                         		</div>
                             </div>
                             <div class="form-bottom">
-			                    <form role="form" action="" method="post" class="login-form">
+			                    <form role="form" action="HomeController?action=authenticate" method="post" class="login-form">
 			                    	<div class="form-group">
 			                    		<label class="sr-only" for="form-username">Username</label>
 			                        	<input type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
@@ -102,6 +102,17 @@
         <script src="js/bootstrap-3.3.5.min.js"></script>
         <script src="js/jquery.backstretch.min.js"></script>
         <script src="js/login.js"></script>
+        
+   <%
+	if(request.getParameter("err")!=null)
+	{ System.out.print(1);
+   %>
+			<script>
+				inputError();
+			</script>
+	<% 
+	 }
+	%>
         
         <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>

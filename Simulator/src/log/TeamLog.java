@@ -109,8 +109,12 @@ public class TeamLog implements Serializable {
 		}
 	}
 
-	double getProfit(int time) {
+	public double getProfit(int time) {
 		return profits.get(time);
+	}
+	
+	public double getProfit() {
+		return profits.get(profits.size()-1);
 	}
 
 	synchronized void updateProfit(int time) {
@@ -118,7 +122,6 @@ public class TeamLog implements Serializable {
 			return;
 		}
 		profits.add(time, getProfit(time - 1) + diff);
-		System.out.println("profit updated");
 	}
 
 	/**
@@ -141,12 +144,12 @@ public class TeamLog implements Serializable {
 
 	boolean isIncidentOpen(int inc_id, int time) {
 		if (time < 0 || inc_id <= 0) {
-			throw new IllegalArgumentException();
+			return false;
 		}
 		
 		IncidentLog il = incident_logs.get(inc_id);
 		if (il == null) {
-			throw new IllegalArgumentException("Incident does not exist.");
+			return false;
 		}
 		
 		System.out.println(

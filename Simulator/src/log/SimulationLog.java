@@ -66,9 +66,9 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	public TeamLog getTeam(String team) {
-		if (team.equals("Marom")) {
+		if (team.equalsIgnoreCase("Marom")) {
 			return marom;
-		} else if (team.equals("Rakia")) {
+		} else if (team.equalsIgnoreCase("Rakia")) {
 			return rakia;
 		}
 		return null;

@@ -7,10 +7,6 @@ public class ServiceLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/*
-	 * The last duration recorded
-	 */
-	private int lastDuration;
-	/*
 	 * The profit/loss per second
 	 */
 	private double diff;
@@ -61,11 +57,7 @@ public class ServiceLog implements Serializable {
 			return;
 		}
 		times.add(time);
-		
-//		int timesSize = times.size();
-//		this.lastDuration = times.get(timesSize - 1) - times.get(timesSize - 2);
 		diff = ((isUp()) ? (fixed_income - fixed_cost) : (-fixed_cost - down_cost));
-
 	}
 	
 	double getDiff(){

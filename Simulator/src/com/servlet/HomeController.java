@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 import com.model.TblGeneral_parameter;
 
+import log.SimulationLog;
 import log.SolutionLog;
 import utils.HomeData;
 import utils.PasswordAuthentication;
@@ -68,7 +69,7 @@ public class HomeController extends HttpServlet {
 		case "authenticate":
 			response.getWriter().print(authenticate(request));
 			break;
-		
+
 		case "getTime":
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
@@ -113,12 +114,26 @@ public class HomeController extends HttpServlet {
 			if (!solutionQueue.isEmpty()) {
 				String json = gson.toJson(solutionQueue.poll());
 				String[] rows = json.split("\n");
-				for (int i= 0 ; i <rows.length ; i++){
+				for (int i = 0; i < rows.length; i++) {
 					rows[i] = "data: " + rows[i];
 				}
 				String streamMessage = String.join("\n", rows);
 				response.getWriter().write(streamMessage + "\n\n");
 			}
+			break;
+		case "profitStream":
+			// content type must be set to text/event-stream
+			response.setContentType("text/event-stream");
+
+			// encoding must be set to UTF-8
+			response.setCharacterEncoding("UTF-8");
+
+			int maromProfit = (int) SimulationLog.getInstance().getTeam("marom").getProfit();
+			int rakiaProfit = (int) SimulationLog.getInstance().getTeam("rakia").getProfit();
+
+			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \"" + maromProfit + "\"}, ";
+			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + rakiaProfit + "\"}]\n\n";
+			response.getWriter().write(streamMessage);
 			break;
 		}
 	}
@@ -145,24 +160,26 @@ public class HomeController extends HttpServlet {
 						 */);
 		return timesMap;
 	}
-	
+
 	/**
 	 * uses utils.PasswordAuthentication to verify password from the client
+	 * 
 	 * @param response
 	 */
-	protected boolean authenticate(HttpServletRequest request)
-	{
+	protected boolean authenticate(HttpServletRequest request) {
 		char[] pass = request.getParameter("pass").toCharArray();
-		request.removeAttribute("pass"); //for security
+		request.removeAttribute("pass"); // for security
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
-		
-		PasswordAuthentication au =  new PasswordAuthentication(); //default cost is 16
+
+		PasswordAuthentication au = new PasswordAuthentication(); // default
+																	// cost is
+																	// 16
 		boolean result = au.authenticate(pass, gp.getHomePass());
-		for(int i=0; i<pass.length;i++)
+		for (int i = 0; i < pass.length; i++)
 			pass[i] = 0;
 		return result;
-				
+
 	}
 
 	// private String toJSON(SolutionLog sl){

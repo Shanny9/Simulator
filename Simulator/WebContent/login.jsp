@@ -105,7 +105,7 @@
         
    <%
 	if(request.getParameter("err")!=null)
-	{ System.out.print(1);
+	{ 
    %>
 			<script>
 				inputError();

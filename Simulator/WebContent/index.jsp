@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <title>Service Management Simulator</title>
@@ -16,8 +16,17 @@
 <script src="js/utils.js"></script>
 <script src="js/home.js"></script>
 
+<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+
+%>
+
 </head>
 <body>
+
 
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">

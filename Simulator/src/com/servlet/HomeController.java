@@ -70,7 +70,7 @@ public class HomeController extends HttpServlet {
 		//	response.getWriter().print(authenticate(request));
 			response.setContentType("text/html");
 			if(authenticate(request) == true){
-				response.sendRedirect("index.html");
+				response.sendRedirect("index.jsp");
 			}
 			else
 				response.sendRedirect("login.jsp?err=1");

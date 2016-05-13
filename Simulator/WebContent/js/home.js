@@ -122,6 +122,7 @@ function clearEvents(){
 		{
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html("&nbsp");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)").html("&nbsp");
+			$(".score-tbl tbody tr:nth-child(" + row + ")").removeClass("success");
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			incidentsOnScreen =0;
 		}

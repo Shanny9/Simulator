@@ -73,10 +73,12 @@ public class HomeController extends HttpServlet {
 				response.sendRedirect("index.jsp");
 				break;
 			case 2:
-				response.sendRedirect("client.jsp?team=Marom");
+				request.getSession().setAttribute("team", "Marom");
+				response.sendRedirect("client.jsp");
 				break;
 			case 3:
-				response.sendRedirect("client.jsp?team=Rakia");
+				request.getSession().setAttribute("team", "Rakia");
+				response.sendRedirect("client.jsp");
 				break;
 			case 0:
 				response.sendRedirect("login.jsp?err=1");

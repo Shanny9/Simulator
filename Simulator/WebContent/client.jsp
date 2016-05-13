@@ -26,12 +26,22 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 <%
-	String jspTeam = request.getParameter("team");
-	if(jspTeam == null)
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+%>        
+        
+<%
+	String jspTeam = (String)session.getAttribute("team");
+	if(jspTeam == null){
+		request.getSession().invalidate();
 		response.sendRedirect("login.jsp");
+		return;
+	}
 %>
 <script type="text/javascript">
-	var team =  '<%= request.getParameter("team") %>';
+	var team =  '<%= jspTeam %>';
 </script>        
         
 <script

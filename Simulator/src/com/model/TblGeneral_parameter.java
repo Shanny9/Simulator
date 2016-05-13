@@ -23,6 +23,8 @@ public class TblGeneral_parameter implements Serializable {
 	private byte sessionsPerRound;
 	
 	private String homePass;
+	
+	private String homeUser;
 
 
 	public TblGeneral_parameter() {
@@ -84,5 +86,14 @@ public class TblGeneral_parameter implements Serializable {
 		this.homePass = homePass;
 	}
 
+	public String getHomeUser() {
+		return homeUser;
+	}
+
+	public void setHomeUser(String homeUser) {
+		this.homeUser = homeUser;
+	}
+
+	
 
 }

@@ -9,7 +9,7 @@ var showTime;
 var session;
 var elapsedTime;
 var gp = new Object();
-var team = "Marom"; // TODO: change this
+//var team = "Marom"; // defined at the beginning of client.jsp
 var courseName = 'IDF-AMAM-01';
 
 $(document).ready(

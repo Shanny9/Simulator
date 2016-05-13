@@ -67,13 +67,24 @@ public class HomeController extends HttpServlet {
 		switch (action) {
 
 		case "authenticate":
-		//	response.getWriter().print(authenticate(request));
+
 			response.setContentType("text/html");
-			if(authenticate(request) == true){
+			
+			switch(authenticate(request)){
+			case 1:
 				response.sendRedirect("index.jsp");
-			}
-			else
+				break;
+			case 2:
+				response.sendRedirect("client.jsp?team=Marom");
+				break;
+			case 3:
+				response.sendRedirect("client.jsp?team=Rakia");
+				break;
+			case 0:
 				response.sendRedirect("login.jsp?err=1");
+				break;
+			}
+
 			break;
 
 		case "getTime":
@@ -172,23 +183,57 @@ public class HomeController extends HttpServlet {
 	 * uses utils.PasswordAuthentication to verify password from the client
 	 * 
 	 * @param response
+	 * @return 1 - Admin login, 2 - Marom, 3 - Rakia, 0 - None (invalid details)
 	 */
-	protected boolean authenticate(HttpServletRequest request) {
-		//char[] pass = request.getParameter("pass").toCharArray();
+	protected int authenticate(HttpServletRequest request) {
+		int result;
+		char[] user = request.getParameter("form-username").toCharArray();
 		char[] pass = request.getParameter("form-password").toCharArray();
 		request.removeAttribute("form-password"); //for security
-
+		request.removeAttribute("form-username");
+		
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
 
-		PasswordAuthentication au = new PasswordAuthentication(); // default
-																	// cost is
-																	// 16
-		boolean result = au.authenticate(pass, gp.getHomePass());
-		for (int i = 0; i < pass.length; i++)
-			pass[i] = 0;
+		PasswordAuthentication au = new PasswordAuthentication(); // default cost is 16
+		
+		//Admin
+		if(au.authenticate(user, gp.getHomeUser()) && au.authenticate(pass, gp.getHomePass()))
+		{
+			result = 1;
+		}
+		//Team
+		else
+		{
+			//Marom
+			if(String.valueOf(user).equals("Marom") && String.valueOf(pass).equals("m") )
+				result = 2;
+			
+			else 
+			{ 
+				//Rakia
+				if(String.valueOf(user).equals("Rakia") && String.valueOf(pass).equals("r"))
+					result = 3;
+			
+				//Invalid details
+				else
+					result = 0;
+			}
+			
+		}
+		
+		gp = null;
+		emptyChar(pass);
+		emptyChar(user);
 		return result;
 
+	}
+	
+	
+	
+	private void emptyChar(char[] arr){
+		for (int i = 0; i < arr.length; i++)
+			arr[i] = 0;
 	}
 
 	// private String toJSON(SolutionLog sl){

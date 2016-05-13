@@ -44,9 +44,9 @@ public class LogUpdater implements Runnable {
 			marom.updateProfit(elapsed_time);
 			rakia.updateProfit(elapsed_time);
 			
-			System.out.println("Marom: " + marom.getProfits());
+/*			System.out.println("Marom: " + marom.getProfits());
 			System.out.println("Rakia: " + rakia.getProfits());
-			System.out.println("");
+			System.out.println("");*/
 		}
 	}
 }

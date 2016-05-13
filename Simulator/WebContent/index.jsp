@@ -232,6 +232,7 @@
 
 				</div>
 				<!--scoreboard-->
+				<div class="push"></div>
 			</div>
 			<!--container-fluid-->
 		</center>

@@ -67,5 +67,6 @@ function authenticate(password){
 }
 
 function inputError(){
-	alert("Wrong user or password");
+//	$("#loginErr").css("display","block");
+	$("#loginErr").slideToggle("slow").delay(2000).slideToggle("slow");
 }

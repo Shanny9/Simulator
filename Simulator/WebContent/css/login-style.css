@@ -170,6 +170,11 @@ img { max-width: 100%; }
 	margin-top: 25px;
 }
 
+#loginErr {
+	text-align: center;
+	color: #fff;
+	display: none;
+}
 
 /***** Media queries *****/
 

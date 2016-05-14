@@ -81,7 +81,8 @@ public class HomeController extends HttpServlet {
 				response.sendRedirect("client.jsp");
 				break;
 			case 0:
-				response.sendRedirect("login.jsp?err=1");
+				request.getSession().setAttribute("err", "1");
+				response.sendRedirect("login.jsp");
 				break;
 			}
 

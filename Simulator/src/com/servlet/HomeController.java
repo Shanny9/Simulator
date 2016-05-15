@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 import com.model.TblGeneral_parameter;
 
+import log.Settings;
 import log.SimulationLog;
 import log.SolutionLog;
 import utils.HomeData;
@@ -31,6 +33,7 @@ import utils.TimerManager;
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String courseName;
+	private int round;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -48,7 +51,7 @@ public class HomeController extends HttpServlet {
 			throws ServletException, IOException {
 		doPost(request, response);
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -95,16 +98,16 @@ public class HomeController extends HttpServlet {
 			break;
 		case "startSimulator":
 			courseName = request.getParameter("courseName");
+			round = Integer.valueOf(request.getParameter("round"));
 			TblCourse course = new TblCourseDaoImpl().getCourseById(courseName);
 			if (course != null) {
 				int runTime = (int) getTimes(courseName).get("runTime");
 				int roundTime = (int) getTimes(courseName).get("roundTime");
 				int pauseTime = (int) getTimes(courseName).get("pauseTime");
 				int sessionTime = (int) getTimes(courseName).get("sessionTime");
-				int currentRound = course.getLastRoundDone();
 
 				log.SimulationLog.getInstance();
-				TimerManager.startSimulator(courseName, runTime, roundTime, currentRound, pauseTime, sessionTime);
+				TimerManager.startSimulator(courseName, runTime, roundTime, round, pauseTime, sessionTime);
 				response.getWriter().print("OK");
 			}
 			break;
@@ -153,6 +156,17 @@ public class HomeController extends HttpServlet {
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \"" + maromProfit + "\"}, ";
 			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + rakiaProfit + "\"}]\n\n";
 			response.getWriter().write(streamMessage);
+			break;
+			
+		case "newCourse":
+			String courseName = request.getParameter("form-courseName");
+			int rounds = Integer.valueOf(request.getParameter("form-numOfRounds"));
+			int runTime = Integer.valueOf(request.getParameter("form-runTime"));
+			int pauseTime = Integer.valueOf(request.getParameter("form-pauseTime"));
+			int sessionsPerRound = Integer.valueOf(request.getParameter("form-sessions"));
+			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
+			
+			log.LogUtils.saveSettings(new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital));
 			break;
 		}
 	}

@@ -17,7 +17,6 @@ var clockInterval;
 var incidentsOnScreen = 0;
 var runPercentage;
 var pausePercentage;
-
 var winnerColor = '#00ff00';
 var looserColor = '#ff0000';
 var regularColor = '#FF9900';
@@ -146,7 +145,8 @@ function getGP() {
 
 function startSimulator() {
 	$.ajax({
-		url : "HomeController?action=startSimulator&courseName=" + courseName,
+		url : "HomeController?action=startSimulator",
+		data: {"courseName": courseName, "round": round},
 		dataType : "text",
 		async : false,
 		success : function(data) {

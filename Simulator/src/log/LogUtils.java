@@ -2,6 +2,7 @@ package log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -50,10 +51,21 @@ public class LogUtils {
 	 */
 	public static void saveLog(String courseName, final int round) {
 		try {
+			
 			String path = generatePath(courseName);
 			File file = new File(path);
-			file.mkdirs();
-
+			
+			// check if the course's directory exists
+			File[] settingsFiles = file.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.equals("settings.ser");
+				}
+			});
+			
+			if (settingsFiles.length == 0){
+				throw new FileNotFoundException("Settings.ser file does not exist in " + path);
+			}
+			
 			final String newFileName = generateFileName(round);
 
 			FileOutputStream fileOut = new FileOutputStream(path + newFileName);
@@ -100,6 +112,57 @@ public class LogUtils {
 			in.close();
 			fileIn.close();
 			return log;
+		} catch (IOException i) {
+			i.printStackTrace();
+		} catch (ClassNotFoundException c) {
+			System.out.println("Log class not found");
+			c.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Creates new directory for the course and saves "settings.ser" in it
+	 * 
+	 * @param settings
+	 *            The course's settings
+	 */
+	public static void saveSettings(Settings settings) {
+		String path = generatePath(settings.getCourseName());
+		File file = new File(path);
+		file.mkdirs();
+
+		FileOutputStream fileOut;
+		try {
+			fileOut = new FileOutputStream(path + "settings.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(settings);
+			out.close();
+			fileOut.close();
+			System.out.printf("settings for course " + settings.getCourseName() + "were saved in " + path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Opens the course's settings given its name
+	 * 
+	 * @param courseName
+	 *            The course name
+	 * @return The course's settings
+	 */
+	public static Settings openSettings(String courseName) {
+		try {
+			String path = generatePath(courseName);
+
+			FileInputStream fileIn = new FileInputStream(path + "settings.ser");
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			Settings settings = (Settings) in.readObject();
+			in.close();
+			fileIn.close();
+			return settings;
 		} catch (IOException i) {
 			i.printStackTrace();
 		} catch (ClassNotFoundException c) {

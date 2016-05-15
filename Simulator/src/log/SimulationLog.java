@@ -50,7 +50,6 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private static SimulationLog instance;
 
-
 	SimulationLog() {
 		super();
 		affecting_cis = LogUtils.getDBAffectingCIs();

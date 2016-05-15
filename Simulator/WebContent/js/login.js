@@ -1,6 +1,6 @@
 var isEmtpy = 0;
 var isCorrect;
-jQuery(document).ready(function() {
+$(document).ready(function() {
 	
     /*
         Fullscreen background

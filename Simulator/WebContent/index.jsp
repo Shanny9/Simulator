@@ -5,12 +5,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="css/home.css">
-<link rel="stylesheet"
-	href="css/bootstrap.min.css">
-<script
-	src="js/jquery-1.11.3.min.js"></script>
-<script
-	src="js/bootstrap-3.3.5.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap-3.3.5.min.js"></script>
 <script src="js/jquery.backstretch.min.js"></script>
 <script src="js/date.format.js"></script>
 <script src="js/utils.js"></script>
@@ -21,43 +18,11 @@
 	response.setHeader("Cache-Control", "no-store");
 	response.setHeader("Pragma", "no-cache");
 	response.setDateHeader("Expires", 0);
-
 %>
 
 </head>
 <body>
-
-
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target="#myNavbar">
-					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a id="startSimulator" class="navbar-brand" href="#">LOGO</a>
-			</div>
-			<div class="collapse navbar-collapse" id="myNavbar">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#home">HOME</a></li>
-					<li><a href="#band">CHANGES</a></li>
-					<li><a href="#tour">REPORTS</a></li>
-					<li><a href="#contact">ABOUT</a></li>
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">MORE <span class="caret"></span>
-					</a>
-						<ul class="dropdown-menu">
-							<li><a id="pause" href="#">Pause</a></li>
-							<li><a id="resume" href="#">Resume</a></li>
-							<li><a href="#">BLA3</a></li>
-						</ul></li>
-					<li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
-
+	<%@ include file="header.html"%>
 	<div class="background-image">
 		<center>
 			<div class="container-fluid">
@@ -222,26 +187,20 @@
 					</table>
 					<div>&nbsp</div>
 					<div id="progress" class="progress">
-						<div id="progress-custom" class="progress-bar progress-bar-success" role="progressbar" style="width: 0%;">
-							Run
-						</div>
-						<div id="progress-custom" class="progress-bar progress-bar-danger progress-bar-custom" role="progressbar" style="width: 0%;">
-							Pause
-						</div>
+						<div id="progress-custom"
+							class="progress-bar progress-bar-success" role="progressbar"
+							style="width: 0%;">Run</div>
+						<div id="progress-custom"
+							class="progress-bar progress-bar-danger progress-bar-custom"
+							role="progressbar" style="width: 0%;">Pause</div>
 					</div>
-
 				</div>
 				<!--scoreboard-->
 				<div class="push"></div>
 			</div>
 			<!--container-fluid-->
 		</center>
-		<footer>
-			<div class="container text-center">
-				Theme made by Shanny Shohet & Tom Yanovich <span
-					class="glyphicon glyphicon-copyright-mark"></span>
-			</div>
-		</footer>
+		<%@ include file="footer.html"%>
 	</div>
 	<!--background-image-->
 </body>

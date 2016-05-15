@@ -1,8 +1,13 @@
 package log;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class SolutionLog {
+public class SolutionLog implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String team;
 	private HashSet<String> events;
 	

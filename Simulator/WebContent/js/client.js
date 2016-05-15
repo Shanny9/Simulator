@@ -327,6 +327,7 @@ function checkSimulator() {
 	$.ajax({
 		url : "ClientController?action=checkSimulator",
 		dataType : "json",
+		timeout : 0,
 		success : function(msg) {
 			startSimulator();
 		},

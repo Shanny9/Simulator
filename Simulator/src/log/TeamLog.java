@@ -11,63 +11,73 @@ import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblService;
 
-/*
- * TeamLog records the team's services, purchases and profits throughout the simulation
+/**
+ * TeamLog records and calculates the team's services, purchases and profits
+ * throughout the simulation
  */
 public class TeamLog implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	/*
+
+	/**
 	 * The team's incident logs
 	 */
 	private HashMap<Integer, IncidentLog> incident_logs;
-	/*
+	/**
 	 * The team's service logs
 	 */
 	private HashMap<Integer, ServiceLog> service_logs;
-	/*
+	/**
 	 * The team's list of purchases: key=time, value=ci_id
 	 */
 	private HashMap<Integer, Integer> purchases;
-	/*
+	/**
 	 * The team's history of profits;
 	 */
 	private ArrayList<Double> profits;
-	/*
-	 * The team's profit gain per second (not including solution purchases)
+	/**
+	 * The team's history of profits;
 	 */
 	private double diff;
-	/*
+	/**
 	 * The status of the log
 	 */
+
 	private boolean isFinished;
 
 	/**
 	 * @param initProfit
 	 *            The team's initial profit
+	 * @param service_logs
+	 *            the team's initial service logs
+	 * @param initDiff
+	 *            the team's initial money gain per second
+	 * @param incident_logs
+	 *            the team's initial incident logs
 	 */
-	TeamLog() {
+	TeamLog(double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
+			HashMap<Integer, IncidentLog> incident_logs) {
 		super();
 		this.profits = new ArrayList<>();
-		this.service_logs = new HashMap<>();
 		this.purchases = new HashMap<>();
 		this.isFinished = false;
 
-		this.profits.add(new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital());
-		List<TblService> services = new TblServiceDaoImpl().getAllServices();
-		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
-
-		for (TblService service : services) {
-			int service_id = service.getServiceId();
-			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
-					serviceDownTimeCosts.get(service_id)));
-			this.diff += service_logs.get(service_id).getDiff();
-		}
-		incident_logs = LogUtils.getIncidentLogs();
+		this.profits.add(initProfit);
+		this.service_logs = service_logs;
+		this.diff = initDiff;
+		this.incident_logs = incident_logs;
 	}
 
+	/**
+	 * Updates the team's diff, purchases and profits given the incident solved
+	 * 
+	 * @param inc_id
+	 *            The incident that was solved
+	 * @param time
+	 *            The time when the incident was solved
+	 * @param isBaught
+	 *            True if the incident was solved, otherwise false.
+	 */
 	synchronized void incidentSolved(int inc_id, int time, boolean isBaught) {
 
 		if (isFinished) {
@@ -87,14 +97,20 @@ public class TeamLog implements Serializable {
 
 		if (isBaught) {
 			purchases.put(time, ci_id);
-			// reduces the solution cost from the team's profit at the given
-			// @time
 			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
 			System.out.println("solution baught at " + time + "seconds for "
 					+ SimulationLog.getInstance().getCISolutionCost(ci_id));
 		}
 	}
 
+	/**
+	 * Updates the team's diff given the incident id and time.
+	 * 
+	 * @param inc_id
+	 *            The incident that was started
+	 * @param time
+	 *            The time when the incident started
+	 */
 	synchronized void incidentStarted(int inc_id, int time) {
 		if (isFinished) {
 			return;
@@ -109,14 +125,26 @@ public class TeamLog implements Serializable {
 		}
 	}
 
+	/**
+	 * @param time
+	 *            The simulation time
+	 * @return The team's profit at the given time
+	 */
 	public double getProfit(int time) {
 		return profits.get(time);
 	}
-	
-	public double getProfit() {
-		return profits.get(profits.size()-1);
+
+	/**
+	 * @return The team's current profit
+	 */
+	public double getCurrentProfit() {
+		return profits.get(profits.size() - 1);
 	}
 
+	/**
+	 * @param time
+	 *            updates the team's profit according to the diff
+	 */
 	synchronized void updateProfit(int time) {
 		if (isFinished) {
 			return;
@@ -125,16 +153,25 @@ public class TeamLog implements Serializable {
 	}
 
 	/**
-	 * @return the service_logs
+	 * @return The team's service_logs
 	 */
 	HashMap<Integer, ServiceLog> getService_logs() {
 		return service_logs;
 	}
 
+	/**
+	 * @return The team's purchases (key= time, value=ci_id)
+	 */
 	HashMap<Integer, Integer> getPurchaces() {
 		return purchases;
 	}
 
+	/**
+	 * Stops the team's log
+	 * 
+	 * @param time
+	 *            Current time
+	 */
 	public void Stop(int time) {
 		for (ServiceLog service : service_logs.values()) {
 			service.stop(time);
@@ -142,20 +179,48 @@ public class TeamLog implements Serializable {
 		this.isFinished = true;
 	}
 
+	/**
+	 * Checks if the given incident in the given time is open
+	 * 
+	 * @param inc_id
+	 *            The incident to check
+	 * @param time
+	 *            The time to check
+	 * @return True if the incident is open. False otherwise.
+	 */
 	boolean isIncidentOpen(int inc_id, int time) {
 		if (time < 0 || inc_id <= 0) {
 			return false;
 		}
-		
+
 		IncidentLog il = incident_logs.get(inc_id);
 		if (il == null) {
 			return false;
 		}
-		
+
 		System.out.println(
 				"TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
 		return incident_logs.get(inc_id).isOpen(time);
 
+	}
+
+	/**
+	 * Fixes all the team's open incidents
+	 * 
+	 * @param time
+	 *            Current time
+	 */
+	public void fixAllIncidents(int time) {
+		for (int inc_id : incident_logs.keySet()) {
+			incidentSolved(inc_id, time, true);
+		}
+	}
+
+	/**
+	 * @return The team's profits (index= time)
+	 */
+	public ArrayList<Double> getProfits() {
+		return profits;
 	}
 
 	public String toString() {
@@ -174,13 +239,4 @@ public class TeamLog implements Serializable {
 		return str;
 	}
 
-	public void fixAllIncidents(int time) {
-		for (int inc_id : incident_logs.keySet()) {
-			incidentSolved(inc_id, time, true);
-		}
-	}
-
-	public ArrayList<Double> getProfits() {
-		return profits;
-	}
 }

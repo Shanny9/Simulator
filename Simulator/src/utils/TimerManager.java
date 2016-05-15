@@ -11,9 +11,10 @@ import javax.servlet.annotation.WebListener;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mysql.jdbc.log.LogUtils;
 import com.sun.org.apache.bcel.internal.generic.LUSHR;
 
-import log.LogUpdater;
+import log.LogManager;
 import log.SimulationLog;
 import log.TeamLog;
 
@@ -22,13 +23,12 @@ public class TimerManager implements ServletContextListener {
 
 	private static ScheduledExecutorService scheduler;
 	private static ClockIncrementor ci;
-	private static LogUpdater lu;
- 
+	private static LogManager lu;
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		log.LogUtils.saveLog();
+		log.LogUtils.saveLog("course1", 1);
 	}
 
 	@Override
@@ -40,28 +40,29 @@ public class TimerManager implements ServletContextListener {
 		return ClockIncrementor.getClocks();
 	}
 
-//	public static double getTeamProfits(String teamName) {
-//		return log.SimulationLog.getInstance().getTeam(teamName).getProfit(ci.get);
-//	}
-
-	public static void startSimulator(int runTime, int roundTime, int round, int pauseTime ,int sessionTime) {
+	public static void startSimulator(String courseName, int runTime, int roundTime, int round, int pauseTime, int sessionTime) {
 		System.out.println("TimerManager: starting simulator");
 		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, sessionTime);
-		lu = new LogUpdater();
+		LogManager.setCourseName(courseName);
+		LogManager.setRound(round);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(lu, 0, 1, TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(LogManager.getInstance(), 0, 1, TimeUnit.SECONDS);
 	}
 
-	public static void pauseSimulator() {
+	public static void forcePause() {
+		if (ci == null) {
+			return;
+		}
 		System.err.println("TimerManager: pausing clock...");
-		ClockIncrementor.pause();
-		lu.pauseLog();
+		ClockIncrementor.forcePause();
 	}
 
-	public static void resumeSimulator() {
+	public static void forceResume() {
+		if (ci == null) {
+			return;
+		}
 		System.err.println("TimerManager: resuming clock...");
-		ClockIncrementor.resume();
-		lu.resumeLog();
+		ClockIncrementor.forceResume();
 	}
 
 }

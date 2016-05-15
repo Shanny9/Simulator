@@ -103,15 +103,15 @@ public class HomeController extends HttpServlet {
 				int currentRound = course.getLastRoundDone();
 
 				log.SimulationLog.getInstance();
-				TimerManager.startSimulator(runTime, roundTime, currentRound, pauseTime, sessionTime);
+				TimerManager.startSimulator(courseName, runTime, roundTime, currentRound, pauseTime, sessionTime);
 				response.getWriter().print("OK");
 			}
 			break;
 		case "pauseSimulator":
-			TimerManager.pauseSimulator();
+			TimerManager.forcePause();
 			break;
 		case "resumeSimulator":
-			TimerManager.resumeSimulator();
+			TimerManager.forceResume();
 			break;
 		case "getGP":
 			courseName = request.getParameter("courseName");
@@ -146,8 +146,8 @@ public class HomeController extends HttpServlet {
 			// encoding must be set to UTF-8
 			response.setCharacterEncoding("UTF-8");
 
-			int maromProfit = (int) SimulationLog.getInstance().getTeam("marom").getProfit();
-			int rakiaProfit = (int) SimulationLog.getInstance().getTeam("rakia").getProfit();
+			int maromProfit = (int) SimulationLog.getInstance().getTeam("marom").getCurrentProfit();
+			int rakiaProfit = (int) SimulationLog.getInstance().getTeam("rakia").getCurrentProfit();
 
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \"" + maromProfit + "\"}, ";
 			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + rakiaProfit + "\"}]\n\n";

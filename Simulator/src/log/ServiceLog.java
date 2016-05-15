@@ -6,35 +6,35 @@ import java.util.ArrayList;
 public class ServiceLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	/*
+	/**
 	 * The profit/loss per second
 	 */
 	private double diff;
-	/*
+	/**
 	 * Counts how many CI's the service depends on, are currently down
 	 */
 	private int cisDown;
-	/*
+	/**
 	 * Even cells = UP, odd cells = DOWN
 	 */
 	private ArrayList<Integer> times;
-	/*
+	/**
 	 * The profit lost every second when the service is up
 	 */
 	private double fixed_cost;
-	/*
+	/**
 	 * The profit gained every second when the service is up
 	 */
 	private double fixed_income;
-	/*
+	/**
 	 * The profit lost every second when the service is down
 	 */
 	private double down_cost;
-	/*
+	/**
 	 * The status of the log
 	 */
 	private boolean isFinished;
-	/*
+	/**
 	 * The service's ID
 	 */
 	private int service_id;
@@ -52,6 +52,11 @@ public class ServiceLog implements Serializable {
 		times.add(0);
 	}
 
+	/**
+	 * Updates the service's status (up/ down)
+	 * 
+	 * @param time The time of update
+	 */
 	void updateStatus(int time) {
 		if (isFinished) {
 			return;
@@ -60,10 +65,18 @@ public class ServiceLog implements Serializable {
 		diff = ((isUp()) ? (fixed_income - fixed_cost) : (-fixed_cost - down_cost));
 	}
 	
+	/**
+	 * @return The service's gain/ loss of money per second
+	 */
 	double getDiff(){
 		return diff;
 	}
 
+	/**
+	 * Adds an end time to the service
+	 * 
+	 * @param time The time of stop
+	 */
 	void stop(int time) {
 		if (!isFinished) {
 			times.add(time);
@@ -72,26 +85,29 @@ public class ServiceLog implements Serializable {
 	}
 
 	/**
-	 * @return the fixed_cost
+	 * @return The service's fixed cost
 	 */
 	double getFixed_cost() {
 		return fixed_cost;
 	}
 
 	/**
-	 * @return the fixed_income
+	 * @return The service's fixed income
 	 */
 	double getFixed_income() {
 		return fixed_income;
 	}
 
 	/**
-	 * @return the down_cost
+	 * @return The service's down-time cost
 	 */
 	Double getDown_cost() {
 		return down_cost;
 	}
 
+	/**
+	 * @return The service's MTBF (Mean Time Between Failures)
+	 */
 	Double getMTBF() {
 		if (!isFinished) {
 			return null;
@@ -110,6 +126,9 @@ public class ServiceLog implements Serializable {
 		return (double) totalUpTime / failures;
 	}
 
+	/**
+	 * @return The service's MTRS (Mean Time to Restore the Service)
+	 */
 	Double getMTRS() {
 		if (!isFinished) {
 			return null;
@@ -128,7 +147,7 @@ public class ServiceLog implements Serializable {
 		return (double) totalDownTime / failures;
 	}
 
-	/*
+	/**
 	 * Updates the CI counter of the service, and, if needed, updates the
 	 * service's status. The function returns the change in the service's profit
 	 * gain speed.
@@ -151,10 +170,16 @@ public class ServiceLog implements Serializable {
 		return oldDiff + diff;
 	}
 	
+	/**
+	 * @return The service's ID
+	 */
 	int getId(){
 		return service_id;
 	}
 
+	/**
+	 * @return True if the service is up. False otherwise.
+	 */
 	private boolean isUp() {
 		if (!isFinished) {
 			return times.size() % 2 != 0;

@@ -164,33 +164,32 @@ function incrementClock() {
 	showTime = (showTime - 1);
 	elapsedTime++;
 
-	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
-		// finished runTime
-		isRunTime = false;
-		showTime = gp["pauseTime"];
-		disablePurchase(true);
-		disableSolve(true);
-
-	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
 		showTime = gp["runTime"];
 		disablePurchase(false);
 		disableSolve(false);
-		
-		if (elapsedTime % gp["sessionTime"] == 0) {
-			// finished session
-			if (session < gp["sessionsPerRound"]){
-				session++;
-			};
 
-			if (elapsedTime % gp["roundTime"] == 0) {
-				// finished round
-				console.log("finished");
-				$('#main-time').html("00:00:00");
-				clearInterval(clockInterval);
-			}
+	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+		// finished run time
+		isRunTime = false;
+		showTime = gp["pauseTime"];
+		disablePurchase(true);
+		disableSolve(true);
+		
+		// finished session
+		if (session < gp["sessionsPerRound"]){
+			session++;
+		};
+
+		if (elapsedTime % gp["roundTime"] == 0) {
+			// finished round
+			console.log("finished");
+			$('#main-time').html("00:00:00");
+			clearInterval(clockInterval);
 		}
+		
 	}
 }
 

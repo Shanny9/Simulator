@@ -240,35 +240,35 @@ function incrementClock() {
 	$(idRun).css('width', runPercentage+'%').attr('aria-valuenow', runPercentage);
 	$(idPause).css('width', pausePercentage+'%').attr('aria-valuenow', pausePercentage);
 
-	if ((elapsedTime + gp["pauseTime"]) % (gp["sessionTime"]) == 0) {
-		// finished runTime
-		isRunTime = false;
-		showTime = gp["pauseTime"];
-
-	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
 		showTime = gp["runTime"];
 
-		if (elapsedTime % gp["sessionTime"] == 0) {
-			// finished session
-			runPercentage = 0;
-			pausePercentage = 0;
-			clearEvents();
-			if (session < gp["sessionsPerRound"]){
-				session++;
-			};
-			console.log("session: " + session);
-			$('#session').html(session);
+	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+		// finished run time
+		isRunTime = false;
+		showTime = gp["pauseTime"];
 
-			if (elapsedTime % gp["roundTime"] == 0) {
-				// finished round
-				console.log("finished");
-				$('#main-time').html("00:00:00");
-				clearInterval(clockInterval);
-			}
+
+		// finished session
+		runPercentage = 0;
+		pausePercentage = 0;
+		clearEvents();
+		if (session < gp["sessionsPerRound"]){
+			session++;
+		};
+		
+		console.log("session: " + session);
+		$('#session').html(session);
+
+		if (elapsedTime % gp["roundTime"] == 0) {
+			// finished round
+			console.log("finished");
+			$('#main-time').html("00:00:00");
+			clearInterval(clockInterval);
 		}
-	}//
+	}
 }
 
 Number.prototype.toHHMMSS = function () {

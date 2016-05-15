@@ -82,7 +82,7 @@ public class ClientController extends HttpServlet {
 		case "sendSolution":
 			team = request.getParameter("team");
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
-			time = ClockIncrementor.getCurrentRunTime();
+			time = ClockIncrementor.getRunTime();
 //			time = Integer.valueOf(request.getParameter("time"));
 			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
 			log.SimulationLog.getInstance().getSolutionQueue().offer(new SolutionLog(team, inc_id));

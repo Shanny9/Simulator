@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 /com/
 /log/
 /utils/
+=======
+/com
+/utils
+/log
+*.class
+>>>>>>> branch 'master' of https://github.com/Shanny9/Simulator

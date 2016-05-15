@@ -72,6 +72,7 @@
 			                        </div>
 			                        <button type="submit" class="btn">Sign in!</button>
 			                    </form>
+			                    <div id="loginErr"><span class="glyphicon glyphicon-remove" ></span> Username or password are incorrect.</div>
 		                    </div>
                         </div>
                     </div>
@@ -104,13 +105,14 @@
         <script src="js/login.js"></script>
         
    <%
-	if(request.getParameter("err")!=null)
+	if(session.getAttribute("err")!=null)
 	{ 
    %>
 			<script>
 				inputError();
 			</script>
 	<% 
+		session.setAttribute("err", null);
 	 }
 	%>
         

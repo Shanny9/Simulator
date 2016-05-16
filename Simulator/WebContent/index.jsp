@@ -22,6 +22,7 @@
 
 </head>
 <body>
+
 	<%@ include file="header.html"%>
 	<div class="background-image">
 		<center>

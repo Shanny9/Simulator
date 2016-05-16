@@ -167,6 +167,7 @@ public class HomeController extends HttpServlet {
 			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
 			
 			log.LogUtils.saveSettings(new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital));
+			response.sendRedirect("newCourse.jsp");
 			break;
 		}
 	}

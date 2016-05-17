@@ -179,6 +179,11 @@ img { max-width: 100%; }
 	margin-top: 10px;
 }
 
+/* for selectCourse.jsp */
+#start {
+	background: #eab265;
+	margin-top: 10px;
+}
 #loginErr {
 	text-align: center;
 	color: #fff;

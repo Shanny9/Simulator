@@ -176,6 +176,7 @@ img { max-width: 100%; }
 
 #create {
 	background: #eab265;
+	margin-top: 10px;
 }
 
 #loginErr {

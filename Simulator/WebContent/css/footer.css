@@ -1,0 +1,21 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	padding-top: 0px;
+	padding-bottom: 40px;
+	position: relative;
+}
+footer {
+	background-color: #2d2d30;
+	bottom: 0px;
+	width: 100%;
+	position: fixed;
+	color: #d5d5d5;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	font-size: 11px !important;
+	letter-spacing: 2px;
+	opacity: 0.9;
+}

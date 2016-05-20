@@ -181,7 +181,7 @@ img { max-width: 100%; }
 
 /* for selectCourse.jsp */
 #start {
-	background: #eab265;
+	background: #EC644B;
 	margin-top: 10px;
 }
 #loginErr {
@@ -208,3 +208,11 @@ img { max-width: 100%; }
 
 }
 
+.message {
+    display: none;
+}
+
+p{
+	opacity: 0.8;
+    color: #fff;
+}

@@ -45,9 +45,9 @@ public class LogUtils {
 	 * Checks is a course has the 'settings.ser' file
 	 * 
 	 * @param courseName The name of the course
-	 * @return True is the 'settings.ser' file exists. False otherwise.
+	 * @return If 'settings.ser' file exists, returns number of rounds. Otherwise returns 0
 	 */
-	public static boolean isLogExists(String courseName){
+	public static int getCourseRounds(String courseName){
 		
 		String path = generatePath(courseName);
 		File file = new File(path);
@@ -57,7 +57,7 @@ public class LogUtils {
 				return name.equals("settings.ser");
 			}
 		});
-		return settingsFiles !=null;
+		return (settingsFiles.length != 0)? openSettings(courseName).getRounds() : 0;
 	}
 	
 	public static String[] getCourses(){

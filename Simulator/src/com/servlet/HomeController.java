@@ -172,7 +172,7 @@ public class HomeController extends HttpServlet {
 			response.sendRedirect("newCourse.jsp");
 			break;
 		case "checkLog":
-			response.getWriter().print(LogUtils.isLogExists(request.getParameter("courseName")));
+			response.getWriter().write(gson.toJson(LogUtils.getCourseRounds(request.getParameter("directory"))));
 			break;
 		case "getCourses":
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));

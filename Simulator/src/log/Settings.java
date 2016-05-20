@@ -15,6 +15,8 @@ public class Settings implements Serializable{
 	private int pauseTime;
 	private int sessionsPerRound;
 	private double initCapital;
+	private int lastRoundDone;
+	
 	/**
 	 * @param courseName
 	 * @param date
@@ -32,6 +34,7 @@ public class Settings implements Serializable{
 		this.pauseTime = pauseTime;
 		this.sessionsPerRound = sessionsPerRound;
 		this.initCapital = initCapital;
+		this.lastRoundDone = 0;
 	}
 	/**
 	 * @return the courseName
@@ -117,4 +120,16 @@ public class Settings implements Serializable{
 	public void setInitCapital(double initCapital) {
 		this.initCapital = initCapital;
 	}
+	/**
+	 * @return the lastRoundDone
+	 */
+	public int getLastRoundDone() {
+		return lastRoundDone;
+	}
+	/**
+	 * @param lastRoundDone the lastRoundDone to set
+	 */
+	public void setLastRoundDone(int lastRoundDone) {
+		this.lastRoundDone = lastRoundDone;
+	}	
 }

@@ -14,15 +14,18 @@ public class SimulationLog extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * The simulation's incidents and their times (key=start_time, value=incident_id)
+	 * The simulation's incidents and their times (key=start_time,
+	 * value=incident_id)
 	 */
 	private HashMap<Integer, Integer> incident_times;
 	/**
-	 * The simulation's map of CIs and their affected services (key=ci_id, value=set of affected services)
+	 * The simulation's map of CIs and their affected services (key=ci_id,
+	 * value=set of affected services)
 	 */
 	private HashMap<Integer, HashSet<Integer>> affecting_cis;
 	/**
-	 * The simulation's map of services and their affecting CIs (key=service_id, value=set of affecting CIs)
+	 * The simulation's map of services and their affecting CIs (key=service_id,
+	 * value=set of affecting CIs)
 	 */
 	private HashMap<Integer, HashSet<Integer>> affected_services;
 	/**
@@ -40,7 +43,7 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * The log of team Marom
 	 */
-	private static TeamLog marom;	
+	private static TeamLog marom;
 	/**
 	 * The log of team Rakia
 	 */
@@ -50,6 +53,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private static SimulationLog instance;
 
+	@SuppressWarnings("unchecked")
 	SimulationLog() {
 		super();
 		affecting_cis = LogUtils.getDBAffectingCIs();
@@ -63,20 +67,23 @@ public class SimulationLog extends Thread implements Serializable {
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
 		HashMap<Integer, ServiceLog> service_logs = new HashMap<>();
-		
+
 		double initDiff = 0;
-		
+
 		for (TblService service : services) {
 			int service_id = service.getServiceId();
 			service_logs.put(service_id, new ServiceLog(service_id, service.getFixedCost(), service.getFixedIncome(),
 					serviceDownTimeCosts.get(service_id)));
 			initDiff += service_logs.get(service_id).getDiff();
 		}
-		
+
 		HashMap<Integer, IncidentLog> incident_logs = LogUtils.getIncidentLogs();
-		
-		marom = new TeamLog(initProfit, service_logs, initDiff, incident_logs);
-		rakia = new TeamLog(initProfit, service_logs, initDiff, incident_logs);
+
+		HashMap<Integer, ServiceLog> service_logs_copy = (HashMap<Integer, ServiceLog>) LogUtils.copy(service_logs);
+		HashMap<Integer, IncidentLog> incident_logs_copy = (HashMap<Integer, IncidentLog>) LogUtils.copy(incident_logs);
+
+		marom = new TeamLog("Marom", initProfit, service_logs, initDiff, incident_logs);
+		rakia = new TeamLog("Rakia", initProfit, service_logs_copy, initDiff, incident_logs_copy);
 	}
 
 	public static SimulationLog getInstance() {
@@ -88,7 +95,8 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * @param team The team's name
+	 * @param team
+	 *            The team's name
 	 * @return The team's log
 	 */
 	public TeamLog getTeam(String team) {
@@ -101,19 +109,21 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * @return The simulation's map of CIs and their affected services (key=ci_id, value=set of affected services)
+	 * @return The simulation's map of CIs and their affected services
+	 *         (key=ci_id, value=set of affected services)
 	 */
 	HashMap<Integer, HashSet<Integer>> getAffectingCis() {
 		return affecting_cis;
 	}
 
 	/**
-	 * @return The simulation's map of services and their affecting CIs (key=service_id, value=set of affecting CIs)
+	 * @return The simulation's map of services and their affecting CIs
+	 *         (key=service_id, value=set of affecting CIs)
 	 */
 	HashMap<Integer, HashSet<Integer>> getAffectedServices() {
 		return affected_services;
 	}
-	
+
 	/**
 	 * @return The events of the incident
 	 */
@@ -122,20 +132,25 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * @param ci_id The CI id
+	 * @param ci_id
+	 *            The CI id
 	 * @return The CI's solution cost
 	 */
-	double getCISolutionCost(int ci_id){
+	double getCISolutionCost(int ci_id) {
 		return ciSolCosts.get(ci_id);
 	}
-	
+
 	/**
 	 * Updates the team's diff, purchases and profits given the incident solved
 	 * 
-	 * @param team The team that solved the incident
-	 * @param inc_id The incident that was solved
-	 * @param time The time when the incident was solved
-	 * @param isBought True weather the incident was bought. False otherwise.
+	 * @param team
+	 *            The team that solved the incident
+	 * @param inc_id
+	 *            The incident that was solved
+	 * @param time
+	 *            The time when the incident was solved
+	 * @param isBought
+	 *            True weather the incident was bought. False otherwise.
 	 */
 	public void incidentSolved(String team, int inc_id, int time, boolean isBought) {
 		getTeam(team).incidentSolved(inc_id, time, isBought);
@@ -144,32 +159,38 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * Checks if the given incident in the given time is open
 	 * 
-	 * @param team The team that the check refers to
-	 * @param inc_id The incident to be checked
-	 * @param time The time to be checked
+	 * @param team
+	 *            The team that the check refers to
+	 * @param inc_id
+	 *            The incident to be checked
+	 * @param time
+	 *            The time to be checked
 	 * @return True if the incident is open. False otherwise.
 	 */
 	public boolean checkIncident(String team, int inc_id, int time) {
 		return getTeam(team).isIncidentOpen(inc_id, time);
 	}
-	
+
 	/**
-	 * @return The simulation's incidents and their times (key=start_time, value=incident_id)
+	 * @return The simulation's incidents and their times (key=start_time,
+	 *         value=incident_id)
 	 */
-	public HashMap<Integer, Integer> getIncidentTimes(){
+	public HashMap<Integer, Integer> getIncidentTimes() {
 		return incident_times;
 	}
-	
+
 	/**
 	 * @return The simulation's live queue of current solutions
 	 */
-	public LinkedList<SolutionLog> getSolutionQueue(){
+	public LinkedList<SolutionLog> getSolutionQueue() {
 		return solutionQueue;
 	}
 
 	/**
 	 * Fixed all the incidents to both team
-	 * @param time The current time
+	 * 
+	 * @param time
+	 *            The current time
 	 */
 	public void fixAllIncidents(int time) {
 		marom.fixAllIncidents(time);

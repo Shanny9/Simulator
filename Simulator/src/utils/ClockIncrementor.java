@@ -54,8 +54,9 @@ public class ClockIncrementor implements Runnable {
 				LogManager.pauseLog(elapsedRuntime, false);
 				elapsedRuntime = 0;
 			}
+		} else {
+			LogManager.Stop(elapsedRuntime);
 		}
-		LogManager.Stop(elapsedRuntime);
 	}
 
 	public static int getRunTime() {

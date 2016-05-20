@@ -100,7 +100,7 @@ public class TblEevntDaoImpl implements TblEventDao {
 	public List<TblEvent> getAllEvents() {
 		List<TblEvent> events = new ArrayList<TblEvent>();
 
-		String query = "SELECT * FROM tblCourse ORDER BY event_id\n";
+		String query = "SELECT * FROM tblEvent ORDER BY event_id\n";
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);

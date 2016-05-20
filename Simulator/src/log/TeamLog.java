@@ -18,7 +18,11 @@ import com.model.TblService;
 public class TeamLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	/**
+	 * The team's name
+	 */
+	private String teamName;
 	/**
 	 * The team's incident logs
 	 */
@@ -55,19 +59,30 @@ public class TeamLog implements Serializable {
 	 * @param incident_logs
 	 *            the team's initial incident logs
 	 */
-	TeamLog(double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
+	TeamLog(String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
 			HashMap<Integer, IncidentLog> incident_logs) {
 		super();
+		this.teamName = teamName;
 		this.profits = new ArrayList<>();
 		this.purchases = new HashMap<>();
+		this.service_logs = new HashMap<>();
+		this.incident_logs = new HashMap<>();
 		this.isFinished = false;
 
 		this.profits.add(initProfit);
-		this.service_logs = service_logs;
+		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
-		this.incident_logs = incident_logs;
+		this.incident_logs.putAll(incident_logs);
 	}
-
+	
+	String getTeamName(){
+		return toString();
+	}
+	
+	double getDiff(){
+		return diff;
+	}
+	
 	/**
 	 * Updates the team's diff, purchases and profits given the incident solved
 	 * 
@@ -224,7 +239,7 @@ public class TeamLog implements Serializable {
 	}
 
 	public String toString() {
-		String str = "Team Log\n========\n\nIncidents\n--------\n";
+		String str = "Team " + teamName + "\n========\n\nIncidents\n--------\n";
 		for (IncidentLog il : incident_logs.values()) {
 			str += il.toString() + "\n";
 		}

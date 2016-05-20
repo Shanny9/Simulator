@@ -57,18 +57,19 @@ public class ServiceLog implements Serializable {
 	 * 
 	 * @param time The time of update
 	 */
-	void updateStatus(int time) {
+	synchronized void updateStatus(int time) {
 		if (isFinished) {
 			return;
 		}
 		times.add(time);
 		diff = ((isUp()) ? (fixed_income - fixed_cost) : (-fixed_cost - down_cost));
+
 	}
 	
 	/**
 	 * @return The service's gain/ loss of money per second
 	 */
-	double getDiff(){
+	synchronized double getDiff(){
 		return diff;
 	}
 
@@ -77,7 +78,7 @@ public class ServiceLog implements Serializable {
 	 * 
 	 * @param time The time of stop
 	 */
-	void stop(int time) {
+	synchronized void stop(int time) {
 		if (!isFinished) {
 			times.add(time);
 		}
@@ -87,28 +88,28 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's fixed cost
 	 */
-	double getFixed_cost() {
+	synchronized double getFixed_cost() {
 		return fixed_cost;
 	}
 
 	/**
 	 * @return The service's fixed income
 	 */
-	double getFixed_income() {
+	synchronized double getFixed_income() {
 		return fixed_income;
 	}
 
 	/**
 	 * @return The service's down-time cost
 	 */
-	Double getDown_cost() {
+	synchronized Double getDown_cost() {
 		return down_cost;
 	}
 
 	/**
 	 * @return The service's MTBF (Mean Time Between Failures)
 	 */
-	Double getMTBF() {
+	synchronized Double getMTBF() {
 		if (!isFinished) {
 			return null;
 		}
@@ -129,7 +130,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's MTRS (Mean Time to Restore the Service)
 	 */
-	Double getMTRS() {
+	synchronized Double getMTRS() {
 		if (!isFinished) {
 			return null;
 		}
@@ -152,7 +153,8 @@ public class ServiceLog implements Serializable {
 	 * service's status. The function returns the change in the service's profit
 	 * gain speed.
 	 */
-	double ciUpdate(boolean isUp, int time) {
+	synchronized double ciUpdate(boolean isUp, int time) {
+		System.out.println("diff= " + diff);
 		double oldDiff = diff;
 		if (isUp) {
 			// if all CIs ARE DOWN, updates service status
@@ -161,26 +163,27 @@ public class ServiceLog implements Serializable {
 				updateStatus(time);
 			}
 		} else {
+			System.out.println("cisDown= " + cisDown);
 			// if all CIs WERE DOWN, updates service status
 			if (cisDown == 0) {
 				updateStatus(time);
 			}
 			this.cisDown++;
 		}
-		return oldDiff + diff;
+		return diff - oldDiff;
 	}
 	
 	/**
 	 * @return The service's ID
 	 */
-	int getId(){
+	synchronized int getId(){
 		return service_id;
 	}
 
 	/**
 	 * @return True if the service is up. False otherwise.
 	 */
-	private boolean isUp() {
+	synchronized private boolean isUp() {
 		if (!isFinished) {
 			return times.size() % 2 != 0;
 		} else {
@@ -188,7 +191,7 @@ public class ServiceLog implements Serializable {
 		}
 	}
 	
-	public String toString(){
+	synchronized public String toString(){
 		return "Service id= " + service_id + ", Times: " + times.toString();
 	}
 }

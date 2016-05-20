@@ -1,5 +1,7 @@
 package log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,34 +41,36 @@ public class LogUtils {
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
 	private static final String filePrefix = "round#";
 	private static final boolean deleteHistory = true;
-	
+
 	/**
 	 * Checks is a course has the 'settings.ser' file
 	 * 
-	 * @param courseName The name of the course
-	 * @return If 'settings.ser' file exists, returns number of rounds. Otherwise returns 0
+	 * @param courseName
+	 *            The name of the course
+	 * @return If 'settings.ser' file exists, returns number of rounds.
+	 *         Otherwise returns 0
 	 */
-	public static int getCourseRounds(String courseName){
-		
+	public static int getCourseRounds(String courseName) {
+
 		String path = generatePath(courseName);
 		File file = new File(path);
-		
+
 		File[] settingsFiles = file.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.equals("settings.ser");
 			}
 		});
-		return (settingsFiles.length != 0)? openSettings(courseName).getRounds() : 0;
+		return (settingsFiles.length != 0) ? openSettings(courseName).getRounds() : 0;
 	}
-	
-	public static String[] getCourses(){
-		
+
+	public static String[] getCourses() {
+
 		File file = new File(path);
 		String[] directories = file.list(new FilenameFilter() {
-		  @Override
-		  public boolean accept(File current, String name) {
-		    return new File(current, name).isDirectory();
-		  }
+			@Override
+			public boolean accept(File current, String name) {
+				return new File(current, name).isDirectory();
+			}
 		});
 		return directories;
 	}
@@ -83,7 +86,7 @@ public class LogUtils {
 	public static void saveLog(String courseName, final int round) {
 		try {
 			String path = generatePath(courseName);
-			File file = new File(path);		
+			File file = new File(path);
 			final String newFileName = generateFileName(round);
 
 			FileOutputStream fileOut = new FileOutputStream(path + newFileName);
@@ -342,5 +345,30 @@ public class LogUtils {
 			incident_events.put(incident, events);
 		}
 		return incident_events;
+	}
+
+	/**
+	 * Returns a copy of the object, or null if the object cannot be serialized.
+	 */
+	public static Object copy(Object orig) {
+		Object obj = null;
+		try {
+			// Write the object out to a byte array
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			out.writeObject(orig);
+			out.flush();
+			out.close();
+
+			// Make an input stream from the byte array and read
+			// a copy of the object back in.
+			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+			obj = in.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}
+		return obj;
 	}
 }

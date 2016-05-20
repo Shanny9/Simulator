@@ -53,22 +53,22 @@
 			                        <div class="form-group">
 			                        <span class = "_label">Course name</span>
 			                         <select name="form-courseName" class="form-courseName form-control" id="form-courseName">
-				                         <option value="1">Example 1</option>
-				                         <option value="2">Example 2</option>
+<!-- 				                         <option value="1">Example 1</option>
+				                         <option value="2">Example 2</option> -->
 			                        </select>
 			                        </div>
 			                        
 			                        <div class="form-group">
 			                    	<span class = "_label">Round</span>
 			                         <select name="form-round" class="form-round form-control" id="form-round">
-				                         <option value="1">Example 1</option>
-				                         <option value="2">Example 2</option>
+<!-- 				                         <option value="1">Example 1</option>
+				                         <option value="2">Example 2</option> -->
 			                        </select>
 			                      	</div>
 
 			                        <button type="submit" class="btn" id="start">Start Simulator</button>
 			                    </form>
-			                    <div id="loginErr"><span class="glyphicon glyphicon-remove" ></span>...</div>
+			                    <div id="err"></div>
 		                    </div>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
         <script src="js/jquery-1.11.3.min.js"></script>
         <script src="js/bootstrap-3.3.5.min.js"></script>
         <script src="js/jquery.backstretch.min.js"></script>
-        <script src="js/newCourse.js"></script>
+        <script src="js/selectCourse.js"></script>
         
    <%
 	if(session.getAttribute("err")!=null)

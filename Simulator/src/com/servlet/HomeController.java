@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.model.TblCourse;
 import com.model.TblGeneral_parameter;
 
+import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
 import log.SolutionLog;
@@ -51,7 +52,7 @@ public class HomeController extends HttpServlet {
 			throws ServletException, IOException {
 		doPost(request, response);
 	}
-	
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -70,8 +71,8 @@ public class HomeController extends HttpServlet {
 		case "authenticate":
 
 			response.setContentType("text/html");
-			
-			switch(authenticate(request)){
+
+			switch (authenticate(request)) {
 			case 1:
 				response.sendRedirect("index.jsp");
 				break;
@@ -135,14 +136,14 @@ public class HomeController extends HttpServlet {
 			if (!solutionQueue.isEmpty()) {
 				String json = gson.toJson(solutionQueue.poll());
 				String[] rows = json.split("\n");
-				for (int i= 0 ; i <rows.length ; i++){
+				for (int i = 0; i < rows.length; i++) {
 					rows[i] = "data: " + rows[i];
 				}
 				String streamMessage = String.join("\n", rows);
 				response.getWriter().write(streamMessage + "\n\n");
 			}
 			break;
-			
+
 		case "profitStream":
 			// content type must be set to text/event-stream
 			response.setContentType("text/event-stream");
@@ -157,7 +158,7 @@ public class HomeController extends HttpServlet {
 			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + rakiaProfit + "\"}]\n\n";
 			response.getWriter().write(streamMessage);
 			break;
-			
+
 		case "newCourse":
 			String courseName = request.getParameter("form-courseName");
 			int rounds = Integer.valueOf(request.getParameter("form-numOfRounds"));
@@ -165,9 +166,16 @@ public class HomeController extends HttpServlet {
 			int pauseTime = Integer.valueOf(request.getParameter("form-pauseTime"));
 			int sessionsPerRound = Integer.valueOf(request.getParameter("form-sessions"));
 			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
-			
-			log.LogUtils.saveSettings(new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital));
+
+			log.LogUtils
+					.saveSettings(new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital));
 			response.sendRedirect("newCourse.jsp");
+			break;
+		case "checkLog":
+			response.getWriter().print(LogUtils.isLogExists(request.getParameter("courseName")));
+			break;
+		case "getCourses":
+			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
 			break;
 		}
 	}
@@ -205,49 +213,46 @@ public class HomeController extends HttpServlet {
 		int result;
 		char[] user = request.getParameter("form-username").toCharArray();
 		char[] pass = request.getParameter("form-password").toCharArray();
-		request.removeAttribute("form-password"); //for security
+		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
-		
+
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
 
-		PasswordAuthentication au = new PasswordAuthentication(); // default cost is 16
-		
-		//Admin
-		if(au.authenticate(user, gp.getHomeUser()) && au.authenticate(pass, gp.getHomePass()))
-		{
+		PasswordAuthentication au = new PasswordAuthentication(); // default
+																	// cost is
+																	// 16
+
+		// Admin
+		if (au.authenticate(user, gp.getHomeUser()) && au.authenticate(pass, gp.getHomePass())) {
 			result = 1;
 		}
-		//Team
-		else
-		{
-			//Marom
-			if(String.valueOf(user).equals("Marom") && String.valueOf(pass).equals("m") )
+		// Team
+		else {
+			// Marom
+			if (String.valueOf(user).equals("Marom") && String.valueOf(pass).equals("m"))
 				result = 2;
-			
-			else 
-			{ 
-				//Rakia
-				if(String.valueOf(user).equals("Rakia") && String.valueOf(pass).equals("r"))
+
+			else {
+				// Rakia
+				if (String.valueOf(user).equals("Rakia") && String.valueOf(pass).equals("r"))
 					result = 3;
-			
-				//Invalid details
+
+				// Invalid details
 				else
 					result = 0;
 			}
-			
+
 		}
-		
+
 		gp = null;
 		emptyChar(pass);
 		emptyChar(user);
 		return result;
 
 	}
-	
-	
-	
-	private void emptyChar(char[] arr){
+
+	private void emptyChar(char[] arr) {
 		for (int i = 0; i < arr.length; i++)
 			arr[i] = 0;
 	}

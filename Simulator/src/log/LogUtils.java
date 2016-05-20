@@ -2,7 +2,6 @@ package log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -12,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,10 +36,41 @@ import utils.Queries;
 
 public class LogUtils {
 
-	private static final String root_directory = "/logs/";
+	private static final String path = "/logs/";
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
 	private static final String filePrefix = "round#";
 	private static final boolean deleteHistory = true;
+	
+	/**
+	 * Checks is a course has the 'settings.ser' file
+	 * 
+	 * @param courseName The name of the course
+	 * @return True is the 'settings.ser' file exists. False otherwise.
+	 */
+	public static boolean isLogExists(String courseName){
+		
+		String path = generatePath(courseName);
+		File file = new File(path);
+		
+		File[] settingsFiles = file.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.equals("settings.ser");
+			}
+		});
+		return settingsFiles !=null;
+	}
+	
+	public static String[] getCourses(){
+		
+		File file = new File(path);
+		String[] directories = file.list(new FilenameFilter() {
+		  @Override
+		  public boolean accept(File current, String name) {
+		    return new File(current, name).isDirectory();
+		  }
+		});
+		return directories;
+	}
 
 	/**
 	 * Saves the log in the logs folder
@@ -51,21 +82,8 @@ public class LogUtils {
 	 */
 	public static void saveLog(String courseName, final int round) {
 		try {
-			
 			String path = generatePath(courseName);
-			File file = new File(path);
-			
-			// check if the course's directory exists
-			File[] settingsFiles = file.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.equals("settings.ser");
-				}
-			});
-			
-			if (settingsFiles.length == 0){
-				throw new FileNotFoundException("Settings.ser file does not exist in " + path);
-			}
-			
+			File file = new File(path);		
 			final String newFileName = generateFileName(round);
 
 			FileOutputStream fileOut = new FileOutputStream(path + newFileName);
@@ -180,7 +198,7 @@ public class LogUtils {
 	 * @return The path to the directory of the course's log
 	 */
 	private static String generatePath(String courseName) {
-		return root_directory + courseName + "/";
+		return path + courseName + "/";
 	}
 
 	/**

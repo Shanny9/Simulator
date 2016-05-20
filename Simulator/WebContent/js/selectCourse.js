@@ -35,7 +35,7 @@ function checkLog(directory) {
 				disable($('#start'), true);
 				disable($('#form-round'), true);
 				if (directory != "") {
-					$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message
+					$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message
 				}
 			}
 		},

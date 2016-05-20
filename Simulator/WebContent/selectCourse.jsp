@@ -57,16 +57,12 @@
 										name="form-courseName" class="form-courseName form-control"
 										id="form-courseName">
 										<option value="">Please select a course...</option>
-										<!--<option value="1">Example 1</option>
-				                         <option value="2">Example 2</option> -->
 									</select>
 								</div>
-
+								
 								<div class="form-group">
 									<span class="_label">Round</span> <select name="form-round"
 										class="form-round form-control disabled" id="form-round">
-										<!--<option value="1">Example 1</option>
-				                         <option value="2">Example 2</option> -->
 									</select>
 								</div>
 

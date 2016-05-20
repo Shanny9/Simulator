@@ -160,7 +160,7 @@ public class LogUtils {
 			out.writeObject(settings);
 			out.close();
 			fileOut.close();
-			System.out.printf("settings for course " + settings.getCourseName() + "were saved in " + path);
+			System.out.printf("settings for course " + settings.getCourseName() + " were saved in " + path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

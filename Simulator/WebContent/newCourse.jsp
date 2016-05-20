@@ -54,6 +54,7 @@
 			                        <span class = "_label">Course name</span>
 			                        	<input type="text" name="form-courseName" class="form-courseName form-control" id="form-courseName">
 			                        </div>
+			                        <p id="err" class="message">This course name is already taken. Please choose a different name</p>
 			                        <hr class="separator">
 			                        <div class="form-group">
 			                    	<span class = "_label">Rounds</span>

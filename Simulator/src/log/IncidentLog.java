@@ -1,6 +1,8 @@
 package log;
 
-public class IncidentLog {
+import java.io.Serializable;
+
+public class IncidentLog implements Serializable{
 	private int incident_id;
 	private int root_ci;
 	private int start_time;

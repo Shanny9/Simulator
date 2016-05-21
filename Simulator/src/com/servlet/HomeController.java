@@ -73,7 +73,8 @@ public class HomeController extends HttpServlet {
 			response.setContentType("text/html");
 
 			switch (authenticate(request)) {
-			case 1:
+			case 1:	
+				request.getSession().setAttribute("isLogged", "1");
 				response.sendRedirect("index.jsp");
 				break;
 			case 2:
@@ -126,36 +127,21 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(new HomeData().getEvents());
 			break;
 		case "solutionStream":
-			// content type must be set to text/event-stream
-			response.setContentType("text/event-stream");
-
-			// encoding must be set to UTF-8
-			response.setCharacterEncoding("UTF-8");
+			prepareResponseToStream(response);
 
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
-				String json = gson.toJson(solutionQueue.poll());
-				String[] rows = json.split("\n");
-				for (int i = 0; i < rows.length; i++) {
-					rows[i] = "data: " + rows[i];
-				}
-				String streamMessage = String.join("\n", rows);
-				response.getWriter().write(streamMessage + "\n\n");
+				response.getWriter().write(toStream(solutionQueue.poll()));
 			}
 			break;
 
 		case "profitStream":
-			// content type must be set to text/event-stream
-			response.setContentType("text/event-stream");
+			prepareResponseToStream(response);
+			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits();
 
-			// encoding must be set to UTF-8
-			response.setCharacterEncoding("UTF-8");
-
-			int maromProfit = (int) SimulationLog.getInstance().getTeam("marom").getCurrentProfit();
-			int rakiaProfit = (int) SimulationLog.getInstance().getTeam("rakia").getCurrentProfit();
-
-			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \"" + maromProfit + "\"}, ";
-			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + rakiaProfit + "\"}]\n\n";
+			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
+					+ profits.get("Marom").intValue() + "\"}, ";
+			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + profits.get("Rakia").intValue() + "\"}]\n\n";
 			response.getWriter().write(streamMessage);
 			break;
 
@@ -178,6 +164,15 @@ public class HomeController extends HttpServlet {
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
 			break;
 		}
+	}
+
+	private void prepareResponseToStream(HttpServletResponse response) {
+		// content type must be set to text/event-stream
+		response.setContentType("text/event-stream");
+
+		// encoding must be set to UTF-8
+		response.setCharacterEncoding("UTF-8");
+
 	}
 
 	protected HashMap<String, Object> getTimes(String courseName) {
@@ -257,16 +252,17 @@ public class HomeController extends HttpServlet {
 			arr[i] = 0;
 	}
 
-	// private String toJSON(SolutionLog sl){
-	// String team = "\"" + sl.getTeam() + "\"";
-	// String events = "\"events\":[";
-	// for (Integer event_id : sl.getEvents()){
-	// events+="{\"event_id\":" + "\"" + event_id + "\"" + "}";
-	// }
-	// events+="]";
-	//// HashSet<Integer> events = "\"" + sl.getEvents() + "\"";;
-	//
-	// String message = "data: {\ndata: \"team\": " + team + ",\ndata:
-	// \"inc_id\": " + inc_id + "\ndata: }\n\n";
-	// }
+	private String toStream(Object obj) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(obj);
+		String[] rows = json.split("\n");
+		for (int i = 0; i < rows.length; i++) {
+			rows[i] = "data: " + rows[i];
+		}
+
+		String streamMessage = String.join("\n", rows);
+		streamMessage += "\n\n";
+
+		return streamMessage;
+	}
 }

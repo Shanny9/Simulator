@@ -76,7 +76,7 @@ public class TeamLog implements Serializable {
 	}
 	
 	String getTeamName(){
-		return toString();
+		return teamName;
 	}
 	
 	double getDiff(){
@@ -187,7 +187,7 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            Current time
 	 */
-	public void Stop(int time) {
+	public void stop(int time) {
 		for (ServiceLog service : service_logs.values()) {
 			service.stop(time);
 		}
@@ -236,6 +236,10 @@ public class TeamLog implements Serializable {
 	 */
 	public ArrayList<Double> getProfits() {
 		return profits;
+	}
+	
+	public HashMap<Integer, IncidentLog> getIncident_logs(){
+		return incident_logs;
 	}
 
 	public String toString() {

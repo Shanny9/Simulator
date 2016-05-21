@@ -16,6 +16,7 @@ import com.sun.org.apache.bcel.internal.generic.LUSHR;
 
 import log.LogManager;
 import log.SimulationLog;
+import log.SimulationTester;
 import log.TeamLog;
 
 @WebListener
@@ -29,6 +30,7 @@ public class TimerManager implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 		log.LogUtils.saveLog("course1", 1);
+//		new Thread(new SimulationTester()).start();
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public class TimerManager implements ServletContextListener {
 		LogManager.setRound(round);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
 		scheduler.scheduleAtFixedRate(LogManager.getInstance(), 0, 1, TimeUnit.SECONDS);
+		
 	}
 
 	public static void forcePause() {

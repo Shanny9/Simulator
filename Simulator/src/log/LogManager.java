@@ -1,7 +1,5 @@
 package log;
 
-import java.util.Date;
-
 public class LogManager implements Runnable {
 	private static SimulationLog simLog;
 	private static boolean isRunning; 
@@ -60,8 +58,7 @@ public class LogManager implements Runnable {
 	 */
 	public static void Stop(int time) {
 		isRunning = false;
-		simLog.getTeam("Marom").Stop(time);
-		simLog.getTeam("Rakia").Stop(time);
+		simLog.stopLogs(time);
 		System.out.println("Log stopped");
 		log.LogUtils.saveLog(course,round);
 	}
@@ -70,19 +67,14 @@ public class LogManager implements Runnable {
 	public void run() {
 //		long start = System.nanoTime();
 		if (isRunning) {
-			TeamLog marom = simLog.getTeam("Marom");
-			TeamLog rakia = simLog.getTeam("Rakia");
 			// should occur every second
 			elapsed_time++;
 
 			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
 				int inc_id = simLog.getIncidentTimes().get(elapsed_time);
-				System.out.println("inc_id= " + inc_id);
-				marom.incidentStarted(inc_id, elapsed_time);
-				rakia.incidentStarted(inc_id, elapsed_time);
+				simLog.incidentStarted(inc_id, elapsed_time);
 			}
-			marom.updateProfit(elapsed_time);
-			rakia.updateProfit(elapsed_time);
+			simLog.updateTeamProfits(elapsed_time);
 			
 //			System.out.println("Marom: " + marom.getProfits());
 //			System.out.println("Rakia: " + rakia.getProfits());

@@ -346,7 +346,23 @@ public class LogUtils {
 		}
 		return incident_events;
 	}
-
+	
+	
+	static HashMap<Integer, String> getServicePriorities() {
+		HashMap<Integer, String> servicePriority = new HashMap<>();
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(Queries.servicePriorities);
+			while (rs.next()) {
+				servicePriority.put(rs.getInt("service_id"), rs.getString("priorityName"));
+			}
+			return servicePriority;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns a copy of the object, or null if the object cannot be serialized.
 	 */

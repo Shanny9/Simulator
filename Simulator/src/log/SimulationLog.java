@@ -108,6 +108,13 @@ public class SimulationLog extends Thread implements Serializable {
 		return null;
 	}
 
+	public HashMap<String, Double> getTeamProfits() {
+		HashMap<String, Double> profits = new HashMap<>();
+		profits.put(marom.getTeamName(), marom.getCurrentProfit());
+		profits.put(rakia.getTeamName(), rakia.getCurrentProfit());
+		return profits;
+	}
+
 	/**
 	 * @return The simulation's map of CIs and their affected services
 	 *         (key=ci_id, value=set of affected services)
@@ -141,7 +148,7 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * Updates the team's diff, purchases and profits given the incident solved
+	 * Fires a solution in the team's logs
 	 * 
 	 * @param team
 	 *            The team that solved the incident
@@ -154,6 +161,41 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	public void incidentSolved(String team, int inc_id, int time, boolean isBought) {
 		getTeam(team).incidentSolved(inc_id, time, isBought);
+	}
+
+	/**
+	 * Fires an incident in the teams' logs
+	 * 
+	 * @param inc_id
+	 *            The incident that has been fired
+	 * @param time
+	 *            The time of the incident
+	 */
+	public void incidentStarted(int inc_id, int time) {
+		marom.incidentStarted(inc_id, time);
+		rakia.incidentStarted(inc_id, time);
+	}
+
+	/**
+	 * Updates the the teams' profits
+	 * 
+	 * @param time
+	 *            The time of update
+	 */
+	public void updateTeamProfits(int time) {
+		marom.updateProfit(time);
+		rakia.updateProfit(time);
+	}
+
+	/**
+	 * Stops the log. Puts end times to both teams' services.
+	 * 
+	 * @param time
+	 *            The time of the stop
+	 */
+	public void stopLogs(int time) {
+		marom.stop(time);
+		rakia.stop(time);
 	}
 
 	/**

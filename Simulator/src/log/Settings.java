@@ -2,6 +2,7 @@ package log;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Settings implements Serializable{
 	/**
@@ -16,6 +17,11 @@ public class Settings implements Serializable{
 	private int sessionsPerRound;
 	private double initCapital;
 	private int lastRoundDone;
+	
+	/**
+	 * The priority name and MAX time to solve according to the SLA
+	 */
+	private HashMap<String, Integer> priority_sla;
 	
 	/**
 	 * @param courseName
@@ -35,6 +41,14 @@ public class Settings implements Serializable{
 		this.sessionsPerRound = sessionsPerRound;
 		this.initCapital = initCapital;
 		this.lastRoundDone = 0;
+		
+		//TODO: should be input from user
+		priority_sla = new HashMap<>();
+		priority_sla.put("Low", 75);
+		priority_sla.put("Medium", 60);
+		priority_sla.put("High", 45);
+		priority_sla.put("Major", 30);
+		priority_sla.put("Critical", 15);
 	}
 	/**
 	 * @return the courseName
@@ -131,5 +145,9 @@ public class Settings implements Serializable{
 	 */
 	public void setLastRoundDone(int lastRoundDone) {
 		this.lastRoundDone = lastRoundDone;
-	}	
+	}
+	
+	public HashMap<String, Integer> getPriority_sla(){
+		return priority_sla;
+	}
 }

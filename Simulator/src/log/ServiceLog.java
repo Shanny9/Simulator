@@ -154,7 +154,6 @@ public class ServiceLog implements Serializable {
 	 * gain speed.
 	 */
 	synchronized double ciUpdate(boolean isUp, int time) {
-		System.out.println("diff= " + diff);
 		double oldDiff = diff;
 		if (isUp) {
 			// if all CIs ARE DOWN, updates service status
@@ -163,7 +162,6 @@ public class ServiceLog implements Serializable {
 				updateStatus(time);
 			}
 		} else {
-			System.out.println("cisDown= " + cisDown);
 			// if all CIs WERE DOWN, updates service status
 			if (cisDown == 0) {
 				updateStatus(time);
@@ -183,7 +181,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return True if the service is up. False otherwise.
 	 */
-	synchronized private boolean isUp() {
+	synchronized public boolean isUp() {
 		if (!isFinished) {
 			return times.size() % 2 != 0;
 		} else {

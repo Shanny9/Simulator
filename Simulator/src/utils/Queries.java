@@ -15,4 +15,7 @@ public class Queries {
 			+ "join SIMULATOR.tblSolution Sol on I.solution_id = Sol.solution_id\r\n"
 			+ "join SIMULATOR.tblCI CI on I.ci_id = CI.CI_ID\r\n"
 			+ "join SIMULATOR.tblSupplier Sup on CI.supplier_level2  = Sup.supplier_name";
+
+	public static String servicePriorities = "select service_id, priorityName from SIMULATOR.tblService S join tblPriority P"
+			+ " on S.urgency = P.urgency and S.impact  = P.impact";
 }

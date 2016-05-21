@@ -20,6 +20,14 @@
 	response.setDateHeader("Expires", 0);
 %>
 
+<%
+	if (session.getAttribute("isLogged") == null) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+%>
+
+
 </head>
 <body>
 

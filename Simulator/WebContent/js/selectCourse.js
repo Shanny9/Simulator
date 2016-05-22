@@ -52,11 +52,8 @@ function setRounds(rounds) {
 }
 
 function disable(obj, dis) {
-	if (dis) {
-		obj.prop("disabled", true);
-	} else {
-		obj.prop("disabled", false);
-	}
+	obj.prop("disabled", dis);
+
 }
 
 function getCourses() {

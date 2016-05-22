@@ -11,21 +11,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblGeneralParametersDao;
-import com.daoImpl.TblCourseDaoImpl;
-import com.daoImpl.TblGeneralParametersDaoImpl;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.model.TblCourse;
-import com.model.TblGeneral_parameter;
-
 import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
 import log.SolutionLog;
+import utils.ClockIncrementor;
 import utils.HomeData;
 import utils.PasswordAuthentication;
 import utils.TimerManager;
+
+import com.dao.TblGeneralParametersDao;
+import com.daoImpl.TblGeneralParametersDaoImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.model.TblGeneral_parameter;
 
 /**
  * Servlet implementation class HomeController
@@ -35,12 +34,16 @@ public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String courseName;
 	private int round;
+	private SimulationLog simLog;
+	private Settings settings;
+	private String selectedCourseName;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public HomeController() {
 		super();
+		simLog = SimulationLog.getInstance();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -99,17 +102,16 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(clocks));
 			break;
 		case "startSimulator":
-			courseName = request.getParameter("courseName");
+			courseName = request.getParameter("courseName"); //TODO: replace with selectedCourseName
 			round = Integer.valueOf(request.getParameter("round"));
-			TblCourse course = new TblCourseDaoImpl().getCourseById(courseName);
-			if (course != null) {
-				int runTime = (int) getTimes(courseName).get("runTime");
-				int roundTime = (int) getTimes(courseName).get("roundTime");
-				int pauseTime = (int) getTimes(courseName).get("pauseTime");
-				int sessionTime = (int) getTimes(courseName).get("sessionTime");
-
-				log.SimulationLog.getInstance();
-				TimerManager.startSimulator(courseName, runTime, roundTime, round, pauseTime, sessionTime);
+			simLog.setCourseName(courseName); // TODO: remove this
+			settings = simLog.getSettings(); // TODO: remove this
+			if (settings != null) {
+				int runTime = settings.getRunTime();
+				int roundTime = settings.getRoundTime();
+				int pauseTime = settings.getPauseTime();
+				
+				TimerManager.startSimulator(courseName, runTime, roundTime, round, pauseTime);
 				response.getWriter().print("OK");
 			}
 			break;
@@ -121,7 +123,9 @@ public class HomeController extends HttpServlet {
 			break;
 		case "getGP":
 			courseName = request.getParameter("courseName");
-			response.getWriter().print(gson.toJson(getTimes(courseName)));
+			simLog.setCourseName(courseName); // TODO: remove this
+			settings = simLog.getSettings(); // TODO: remove this
+			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
 			response.getWriter().print(new HomeData().getEvents());
@@ -137,7 +141,8 @@ public class HomeController extends HttpServlet {
 
 		case "profitStream":
 			prepareResponseToStream(response);
-			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits();
+			int currentTime = ClockIncrementor.getRunTime();
+			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits(currentTime);
 
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
@@ -163,6 +168,13 @@ public class HomeController extends HttpServlet {
 		case "getCourses":
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
 			break;
+			
+		case "selectCourse":
+			selectedCourseName = request.getParameter("form-courseName");
+			simLog.setCourseName(selectedCourseName);
+			settings = simLog.getSettings();
+			response.sendRedirect("index.jsp");
+			break;
 		}
 	}
 
@@ -175,7 +187,7 @@ public class HomeController extends HttpServlet {
 
 	}
 
-	protected HashMap<String, Object> getTimes(String courseName) {
+/*	protected HashMap<String, Object> getTimes(String courseName) {
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		HashMap<String, Object> timesMap = new HashMap<String, Object>();
 
@@ -191,12 +203,12 @@ public class HomeController extends HttpServlet {
 		timesMap.put("sessionsPerRound", daoGP.getGeneralParameters().getSessionsPerRound());
 		timesMap.put("totalTime", daoGP.getTotalTime());
 		timesMap.put("currentRound",
-				round/*
+				round
 						 * new TblCourseDaoImpl().getCourseById(courseName).
 						 * getLastRoundDone()+1
-						 */);
+						 );
 		return timesMap;
-	}
+	}*/
 
 	/**
 	 * uses utils.PasswordAuthentication to verify password from the client

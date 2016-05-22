@@ -8,7 +8,7 @@ $(document).ready(function() {
 	 */
 	$.backstretch("./css/home_images/runway.jpg");
 	getCourses();
-
+	checkSubmit();
 	$('#form-courseName').change(function() {
 		checkLog($(this).val());
 	});
@@ -53,9 +53,9 @@ function setRounds(rounds) {
 
 function disable(obj, dis) {
 	if (dis) {
-		obj.attr("disabled", true);
+		obj.prop("disabled", true);
 	} else {
-		obj.attr("disabled", false);
+		obj.prop("disabled", false);
 	}
 }
 
@@ -74,4 +74,18 @@ function getCourses() {
 			console.log("js: Error in getCourses");
 		}
 	});
+}
+
+function checkSubmit(){
+
+    $('.create-form').on('submit', function(e) {
+    	
+    	if( !$("#start").prop("diabled") )
+    	{
+    		e.preventDefault(); 
+    	}
+
+    	
+    });
+	 
 }

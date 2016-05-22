@@ -17,6 +17,8 @@ public class Settings implements Serializable{
 	private int sessionsPerRound;
 	private double initCapital;
 	private int lastRoundDone;
+	private int roundTime;
+	private int sessionTime;
 	
 	/**
 	 * The priority name and MAX time to solve according to the SLA
@@ -41,6 +43,8 @@ public class Settings implements Serializable{
 		this.sessionsPerRound = sessionsPerRound;
 		this.initCapital = initCapital;
 		this.lastRoundDone = 0;
+		this.roundTime = (runTime+pauseTime)*sessionsPerRound*rounds;
+		this.sessionTime = runTime + pauseTime;
 		
 		//TODO: should be input from user
 		priority_sla = new HashMap<>();
@@ -154,4 +158,13 @@ public class Settings implements Serializable{
 	public int getTotalRunTIme(){
 		return runTime*sessionsPerRound*rounds;
 	}
+	
+	public int getRoundTime(){
+		return roundTime;
+	}
+	public int getSessionTime() {
+		return sessionTime;
+	}
+	
+	
 }

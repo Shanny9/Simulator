@@ -113,10 +113,10 @@ public class SimulationLog extends Thread implements Serializable {
 		return null;
 	}
 
-	public HashMap<String, Double> getTeamProfits() {
+	public HashMap<String, Double> getTeamProfits(int time) {
 		HashMap<String, Double> profits = new HashMap<>();
-		profits.put(marom.getTeamName(), marom.getCurrentProfit());
-		profits.put(rakia.getTeamName(), rakia.getCurrentProfit());
+		profits.put(marom.getTeamName(), marom.getProfit(time));
+		profits.put(rakia.getTeamName(), rakia.getProfit(time));
 		return profits;
 	}
 
@@ -251,4 +251,10 @@ public class SimulationLog extends Thread implements Serializable {
 		marom.setLength(courseLength);
 		rakia.setLength(courseLength);
 	}
+
+	public Settings getSettings() {
+		return settings;
+	}
+	
+	
 }

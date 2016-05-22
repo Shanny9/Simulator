@@ -9,15 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mysql.jdbc.log.LogUtils;
-import com.sun.org.apache.bcel.internal.generic.LUSHR;
-
 import log.LogManager;
-import log.SimulationLog;
-import log.SimulationTester;
-import log.TeamLog;
 
 @WebListener
 public class TimerManager implements ServletContextListener {
@@ -42,9 +34,9 @@ public class TimerManager implements ServletContextListener {
 		return ClockIncrementor.getClocks();
 	}
 
-	public static void startSimulator(String courseName, int runTime, int roundTime, int round, int pauseTime, int sessionTime) {
+	public static void startSimulator(String courseName, int runTime, int roundTime, int round, int pauseTime) {
 		System.out.println("TimerManager: starting simulator");
-		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, sessionTime);
+		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, (runTime+pauseTime));
 		LogManager.setCourseName(courseName);
 		LogManager.setRound(round);
 		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);

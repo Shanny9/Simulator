@@ -72,7 +72,7 @@ public class TeamLog implements Serializable {
 	}
 	
 	void setLength(int length){
-		this.profits = new ArrayList<>(Collections.nCopies(length, 0d));
+		this.profits = new ArrayList<>(Collections.nCopies(length+1, 0d));
 		this.profits.set(0, initProfit);
 	}
 	
@@ -159,9 +159,9 @@ public class TeamLog implements Serializable {
 	/**
 	 * @return The team's current profit
 	 */
-	public double getCurrentProfit() {
+/*	public double getCurrentProfit() {
 		return profits.get(profits.size() - 1);
-	}
+	}*/
 
 	/**
 	 * @param time

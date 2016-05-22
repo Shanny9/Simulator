@@ -1,12 +1,4 @@
-html, body {
-	height: 100%;
-}
 
-body {
-	padding-top: 0px;
-	padding-bottom: 40px;
-	position: relative;
-}
 /* Add a dark background color with a little bit see-through */
 .navbar {
 	margin-bottom: 0;
@@ -52,4 +44,11 @@ body {
 /* On hover, the dropdown links will turn red */
 .dropdown-menu li a:hover {
 	background-color: #eab265 !important;
+}
+
+#myNavBar {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: normal;
+	line-height: 1.42857143;
+	color: #333;
 }

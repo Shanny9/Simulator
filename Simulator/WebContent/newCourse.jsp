@@ -111,17 +111,19 @@
         <script src="js/jquery.backstretch.min.js"></script>
         <script src="js/newCourse.js"></script>
         
-   <%
-	if(session.getAttribute("err")!=null)
-	{ 
-   %>
-			<script>
-				inputError();
-			</script>
-	<% 
-		session.setAttribute("err", null);
-	 }
-	%>
+<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+%>
+
+<%
+	if (session.getAttribute("isLogged") == null) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+%>
         
         <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>

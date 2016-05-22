@@ -15,6 +15,8 @@
 	href="css/fonts/font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="css/login-form.css">
 <link rel="stylesheet" href="css/course-style.css">
+<link rel="stylesheet" href="css/header.css">
+<link rel="stylesheet" href="css/footer.css">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -49,7 +51,7 @@
 							</div>
 						</div>
 						<div class="form-bottom">
-							<form role="form" action="index.jsp"
+							<form role="form"  action="HomeController?action=selectCourse"
 								method="post" class="login-form create-form">
 
 								<div class="form-group">
@@ -102,17 +104,20 @@
 	<script src="js/jquery.backstretch.min.js"></script>
 	<script src="js/selectCourse.js"></script>
 
+
 	<%
-		if (session.getAttribute("err") != null) {
-	%>
-	<script>
-		inputError();
-	</script>
-	<%
-		session.setAttribute("err", null);
-		}
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
 	%>
 
+	<%
+	if (session.getAttribute("isLogged") == null) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+	%>
 	<!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>
         <![endif]-->

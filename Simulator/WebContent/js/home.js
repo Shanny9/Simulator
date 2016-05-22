@@ -13,7 +13,7 @@ var isRunTime = true;
 var gp = new Object();
 var eventsData = new Object();
 var finishRound;
-var courseName = 'IDF-AMAM-01';
+var courseName = 'normalCourse';
 var clockInterval;
 var incidentsOnScreen = 0;
 var runPercentage;
@@ -153,7 +153,7 @@ function startSimulator() {
 		success : function(data) {
 			getEvents();
 			getGP(courseName);
-			finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
+			finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();

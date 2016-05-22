@@ -11,19 +11,38 @@
 		</div>
 		<div class="collapse navbar-collapse" id="myNavbar">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#home">HOME</a></li>
-				<li><a href="#band">CHANGES</a></li>
-				<li><a href="#tour">REPORTS</a></li>
-				<li><a href="#contact">ABOUT</a></li>
+
 				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="#">COURSES <span class="caret"></span>
+				</a>
+					<ul class="dropdown-menu">
+						<li><a id="selectc" class="mItem" href="selectCourse.jsp">Select
+								Course</a></li>
+						<li><a id="createc" class="mItem" href="newCourse.jsp">Create New
+								Course</a></li>
+					</ul></li>
+
+
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="#">SIMULATOR <span class="caret"></span>
+				</a>
+					<ul class="dropdown-menu">
+						<li><a id="pause" class="mItem" href="#">Pause</a></li>
+						<li><a id="resume" class="mItem" href="#">Resume</a></li>
+					</ul></li>
+					
+				<li><a href="#reports">REPORTS</a></li>
+				<li><a href="#data">MANAGE DATA</a></li>
+<!-- 				<li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#">MORE <span class="caret"></span>
 				</a>
 					<ul class="dropdown-menu">
 						<li><a id="pause" href="#">Pause</a></li>
 						<li><a id="resume" href="#">Resume</a></li>
 						<li><a href="#">BLA3</a></li>
-					</ul></li>
-				<li><a id="logout" href="login.jsp?action=logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
+					</ul></li> -->
+				<li><a id="logout" href="login.jsp?action=logout"><span
+						class="glyphicon glyphicon-log-out"></span></a></li>
 			</ul>
 		</div>
 	</div>

@@ -8,6 +8,7 @@ var isRunTime;
 var showTime;
 var session;
 var elapsedTime;
+var elapsedRunTime = 0;
 var gp = new Object();
 //var team = "Marom"; // defined at the beginning of client.jsp
 var courseName = 'IDF-AMAM-01';
@@ -163,7 +164,10 @@ function incrementClock() {
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;
-
+	
+	if(isRunTime)
+		elapsedRunTime++;
+	
 	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
@@ -217,8 +221,10 @@ function getTime() {
 			}
 			showTime =  Math.floor(remainingClock + offset);
 			elapsedTime = Math.floor(data.elapsedClock + offset);
+			elapsedRunTime = Math.floor(data.elapsedRunTime + offset);
 			console.log("remainingClock " +remainingClock);
 			console.log("elapsed time " +elapsedTime);
+			console.log("elapsed run time " +elapsedRunTime);
 			console.log("offset: "+ offset);
 		},
 		error : function(e) {
@@ -250,7 +256,7 @@ function checkIncident(){
 		data : {
 			team : team,
 			inc_id : inc_id,
-			time : elapsedTime
+			time : elapsedRunTime
 		},
 		async : false,
 		success : function(data) {
@@ -310,7 +316,7 @@ function sendSolution() {
 		data : {
 			team : team,
 			inc_id : inc_id,
-			time : elapsedTime
+			time : elapsedRunTime
 		},
 		success : function(msg) {
 			console.log(msg);
@@ -347,7 +353,7 @@ function buySolution() {
 		data : {
 			team : team,
 			inc_id : inc_id,
-			time : elapsedTime
+			time : elapsedRunTime
 		},
 		success : function(msg) {
 			$('#success').delay(1000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message

@@ -49,7 +49,7 @@
 							</div>
 						</div>
 						<div class="form-bottom">
-							<form role="form" action="HomeController?action=newCourse"
+							<form role="form" action="index.jsp"
 								method="post" class="login-form create-form">
 
 								<div class="form-group">

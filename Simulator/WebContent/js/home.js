@@ -2,12 +2,13 @@
 var real_time;
 var offset;
 var runTime;
+var elapsedRunTime = 0;
 var pauseTime;
 var showTime;
 var elapsedTime = 0;
 var remainingTime = 0;
 var session = 1;
-var round = 1;
+var round = 1; //TODO: delete this
 var isRunTime = true;
 var gp = new Object();
 var eventsData = new Object();
@@ -106,7 +107,7 @@ function getEvents() {
 
 function showEventsInTime() {
 	$.each(eventsData, function(i, item) {
-		if (elapsedTime == item.time) {
+		if (elapsedRunTime == item.time) {
 			var row = incidentsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html(item.event_id);
@@ -226,10 +227,12 @@ function incrementClock() {
 	
 	showEventsInTime();
 	
+	
 	elapsedTime++;
 	
 	if (isRunTime){
 		runPercentage = (gp["runTime"] - showTime) / gp["sessionTime"] * 100;
+		elapsedRunTime++;
 	} else{
 		pausePercentage = (gp["pauseTime"] - showTime) / gp["sessionTime"] * 100;
 	}

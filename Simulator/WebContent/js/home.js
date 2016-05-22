@@ -9,7 +9,7 @@ var elapsedTime = 0;
 var remainingTime = 0;
 var session = 1;
 var round = 1; //TODO: delete this
-var isRunTime = true;
+var isRunTime = false;
 var gp = new Object();
 var eventsData = new Object();
 var finishRound;
@@ -27,6 +27,10 @@ var rakiaScore;
 
 $(document).ready(function() {
 	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
+	
+	getGP(courseName);
+	getEvents();
+	finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
 	
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
@@ -151,9 +155,6 @@ function startSimulator() {
 		dataType : "text",
 		async : false,
 		success : function(data) {
-			getEvents();
-			getGP(courseName);
-			finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();
@@ -223,11 +224,9 @@ function incrementClock() {
 	
 	console.log("incrementClock: show time=" + showTime);
 	$('#main-time').html(showTime.toHHMMSS());
-	showTime = (showTime - 1);
+	showTime -= 1;
 	
 	showEventsInTime();
-	
-	
 	elapsedTime++;
 	
 	if (isRunTime){

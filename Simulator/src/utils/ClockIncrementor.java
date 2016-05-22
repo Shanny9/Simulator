@@ -16,14 +16,14 @@ public class ClockIncrementor implements Runnable {
 	private static int elapsedRuntime;
 	private static boolean isRunTime;
 
-	public ClockIncrementor(int runTime, int roundTime, int currentRound, int pause, int sessionT) {
+	public ClockIncrementor(int runTime, int roundTime, int currentRound, int pauseTime, int sessionT) {
 		super();
 		elapsedTime = 0;
 		elapsedRuntime = 0;
-		remainingTime = runTime;
+		remainingTime = pauseTime;
 		finishRound = roundTime * (round + 1);
 		round = currentRound;
-		PAUSE_TIME = pause;
+		PAUSE_TIME = pauseTime;
 		sessionTime = sessionT;
 		RUN_TIME = runTime;
 		isRunning = true;

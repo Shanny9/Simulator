@@ -7,23 +7,22 @@
 <link rel="stylesheet" type="text/css" href="css/home.css">
 <link rel="stylesheet" href="css/bootstrap.min.css">
 
-	<%
-		//TODO: change round in home.js to realRound.
-		//TODO: change course in home.js to realCourse.
-		String jspRound = request.getParameter("form-round");
-		String jspCourse = request.getParameter("form-courseName");
-		if(jspRound != null && jspCourse != null){
-			Integer round = Integer.valueOf(jspRound);
+<%
+	//TODO: change round in home.js to realRound.
+	//TODO: change course in home.js to realCourse.
+	String jspRound = request.getParameter("form-round");
+	String jspCourse = request.getParameter("form-courseName");
+	if (jspRound != null && jspCourse != null) {
+		Integer round = Integer.valueOf(jspRound);
+%>
 
-	%>
-	
-			<script type="text/javascript">
-				var realRound =  '<%= round %>'; 
-				var realCourse = '<%= jspCourse %>'; 
-			</script>         
-	<%
-		}
-	%>
+<script type="text/javascript">
+				var realRound =  '<%=round%>'; 
+				var realCourse = '<%=jspCourse%>';
+</script>
+<%
+	}
+%>
 
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap-3.3.5.min.js"></script>
@@ -216,11 +215,11 @@
 					<div>&nbsp</div>
 					<div id="progress" class="progress">
 						<div id="progress-custom"
-							class="progress-bar progress-bar-success" role="progressbar"
-							style="width: 0%;">Run</div>
-						<div id="progress-custom"
 							class="progress-bar progress-bar-danger progress-bar-custom"
 							role="progressbar" style="width: 0%;">Pause</div>
+						<div id="progress-custom"
+							class="progress-bar progress-bar-success" role="progressbar"
+							style="width: 0%;">Run</div>
 					</div>
 				</div>
 				<!--scoreboard-->

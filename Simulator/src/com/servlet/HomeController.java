@@ -1,9 +1,14 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,14 +21,16 @@ import log.Settings;
 import log.SimulationLog;
 import log.SolutionLog;
 import utils.ClockIncrementor;
-import utils.HomeData;
 import utils.PasswordAuthentication;
+import utils.Queries;
 import utils.TimerManager;
 
 import com.dao.TblGeneralParametersDao;
 import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.jdbc.DBUtility;
 import com.model.TblGeneral_parameter;
 
 /**
@@ -128,7 +135,7 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
-			response.getWriter().print(new HomeData().getEvents());
+			response.getWriter().print(getEvents(settings));
 			break;
 		case "solutionStream":
 			prepareResponseToStream(response);
@@ -251,7 +258,6 @@ public class HomeController extends HttpServlet {
 			}
 
 		}
-
 		gp = null;
 		emptyChar(pass);
 		emptyChar(user);
@@ -276,5 +282,30 @@ public class HomeController extends HttpServlet {
 		streamMessage += "\n\n";
 
 		return streamMessage;
+	}
+	
+	private  List<JsonObject> getEvents(Settings settings){
+		
+		List<JsonObject> events = new ArrayList<JsonObject>();
+		String query = Queries.eventsForHomeTable;
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				JsonObject row = new JsonObject();
+				row.addProperty("time", convertToSimulTime(settings, rs.getInt("incidentTime")));
+				row.addProperty("event_id", rs.getInt("event_id"));
+				events.add(row);	
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return events;
+	}
+
+	private int convertToSimulTime(Settings settings, int time) {
+		int numOfPauseTimes = time / settings.getSessionTime();
+		int elapsedPauseTime = numOfPauseTimes * settings.getPauseTime();
+		return time + elapsedPauseTime;
 	}
 }

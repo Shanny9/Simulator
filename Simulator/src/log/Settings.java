@@ -150,4 +150,8 @@ public class Settings implements Serializable{
 	public HashMap<String, Integer> getPriority_sla(){
 		return priority_sla;
 	}
+	
+	public int getTotalRunTIme(){
+		return runTime*sessionsPerRound*rounds;
+	}
 }

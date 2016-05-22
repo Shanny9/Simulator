@@ -52,6 +52,10 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The Simulation log's instance
 	 */
 	private static SimulationLog instance;
+	
+	private static String courseName;
+	
+	private static Settings settings;
 
 	@SuppressWarnings("unchecked")
 	SimulationLog() {
@@ -62,6 +66,7 @@ public class SimulationLog extends Thread implements Serializable {
 		incident_times = LogUtils.getIncidentTimes();
 		incident_events = LogUtils.getIncidentEvents();
 		solutionQueue = new LinkedList<>();
+		
 		double initProfit = new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
@@ -81,7 +86,7 @@ public class SimulationLog extends Thread implements Serializable {
 
 		HashMap<Integer, ServiceLog> service_logs_copy = (HashMap<Integer, ServiceLog>) LogUtils.copy(service_logs);
 		HashMap<Integer, IncidentLog> incident_logs_copy = (HashMap<Integer, IncidentLog>) LogUtils.copy(incident_logs);
-
+		
 		marom = new TeamLog("Marom", initProfit, service_logs, initDiff, incident_logs);
 		rakia = new TeamLog("Rakia", initProfit, service_logs_copy, initDiff, incident_logs_copy);
 	}
@@ -237,5 +242,13 @@ public class SimulationLog extends Thread implements Serializable {
 	public void fixAllIncidents(int time) {
 		marom.fixAllIncidents(time);
 		rakia.fixAllIncidents(time);
+	}
+
+	public void setCourseName(String currentCourse) {
+		courseName = currentCourse;
+		settings = LogUtils.openSettings(courseName);
+		int courseLength = settings.getTotalRunTIme();
+		marom.setLength(courseLength);
+		rakia.setLength(courseLength);
 	}
 }

@@ -19,7 +19,7 @@ public class SimulationTester implements Runnable {
 		marom = simLog.getTeam("marom");
 
 		Settings settings = LogUtils.openSettings("Test");
-		endTime = settings.getRunTime() * settings.getSessionsPerRound() * settings.getRounds();
+		endTime = settings.getTotalRunTIme();
 
 		HashMap<Integer, String> servicePriorities = LogUtils.getServicePriorities();
 		HashMap<String, Integer> priority_sla = settings.getPriority_sla();

@@ -14,6 +14,7 @@ public class ClockIncrementor implements Runnable {
 	private static int sessionTime;
 	private static int RUN_TIME;
 	private static int elapsedRuntime;
+	private static boolean isRunTime;
 
 	public ClockIncrementor(int runTime, int roundTime, int currentRound, int pause, int sessionT) {
 		super();
@@ -26,6 +27,7 @@ public class ClockIncrementor implements Runnable {
 		sessionTime = sessionT;
 		RUN_TIME = runTime;
 		isRunning = true;
+		isRunTime = false;
 	}
 
 	public static HashMap<String, Object> getClocks() {
@@ -33,6 +35,7 @@ public class ClockIncrementor implements Runnable {
 		HashMap<String, Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock", elapsedTime);
 		clocks.put("remainingClock", remainingTime);
+		clocks.put("elapsedRuntime", elapsedRuntime);
 		return clocks;
 	}
 
@@ -41,16 +44,21 @@ public class ClockIncrementor implements Runnable {
 
 			elapsedTime += 1;
 			remainingTime -= 1;
-			elapsedRuntime++;
+			
+			if (isRunTime){
+				elapsedRuntime++;
+			}
 
 			if ((elapsedTime + RUN_TIME) % sessionTime == 0) {
 				// finished pause time
 				remainingTime = RUN_TIME;
+				isRunTime = true;
 				LogManager.resumeLog();
 
 			} else if (elapsedTime % sessionTime == 0) {
 				// finished run time
 				remainingTime = PAUSE_TIME;
+				isRunTime = false;
 				LogManager.pauseLog(elapsedRuntime, false);
 				elapsedRuntime = 0;
 			}

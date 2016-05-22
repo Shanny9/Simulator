@@ -2,14 +2,10 @@ package log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-
-import com.daoImpl.TblGeneralParametersDaoImpl;
-import com.daoImpl.TblServiceDaoImpl;
-import com.model.TblService;
 
 /**
  * TeamLog records and calculates the team's services, purchases and profits
@@ -46,8 +42,9 @@ public class TeamLog implements Serializable {
 	/**
 	 * The status of the log
 	 */
-
 	private boolean isFinished;
+	
+	private double initProfit;
 
 	/**
 	 * @param initProfit
@@ -61,18 +58,22 @@ public class TeamLog implements Serializable {
 	 */
 	TeamLog(String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
 			HashMap<Integer, IncidentLog> incident_logs) {
+		
 		super();
 		this.teamName = teamName;
-		this.profits = new ArrayList<>();
+		this.initProfit = initProfit;
 		this.purchases = new HashMap<>();
 		this.service_logs = new HashMap<>();
 		this.incident_logs = new HashMap<>();
 		this.isFinished = false;
-
-		this.profits.add(initProfit);
 		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
 		this.incident_logs.putAll(incident_logs);
+	}
+	
+	void setLength(int length){
+		this.profits = new ArrayList<>(Collections.nCopies(length, 0d));
+		this.profits.set(0, initProfit);
 	}
 	
 	String getTeamName(){
@@ -98,6 +99,7 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
+		
 		IncidentLog incLog = incident_logs.get(inc_id);
 		incLog.setEnd_time(time);
 		int ci_id = incLog.getRoot_ci();
@@ -146,7 +148,12 @@ public class TeamLog implements Serializable {
 	 * @return The team's profit at the given time
 	 */
 	public double getProfit(int time) {
-		return profits.get(time);
+		try{
+			return profits.get(time);
+		} catch (ArrayIndexOutOfBoundsException e){
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	/**
@@ -164,7 +171,7 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		profits.add(time, getProfit(time - 1) + diff);
+		profits.set(time, getProfit(time - 1) + diff);
 	}
 
 	/**
@@ -209,6 +216,7 @@ public class TeamLog implements Serializable {
 		}
 
 		IncidentLog il = incident_logs.get(inc_id);
+		
 		if (il == null) {
 			return false;
 		}

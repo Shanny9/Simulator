@@ -23,6 +23,7 @@ public class LogManager implements Runnable {
 	
 	public static void setCourseName(String currentCourse){
 		course = currentCourse;
+		simLog.setCourseName(currentCourse);
 	}
 	
 	public static void setRound(int currentRound){

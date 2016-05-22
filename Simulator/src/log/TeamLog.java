@@ -115,7 +115,7 @@ public class TeamLog implements Serializable {
 		if (isBaught) {
 			purchases.put(time, ci_id);
 			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
-			System.out.println("solution baught at " + time + "seconds for "
+			System.out.println("Team " + teamName + ": solution baught at " + time + "seconds for "
 					+ SimulationLog.getInstance().getCISolutionCost(ci_id));
 		}
 	}
@@ -235,7 +235,9 @@ public class TeamLog implements Serializable {
 	 */
 	public void fixAllIncidents(int time) {
 		for (int inc_id : incident_logs.keySet()) {
-			incidentSolved(inc_id, time, true);
+			if (incident_logs.get(inc_id).isOpen(time)){
+				incidentSolved(inc_id, time, true);
+			}
 		}
 	}
 

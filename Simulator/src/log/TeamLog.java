@@ -149,6 +149,7 @@ public class TeamLog implements Serializable {
 	 */
 	public double getProfit(int time) {
 		try{
+			System.out.println(time);
 			return profits.get(time);
 		} catch (ArrayIndexOutOfBoundsException e){
 			e.printStackTrace();

@@ -73,7 +73,7 @@ public class ClientController extends HttpServlet {
 		case "checkIncident":
 			team = request.getParameter("team");
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
-			time = Integer.valueOf(request.getParameter("time"));
+			time = ClockIncrementor.getRunTime();
 			boolean isGood = SimulationLog.getInstance().checkIncident(team, inc_id, time);
 			response.getWriter().print(isGood);
 			break;

@@ -7,11 +7,11 @@ var clockInterval;
 var isRunTime;
 var showTime;
 var session;
-var elapsedTime;
+var elapsedTime = 0;
 var elapsedRunTime = 0;
 var gp = new Object();
 //var team = "Marom"; // defined at the beginning of client.jsp
-var courseName = 'IDF-AMAM-01';
+var courseName = 'normalCourse';
 
 $(document).ready(
 			
@@ -165,8 +165,10 @@ function incrementClock() {
 	showTime = (showTime - 1);
 	elapsedTime++;
 	
-	if(isRunTime)
+	if(isRunTime){
 		elapsedRunTime++;
+		elapsedTime;
+	}
 	
 	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
 		// finished pause time

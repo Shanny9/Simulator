@@ -76,11 +76,11 @@ public class LogManager implements Runnable {
 			}
 			simLog.updateTeamProfits(elapsed_time);
 			
-			System.out.println("Marom: " + simLog.getTeam("marom").getProfits());
+/*			System.out.println("Marom: " + simLog.getTeam("marom").getProfits());
 			System.out.println("Rakia: " + simLog.getTeam("rakia").getProfits());
-			System.out.println("");
+			System.out.println("");*/
 		}
-//		long end = System.nanoTime();
-//		System.out.println(end-start);
+/*		long end = System.nanoTime();
+		System.out.println(end-start);*/
 	}
 }

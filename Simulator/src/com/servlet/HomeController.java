@@ -118,7 +118,7 @@ public class HomeController extends HttpServlet {
 				int roundTime = settings.getRoundTime();
 				int pauseTime = settings.getPauseTime();
 				
-				TimerManager.startSimulator(courseName, runTime, roundTime, round, pauseTime);
+				TimerManager.startSimulator(settings);
 				response.getWriter().print("OK");
 			}
 			break;
@@ -131,6 +131,7 @@ public class HomeController extends HttpServlet {
 		case "getGP":
 			courseName = request.getParameter("courseName");
 			simLog.setCourseName(courseName); // TODO: remove this
+			System.out.println("getGP");
 			settings = simLog.getSettings(); // TODO: remove this
 			response.getWriter().print(gson.toJson(settings));
 			break;

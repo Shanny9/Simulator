@@ -247,7 +247,7 @@ public class SimulationLog extends Thread implements Serializable {
 	public void setCourseName(String currentCourse) {
 		courseName = currentCourse;
 		settings = LogUtils.openSettings(courseName);
-		int courseLength = settings.getTotalRunTIme();
+		int courseLength = settings.getTotalRunTime();
 		marom.setLength(courseLength);
 		rakia.setLength(courseLength);
 	}

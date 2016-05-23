@@ -25,6 +25,23 @@ var regularColor = '#FF9900';
 var maromScore;
 var rakiaScore;
 
+
+var f = function(e) {
+	
+	var data = JSON.parse(e.data);
+	var column = (data.team=="Marom")? 0 : 1;
+	
+	for (var row = 1; row <= 12 ; row++){
+		var eventOnBoard = $(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").eq(column).html();
+		if ($.inArray(eventOnBoard,data.events) > -1){
+			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column).removeClass("danger");
+			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column).addClass("success");
+		}
+	}
+	
+	console.log("team= " + data.team + ", events= " + data.events);
+}
+
 $(document).ready(function() {
 	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
 	
@@ -40,22 +57,7 @@ $(document).ready(function() {
 
 function setSolutionSource() {
     var eventSource = new EventSource("HomeController?action=solutionStream");
-
-    eventSource.addEventListener('message', function(e) {
-    	
-		var data = JSON.parse(e.data);
-		var column = (data.team=="Marom")? 0 : 1;
-		
-		for (var row = 1; row <= 12 ; row++){
-			var eventOnBoard = $(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").eq(column).html();
-			if ($.inArray(eventOnBoard,data.events) > -1){
-				$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column).removeClass("danger");
-				$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column).addClass("success");
-			}
-		}
-		
-		console.log("team= " + data.team + ", events= " + data.events);
-	}, false);
+    eventSource.addEventListener('message',f, false);
 }
 
 function setProfitSource() {
@@ -116,6 +118,7 @@ function showEventsInTime() {
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html(item.event_id);
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)").html(item.time.toHHMMSS());
+			delete eventsData[i];
 			incidentsOnScreen++;
 		}
 	});
@@ -269,6 +272,7 @@ function incrementClock() {
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);
+			eventSource.removeEventListener('message',f);
 		}
 	}
 }

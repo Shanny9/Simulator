@@ -155,8 +155,12 @@ public class Settings implements Serializable{
 		return priority_sla;
 	}
 	
-	public int getTotalRunTIme(){
+	public int getTotalRunTime(){
 		return runTime*sessionsPerRound*rounds;
+	}
+	
+	public int getTotalTime(){
+		return sessionTime*sessionsPerRound*rounds;
 	}
 	
 	public int getRoundTime(){

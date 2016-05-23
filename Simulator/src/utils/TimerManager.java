@@ -10,6 +10,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import log.LogManager;
+import log.Settings;
 
 @WebListener
 public class TimerManager implements ServletContextListener {
@@ -34,13 +35,17 @@ public class TimerManager implements ServletContextListener {
 		return ClockIncrementor.getClocks();
 	}
 
-	public static void startSimulator(String courseName, int runTime, int roundTime, int round, int pauseTime) {
+	public static void startSimulator(Settings settings) {
 		System.out.println("TimerManager: starting simulator");
-		ci = new ClockIncrementor(runTime, roundTime, round, pauseTime, (runTime+pauseTime));
-		LogManager.setCourseName(courseName);
-		LogManager.setRound(round);
-		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(LogManager.getInstance(), 0, 1, TimeUnit.SECONDS);
+		ci = new ClockIncrementor(settings.getRunTime(), settings.getRoundTime(), settings.getLastRoundDone()+1, settings.getPauseTime());
+		LogManager.setCourseName(settings.getCourseName());
+		LogManager.setRound(settings.getLastRoundDone()+1);
+		
+//		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
+//		scheduler.scheduleAtFixedRate(LogManager.getInstance(), 0, 1, TimeUnit.SECONDS);
+		
+		runNTimes(ci,settings.getRoundTime(),1,TimeUnit.SECONDS,scheduler);
+		runNTimes(LogManager.getInstance(),settings.getRoundTime(),1,TimeUnit.SECONDS,scheduler);
 		
 	}
 
@@ -58,6 +63,10 @@ public class TimerManager implements ServletContextListener {
 		}
 		System.err.println("TimerManager: resuming clock...");
 		ClockIncrementor.forceResume();
+	}
+	
+	public static void runNTimes(Runnable task, int maxRunCount, long period, TimeUnit unit, ScheduledExecutorService executor) {
+	    new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, period, unit);
 	}
 
 }

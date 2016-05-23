@@ -60,7 +60,12 @@ public class LogUtils {
 				return name.equals("settings.ser");
 			}
 		});
-		return (settingsFiles.length != 0) ? openSettings(courseName).getRounds() : 0;
+		
+		if (settingsFiles == null || settingsFiles.length == 0 ){
+			return 0;
+		}
+		
+		return openSettings(courseName).getRounds();
 	}
 
 	public static String[] getCourses() {

@@ -14,6 +14,8 @@
         <link rel="stylesheet" href="css/fonts/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="css/login-form.css">
         <link rel="stylesheet" href="css/course-style.css">
+        <link rel="stylesheet" href="css/header.css">
+		<link rel="stylesheet" href="css/footer.css">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

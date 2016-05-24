@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Manage Data</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <link rel="stylesheet" type="text/css" href="css/home.css"> -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/header.css">
+<link rel="stylesheet" href="css/footer.css">
+
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap-3.3.5.min.js"></script>
+<script src="js/jquery.backstretch.min.js"></script>
+<script src="js/date.format.js"></script>
+<script src="js/utils.js"></script>
+
+
+<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+%>
+
+<%-- <%
+	if (session.getAttribute("isLogged") == null) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+%> --%>
+<link rel="stylesheet" href="css/simple-sidebar.css">
+<style type="text/css">
+
+</style>
+</head>
+<body>
+
+
+	<div class="background-image">
+		<%@ include file="header.html"%>
+		<div class="container-fluid">
+			<div class="headline"></div>
+			<div class="content">
+				<div
+					style="width: 60%; margin-right: 10%; margin-left: 20%; text-align: center;">
+
+					<h4>Manage Data</h4>
+					<div id="SupplierTableContainer"></div>
+
+				</div>
+			</div>
+			<div class="push"></div>
+
+			<div class="sidebar">
+				<ul class="sidebar-nav">
+					<li class="sidebar-brand"><a href="#"> Manage Data </a></li>
+					<li><a href="#">Suppliers</a></li>
+					<li><a href="#">Departments</a></li>
+					<li><a href="#">Divisions</a></li>
+					<li><a href="#">Events</a></li>
+					<li><a href="#">Incidents</a></li>
+					<li><a href="#">Services</a></li>
+					<li><a href="#">Solutions</a></li>
+				</ul>
+			</div>
+			<!--side bar-->
+		</div>
+		<!--container-fluid-->
+
+		<%@ include file="footer.html"%>
+	</div>
+	<!--background-image-->
+</body>
+</html>

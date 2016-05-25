@@ -76,6 +76,8 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
+//		System.out.println("action= " + action);
+		
 		switch (action) {
 
 		case "authenticate":

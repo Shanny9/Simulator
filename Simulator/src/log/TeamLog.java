@@ -99,7 +99,6 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		
 		IncidentLog incLog = incident_logs.get(inc_id);
 		incLog.setEnd_time(time);
 		int ci_id = incLog.getRoot_ci();
@@ -147,9 +146,8 @@ public class TeamLog implements Serializable {
 	 *            The simulation time
 	 * @return The team's profit at the given time
 	 */
-	public double getProfit(int time) {
+	synchronized public double getProfit(int time) {
 		try{
-			System.out.println(time);
 			return profits.get(time);
 		} catch (ArrayIndexOutOfBoundsException e){
 			e.printStackTrace();
@@ -169,6 +167,12 @@ public class TeamLog implements Serializable {
 	 *            updates the team's profit according to the diff
 	 */
 	synchronized void updateProfit(int time) {
+		try {
+			wait(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (isFinished) {
 			return;
 		}

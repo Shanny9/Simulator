@@ -26,7 +26,7 @@ var maromScore;
 var rakiaScore;
 
 
-var f = function(e) {
+var solutionListener = function(e) {
 	
 	var data = JSON.parse(e.data);
 	var column = (data.team=="Marom")? 0 : 1;
@@ -38,8 +38,35 @@ var f = function(e) {
 			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column).addClass("success");
 		}
 	}
-	
 	console.log("team= " + data.team + ", events= " + data.events);
+}
+
+var profitListener = function(e) {
+	
+	var data = JSON.parse(e.data);
+	$.each(data, function(i, obj) {
+		if (obj.team == 'marom'){
+			maromScore = obj.profit;
+		} else{
+			rakiaScore = obj.profit;
+		}
+		var scoreId = '#' + obj.team + '-score';
+		$(scoreId).html(obj.profit.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+	});
+	
+	var marom = '#marom-score';
+	var rakia = '#rakia-score';
+	
+	if (maromScore > rakiaScore){
+		$(marom).css('color', winnerColor);
+		$(rakia).css('color', looserColor);
+	} else if (maromScore < rakiaScore){
+		$(rakia).css('color', winnerColor);
+		$(marom).css('color', looserColor);
+	} else{
+		$(marom).css('color', regularColor);
+		$(rakia).css('color', regularColor);
+	}
 }
 
 $(document).ready(function() {
@@ -57,39 +84,12 @@ $(document).ready(function() {
 
 function setSolutionSource() {
     var eventSource = new EventSource("HomeController?action=solutionStream");
-    eventSource.addEventListener('message',f, false);
+    eventSource.addEventListener('message',solutionListener, false);
 }
 
 function setProfitSource() {
     var eventSource = new EventSource("HomeController?action=profitStream");
-
-    eventSource.addEventListener('message', function(e) {
-    	
-		var data = JSON.parse(e.data);
-		$.each(data, function(i, obj) {
-			if (obj.team == 'marom'){
-				maromScore = obj.profit;
-			} else{
-				rakiaScore = obj.profit;
-			}
-			var scoreId = '#' + obj.team + '-score';
-			$(scoreId).html(obj.profit.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
-		});
-		
-		var marom = '#marom-score';
-		var rakia = '#rakia-score';
-		
-		if (maromScore > rakiaScore){
-			$(marom).css('color', winnerColor);
-			$(rakia).css('color', looserColor);
-		} else if (maromScore < rakiaScore){
-			$(rakia).css('color', winnerColor);
-			$(marom).css('color', looserColor);
-		} else{
-			$(marom).css('color', regularColor);
-			$(rakia).css('color', regularColor);
-		}
-	}, false);
+    eventSource.addEventListener('message', profitListener, false);
 }
 
 /**
@@ -272,7 +272,8 @@ function incrementClock() {
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);
-			eventSource.removeEventListener('message',f);
+			eventSource.removeEventListener('message',solutionListener);
+			eventSource.removeEventListener('message',profitListener);
 		}
 	}
 }

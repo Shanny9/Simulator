@@ -38,7 +38,7 @@ class FixedExecutionRunnable implements Runnable {
         }
     }
     
-    public void runNTimes(ScheduledExecutorService executor, long period, TimeUnit unit) {
-        self = executor.scheduleAtFixedRate(this, 0, period, unit);
+    public void runNTimes(ScheduledExecutorService executor, long initDelay, long period, TimeUnit unit) {
+        self = executor.scheduleAtFixedRate(this, initDelay, period, unit);
     }
 }

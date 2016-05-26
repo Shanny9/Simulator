@@ -8,6 +8,8 @@ $(document).ready(function() {
 	 */
 	$.backstretch("./css/home_images/runway.jpg");
 	getCourses();
+	disable($("#start"), true);
+	disable($("#form-round"), true);
 	checkSubmit();
 	$('#form-courseName').change(function() {
 		checkLog($(this).val());
@@ -29,11 +31,15 @@ function checkLog(directory) {
 			if (rounds > 0) {
 				disable($('#start'), false);
 				disable($('#form-round'), false);
+				$(".form-round").removeClass("disabled");
+				$("#start").removeClass("disabled");
 				setRounds(rounds);
 				
 			} else {
 				disable($('#start'), true);
 				disable($('#form-round'), true);
+				$(".form-round").addClass("disabled");
+				$("#start").addClass("disabled");
 				if (directory != "") {
 					$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message
 				}
@@ -77,8 +83,9 @@ function checkSubmit(){
 
     $('.create-form').on('submit', function(e) {
     	
-    	if( !$("#start").prop("diabled") )
+    	if( $("#start").prop("diabled") == true )
     	{
+    		console.log($("#start").prop("diabled"));
     		e.preventDefault(); 
     	}
 

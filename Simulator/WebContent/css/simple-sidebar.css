@@ -70,6 +70,14 @@
 	width: 91.6%;
 
 }
+td{
+	text-align: left;
+}
+
+select{
+	color:#000 !important;
+}
+
 
 @media ( min-width :768px) {
 	#wrapper {

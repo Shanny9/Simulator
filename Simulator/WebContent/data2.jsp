@@ -9,12 +9,23 @@
 <link rel="stylesheet" href="css/header.css">
 <link rel="stylesheet" href="css/footer.css">
 
+<!-- Include one of jTable styles. -->
+<link href="css/metro/blue/jtable.css" rel="stylesheet" type="text/css" />
+<link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+<!-- Include jTable script file. -->
+<script src="js/jquery-1.8.2.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.editinline.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.jtable.toolbarsearch.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/exportToExcel.js" type="text/javascript" charset="utf-8"></script>
 
-<script src="js/jquery-1.11.3.min.js"></script>
+
 <script src="js/bootstrap-3.3.5.min.js"></script>
 <script src="js/jquery.backstretch.min.js"></script>
 <script src="js/date.format.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/tables.js"></script>
 
 
 <%

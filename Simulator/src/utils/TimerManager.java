@@ -44,8 +44,8 @@ public class TimerManager implements ServletContextListener {
 //		scheduler.scheduleAtFixedRate(ci, 0, 1, TimeUnit.SECONDS);
 //		scheduler.scheduleAtFixedRate(LogManager.getInstance(), 0, 1, TimeUnit.SECONDS);
 		
-		runNTimes(ci,settings.getRoundTime(),1,TimeUnit.SECONDS,scheduler);
-		runNTimes(LogManager.getInstance(),settings.getRoundTime(),1,TimeUnit.SECONDS,scheduler);
+		runNTimes(ci,settings.getRoundTime(), 0, 1,TimeUnit.SECONDS,scheduler);
+		runNTimes(LogManager.getInstance(),settings.getRoundTime(),0, 1,TimeUnit.SECONDS,scheduler);
 		
 	}
 
@@ -65,8 +65,8 @@ public class TimerManager implements ServletContextListener {
 		ClockIncrementor.forceResume();
 	}
 	
-	public static void runNTimes(Runnable task, int maxRunCount, long period, TimeUnit unit, ScheduledExecutorService executor) {
-	    new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, period, unit);
+	public static void runNTimes(Runnable task, int maxRunCount, long initDelay, long period, TimeUnit unit, ScheduledExecutorService executor) {
+	    new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, initDelay, period, unit);
 	}
 
 }

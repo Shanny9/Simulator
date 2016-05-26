@@ -78,6 +78,11 @@ public class Controller extends HttpServlet {
 						byte isActive = Byte.parseByte(request.getParameter("isActive"));
 						supplier.setIsActive(isActive);
 					}
+					
+					if (request.getParameter("currency") != null) {
+						String currency = request.getParameter("currency");
+						supplier.setCurrency(currency);
+					}
 
 					if (action.equals("create")) {
 						// Create new record

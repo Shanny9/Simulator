@@ -27,6 +27,9 @@ $(document).ready(
 					});
 			getSolutions();
 			
+			disablePurchase(true);
+			disableSolve(true);
+			
 			// when a key released in the incident field - updates if the menus could toggle
 			$("#incidentID").on('keyup', function () {
 				// checks if incident field is empty

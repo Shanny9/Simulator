@@ -87,13 +87,19 @@ function suppliersTable(){
 				},
 				solutionCost : {
 					title : 'Solution Cost',
-					width : '30%',
+					width : '25%',
 					edit : true
 				},
 				isActive : {
 					title : 'Active?',
-					width : '30%',
+					width : '20%',
 					options: { '1': 'Yes', '0': 'No'},
+					edit : true
+				},
+				currency : {
+					title : 'Currency',
+					width : '25%',
+					options: { 'NIS': 'NIS', 'USD': 'USD'},
 					edit : true
 				}
 			}

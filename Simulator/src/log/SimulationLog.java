@@ -41,6 +41,10 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private LinkedList<SolutionLog> solutionQueue;
 	/**
+	 * The current round
+	 */
+	private int round;
+	/**
 	 * The log of team Marom
 	 */
 	private static TeamLog marom;
@@ -119,6 +123,14 @@ public class SimulationLog extends Thread implements Serializable {
 		profits.put(rakia.getTeamName(), rakia.getProfit(time));
 		return profits;
 	}
+	
+	public HashMap<String, Double> getTeamScores(int time) {
+		int targetScore = settings.getTargetScores().get(round-1);
+		HashMap<String, Double> profits = new HashMap<>();
+		profits.put(marom.getTeamName(), marom.getProfit(time)/targetScore);
+		profits.put(rakia.getTeamName(), rakia.getProfit(time)/targetScore);
+		return profits;
+	}
 
 	/**
 	 * @return The simulation's map of CIs and their affected services
@@ -188,8 +200,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The time of update
 	 */
 	public void updateTeamProfits(int time) {
-		marom.updateProfit(time);
-		rakia.updateProfit(time);
+		marom.updateProfit(time, 500);
+		rakia.updateProfit(time, 500);
 	}
 
 	/**
@@ -255,6 +267,12 @@ public class SimulationLog extends Thread implements Serializable {
 	public Settings getSettings() {
 		return settings;
 	}
+
+	public void setRound(int currentRound) {
+		this.round = currentRound;
+	}
 	
-	
+	public int getRound(){
+		return round;
+	}
 }

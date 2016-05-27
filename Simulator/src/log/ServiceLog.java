@@ -110,42 +110,47 @@ public class ServiceLog implements Serializable {
 	 * @return The service's MTBF (Mean Time Between Failures)
 	 */
 	synchronized Double getMTBF() {
-		if (!isFinished) {
-			return null;
-		}
 
-		int failures = (times.size() - 1) / 2;
+		int failures = getNumOfFailures();
 		if (failures == 0) {
-			// returns the whole time when the service was up
+			// returns the total up-time duration
 			return (double) times.get(1);
 		}
 
-		int totalUpTime = 0;
-		for (int index = 2; index < times.size(); index += 2) {
-			totalUpTime += times.get(index) - times.get(index - 1);
-		}
+		int totalUpTime = times.size()-1 - getTRS();
 		return (double) totalUpTime / failures;
 	}
 
 	/**
 	 * @return The service's MTRS (Mean Time to Restore the Service)
 	 */
-	synchronized Double getMTRS() {
-		if (!isFinished) {
-			return null;
-		}
+	synchronized double getMTRS() {
 
-		int failures = (times.size() - 1) / 2;
+		int failures = getNumOfFailures();
 		if (failures == 0) {
 			// returns 0 because there were no failures
 			return 0d;
 		}
-
+				
+		return (double) getTRS() / failures;
+	}
+	
+	/**
+	 * @return The total duration that the services was down 
+	 */
+	int getTRS(){
 		int totalDownTime = 0;
 		for (int index = 3; index < times.size(); index += 2) {
 			totalDownTime += times.get(index) - times.get(index - 1);
 		}
-		return (double) totalDownTime / failures;
+		return totalDownTime;
+	}
+	
+	/**
+	 * @return The number of time the service was down
+	 */
+	int getNumOfFailures(){
+		return (times.size() - 1) / 2;
 	}
 
 	/**

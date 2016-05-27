@@ -7,25 +7,17 @@ public class LogManager implements Runnable {
 	private static String course;
 	private static LogManager instance;
 
-	LogManager() {
+	LogManager(String courseName) {
 		super();
-		simLog = SimulationLog.getInstance();
+		simLog = SimulationLog.getInstance(courseName);
 		isRunning = false;
 	}
 	
-	public static LogManager getInstance(){
+	public static LogManager getInstance(String courseName){
 		if (instance == null){
-			instance = new LogManager();
+			instance = new LogManager(courseName);
 		}
 		return instance;
-	}
-	
-	public static void setCourseName(String currentCourse){
-		course = currentCourse;
-	}
-	
-	public static void setRound(int currentRound){
-		simLog.setRound(currentRound);
 	}
 
 	/**
@@ -81,5 +73,9 @@ public class LogManager implements Runnable {
 		}
 /*		long end = System.nanoTime();
 		System.out.println(end-start);*/
+	}
+
+	public void setRound(int round) {
+		simLog.setRound(round);
 	}
 }

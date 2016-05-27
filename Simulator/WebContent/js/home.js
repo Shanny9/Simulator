@@ -72,10 +72,6 @@ var profitListener = function(e) {
 $(document).ready(function() {
 	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
 	
-	getGP(courseName);
-	getEvents();
-	finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
-	
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
@@ -158,6 +154,9 @@ function startSimulator() {
 		dataType : "text",
 		async : false,
 		success : function(data) {
+			getGP(courseName);
+			finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
+			getEvents();
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();

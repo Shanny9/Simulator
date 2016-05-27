@@ -14,7 +14,11 @@ import java.util.Map;
 public class TeamLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	/**
+	 * The course's name
+	 */
+	private String courseName;
 	/**
 	 * The team's name
 	 */
@@ -44,8 +48,6 @@ public class TeamLog implements Serializable {
 	 */
 	private boolean isFinished;
 
-	private double initProfit;
-
 	/**
 	 * @param initProfit
 	 *            The team's initial profit
@@ -56,12 +58,11 @@ public class TeamLog implements Serializable {
 	 * @param incident_logs
 	 *            the team's initial incident logs
 	 */
-	TeamLog(String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
-			HashMap<Integer, IncidentLog> incident_logs) {
+	TeamLog(String courseName, String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
+			HashMap<Integer, IncidentLog> incident_logs, int duration) {
 
 		super();
 		this.teamName = teamName;
-		this.initProfit = initProfit;
 		this.purchases = new HashMap<>();
 		this.service_logs = new HashMap<>();
 		this.incident_logs = new HashMap<>();
@@ -69,10 +70,7 @@ public class TeamLog implements Serializable {
 		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
 		this.incident_logs.putAll(incident_logs);
-	}
-
-	void setLength(int length) {
-		this.profits = new ArrayList<>(Collections.nCopies(length + 1, 0d));
+		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
 		this.profits.set(0, initProfit);
 	}
 
@@ -103,7 +101,7 @@ public class TeamLog implements Serializable {
 		incLog.setEnd_time(time);
 		int ci_id = incLog.getRoot_ci();
 
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectedServices().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectedServices().get(ci_id);
 
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
@@ -113,9 +111,9 @@ public class TeamLog implements Serializable {
 
 		if (isBaught) {
 			purchases.put(time, ci_id);
-			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
+			profits.set(time, getProfit(time) - SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
 			System.out.println("Team " + teamName + ": solution baught at " + time + "seconds for "
-					+ SimulationLog.getInstance().getCISolutionCost(ci_id));
+					+ SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
 		}
 	}
 
@@ -133,7 +131,7 @@ public class TeamLog implements Serializable {
 		}
 
 		int ci_id = incident_logs.get(inc_id).getRoot_ci();
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectingCis().get(ci_id);
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
 				diff += service_logs.get(service_id).ciUpdate(false, time);
@@ -259,19 +257,19 @@ public class TeamLog implements Serializable {
 	public HashMap<Integer, IncidentLog> getIncident_logs() {
 		return incident_logs;
 	}
-	
+
 	/**
 	 * @return The team's Mean Time to Restore Service (MTRS)
 	 */
-	public double getMTRS(){
+	public double getMTRS() {
 		int trs = 0;
 		int failures = 0;
-		
-		for (ServiceLog sl : service_logs.values()){
-			trs+=sl.getTRS();
-			failures+=sl.getNumOfFailures();
+
+		for (ServiceLog sl : service_logs.values()) {
+			trs += sl.getTRS();
+			failures += sl.getNumOfFailures();
 		}
-		return (double)trs/failures;
+		return (double) trs / failures;
 	}
 
 	public String toString() {

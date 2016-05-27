@@ -96,7 +96,7 @@ public class LogUtils {
 
 			FileOutputStream fileOut = new FileOutputStream(path + newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(SimulationLog.getInstance());
+			out.writeObject(SimulationLog.getInstance(courseName));
 			out.close();
 			fileOut.close();
 			System.out.printf("Log is saved in /tmp/log.ser");
@@ -165,7 +165,7 @@ public class LogUtils {
 			out.writeObject(settings);
 			out.close();
 			fileOut.close();
-			System.out.printf("settings for course " + settings.getCourseName() + " were saved in " + path);
+			System.out.println("settings for course " + settings.getCourseName() + " were saved in " + path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -324,11 +324,11 @@ public class LogUtils {
 	/**
 	 * @return The incidents and their timings
 	 */
-	static HashMap<Integer, Integer> getIncidentTimes() {
+	static HashMap<Integer, Integer> getIncidentTimes(double mul) {
 		HashMap<Integer, Integer> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		for (TblIncident inc : dao.getAllIncidents()) {
-			incidents.put(inc.getIncidentTime(), (int) inc.getIncidentId());
+			incidents.put((int) (inc.getIncidentTime()*mul), (int) inc.getIncidentId());
 		}
 		return incidents;
 	}

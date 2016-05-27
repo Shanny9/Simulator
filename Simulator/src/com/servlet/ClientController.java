@@ -27,6 +27,8 @@ import utils.SolutionElement;
  */
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
+	//TODO: get this from client in checkSimulator
+	private String courseName = "normalCourse";
 	private String team;
 	private int inc_id;
 	private int time;
@@ -74,7 +76,7 @@ public class ClientController extends HttpServlet {
 			team = request.getParameter("team");
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
-			boolean isGood = SimulationLog.getInstance().checkIncident(team, inc_id, time);
+			boolean isGood = SimulationLog.getInstance(courseName).checkIncident(team, inc_id, time);
 			response.getWriter().print(isGood);
 			break;
 		case "buySolution":
@@ -84,8 +86,8 @@ public class ClientController extends HttpServlet {
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
 //			time = Integer.valueOf(request.getParameter("time"));
-			SimulationLog.getInstance().incidentSolved(team, inc_id, time, isBaught);
-			log.SimulationLog.getInstance().getSolutionQueue().offer(new SolutionLog(team, inc_id));
+			SimulationLog.getInstance(courseName).incidentSolved(team, inc_id, time, isBaught);
+			log.SimulationLog.getInstance(courseName).getSolutionQueue().offer(new SolutionLog(courseName, team, inc_id));
 			response.getWriter().print(true);
 			break;
 		case "checkSimulator":

@@ -1,13 +1,16 @@
 package log;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
+import com.google.gson.JsonObject;
 import com.model.TblService;
 
 public class SimulationLog extends Thread implements Serializable {
@@ -47,30 +50,34 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * The log of team Marom
 	 */
-	private static TeamLog marom;
+	private TeamLog marom;
 	/**
 	 * The log of team Rakia
 	 */
-	private static TeamLog rakia;
+	private TeamLog rakia;
 	/**
 	 * The Simulation log's instance
 	 */
 	private static SimulationLog instance;
-	
-	private static String courseName;
-	
-	private static Settings settings;
+
+	private Settings settings;
+
+	// TODO: fix this - should be calculated somehow
+	private double mul = 1;
 
 	@SuppressWarnings("unchecked")
-	SimulationLog() {
+	SimulationLog(String courseName) {
 		super();
-		affecting_cis = LogUtils.getDBAffectingCIs();
-		affected_services = LogUtils.getDBAffectedServices();
-		ciSolCosts = LogUtils.getCISolCosts();
-		incident_times = LogUtils.getIncidentTimes();
-		incident_events = LogUtils.getIncidentEvents();
-		solutionQueue = new LinkedList<>();
-		
+
+		this.settings = LogUtils.openSettings(courseName);
+		this.round = settings.getLastRoundDone() + 1;
+		this.affecting_cis = LogUtils.getDBAffectingCIs();
+		this.affected_services = LogUtils.getDBAffectedServices();
+		this.ciSolCosts = LogUtils.getCISolCosts();
+		this.incident_times = LogUtils.getIncidentTimes(mul);
+		this.incident_events = LogUtils.getIncidentEvents();
+		this.solutionQueue = new LinkedList<>();
+
 		double initProfit = new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
@@ -90,15 +97,17 @@ public class SimulationLog extends Thread implements Serializable {
 
 		HashMap<Integer, ServiceLog> service_logs_copy = (HashMap<Integer, ServiceLog>) LogUtils.copy(service_logs);
 		HashMap<Integer, IncidentLog> incident_logs_copy = (HashMap<Integer, IncidentLog>) LogUtils.copy(incident_logs);
-		
-		marom = new TeamLog("Marom", initProfit, service_logs, initDiff, incident_logs);
-		rakia = new TeamLog("Rakia", initProfit, service_logs_copy, initDiff, incident_logs_copy);
+
+		int duration = settings.getTotalRunTime();
+
+		marom = new TeamLog(courseName, "Marom", initProfit, service_logs, initDiff, incident_logs, duration);
+		rakia = new TeamLog(courseName, "Rakia", initProfit, service_logs_copy, initDiff, incident_logs_copy, duration);
 	}
 
-	public static SimulationLog getInstance() {
+	public static SimulationLog getInstance(String courseName) {
 		if (instance == null) {
 			System.out.println("Log is created");
-			instance = new SimulationLog();
+			instance = new SimulationLog(courseName);
 		}
 		return instance;
 	}
@@ -123,12 +132,26 @@ public class SimulationLog extends Thread implements Serializable {
 		profits.put(rakia.getTeamName(), rakia.getProfit(time));
 		return profits;
 	}
-	
+
 	public HashMap<String, Double> getTeamScores(int time) {
-		int targetScore = settings.getTargetScores().get(round-1);
+		int targetScore = settings.getTargetScores().get(round - 1);
+		int initCapital = (int) settings.getInitCapital();
+		double targetWithoughtInit = targetScore - initCapital;
+
+		double maromWithoutInit = marom.getProfit(time) - initCapital;
+		double rakiaWithoutInit = rakia.getProfit(time) - initCapital;
+
+		if (maromWithoutInit < 0) {
+			maromWithoutInit = 0;
+		}
+
+		if (rakiaWithoutInit < 0) {
+			rakiaWithoutInit = 0;
+		}
+
 		HashMap<String, Double> profits = new HashMap<>();
-		profits.put(marom.getTeamName(), marom.getProfit(time)/targetScore);
-		profits.put(rakia.getTeamName(), rakia.getProfit(time)/targetScore);
+		profits.put(marom.getTeamName(), maromWithoutInit / targetWithoughtInit * 100);
+		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetWithoughtInit * 100);
 		return profits;
 	}
 
@@ -256,23 +279,37 @@ public class SimulationLog extends Thread implements Serializable {
 		rakia.fixAllIncidents(time);
 	}
 
-	public void setCourseName(String currentCourse) {
-		courseName = currentCourse;
-		settings = LogUtils.openSettings(courseName);
-		int courseLength = settings.getTotalRunTime();
-		marom.setLength(courseLength);
-		rakia.setLength(courseLength);
-	}
-
 	public Settings getSettings() {
 		return settings;
 	}
 
-	public void setRound(int currentRound) {
-		this.round = currentRound;
+	public void setRound(int round) {
+		this.round = round;
 	}
-	
-	public int getRound(){
+
+	public int getRound() {
 		return round;
+	}
+
+	/**
+	 * @param settings
+	 *            The course's settings
+	 * @return The events considering stretching and pause times
+	 */
+	public List<JsonObject> getEventsForHomeScreen() {
+		List<JsonObject> eventList = new ArrayList<JsonObject>();
+
+		for (Map.Entry<Integer, Integer> incident : incident_times.entrySet()) {
+			HashSet<String> events = incident_events.get(incident.getKey());
+
+			for (String event : events) {
+				JsonObject row = new JsonObject();
+				row.addProperty("time", utils.TimeUtils.convertToSimulTime(settings.getRunTime(),
+						settings.getPauseTime(), incident.getKey()));
+				row.addProperty("event_id", Integer.valueOf(event));
+			}
+
+		}
+		return eventList;
 	}
 }

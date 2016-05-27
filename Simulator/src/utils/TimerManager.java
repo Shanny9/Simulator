@@ -34,13 +34,11 @@ public class TimerManager implements ServletContextListener {
 		return ClockIncrementor.getClocks();
 	}
 
-	public static void startSimulator(Settings settings) {
+	public static void startSimulator(Settings settings, int round) {
 		System.out.println("TimerManager: starting simulator");
 		ci = new ClockIncrementor(settings.getRunTime(), settings.getRoundTime(), settings.getLastRoundDone()+1, settings.getPauseTime());
-		lm = LogManager.getInstance();
-		
-		LogManager.setCourseName(settings.getCourseName());
-		LogManager.setRound(settings.getLastRoundDone()+1);
+		lm = LogManager.getInstance(settings.getCourseName());
+		lm.setRound(round);
 		
 		runNTimes(ci,settings.getRoundTime(), 0, 1,TimeUnit.SECONDS,scheduler);
 		runNTimes(lm,settings.getRoundTime(),0, 1,TimeUnit.SECONDS,scheduler);

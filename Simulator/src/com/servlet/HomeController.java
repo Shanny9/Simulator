@@ -50,7 +50,6 @@ public class HomeController extends HttpServlet {
 	 */
 	public HomeController() {
 		super();
-		simLog = SimulationLog.getInstance();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -76,8 +75,8 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
-//		System.out.println("action= " + action);
-		
+		// System.out.println("action= " + action);
+
 		switch (action) {
 
 		case "authenticate":
@@ -85,7 +84,7 @@ public class HomeController extends HttpServlet {
 			response.setContentType("text/html");
 
 			switch (authenticate(request)) {
-			case 1:	
+			case 1:
 				request.getSession().setAttribute("isLogged", "1");
 				response.sendRedirect("index.jsp");
 				break;
@@ -111,16 +110,16 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(clocks));
 			break;
 		case "startSimulator":
-			courseName = request.getParameter("courseName"); //TODO: replace with selectedCourseName
+			courseName = request.getParameter("courseName"); // TODO: replace with selectedCourseName
 			round = Integer.valueOf(request.getParameter("round"));
-			simLog.setCourseName(courseName); // TODO: remove this
+			SimulationLog.getInstance(courseName); // TODO: remove this
 			settings = simLog.getSettings(); // TODO: remove this
 			if (settings != null) {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
 				int pauseTime = settings.getPauseTime();
-				
-				TimerManager.startSimulator(settings);
+
+				TimerManager.startSimulator(settings, round);
 				response.getWriter().print("OK");
 			}
 			break;
@@ -132,18 +131,17 @@ public class HomeController extends HttpServlet {
 			break;
 		case "getGP":
 			courseName = request.getParameter("courseName");
-			simLog.setCourseName(courseName); // TODO: remove this
+			SimulationLog.getInstance(courseName); // TODO: remove this
 			System.out.println("getGP");
 			settings = simLog.getSettings(); // TODO: remove this
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
-			response.getWriter().print(getEvents(settings));
+			response.getWriter().print(SimulationLog.getInstance(courseName).getEventsForHomeScreen());
 			break;
 		case "solutionStream":
 			prepareResponseToStream(response);
-
-			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
+			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance(courseName).getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
 				response.getWriter().write(toStream(solutionQueue.poll()));
 			}
@@ -152,8 +150,9 @@ public class HomeController extends HttpServlet {
 		case "profitStream":
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
-//			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits(currentTime);
-			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamScores(currentTime);
+			// HashMap<String, Double> profits =
+			// SimulationLog.getInstance().getTeamProfits(currentTime);
+			HashMap<String, Double> profits = SimulationLog.getInstance(courseName).getTeamScores(currentTime);
 
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
@@ -171,7 +170,7 @@ public class HomeController extends HttpServlet {
 
 			Settings s = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
 			new Thread(new log.SimulationTester(s)).start();
-			
+
 			response.sendRedirect("newCourse.jsp");
 			break;
 		case "checkLog":
@@ -180,10 +179,10 @@ public class HomeController extends HttpServlet {
 		case "getCourses":
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
 			break;
-			
+
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
-			simLog.setCourseName(selectedCourseName);
+			SimulationLog.getInstance(selectedCourseName);
 			settings = simLog.getSettings();
 			response.sendRedirect("index.jsp");
 			break;
@@ -199,28 +198,28 @@ public class HomeController extends HttpServlet {
 
 	}
 
-/*	protected HashMap<String, Object> getTimes(String courseName) {
-		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
-		HashMap<String, Object> timesMap = new HashMap<String, Object>();
-
-		TblCourseDaoImpl daoCourse = new TblCourseDaoImpl();
-		TblCourse course = daoCourse.getCourseById(courseName);
-		int round = course.getLastRoundDone() + 1;
-
-		timesMap.put("sessionTime", daoGP.getSessionTime());
-		timesMap.put("roundTime", daoGP.getRoundTime());
-		timesMap.put("numOfRounds", daoGP.getGeneralParameters().getNumOfRounds());
-		timesMap.put("pauseTime", daoGP.getGeneralParameters().getPauseTime());
-		timesMap.put("runTime", daoGP.getGeneralParameters().getRunTime());
-		timesMap.put("sessionsPerRound", daoGP.getGeneralParameters().getSessionsPerRound());
-		timesMap.put("totalTime", daoGP.getTotalTime());
-		timesMap.put("currentRound",
-				round
-						 * new TblCourseDaoImpl().getCourseById(courseName).
-						 * getLastRoundDone()+1
-						 );
-		return timesMap;
-	}*/
+	/*
+	 * protected HashMap<String, Object> getTimes(String courseName) {
+	 * TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
+	 * HashMap<String, Object> timesMap = new HashMap<String, Object>();
+	 * 
+	 * TblCourseDaoImpl daoCourse = new TblCourseDaoImpl(); TblCourse course =
+	 * daoCourse.getCourseById(courseName); int round =
+	 * course.getLastRoundDone() + 1;
+	 * 
+	 * timesMap.put("sessionTime", daoGP.getSessionTime());
+	 * timesMap.put("roundTime", daoGP.getRoundTime());
+	 * timesMap.put("numOfRounds",
+	 * daoGP.getGeneralParameters().getNumOfRounds()); timesMap.put("pauseTime",
+	 * daoGP.getGeneralParameters().getPauseTime()); timesMap.put("runTime",
+	 * daoGP.getGeneralParameters().getRunTime());
+	 * timesMap.put("sessionsPerRound",
+	 * daoGP.getGeneralParameters().getSessionsPerRound());
+	 * timesMap.put("totalTime", daoGP.getTotalTime());
+	 * timesMap.put("currentRound", round new
+	 * TblCourseDaoImpl().getCourseById(courseName). getLastRoundDone()+1 );
+	 * return timesMap; }
+	 */
 
 	/**
 	 * uses utils.PasswordAuthentication to verify password from the client
@@ -288,29 +287,27 @@ public class HomeController extends HttpServlet {
 
 		return streamMessage;
 	}
-	
-	private  List<JsonObject> getEvents(Settings settings){
-		
-		List<JsonObject> events = new ArrayList<JsonObject>();
-		String query = Queries.eventsForHomeTable;
-		try {
-			Statement stmt = DBUtility.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
-				JsonObject row = new JsonObject();
-				row.addProperty("time", convertToSimulTime(settings, rs.getInt("incidentTime")));
-				row.addProperty("event_id", rs.getInt("event_id"));
-				events.add(row);	
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-		return events;
-	}
 
-	private int convertToSimulTime(Settings settings, int time) {
-		int numOfPauseTimes = time / settings.getSessionTime();
-		int elapsedPauseTime = numOfPauseTimes * settings.getPauseTime();
-		return time + elapsedPauseTime;
-	}
+//	private List<JsonObject> getEvents(Settings settings) {
+//
+//		List<JsonObject> events = new ArrayList<JsonObject>();
+//		String query = Queries.eventsForHomeTable;
+//		try {
+//			Statement stmt = DBUtility.getConnection().createStatement();
+//			ResultSet rs = stmt.executeQuery(query);
+//			while (rs.next()) {
+//				JsonObject row = new JsonObject();
+//				row.addProperty("time", rs.getInt("incidentTime"));
+//				row.addProperty("event_id", rs.getInt("event_id"));
+//				events.add(row);
+//			}
+//		} catch (SQLException e) {
+//			System.err.println(e.getMessage());
+//		}
+//		return events;
+//	}
+
+	/*
+	 * more bug fixes. @HomeController: convertToSimulTime method fixed + new method - stretch
+	 */
 }

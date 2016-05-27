@@ -37,9 +37,8 @@ public class SimulationTester implements Runnable {
 	public SimulationTester(Settings settings) {
 		super();
 		this.settings = settings;
-		simLog = SimulationLog.getInstance();
+		simLog = SimulationLog.getInstance(settings.getCourseName());
 		marom = simLog.getTeam("marom");
-		marom.setLength(settings.getTotalRunTime());
 		
 		HashMap<Integer, String> servicePriorities = LogUtils.getServicePriorities();
 		HashMap<String, Integer> priority_sla = settings.getPriority_sla();
@@ -99,6 +98,7 @@ public class SimulationTester implements Runnable {
 			System.out.print(targetScore + ((r<rounds)? ", " : ""));
 			targetScores.add(targetScore);
 		}
+		System.out.println("");
 		settings.setTargetScores(targetScores);
 		LogUtils.saveSettings(settings);
 	}

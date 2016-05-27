@@ -152,7 +152,8 @@ public class HomeController extends HttpServlet {
 		case "profitStream":
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
-			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits(currentTime);
+//			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamProfits(currentTime);
+			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamScores(currentTime);
 
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
@@ -168,8 +169,9 @@ public class HomeController extends HttpServlet {
 			int sessionsPerRound = Integer.valueOf(request.getParameter("form-sessions"));
 			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
 
-			log.LogUtils
-					.saveSettings(new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital));
+			Settings s = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
+			new Thread(new log.SimulationTester(s)).start();
+			
 			response.sendRedirect("newCourse.jsp");
 			break;
 		case "checkLog":

@@ -1,6 +1,7 @@
 package log;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -19,7 +20,7 @@ public class Settings implements Serializable{
 	private int lastRoundDone;
 	private int roundTime;
 	private int sessionTime;
-	
+	private ArrayList<Integer> targetScores;
 	/**
 	 * The priority name and MAX time to solve according to the SLA
 	 */
@@ -169,6 +170,17 @@ public class Settings implements Serializable{
 	public int getSessionTime() {
 		return sessionTime;
 	}
+	/**
+	 * @return the targetScore
+	 */
+	public ArrayList<Integer> getTargetScores() {
+		return targetScores;
+	}
 	
-	
+	/**
+	 * @param targetScore the targetScore to set
+	 */
+	public void setTargetScores(ArrayList<Integer> targetScores) {
+		this.targetScores = targetScores;
+	}
 }

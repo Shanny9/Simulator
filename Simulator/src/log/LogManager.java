@@ -5,7 +5,6 @@ public class LogManager implements Runnable {
 	private static boolean isRunning; 
 	private static int elapsed_time;
 	private static String course;
-	private static int round;
 	private static LogManager instance;
 
 	LogManager() {
@@ -26,7 +25,7 @@ public class LogManager implements Runnable {
 	}
 	
 	public static void setRound(int currentRound){
-		round = currentRound;
+		simLog.setRound(currentRound);
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class LogManager implements Runnable {
 		isRunning = false;
 		simLog.stopLogs(time);
 		System.out.println("Log stopped");
-		log.LogUtils.saveLog(course,round);
+		log.LogUtils.saveLog(course,simLog.getRound());
 	}
 
 	@Override

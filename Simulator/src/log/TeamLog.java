@@ -14,7 +14,7 @@ import java.util.Map;
 public class TeamLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * The team's name
 	 */
@@ -43,7 +43,7 @@ public class TeamLog implements Serializable {
 	 * The status of the log
 	 */
 	private boolean isFinished;
-	
+
 	private double initProfit;
 
 	/**
@@ -58,7 +58,7 @@ public class TeamLog implements Serializable {
 	 */
 	TeamLog(String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs, double initDiff,
 			HashMap<Integer, IncidentLog> incident_logs) {
-		
+
 		super();
 		this.teamName = teamName;
 		this.initProfit = initProfit;
@@ -70,20 +70,20 @@ public class TeamLog implements Serializable {
 		this.diff = initDiff;
 		this.incident_logs.putAll(incident_logs);
 	}
-	
-	void setLength(int length){
-		this.profits = new ArrayList<>(Collections.nCopies(length+1, 0d));
+
+	void setLength(int length) {
+		this.profits = new ArrayList<>(Collections.nCopies(length + 1, 0d));
 		this.profits.set(0, initProfit);
 	}
-	
-	String getTeamName(){
+
+	String getTeamName() {
 		return teamName;
 	}
-	
-	double getDiff(){
+
+	double getDiff() {
 		return diff;
 	}
-	
+
 	/**
 	 * Updates the team's diff, purchases and profits given the incident solved
 	 * 
@@ -147,9 +147,9 @@ public class TeamLog implements Serializable {
 	 * @return The team's profit at the given time
 	 */
 	synchronized public double getProfit(int time) {
-		try{
+		try {
 			return profits.get(time);
-		} catch (ArrayIndexOutOfBoundsException e){
+		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
 			return 0;
 		}
@@ -158,20 +158,23 @@ public class TeamLog implements Serializable {
 	/**
 	 * @return The team's current profit
 	 */
-/*	public double getCurrentProfit() {
-		return profits.get(profits.size() - 1);
-	}*/
+	/*
+	 * public double getCurrentProfit() { return profits.get(profits.size() -
+	 * 1); }
+	 */
 
 	/**
 	 * @param time
 	 *            updates the team's profit according to the diff
 	 */
-	synchronized void updateProfit(int time) {
-		try {
-			wait(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	synchronized void updateProfit(int time, int delayInMilis) {
+		if (delayInMilis > 0) {
+			try {
+				wait(delayInMilis);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if (isFinished) {
 			return;
@@ -221,7 +224,7 @@ public class TeamLog implements Serializable {
 		}
 
 		IncidentLog il = incident_logs.get(inc_id);
-		
+
 		if (il == null) {
 			return false;
 		}
@@ -240,7 +243,7 @@ public class TeamLog implements Serializable {
 	 */
 	public void fixAllIncidents(int time) {
 		for (int inc_id : incident_logs.keySet()) {
-			if (incident_logs.get(inc_id).isOpen(time)){
+			if (incident_logs.get(inc_id).isOpen(time)) {
 				incidentSolved(inc_id, time, true);
 			}
 		}
@@ -252,9 +255,23 @@ public class TeamLog implements Serializable {
 	public ArrayList<Double> getProfits() {
 		return profits;
 	}
-	
-	public HashMap<Integer, IncidentLog> getIncident_logs(){
+
+	public HashMap<Integer, IncidentLog> getIncident_logs() {
 		return incident_logs;
+	}
+	
+	/**
+	 * @return The team's Mean Time to Restore Service (MTRS)
+	 */
+	public double getMTRS(){
+		int trs = 0;
+		int failures = 0;
+		
+		for (ServiceLog sl : service_logs.values()){
+			trs+=sl.getTRS();
+			failures+=sl.getNumOfFailures();
+		}
+		return (double)trs/failures;
 	}
 
 	public String toString() {

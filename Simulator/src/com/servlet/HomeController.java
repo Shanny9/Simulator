@@ -112,8 +112,7 @@ public class HomeController extends HttpServlet {
 		case "startSimulator":
 			courseName = request.getParameter("courseName"); // TODO: replace with selectedCourseName
 			round = Integer.valueOf(request.getParameter("round"));
-			SimulationLog.getInstance(courseName); // TODO: remove this
-			settings = simLog.getSettings(); // TODO: remove this
+			settings = SimulationLog.getInstance(courseName).getSettings(); // TODO: remove this
 			if (settings != null) {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
@@ -182,8 +181,7 @@ public class HomeController extends HttpServlet {
 
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
-			SimulationLog.getInstance(selectedCourseName);
-			settings = simLog.getSettings();
+			settings = SimulationLog.getInstance(selectedCourseName).getSettings();
 			response.sendRedirect("index.jsp");
 			break;
 		}

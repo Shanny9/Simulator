@@ -308,7 +308,6 @@ public class SimulationLog extends Thread implements Serializable {
 						settings.getPauseTime(), incident.getKey()));
 				row.addProperty("event_id", Integer.valueOf(event));
 			}
-
 		}
 		return eventList;
 	}

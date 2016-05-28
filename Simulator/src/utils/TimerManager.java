@@ -22,7 +22,6 @@ public class TimerManager implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-//		log.LogUtils.saveLog("course1", 1);
 	}
 
 	@Override
@@ -36,7 +35,7 @@ public class TimerManager implements ServletContextListener {
 
 	public static void startSimulator(Settings settings, int round) {
 		System.out.println("TimerManager: starting simulator");
-		ci = new ClockIncrementor(settings.getRunTime(), settings.getRoundTime(), settings.getLastRoundDone()+1, settings.getPauseTime());
+		ci = new ClockIncrementor(settings, round);
 		lm = LogManager.getInstance(settings.getCourseName());
 		lm.setRound(round);
 		

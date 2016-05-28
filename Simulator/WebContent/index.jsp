@@ -8,20 +8,21 @@
 <link rel="stylesheet" href="css/bootstrap.min.css">
 
 <%
-	//TODO: change round in home.js to realRound.
-	//TODO: change course in home.js to realCourse.
-	String jspRound = request.getParameter("form-round");
-	String jspCourse = request.getParameter("form-courseName");
+	Object jspRound = session.getAttribute("selectedRound");
+	Object jspCourse = session.getAttribute("selectedCourseName");
 	if (jspRound != null && jspCourse != null) {
-		Integer round = Integer.valueOf(jspRound);
+		Integer round = Integer.valueOf(String.valueOf(jspRound));
 %>
 
 <script type="text/javascript">
-				var realRound =  '<%=round%>'; 
-				var realCourse = '<%=jspCourse%>';
+				var round =  '<%=round%>'; 
+				var courseName = '<%=jspCourse%>';
+				console.log("round number "+round+" in course "+courseName);
 </script>
 <%
 	}
+	else
+		System.out.println("index.jsp: round or course was not selected.");
 %>
 
 <script src="js/jquery-1.11.3.min.js"></script>
@@ -60,7 +61,7 @@
 							<th class="text-center">
 								<div class="header">MAROM</div>
 								<div id="marom-score" class="txt-score regular">
-									$10,256,412</div>
+									0</div>
 							</th>
 							<th class="text-center">
 								<div class="header">REMAINING</div>
@@ -70,7 +71,7 @@
 							<th class="text-center">
 								<div class="header">RAKIA</div>
 								<div id="rakia-score" class="txt-score regular">
-									$1,376,526</div>
+									0</div>
 							</th>
 						</thead>
 						<tbody>
@@ -142,11 +143,11 @@
 								<td class="round-session">
 									<div class="header text-center">ROUND</div>
 									<div class="txt-score regular center">
-										<span id="round">1</span>/<span id="totalRounds">3</span>
+										<span id="round">?</span>/<span id="totalRounds">?</span>
 									</div> <br>
 									<div class="header text-center">SESSION</div>
 									<div class="txt-score regular center">
-										<span id="session">1</span>/<span id="sessionsPerRound">3</span>
+										<span id="session">1</span>/<span id="sessionsPerRound">?</span>
 									</div>
 								</td>
 								<td>

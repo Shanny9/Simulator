@@ -1,4 +1,4 @@
-﻿var client_time;
+﻿﻿var client_time;
 var real_time;
 var offset;
 var runTime;
@@ -8,12 +8,12 @@ var showTime;
 var elapsedTime = 0;
 var remainingTime = 0;
 var session = 1;
-var round = 1; //TODO: delete this
+//var round = 1; //defined at the beginning of index.jsp
 var isRunTime = false;
 var settings = new Object();
 var eventsData = new Object();
 var finishRound;
-var courseName = 'normalCourse';
+//var courseName = 'normalCourse'; //defined at the beginning of index.jsp
 var clockInterval;
 var incidentsOnScreen = 0;
 var runPercentage;
@@ -25,6 +25,8 @@ var regularColor = '#FF9900';
 var maromScore;
 var rakiaScore;
 
+var solutionEventSource;
+var profitEventSource;
 
 var solutionListener = function(e) {
 	
@@ -72,6 +74,11 @@ var profitListener = function(e) {
 $(document).ready(function() {
 	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
 	
+	getSettings(courseName);
+	$("#totalRounds").html(settings["rounds"]);
+	$("#sessionsPerRound").html(settings["sessionsPerRound"]);
+	$("#round").html(round);
+	
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
@@ -79,13 +86,13 @@ $(document).ready(function() {
 });
 
 function setSolutionSource() {
-    var eventSource = new EventSource("HomeController?action=solutionStream");
-    eventSource.addEventListener('message',solutionListener, false);
+    solutionEventSource = new EventSource("HomeController?action=solutionStream");
+    solutionEventSource.addEventListener('message',solutionListener, false);
 }
 
 function setProfitSource() {
-    var eventSource = new EventSource("HomeController?action=profitStream");
-    eventSource.addEventListener('message', profitListener, false);
+    profitEventSource = new EventSource("HomeController?action=profitStream");
+    profitEventSource.addEventListener('message', profitListener, false);
 }
 
 /**
@@ -165,7 +172,10 @@ function startSimulator() {
 		dataType : "text",
 		async : false,
 		success : function(data) {
-			getSettings(courseName);
+						
+//			$("#marom-score").html(settings["initCapital"]);
+//			$("#rakia-score").html(settings["initCapital"]);			
+			
 			finishRound = settings["roundTime"] * (settings["lastRoundDone"] + 1);
 			getEvents();
 			getTime();
@@ -296,8 +306,8 @@ function incrementClock() {
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);
-			eventSource.removeEventListener('message',solutionListener);
-			eventSource.removeEventListener('message',profitListener);
+			solutionEventSource.removeEventListener('message',solutionListener);
+			profitEventSource.removeEventListener('message',profitListener);
 		}
 	}
 }

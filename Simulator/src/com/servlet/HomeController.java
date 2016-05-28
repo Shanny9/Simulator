@@ -1,14 +1,10 @@
 package com.servlet;
 
+import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,22 +12,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dao.TblGeneralParametersDao;
+import com.daoImpl.TblGeneralParametersDaoImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.model.TblGeneral_parameter;
+
 import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
 import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.PasswordAuthentication;
-import utils.Queries;
 import utils.TimerManager;
-
-import com.dao.TblGeneralParametersDao;
-import com.daoImpl.TblGeneralParametersDaoImpl;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.jdbc.DBUtility;
-import com.model.TblGeneral_parameter;
 
 /**
  * Servlet implementation class HomeController
@@ -74,7 +67,7 @@ public class HomeController extends HttpServlet {
 //			  URL resourceUrl = context.getResource("WEB-INF"+File.separator+"logs");
 //			  LogUtils.path = resourceUrl.getPath();
 //		}
-		LogUtils.path = getServletContext().getRealPath("/logs/");
+		LogUtils.path = getServletContext().getRealPath(File.separator + "logs");
 		
 		// General settings
 		response.setCharacterEncoding("UTF-8");

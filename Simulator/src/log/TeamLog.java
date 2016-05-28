@@ -242,7 +242,8 @@ public class TeamLog implements Serializable {
 	public void fixAllIncidents(int time) {
 		for (int inc_id : incident_logs.keySet()) {
 			if (incident_logs.get(inc_id).isOpen(time)) {
-				incidentSolved(inc_id, time, true);
+				//TODO: change false back to true
+				incidentSolved(inc_id, time, false);
 			}
 		}
 	}

@@ -93,14 +93,18 @@ public class SimulationTester implements Runnable {
 		int rounds = settings.getRounds();
 		int roundRunTime = settings.getRunTime() * settings.getSessionsPerRound();
 		
-		System.out.print("Simulation tester finished: Target scores are: ");
+		
 		ArrayList<Integer> targetScores = new ArrayList<>(rounds);
 		for (int r = 1; r <= rounds; r++) {
 			int targetScore = marom.getProfits().get(roundRunTime * r).intValue();
-			System.out.print(targetScore + ((r<rounds)? ", " : ""));
+			
 			targetScores.add(targetScore);
 		}
-		System.out.println("");
+		
+		for (int r= 2 ;  r< rounds ; r++){
+			targetScores.set(r,targetScores.get(r-1)-targetScores.get(r-2));
+		}
+		
 		settings.setTargetScores(targetScores);
 		LogUtils.saveSettings(settings);
 	}

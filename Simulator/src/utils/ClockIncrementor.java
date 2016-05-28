@@ -3,29 +3,28 @@ package utils;
 import java.util.HashMap;
 
 import log.LogManager;
+import log.Settings;
 
 public class ClockIncrementor implements Runnable {
 	private static volatile boolean isRunning = false;
 	private static int elapsedTime;
 	private static int remainingTime;
 	private static int finishRound;
-	private static int round;
 	private static int PAUSE_TIME;
 	private static int sessionTime;
 	private static int RUN_TIME;
 	private static int elapsedRunTime;
 	private static boolean isRunTime;
 
-	public ClockIncrementor(int runTime, int roundTime, int currentRound, int pauseTime) {
+	public ClockIncrementor(Settings settings, int currentRound) {
 		super();
-		elapsedTime = 0;
-		elapsedRunTime = 0;
-		remainingTime = pauseTime;
-		finishRound = roundTime * (round + 1);
-		round = currentRound;
-		PAUSE_TIME = pauseTime;
-		sessionTime = runTime + pauseTime;
-		RUN_TIME = runTime;
+		elapsedTime = (currentRound - 1) * settings.getRoundTime();
+		elapsedRunTime = (currentRound - 1) * settings.getRunTime();
+		remainingTime = settings.getPauseTime();
+		finishRound = currentRound * settings.getRoundTime();
+		PAUSE_TIME = settings.getPauseTime();
+		sessionTime = settings.getSessionTime();
+		RUN_TIME = settings.getRunTime();
 		isRunning = true;
 		isRunTime = false;
 	}
@@ -44,8 +43,8 @@ public class ClockIncrementor implements Runnable {
 
 			elapsedTime += 1;
 			remainingTime -= 1;
-			
-			if (isRunTime){
+
+			if (isRunTime) {
 				elapsedRunTime++;
 			}
 

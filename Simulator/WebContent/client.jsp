@@ -51,7 +51,7 @@
 <script src="js/jquery.backstretch.min.js"></script>
 <script src="js/date.format.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/home.js"></script>
+<!-- <script src="js/home.js"></script> -->
 <script src="js/client.js"></script>
 
 </head>

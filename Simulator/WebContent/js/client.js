@@ -384,6 +384,26 @@ function disableSolve(dis){
 	}
 }
 
+function getSettings() {
+	$.ajax({
+		url : "HomeController",
+		data : {
+			action : "getSettings",
+			courseName : courseName
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			$.each(data, function(key, value) {
+				settings[key] = value;
+			});
+		},
+		error : function(e) {
+			console.log("js:getSettings: Error in getSettings: " + e.message);
+		}
+	});
+}
+
 Number.prototype.toHHMMSS = function () {
     var sec_num = parseInt(this, 10); // don't forget the second param
     var hours   = Math.floor(sec_num / 3600);

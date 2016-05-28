@@ -87,7 +87,7 @@ public class HomeController extends HttpServlet {
 			switch (authenticate(request)) {
 			case 1:
 				request.getSession().setAttribute("isLogged", "1");
-				response.sendRedirect("index.jsp");
+				response.sendRedirect("opening.jsp");
 				break;
 			case 2:
 				request.getSession().setAttribute("team", "Marom");

@@ -65,7 +65,6 @@ public class SimulationLog extends Thread implements Serializable {
 	// TODO: fix this - should be calculated somehow
 	private double mul = 1;
 
-	@SuppressWarnings("unchecked")
 	SimulationLog(String courseName) {
 		super();
 
@@ -77,8 +76,7 @@ public class SimulationLog extends Thread implements Serializable {
 		this.incident_times = LogUtils.getIncidentTimes(mul);
 		this.incident_events = LogUtils.getIncidentEvents();
 		this.solutionQueue = new LinkedList<>();
-
-		double initProfit = new TblGeneralParametersDaoImpl().getGeneralParameters().getInitialCapital();
+		double initProfit = settings.getInitCapital();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
@@ -93,9 +91,11 @@ public class SimulationLog extends Thread implements Serializable {
 			initDiff += service_logs.get(service_id).getDiff();
 		}
 
-		HashMap<Integer, IncidentLog> incident_logs = LogUtils.getIncidentLogs();
-
+		HashMap<Integer, IncidentLog> incident_logs = LogUtils.getIncidentLogs();		
+		
+		@SuppressWarnings("unchecked")
 		HashMap<Integer, ServiceLog> service_logs_copy = (HashMap<Integer, ServiceLog>) LogUtils.copy(service_logs);
+		@SuppressWarnings("unchecked")
 		HashMap<Integer, IncidentLog> incident_logs_copy = (HashMap<Integer, IncidentLog>) LogUtils.copy(incident_logs);
 
 		int duration = settings.getTotalRunTime();

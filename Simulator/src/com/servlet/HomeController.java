@@ -50,7 +50,7 @@ public class HomeController extends HttpServlet {
 	 */
 	public HomeController() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -68,7 +68,12 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+//		if(LogUtils.path.isEmpty())
+//		{
+//			ServletContext context = getServletConfig().getServletContext();
+//			  URL resourceUrl = context.getResource("WEB-INF"+File.separator+"logs");
+//			  LogUtils.path = resourceUrl.getPath();
+//		}
 		LogUtils.path = getServletContext().getRealPath("/logs/");
 		
 		// General settings
@@ -113,9 +118,9 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(clocks));
 			break;
 		case "startSimulator":
-			courseName = request.getParameter("courseName"); // TODO: replace with selectedCourseName
-			round = Integer.valueOf(request.getParameter("round"));
-			settings = SimulationLog.getInstance(courseName).getSettings(); // TODO: remove this
+//			courseName = request.getParameter("courseName"); // V replace with selectedCourseName
+//			round = Integer.valueOf(request.getParameter("round"));
+//			settings = SimulationLog.getInstance(courseName).getSettings(); // V remove this
 			if (settings != null) {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
@@ -131,9 +136,9 @@ public class HomeController extends HttpServlet {
 		case "resumeSimulator":
 			TimerManager.forceResume();
 			break;
-		case "getSettings":
-			courseName = request.getParameter("courseName");
-			settings = LogUtils.openSettings(courseName); // TODO: remove this
+		case "getSettings": //TODO: check that it happens after start simulator
+//			courseName = request.getParameter("courseName");
+//			settings = LogUtils.openSettings(courseName); // V remove this
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
@@ -191,7 +196,10 @@ public class HomeController extends HttpServlet {
 
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
+			round = Integer.valueOf(request.getParameter("form-round"));
 			settings = SimulationLog.getInstance(selectedCourseName).getSettings();
+			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
+			request.getSession().setAttribute("selectedRound", round);
 			response.sendRedirect("index.jsp");
 			break;
 		}

@@ -51,20 +51,20 @@ public class LogUtils {
 	 *         Otherwise returns 0
 	 */
 	public static int getCourseRounds(String courseName) {
-		
-		File file = new File(path);
+
+		File file = new File(path + File.separator + courseName);
 		file.mkdirs();
-		
+
 		File[] settingsFiles = file.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.equals("settings.ser");
 			}
 		});
-		
-		if (settingsFiles == null || settingsFiles.length == 0 ){
+
+		if (settingsFiles == null || settingsFiles.length == 0) {
 			return 0;
 		}
-		
+
 		return openSettings(courseName).getRounds();
 	}
 
@@ -90,10 +90,10 @@ public class LogUtils {
 	 */
 	public static void saveLog(String courseName, final int round) {
 		try {
-			
-			File file = new File(path + courseName + "/");
+
+			File file = new File(path + File.separator + courseName + "/");
 			file.mkdirs();
-			
+
 			final String newFileName = generateFileName(round);
 
 			FileOutputStream fileOut = new FileOutputStream(path + courseName + newFileName);
@@ -133,7 +133,7 @@ public class LogUtils {
 		try {
 			String fileName = generateFileName(round);
 
-			FileInputStream fileIn = new FileInputStream(path + course + "/" + fileName);
+			FileInputStream fileIn = new FileInputStream(path + File.separator + course + File.separator + fileName);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
 			in.close();
@@ -156,12 +156,13 @@ public class LogUtils {
 	 */
 	public static void saveSettings(Settings settings) {
 
-		File file = new File(path + settings.getCourseName());
+		File file = new File(path + File.separator + settings.getCourseName());
 		file.mkdirs();
 
 		FileOutputStream fileOut;
 		try {
-			fileOut = new FileOutputStream(path + settings.getCourseName() + "/settings.ser");
+			fileOut = new FileOutputStream(
+					path + File.separator + settings.getCourseName() + File.separator + "settings.ser");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(settings);
 			out.close();
@@ -183,7 +184,8 @@ public class LogUtils {
 	public static Settings openSettings(String courseName) {
 		try {
 
-			FileInputStream fileIn = new FileInputStream(path + courseName + "/settings.ser");
+			FileInputStream fileIn = new FileInputStream(
+					path + File.separator + courseName + File.separator + "settings.ser");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			Settings settings = (Settings) in.readObject();
 			in.close();
@@ -198,16 +200,16 @@ public class LogUtils {
 		return null;
 	}
 
-//	/**
-//	 * Generates a path given the course name
-//	 * 
-//	 * @param courseName
-//	 *            The name of the course
-//	 * @return The path to the directory of the course's log
-//	 */
-//	private static String generatePath(String courseName) {
-//		return path + courseName + "/";
-//	}
+	// /**
+	// * Generates a path given the course name
+	// *
+	// * @param courseName
+	// * The name of the course
+	// * @return The path to the directory of the course's log
+	// */
+	// private static String generatePath(String courseName) {
+	// return path + courseName + "/";
+	// }
 
 	/**
 	 * Generates a file name given the simulation's round
@@ -328,7 +330,7 @@ public class LogUtils {
 		HashMap<Integer, Integer> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		for (TblIncident inc : dao.getAllIncidents()) {
-			incidents.put((int) (inc.getIncidentTime()*mul), (int) inc.getIncidentId());
+			incidents.put((int) (inc.getIncidentTime() * mul), (int) inc.getIncidentId());
 		}
 		return incidents;
 	}
@@ -351,8 +353,7 @@ public class LogUtils {
 		}
 		return incident_events;
 	}
-	
-	
+
 	static HashMap<Integer, String> getServicePriorities() {
 		HashMap<Integer, String> servicePriority = new HashMap<>();
 		try {
@@ -367,7 +368,7 @@ public class LogUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a copy of the object, or null if the object cannot be serialized.
 	 */

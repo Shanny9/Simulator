@@ -22,7 +22,7 @@ public class TimerManager implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		log.LogUtils.saveLog("course1", 1);
+//		log.LogUtils.saveLog("course1", 1);
 	}
 
 	@Override

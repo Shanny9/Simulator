@@ -1,5 +1,6 @@
 package log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ public class SimulationTester implements Runnable {
 	public SimulationTester(Settings settings) {
 		super();
 		this.settings = settings;
+		LogUtils.saveSettings(settings);
 		simLog = SimulationLog.getInstance(settings.getCourseName());
 		marom = simLog.getTeam("marom");
 		

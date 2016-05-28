@@ -44,7 +44,7 @@ public class HomeController extends HttpServlet {
 	private SimulationLog simLog;
 	private Settings settings;
 	private String selectedCourseName;
-
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -68,6 +68,9 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		LogUtils.path = getServletContext().getRealPath("/logs/");
+		
 		// General settings
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
@@ -128,11 +131,9 @@ public class HomeController extends HttpServlet {
 		case "resumeSimulator":
 			TimerManager.forceResume();
 			break;
-		case "getGP":
+		case "getSettings":
 			courseName = request.getParameter("courseName");
-			SimulationLog.getInstance(courseName); // TODO: remove this
-			System.out.println("getGP");
-			settings = simLog.getSettings(); // TODO: remove this
+			settings = LogUtils.openSettings(courseName); // TODO: remove this
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
@@ -159,7 +160,8 @@ public class HomeController extends HttpServlet {
 			response.getWriter().write(streamMessage);
 			break;
 
-		case "newCourse":
+		case "newCourse":			
+			
 			String courseName = request.getParameter("form-courseName");
 			int rounds = Integer.valueOf(request.getParameter("form-numOfRounds"));
 			int runTime = Integer.valueOf(request.getParameter("form-runTime"));
@@ -169,7 +171,7 @@ public class HomeController extends HttpServlet {
 
 			Settings s = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
 			new Thread(new log.SimulationTester(s)).start();
-
+			
 			response.sendRedirect("newCourse.jsp");
 			break;
 		case "checkLog":

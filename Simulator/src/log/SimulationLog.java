@@ -32,7 +32,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<Integer, HashSet<Integer>> affected_services;
 	/**
-	 * The simulation's incidents and their events
+	 * The simulation's incidents and their events (key = incident_id, value=set of events)
 	 */
 	private HashMap<Integer, HashSet<String>> incident_events;
 	/**
@@ -300,15 +300,21 @@ public class SimulationLog extends Thread implements Serializable {
 		List<JsonObject> eventList = new ArrayList<JsonObject>();
 
 		for (Map.Entry<Integer, Integer> incident : incident_times.entrySet()) {
-			HashSet<String> events = incident_events.get(incident.getKey());
-
+			HashSet<String> events = incident_events.get(incident.getValue());
+			
+			if (events == null){
+				continue;
+			}
+			
 			for (String event : events) {
 				JsonObject row = new JsonObject();
 				row.addProperty("time", utils.TimeUtils.convertToSimulTime(settings.getRunTime(),
 						settings.getPauseTime(), incident.getKey()));
 				row.addProperty("event_id", Integer.valueOf(event));
+				eventList.add(row);
 			}
 		}
+		System.out.println("SimulationLog getEventsForHomeScreen:\n" + eventList);
 		return eventList;
 	}
 }

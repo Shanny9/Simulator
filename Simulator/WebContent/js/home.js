@@ -10,7 +10,7 @@ var remainingTime = 0;
 var session = 1;
 var round = 1; //TODO: delete this
 var isRunTime = false;
-var gp = new Object();
+var settings = new Object();
 var eventsData = new Object();
 var finishRound;
 var courseName = 'normalCourse';
@@ -109,7 +109,7 @@ function getEvents() {
 
 function showEventsInTime() {
 	$.each(eventsData, function(i, item) {
-		if (elapsedRunTime == item.time) {
+		if (elapsedTime == item.time) {
 			var row = incidentsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html(item.event_id);
@@ -131,14 +131,14 @@ function clearEvents(){
 		}
 }
 
-function getGP() {
+function getSettings() {
 	$.ajax({
-		url : "HomeController?action=getGP&courseName=" + courseName,
+		url : "HomeController?action=getSettings&courseName=" + courseName,
 		dataType : "json",
 		async : false,
 		success : function(data) {
 			$.each(data, function(key, value) {
-				gp[key] = value;
+				settings[key] = value;
 			});
 		},
 		error : function(e) {
@@ -154,8 +154,8 @@ function startSimulator() {
 		dataType : "text",
 		async : false,
 		success : function(data) {
-			getGP(courseName);
-			finishRound = gp["roundTime"] * (gp["lastRoundDone"] + 1);
+			getSettings(courseName);
+			finishRound = settings["roundTime"] * (settings["lastRoundDone"] + 1);
 			getEvents();
 			getTime();
 			clockInterval = setInterval(incrementClock, 1000);
@@ -184,7 +184,11 @@ function getTime() {
 			if (offset < 0) {
 				offset = offset * -1;
 			}
+			
+			elapsedTime = Math.floor(data.elapsedClock + offset); 
+			elapsedRunTime = Math.floor(data.elapsedRunTime + offset);
 			showTime = Math.floor(remainingClock + offset);
+			
 			console.log("remainingClock " +remainingClock);
 			console.log("offset: "+ offset);
 		},
@@ -224,18 +228,19 @@ function resumeSimulator(){
 
 function incrementClock() {
 	
-	console.log("incrementClock: show time=" + showTime);
+//	console.log("incrementClock: show time=" + showTime);
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime -= 1;
 	
 	showEventsInTime();
 	elapsedTime++;
+	console.log("incrementClock: elapsed time=" + elapsedTime);
 	
 	if (isRunTime){
-		runPercentage = (gp["runTime"] - showTime) / gp["sessionTime"] * 100;
+		runPercentage = (settings["runTime"] - showTime) / settings["sessionTime"] * 100;
 		elapsedRunTime++;
 	} else{
-		pausePercentage = (gp["pauseTime"] - showTime) / gp["sessionTime"] * 100;
+		pausePercentage = (settings["pauseTime"] - showTime) / settings["sessionTime"] * 100;
 	}
 	
 	var idRun = '.progress-bar-success';
@@ -244,29 +249,29 @@ function incrementClock() {
 	$(idRun).css('width', runPercentage+'%').attr('aria-valuenow', runPercentage);
 	$(idPause).css('width', pausePercentage+'%').attr('aria-valuenow', pausePercentage);
 
-	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
+	if ((elapsedTime + settings["runTime"]) % (settings["sessionTime"]) == 0) {
 		// finished pause time
 		isRunTime = true;
-		showTime = gp["runTime"];
+		showTime = settings["runTime"];
 
-	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+	} else if (elapsedTime % (settings["sessionTime"]) == 0) {
 		// finished run time
 		isRunTime = false;
-		showTime = gp["pauseTime"];
+		showTime = settings["pauseTime"];
 
 
 		// finished session
 		runPercentage = 0;
 		pausePercentage = 0;
 		clearEvents();
-		if (session < gp["sessionsPerRound"]){
+		if (session < settings["sessionsPerRound"]){
 			session++;
 		};
 		
 		console.log("session: " + session);
 		$('#session').html(session);
 
-		if (elapsedTime % gp["roundTime"] == 0) {
+		if (elapsedTime % settings["roundTime"] == 0) {
 			// finished round
 			console.log("finished");
 			$('#main-time').html("00:00:00");

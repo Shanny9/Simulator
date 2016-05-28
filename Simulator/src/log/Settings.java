@@ -44,7 +44,7 @@ public class Settings implements Serializable{
 		this.sessionsPerRound = sessionsPerRound;
 		this.initCapital = initCapital;
 		this.lastRoundDone = 0;
-		this.roundTime = (runTime+pauseTime)*sessionsPerRound*rounds;
+		this.roundTime = (runTime+pauseTime)*sessionsPerRound;
 		this.sessionTime = runTime + pauseTime;
 		
 		//TODO: should be input from user
@@ -176,7 +176,6 @@ public class Settings implements Serializable{
 	public ArrayList<Integer> getTargetScores() {
 		return targetScores;
 	}
-	
 	/**
 	 * @param targetScore the targetScore to set
 	 */

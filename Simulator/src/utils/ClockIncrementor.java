@@ -13,13 +13,13 @@ public class ClockIncrementor implements Runnable {
 	private static int PAUSE_TIME;
 	private static int sessionTime;
 	private static int RUN_TIME;
-	private static int elapsedRuntime;
+	private static int elapsedRunTime;
 	private static boolean isRunTime;
 
 	public ClockIncrementor(int runTime, int roundTime, int currentRound, int pauseTime) {
 		super();
 		elapsedTime = 0;
-		elapsedRuntime = 0;
+		elapsedRunTime = 0;
 		remainingTime = pauseTime;
 		finishRound = roundTime * (round + 1);
 		round = currentRound;
@@ -35,7 +35,7 @@ public class ClockIncrementor implements Runnable {
 		HashMap<String, Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock", elapsedTime);
 		clocks.put("remainingClock", remainingTime);
-		clocks.put("elapsedRunTime", elapsedRuntime);
+		clocks.put("elapsedRunTime", elapsedRunTime);
 		return clocks;
 	}
 
@@ -46,7 +46,7 @@ public class ClockIncrementor implements Runnable {
 			remainingTime -= 1;
 			
 			if (isRunTime){
-				elapsedRuntime++;
+				elapsedRunTime++;
 			}
 
 			if ((elapsedTime + RUN_TIME) % sessionTime == 0) {
@@ -59,20 +59,20 @@ public class ClockIncrementor implements Runnable {
 				// finished run time
 				remainingTime = PAUSE_TIME;
 				isRunTime = false;
-				LogManager.pauseLog(elapsedRuntime, false);
+				LogManager.pauseLog(elapsedRunTime, false);
 			}
 		} else {
-			LogManager.Stop(elapsedRuntime);
+			LogManager.Stop(elapsedRunTime);
 		}
 	}
 
 	public static int getRunTime() {
-		return elapsedRuntime;
+		return elapsedRunTime;
 	}
 
 	public static void forcePause() {
 		isRunning = false;
-		LogManager.pauseLog(elapsedRuntime, true);
+		LogManager.pauseLog(elapsedRunTime, true);
 	}
 
 	public static void forceResume() {

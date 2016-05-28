@@ -203,7 +203,7 @@ function incrementClock() {
 }
 
 function startSimulator() {
-	getGP(courseName);
+	getSettings(courseName);
 	finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
 	getTime();
 	clockInterval = setInterval(incrementClock, 1000);

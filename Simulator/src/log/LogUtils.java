@@ -37,7 +37,7 @@ import utils.Queries;
 
 public class LogUtils {
 
-	private static final String path = "/logs/";
+	public static String path = "";
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
 	private static final String filePrefix = "round#";
 	private static final boolean deleteHistory = true;
@@ -51,10 +51,10 @@ public class LogUtils {
 	 *         Otherwise returns 0
 	 */
 	public static int getCourseRounds(String courseName) {
-
-		String path = generatePath(courseName);
+		
 		File file = new File(path);
-
+		file.mkdirs();
+		
 		File[] settingsFiles = file.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.equals("settings.ser");
@@ -90,11 +90,13 @@ public class LogUtils {
 	 */
 	public static void saveLog(String courseName, final int round) {
 		try {
-			String path = generatePath(courseName);
-			File file = new File(path);
+			
+			File file = new File(path + courseName + "/");
+			file.mkdirs();
+			
 			final String newFileName = generateFileName(round);
 
-			FileOutputStream fileOut = new FileOutputStream(path + newFileName);
+			FileOutputStream fileOut = new FileOutputStream(path + courseName + newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(SimulationLog.getInstance(courseName));
 			out.close();
@@ -129,10 +131,9 @@ public class LogUtils {
 	 */
 	public static SimulationLog openLog(String course, int round) {
 		try {
-			String path = generatePath(course);
 			String fileName = generateFileName(round);
 
-			FileInputStream fileIn = new FileInputStream(path + fileName);
+			FileInputStream fileIn = new FileInputStream(path + course + "/" + fileName);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
 			in.close();
@@ -154,13 +155,13 @@ public class LogUtils {
 	 *            The course's settings
 	 */
 	public static void saveSettings(Settings settings) {
-		String path = generatePath(settings.getCourseName());
-		File file = new File(path);
+
+		File file = new File(path + settings.getCourseName());
 		file.mkdirs();
 
 		FileOutputStream fileOut;
 		try {
-			fileOut = new FileOutputStream(path + "settings.ser");
+			fileOut = new FileOutputStream(path + settings.getCourseName() + "/settings.ser");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(settings);
 			out.close();
@@ -181,9 +182,8 @@ public class LogUtils {
 	 */
 	public static Settings openSettings(String courseName) {
 		try {
-			String path = generatePath(courseName);
 
-			FileInputStream fileIn = new FileInputStream(path + "settings.ser");
+			FileInputStream fileIn = new FileInputStream(path + courseName + "/settings.ser");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			Settings settings = (Settings) in.readObject();
 			in.close();
@@ -198,16 +198,16 @@ public class LogUtils {
 		return null;
 	}
 
-	/**
-	 * Generates a path given the course name
-	 * 
-	 * @param courseName
-	 *            The name of the course
-	 * @return The path to the directory of the course's log
-	 */
-	private static String generatePath(String courseName) {
-		return path + courseName + "/";
-	}
+//	/**
+//	 * Generates a path given the course name
+//	 * 
+//	 * @param courseName
+//	 *            The name of the course
+//	 * @return The path to the directory of the course's log
+//	 */
+//	private static String generatePath(String courseName) {
+//		return path + courseName + "/";
+//	}
 
 	/**
 	 * Generates a file name given the simulation's round

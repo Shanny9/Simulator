@@ -8,8 +8,7 @@ var isRunTime;
 var showTime;
 var session;
 var elapsedTime = 0;
-var elapsedRunTime = 0;
-var gp = new Object();
+var settings = new Object();
 //var team = "Marom"; // defined at the beginning of client.jsp
 var courseName = 'normalCourse';
 
@@ -147,71 +146,50 @@ function showPrice(){
 	});
 }
 
-function getGP() {
-	$.ajax({
-		url : "HomeController?action=getGP&courseName=" + courseName,
-		dataType : "json",
-		async : false,
-		success : function(data) {
-			$.each(data, function(key, value) {
-				gp[key] = value;
-			});
-		},
-		error : function(e) {
-			console.log("js:getGP: Error in getGP: " + e.message);
-		}
-	});
-}
-
 function incrementClock() {
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;
 	
-	if(isRunTime){
-		elapsedRunTime++;
-		elapsedTime;
-	}
-	
-	if ((elapsedTime + gp["runTime"]) % (gp["sessionTime"]) == 0) {
+	if ((elapsedTime + settings["runTime"]) % (settings["sessionTime"]) == 0) {
 		// finished pause time
-		isRunTime = true;
-		showTime = gp["runTime"];
+		showTime = settings["runTime"];
 		disablePurchase(false);
 		disableSolve(false);
 
-	} else if (elapsedTime % (gp["sessionTime"]) == 0) {
+	} else if (elapsedTime % (settings["sessionTime"]) == 0) {
 		// finished run time
-		isRunTime = false;
-		showTime = gp["pauseTime"];
+		showTime = settings["pauseTime"];
 		disablePurchase(true);
 		disableSolve(true);
 		
 		// finished session
-		if (session < gp["sessionsPerRound"]){
+		if (session < settings["sessionsPerRound"]){
 			session++;
 		};
 
-		if (elapsedTime % gp["roundTime"] == 0) {
+		if (elapsedTime % settings["roundTime"] == 0) {
 			// finished round
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);
 		}
-		
 	}
 }
 
 function startSimulator() {
 	getSettings(courseName);
-	finishRound = gp["roundTime"] * (gp["currentRound"] + 1);
+	finishRound = settings["roundTime"] * (settings["currentRound"] + 1);
 	getTime();
 	clockInterval = setInterval(incrementClock, 1000);
 }
 
 function getTime() {
 	$.ajax({
-		url : "HomeController?action=getTime",
+		url : "HomeController",
+		data : {
+			action : "getTime"
+		},
 		dataType : "json",
 		async : false,
 		success : function(data) {
@@ -226,10 +204,8 @@ function getTime() {
 			}
 			showTime =  Math.floor(remainingClock + offset);
 			elapsedTime = Math.floor(data.elapsedClock + offset);
-			elapsedRunTime = Math.floor(data.elapsedRunTime + offset);
 			console.log("remainingClock " +remainingClock);
 			console.log("elapsed time " +elapsedTime);
-			console.log("elapsed run time " +elapsedRunTime);
 			console.log("offset: "+ offset);
 		},
 		error : function(e) {
@@ -256,12 +232,12 @@ function checkIncident(){
 	var isOpen = false;
 	// second check - is the incident currently open
 	$.ajax({
-		url : "ClientController?action=checkIncident",
+		url : "ClientController",
 		dataType : "json",
 		data : {
+			action : "checkIncident",
 			team : team,
-			inc_id : inc_id,
-			time : elapsedRunTime
+			inc_id : inc_id
 		},
 		async : false,
 		success : function(data) {
@@ -321,7 +297,6 @@ function sendSolution() {
 		data : {
 			team : team,
 			inc_id : inc_id,
-			time : elapsedRunTime
 		},
 		success : function(msg) {
 			console.log(msg);
@@ -336,7 +311,10 @@ function sendSolution() {
 function checkSimulator() {
 
 	$.ajax({
-		url : "ClientController?action=checkSimulator",
+		url : "ClientController",
+		data : {
+			action : "checkSimulator",
+		},
 		dataType : "json",
 		timeout : 0,
 		success : function(msg) {
@@ -353,12 +331,12 @@ function buySolution() {
 
 	var inc_id = $('#incidentID').val();
 	$.ajax({
-		url : "ClientController?action=buySolution",
+		url : "ClientController",
 		dataType : "json",
 		data : {
+			action : "buySolution",
 			team : team,
-			inc_id : inc_id,
-			time : elapsedRunTime
+			inc_id : inc_id
 		},
 		success : function(msg) {
 			$('#success').delay(1000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message

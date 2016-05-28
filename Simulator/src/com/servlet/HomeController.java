@@ -140,6 +140,10 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(SimulationLog.getInstance(courseName).getEventsForHomeScreen());
 			break;
 		case "solutionStream":
+			if (!ClockIncrementor.isRunning()){
+				return;
+			}
+
 			prepareResponseToStream(response);
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance(courseName).getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
@@ -148,6 +152,10 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "profitStream":
+			if (!ClockIncrementor.isRunning()){
+				return;
+			}
+			
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
 			// HashMap<String, Double> profits =

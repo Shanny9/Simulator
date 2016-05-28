@@ -93,7 +93,10 @@ function setProfitSource() {
  */
 function getEvents() {
 	$.ajax({
-		url : "HomeController?action=getEvents",
+		url : "HomeController",
+		data : {
+			action : "getEvents",
+		},
 		dataType : "json",
 		async : false,
 		success : function(data) {
@@ -133,7 +136,11 @@ function clearEvents(){
 
 function getSettings() {
 	$.ajax({
-		url : "HomeController?action=getSettings&courseName=" + courseName,
+		url : "HomeController",
+		data : {
+			action : "getSettings",
+			courseName : courseName
+		},
 		dataType : "json",
 		async : false,
 		success : function(data) {
@@ -142,15 +149,19 @@ function getSettings() {
 			});
 		},
 		error : function(e) {
-			console.log("js:getGP: Error in getGP: " + e.message);
+			console.log("js:getSettings: Error in getSettings: " + e.message);
 		}
 	});
 }
 
 function startSimulator() {
 	$.ajax({
-		url : "HomeController?action=startSimulator",
-		data: {"courseName": courseName, "round": round},
+		url : "HomeController",
+		data: {
+			action : "startSimulator",
+			courseName: courseName, 
+			round: round
+		},
 		dataType : "text",
 		async : false,
 		success : function(data) {
@@ -171,7 +182,10 @@ function startSimulator() {
 
 function getTime() {
 	$.ajax({
-		url : "HomeController?action=getTime",
+		url : "HomeController",
+		data : {
+			action : "getTime"
+		},
 		dataType : "json",
 		async : false,
 		success : function(data) {
@@ -200,7 +214,10 @@ function getTime() {
 
 function pauseSimulator(){
 	$.ajax({
-		url : "HomeController?action=pauseSimulator",
+		url : "HomeController",
+		data : {
+			action : "pauseSimulator"
+		},
 		dataType : "text",
 		async : false,
 		success : function(data) {
@@ -214,7 +231,10 @@ function pauseSimulator(){
 
 function resumeSimulator(){
 	$.ajax({
-		url : "HomeController?action=resumeSimulator",
+		url : "HomeController",
+		data : {
+			action : "resumeSimulator"
+		},
 		dataType : "text",
 		async : false,
 		success : function(data) {

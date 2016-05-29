@@ -134,7 +134,7 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	public HashMap<String, Double> getTeamScores(int time) {
-		int targetScore = settings.getTargetScores().get(round - 1);
+		int targetScore = settings.getTargetScores().get(round - 1); //TODO: fix this!
 		int initCapital = (int) settings.getInitCapital();
 		//TODO: prevent targetWithoughtInit from being negative/zero
 		double targetWithoughtInit = targetScore - initCapital;

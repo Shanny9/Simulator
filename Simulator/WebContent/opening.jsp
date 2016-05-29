@@ -49,6 +49,11 @@
 			</div>
 			<!--container-fluid-->
 		</center>
+		<style>
+			footer{
+				position: fixed;
+			}
+		</style>
 		<%@ include file="footer.html"%>
 	</div>
 	<!--background-image-->

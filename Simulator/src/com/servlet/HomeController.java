@@ -111,6 +111,7 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "getTime":
+			System.out.println("getTimes: " + new Date());
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
 			response.getWriter().print(gson.toJson(clocks));

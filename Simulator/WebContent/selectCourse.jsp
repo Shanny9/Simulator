@@ -113,7 +113,7 @@
 	%>
 
 	<%
-	if (session.getAttribute("isLogged") == null) {
+	if (session.getAttribute("isLogged") == null && getServletContext().getAttribute("isLogged") == null) {
 		response.sendRedirect("login.jsp");
 		return;
 	}

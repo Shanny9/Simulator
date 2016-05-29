@@ -1,7 +1,6 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,8 +26,8 @@ import utils.SolutionElement;
  */
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
-	//TODO: get this from client in checkSimulator
-	private String courseName = "normalCourse";
+	//V get this from client in checkSimulator
+	private String courseName; /*= "normalCourse";*/
 	private String team;
 	private int inc_id;
 	private int time;
@@ -39,7 +38,7 @@ public class ClientController extends HttpServlet {
 	 */
 	public ClientController() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -48,7 +47,7 @@ public class ClientController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
 		doPost(request, response);
 	}
 
@@ -62,6 +61,13 @@ public class ClientController extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+		
+		//check that courseName is set
+		Object selectedCourse = getServletContext().getAttribute("selectedCourseName");
+		if(courseName == null && selectedCourse != null){
+			courseName = (String) selectedCourse;
+			System.out.println("ClientController: selected course - "+courseName);
+		}
 
 		// get the action
 		String action = request.getParameter("action");

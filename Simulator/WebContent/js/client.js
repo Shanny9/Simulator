@@ -10,7 +10,7 @@ var session;
 var elapsedTime = 0;
 var settings = new Object();
 //var team = "Marom"; // defined at the beginning of client.jsp
-var courseName = 'normalCourse';
+//var courseName = 'normalCourse'; // defined at the beginning of client.jsp
 
 $(document).ready(
 			
@@ -178,7 +178,7 @@ function incrementClock() {
 }
 
 function startSimulator() {
-	getSettings(courseName);
+	getSettings(courseName); // must not be called outside&before startSimulator.
 	finishRound = settings["roundTime"] * (settings["currentRound"] + 1);
 	getTime();
 	clockInterval = setInterval(incrementClock, 1000);

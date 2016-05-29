@@ -42,7 +42,20 @@
 %>
 <script type="text/javascript">
 	var team =  '<%= jspTeam %>';
-</script>        
+</script> 
+
+<%
+	Object jspCourse = getServletContext().getAttribute("selectedCourseName");
+	if(jspCourse != null){
+
+	
+%>
+<script type="text/javascript">
+	var courseName =  '<%= jspCourse %>';
+</script>
+<%
+	}//end if jspCourse
+%>         
         
 <script
 	src="js/jquery-1.11.3.min.js"></script>

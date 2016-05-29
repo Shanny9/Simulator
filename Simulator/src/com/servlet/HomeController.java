@@ -198,6 +198,9 @@ public class HomeController extends HttpServlet {
 			settings = SimulationLog.getInstance(selectedCourseName).getSettings();
 			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
+			//for client.jsp - app scope attribute
+			//*if Admin changes the course after client.jsp is on, client.jsp need to refresh.
+			getServletContext().setAttribute("selectedCourseName", selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
 		}

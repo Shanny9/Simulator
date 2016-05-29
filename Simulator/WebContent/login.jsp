@@ -133,6 +133,7 @@
 		String action = request.getParameter("action");
 		if (action != null && action.equals("logout")) {
 			session.setAttribute("isLogged", null);
+			getServletContext().setAttribute("isLogged", null);
 			request.getSession().invalidate();
 		}
 	%>

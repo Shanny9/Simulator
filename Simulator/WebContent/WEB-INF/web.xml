@@ -5,6 +5,10 @@
              utils.TimerManager 
         </listener-class>
   </listener>
+  <listener>
+  <listener-class>
+             utils.SessionCounterListener 
+        </listener-class></listener>
   <display-name>Home</display-name>
   <welcome-file-list>
     <welcome-file>opening.jsp</welcome-file>

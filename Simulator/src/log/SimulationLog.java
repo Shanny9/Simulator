@@ -136,6 +136,7 @@ public class SimulationLog extends Thread implements Serializable {
 	public HashMap<String, Double> getTeamScores(int time) {
 		int targetScore = settings.getTargetScores().get(round - 1);
 		int initCapital = (int) settings.getInitCapital();
+		//TODO: prevent targetWithoughtInit from being negative/zero
 		double targetWithoughtInit = targetScore - initCapital;
 
 		double maromWithoutInit = marom.getProfit(time) - initCapital;
@@ -316,5 +317,9 @@ public class SimulationLog extends Thread implements Serializable {
 		}
 		System.out.println("SimulationLog getEventsForHomeScreen:\n" + eventList);
 		return eventList;
+	}
+
+	public void updateSettings(Settings newSettings) {
+		this.settings = newSettings;
 	}
 }

@@ -101,12 +101,13 @@ public class SimulationTester implements Runnable {
 			targetScores.add(targetScore);
 		}
 		
-		for (int r= 2 ;  r< rounds ; r++){
-			targetScores.set(r,targetScores.get(r-1)-targetScores.get(r-2));
+		for (int r= rounds ;  r > 1 ; r--){
+			targetScores.set(r-1,targetScores.get(r-1)-targetScores.get(r-2));
 		}
 		
 		settings.setTargetScores(targetScores);
 		LogUtils.saveSettings(settings);
+		simLog.updateSettings(settings);
 	}
 
 	/**

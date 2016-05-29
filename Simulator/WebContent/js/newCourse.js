@@ -1,6 +1,7 @@
 /**
  * 
  */
+var isExist;
 $(document).ready(function() {
 	
     /*
@@ -33,7 +34,15 @@ $(document).ready(function() {
 					$(this).removeClass('input-error');
 			});
 			
-			checkLog($("#form-courseName").val());
+			if($("#form-courseName").val() != ""){
+				checkLog($("#form-courseName").val());
+				if(isExist){
+	    			e.preventDefault();
+	    			$("#form-courseName").addClass('input-error');
+				}
+				else
+					$("#form-courseName").removeClass('input-error');
+			}
 			
 	    });
 	
@@ -46,13 +55,17 @@ function checkLog(directory) {
 		data : {
 			"directory" : directory
 		},
+		async: false,
 		dataType: "json", 
 		success : function(rounds) {
 			if (rounds>0) {
 				//the course already exists
 				//TODO: fix error pop-up
 				$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message
+				isExist = true;
 			}
+			else
+				isExist = false;
 		},
 		error : function(e) {
 			console.log("js: Error in checkLog");

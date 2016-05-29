@@ -231,3 +231,7 @@ footer {
 .dropdown-menu li a:hover {
 	background-color: #eab265 !important;
 }
+
+.mItem {
+	letter-spacing: 1px;
+}

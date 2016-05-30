@@ -51,9 +51,10 @@ $(document).ready(function() {
 function checkLog(directory) {
 
 	$.ajax({
-		url : "HomeController?action=checkLog",
+		url : "HomeController",
 		data : {
-			"directory" : directory
+			action : "checkLog",
+			directory : directory
 		},
 		async: false,
 		dataType: "json", 

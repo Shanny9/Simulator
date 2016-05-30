@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+
 import com.dao.TblCIDao;
 import com.dao.TblCMDBDao;
 import com.dao.TblEventDao;
@@ -64,10 +66,27 @@ public class LogUtils {
 		if (settingsFiles == null || settingsFiles.length == 0) {
 			return 0;
 		}
-
 		return openSettings(courseName).getRounds();
 	}
 
+	public static void deleteCourse(String courseName) {
+
+		File file = new File(path + File.separator + courseName);
+		if (!file.exists()) {
+			return;
+		}
+
+		try {
+			FileUtils.deleteDirectory(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return The names of the courses in the path
+	 */
 	public static String[] getCourses() {
 
 		File file = new File(path);

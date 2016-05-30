@@ -4,7 +4,7 @@
 var finishRound;
 var solutionsData = new Object();
 var clockInterval;
-var isRunTime;
+var isRunTime = false;
 var showTime;
 var session;
 var elapsedTime = 0;
@@ -26,8 +26,7 @@ $(document).ready(
 					});
 			getSolutions();
 			
-			disablePurchase(true);
-			disableSolve(true);
+			run(isRunTime);
 			
 			// when a key released in the incident field - updates if the menus could toggle
 			$("#incidentID").on('keyup', function () {
@@ -126,6 +125,12 @@ $(document).ready(
 
 		});
 
+function run (isRun){
+	
+	disablePurchase(!isRun);
+	disableSolve(!isRun);
+}
+
 function showPrice(){
 	var inc_id = $('#incidentID').val();
 	var currencyTag;
@@ -185,6 +190,7 @@ function startSimulator() {
 }
 
 function getTime() {
+	var start = (new Date).getTime();
 	$.ajax({
 		url : "HomeController",
 		data : {
@@ -193,20 +199,22 @@ function getTime() {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			isRunTime = data.isRunTime;
+			run(isRunTime);
+			var latency = Math.round ( (((new Date).getTime() - start)/2)/1000 );
 			var remainingClock = data.remainingClock;
-			var serverTime = new Date(data.serverTime);
+//			var serverTime = new Date(data.serverTime);
 
-			client_time = new Date();
-			offset = (client_time.getTime() - serverTime.getTime())/1000;
-			if (offset < 0) {
-				offset = offset * -1;
-			}
-			showTime =  Math.floor(remainingClock + offset);
-			elapsedTime = Math.floor(data.elapsedClock + offset);
+//			client_time = new Date();
+//			offset = (client_time.getTime() - serverTime.getTime())/1000;
+//			if (offset < 0) {
+//				offset = offset * -1;
+//			}
+			showTime =  Math.floor(remainingClock + latency);
+			elapsedTime = Math.floor(data.elapsedClock + latency);
 			console.log("remainingClock " +remainingClock);
 			console.log("elapsed time " +elapsedTime);
-			console.log("offset: "+ offset);
+			console.log("latency: "+ latency);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");
@@ -242,6 +250,7 @@ function checkIncident(){
 		async : false,
 		success : function(data) {
 			isOpen = data;
+			console.log("checkIncident: isOpen: "+ isOpen);
 		},
 		error : function(e) {
 			console.log("js:checkIncident: Error in checking incidents.");

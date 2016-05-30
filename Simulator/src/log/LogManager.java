@@ -1,5 +1,9 @@
 package log;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 public class LogManager implements Runnable {
 	private static SimulationLog simLog;
 	private static boolean isRunning; 
@@ -67,9 +71,10 @@ public class LogManager implements Runnable {
 			}
 			simLog.updateTeamProfits(elapsed_time);
 			
-//			System.out.println("Marom: " + simLog.getTeam("marom").getProfits());
-//			System.out.println("Rakia: " + simLog.getTeam("rakia").getProfits());
-//			System.out.println("");
+
+			System.out.println("Marom: " + simLog.getTeam("marom").getProfits());
+			System.out.println("Rakia: " + simLog.getTeam("rakia").getProfits());
+			System.out.println("");
 		}
 /*		long end = System.nanoTime();
 		System.out.println(end-start);*/

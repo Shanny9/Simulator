@@ -191,6 +191,7 @@ function startSimulator() {
 }
 
 function getTime() {
+	var start = (new Date).getTime();
 	$.ajax({
 		url : "HomeController",
 		data : {
@@ -199,22 +200,22 @@ function getTime() {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			var latency = Math.round ( (((new Date).getTime() - start)/2)/1000 );
 			var remainingClock = data.remainingClock;
-			var serverTime = new Date(data.serverTime);
-
-			client_time = new Date();
-			offset = (client_time.getTime() - serverTime.getTime())/1000;
-			if (offset < 0) {
-				offset = offset * -1;
-			}
+//			var serverTime = new Date(data.serverTime);
+//
+//			client_time = new Date();
+//			offset = (client_time.getTime() - serverTime.getTime())/1000;
+//			if (offset < 0) {
+//				offset = offset * -1;
+//			}
 			
-			elapsedTime = Math.floor(data.elapsedClock + offset); 
-			elapsedRunTime = Math.floor(data.elapsedRunTime + offset);
-			showTime = Math.floor(remainingClock + offset);
+			elapsedTime = Math.floor(data.elapsedClock + latency); 
+			elapsedRunTime = Math.floor(data.elapsedRunTime + latency);
+			showTime = Math.floor(remainingClock + latency);
 			
 			console.log("remainingClock " +remainingClock);
-			console.log("offset: "+ offset);
+			console.log("latency: "+ latency);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");

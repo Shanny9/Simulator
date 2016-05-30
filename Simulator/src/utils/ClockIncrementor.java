@@ -35,6 +35,7 @@ public class ClockIncrementor implements Runnable {
 		clocks.put("elapsedClock", elapsedTime);
 		clocks.put("remainingClock", remainingTime);
 		clocks.put("elapsedRunTime", elapsedRunTime);
+		clocks.put("isRunTime", isRunTime);
 		return clocks;
 	}
 

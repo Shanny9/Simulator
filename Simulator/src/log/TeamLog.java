@@ -93,7 +93,11 @@ public class TeamLog implements Serializable {
 	 *            True if the incident was solved, otherwise false.
 	 */
 	synchronized void incidentSolved(int inc_id, int time, boolean isBaught) {
-
+		
+		if( !isIncidentOpen(inc_id, time) ) {
+			return;
+		}
+		
 		if (isFinished) {
 			return;
 		}
@@ -222,7 +226,7 @@ public class TeamLog implements Serializable {
 		}
 
 		IncidentLog il = incident_logs.get(inc_id);
-
+		System.out.println("TeamLog: isIncidentOpen: "+ il);
 		if (il == null) {
 			return false;
 		}

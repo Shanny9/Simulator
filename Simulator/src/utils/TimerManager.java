@@ -1,5 +1,8 @@
 package utils;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,6 +37,17 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static void startSimulator(Settings settings, int round) {
+		PrintStream out;
+		try {
+		out = new PrintStream(new FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
+		System.setOut(out);
+		System.out.println("H");
+
+		} catch (FileNotFoundException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+		}
+		
 		System.out.println("TimerManager: starting simulator");
 		ci = new ClockIncrementor(settings, round);
 		lm = LogManager.getInstance(settings.getCourseName());

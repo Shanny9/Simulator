@@ -83,6 +83,7 @@ public class ClientController extends HttpServlet {
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
 			boolean isGood = SimulationLog.getInstance(courseName).checkIncident(team, inc_id, time);
+			System.out.println("ClientController: "+ team +" Inc:"+ inc_id + " Time:" + time + " isGood:" + isGood);
 			response.getWriter().print(isGood);
 			break;
 		case "buySolution":

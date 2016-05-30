@@ -7,12 +7,12 @@ import javax.servlet.http.HttpSessionListener;
 
 public class SessionCounterListener implements HttpSessionListener {
 
-	private static final AtomicInteger maromCount = new AtomicInteger(0);
-	private static final AtomicInteger rakiaCount = new AtomicInteger(0);
+	private static final AtomicInteger sessionCount = new AtomicInteger(0);
 
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
-		updateCount(event,true);
+		sessionCount.incrementAndGet();
+		System.out.println(sessionCount.get());
 	}
 
 	@Override
@@ -20,35 +20,10 @@ public class SessionCounterListener implements HttpSessionListener {
 		sessionCount.decrementAndGet();
 		System.out.println(sessionCount.get());
 
+	}
+
 	public static int getSessionCount(String team) {
-		if (team.equalsIgnoreCase("marom")){
-			return maromCount.get();
-		} else if (team.equalsIgnoreCase("rakia")){
-			return rakiaCount.get();
-		}
-		return 0;
+		return sessionCount.get();
+		
 	}
-
-	private void updateCount(HttpSessionEvent event, boolean increment) {
-		Object obj = event.getSession().getAttribute("team");
-		String team;
-		if (obj instanceof String) {
-			team = obj.toString();
-
-			if (team.equalsIgnoreCase("marom")) {
-				if (increment) {
-					maromCount.incrementAndGet();
-				} else {
-					maromCount.decrementAndGet();
-				}
-			} else if (team.equalsIgnoreCase("rakia")) {
-				if (increment) {
-					rakiaCount.incrementAndGet();
-				} else{
-					rakiaCount.decrementAndGet();
-				}
-			}
-		}
-	}
-
 }

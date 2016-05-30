@@ -184,7 +184,7 @@ img { max-width: 100%; }
 	background: #EC644B;
 	margin-top: 10px;
 }
-#loginErr {
+#msg {
 	text-align: center;
 	color: #fff;
 	display: none;

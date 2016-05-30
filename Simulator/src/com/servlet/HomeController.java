@@ -184,7 +184,7 @@ public class HomeController extends HttpServlet {
 			Settings s = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
 			new Thread(new log.SimulationTester(s)).start();
 			
-			response.sendRedirect("newCourse.jsp");
+			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkLog":
 			response.getWriter().write(gson.toJson(LogUtils.getCourseRounds(request.getParameter("directory"))));

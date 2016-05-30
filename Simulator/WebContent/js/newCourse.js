@@ -73,3 +73,7 @@ function checkLog(directory) {
 		}
 	});
 }
+
+function ok(){
+	$("#msg").slideToggle("slow").delay(2000).slideToggle("slow");
+}

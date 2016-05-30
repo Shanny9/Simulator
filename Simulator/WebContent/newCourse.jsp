@@ -80,7 +80,7 @@
 			                        </div>
 			                        <button type="submit" class="btn" id="create">Create</button>
 			                    </form>
-			                    <div id="loginErr"><span class="glyphicon glyphicon-remove" ></span>...</div>
+			                    <div id="msg"><span class="glyphicon glyphicon-ok" ></span> Successfully created.</div>
 		                    </div>
                         </div>
                     </div>
@@ -126,6 +126,18 @@
 		return;
 	}
 %>
+
+	<%
+		String action = request.getParameter("action");
+		if (action != null) {
+	%>
+	<script>
+		ok();
+	</script>
+	<%
+		}
+	%>
+
         
         <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>

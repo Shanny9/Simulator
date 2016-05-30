@@ -17,8 +17,8 @@ public class SessionCounterListener implements HttpSessionListener {
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
-		updateCount(event,false);
-	}
+		sessionCount.decrementAndGet();
+		System.out.println(sessionCount.get());
 
 	public static int getSessionCount(String team) {
 		if (team.equalsIgnoreCase("marom")){

@@ -39,7 +39,8 @@ public class TimerManager implements ServletContextListener {
 	public static void startSimulator(Settings settings, int round) {
 		PrintStream out;
 		try {
-		out = new PrintStream(new FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
+//		out = new PrintStream(new FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
+		out = new PrintStream(new FileOutputStream("C:\\Users\\ROBERT\\Desktop\\output.txt"));
 		System.setOut(out);
 		System.out.println("H");
 

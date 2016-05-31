@@ -94,7 +94,7 @@ public class TeamLog implements Serializable {
 	 */
 	synchronized void incidentSolved(int inc_id, int time, boolean isBaught) {
 		
-		if( !isIncidentOpen(inc_id, time) ) {
+		if(!isIncidentOpen(inc_id, time) ) {
 			return;
 		}
 		
@@ -109,15 +109,16 @@ public class TeamLog implements Serializable {
 
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
-				diff += service_logs.get(service_id).ciUpdate(true, time);
+				//TODO: fix - every service should have a set of cis
+				diff += service_logs.get(service_id).ciUpdate(ci_id, true, time);
 			}
 		}
 
 		if (isBaught) {
 			purchases.put(time, ci_id);
 			profits.set(time, getProfit(time) - SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
-			System.out.println("Team " + teamName + ": solution baught at " + time + "seconds for "
-					+ SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
+//			System.out.println("Team " + teamName + ": solution baught at " + time + "seconds for "
+//					+ SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
 		}
 	}
 
@@ -138,7 +139,7 @@ public class TeamLog implements Serializable {
 		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectingCis().get(ci_id);
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
-				diff += service_logs.get(service_id).ciUpdate(false, time);
+				diff += service_logs.get(service_id).ciUpdate(ci_id, false, time);
 			}
 		}
 	}
@@ -226,13 +227,12 @@ public class TeamLog implements Serializable {
 		}
 
 		IncidentLog il = incident_logs.get(inc_id);
-		System.out.println("TeamLog: isIncidentOpen: "+ il);
 		if (il == null) {
 			return false;
 		}
 
-		System.out.println(
-				"TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
+//		System.out.println(
+//				"TeamLog isIncidentOpen: time= " + time + ", isOpen= " + incident_logs.get(inc_id).isOpen(time));
 		return incident_logs.get(inc_id).isOpen(time);
 
 	}

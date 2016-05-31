@@ -2,6 +2,7 @@ package log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ServiceLog implements Serializable {
 
@@ -13,7 +14,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * Counts how many CI's the service depends on, are currently down
 	 */
-	private int cisDown;
+	private HashSet<Integer> cisDown;
 	/**
 	 * Even cells = UP, odd cells = DOWN
 	 */
@@ -42,7 +43,7 @@ public class ServiceLog implements Serializable {
 	ServiceLog(int id, double fixed_cost, double fixed_income, double down_cost) {
 		super();
 		this.service_id = id;
-		this.cisDown = 0;
+		this.cisDown = new HashSet<>();
 		this.fixed_cost = fixed_cost;
 		this.fixed_income = fixed_income;
 		this.down_cost = down_cost;
@@ -158,20 +159,19 @@ public class ServiceLog implements Serializable {
 	 * service's status. The function returns the change in the service's profit
 	 * gain speed.
 	 */
-	synchronized double ciUpdate(boolean isUp, int time) {
+	synchronized double ciUpdate(int ci_id, boolean isUp, int time) {
 		double oldDiff = diff;
 		if (isUp) {
 			// if all CIs ARE DOWN, updates service status
-			this.cisDown--;
-			if (cisDown == 0) {
+			if (this.cisDown.remove(ci_id) && cisDown.size() == 0) {
 				updateStatus(time);
 			}
 		} else {
 			// if all CIs WERE DOWN, updates service status
-			if (cisDown == 0) {
+			if (cisDown.size() == 0) {
 				updateStatus(time);
 			}
-			this.cisDown++;
+			this.cisDown.add(ci_id);
 		}
 		return diff - oldDiff;
 	}

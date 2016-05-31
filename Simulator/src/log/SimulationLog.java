@@ -137,7 +137,6 @@ public class SimulationLog extends Thread implements Serializable {
 		int targetScore = settings.getTargetScores().get(round - 1); //TODO: fix this!
 		int initCapital = (int) settings.getInitCapital();
 		//TODO: prevent targetWithoughtInit from being negative/zero
-		double targetWithoughtInit = targetScore - initCapital;
 
 		double maromWithoutInit = marom.getProfit(time) - initCapital;
 		double rakiaWithoutInit = rakia.getProfit(time) - initCapital;
@@ -151,8 +150,11 @@ public class SimulationLog extends Thread implements Serializable {
 		}
 
 		HashMap<String, Double> profits = new HashMap<>();
-		profits.put(marom.getTeamName(), maromWithoutInit / targetWithoughtInit * 100);
-		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetWithoughtInit * 100);
+		profits.put(marom.getTeamName(), maromWithoutInit / targetScore * 100);
+		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetScore * 100);
+		System.out.println("Marom: " + marom.getProfit(time) + ". Rakia: " + rakia.getProfit(time));
+		System.out.println("Marom: " + maromWithoutInit / targetScore * 100 + ". Rakia: " + rakiaWithoutInit / targetScore * 100);
+		System.out.println();
 		return profits;
 	}
 

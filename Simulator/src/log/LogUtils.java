@@ -260,6 +260,25 @@ public class LogUtils {
 		}
 		return dbAffectingCis;
 	}
+	
+	/**
+	 * @return
+	 */
+	static HashMap<Integer, HashSet<Integer>> getCIsAndTheirIncidents() {
+		HashMap<Integer, HashSet<Integer>> ci_incidents = new HashMap<>();
+		TblIncidentDao dao = new TblIncidentDaoImpl();
+
+		for (TblIncident incident : dao.getAllIncidents()) {
+			int ci = incident.getCiId();
+			HashSet<Integer> incidents = ci_incidents.get(ci);
+			if (incidents == null) {
+				incidents = new HashSet<Integer>();
+			}
+			incidents.add((int) incident.getIncidentId());
+			ci_incidents.put(ci, incidents);
+		}
+		return ci_incidents;
+	}
 
 	/**
 	 * @return A map of the services and their affecting CIs

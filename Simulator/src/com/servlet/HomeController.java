@@ -248,10 +248,11 @@ public class HomeController extends HttpServlet {
 	protected int authenticate(HttpServletRequest request) {
 		int result;
 		char[] user = request.getParameter("form-username").toCharArray();
+		System.out.println("HomeController: username= " + request.getParameter("form-username"));
 		char[] pass = request.getParameter("form-password").toCharArray();
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
-
+	
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
 

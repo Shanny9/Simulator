@@ -202,8 +202,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param isBought
 	 *            True weather the incident was bought. False otherwise.
 	 */
-	public void incidentSolved(String team, int inc_id, int time, boolean isBought) {
-		getTeam(team).incidentSolved(inc_id, time, isBought);
+	public boolean incidentSolved(String team, int inc_id, int time, boolean isBought) {
+		return getTeam(team).incidentSolved(inc_id, time, isBought);
 	}
 
 	/**

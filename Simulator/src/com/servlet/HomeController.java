@@ -1,6 +1,7 @@
 package com.servlet;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -203,6 +204,7 @@ public class HomeController extends HttpServlet {
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
 			round = Integer.valueOf(request.getParameter("form-round"));
+			
 			settings = LogUtils.openSettings(selectedCourseName);
 			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
@@ -211,7 +213,33 @@ public class HomeController extends HttpServlet {
 			getServletContext().setAttribute("selectedCourseName", selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
+			
+		case "isRoundDone":
+			String filePrefix = request.getParameter("filePrefix");
+			String course = request.getParameter("course");
+			response.getWriter().print(checkFile(filePrefix,course));
+			break;
 		}
+	}
+	
+	private boolean checkFile(String prefix, String course){
+		final String p = prefix;
+		File file = new File(LogUtils.path + File.separator + course);
+		if(file.exists() && file.isDirectory()){
+
+			File[] settingsFiles = file.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.startsWith(p);
+				}
+			});
+
+			if (settingsFiles == null || settingsFiles.length == 0) {
+				return false;
+			}
+			return true;
+		}
+		else
+			return false;
 	}
 
 	private void prepareResponseToStream(HttpServletResponse response) {

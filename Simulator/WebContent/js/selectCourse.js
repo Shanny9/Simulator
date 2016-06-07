@@ -15,7 +15,39 @@ $(document).ready(function() {
 		checkLog($(this).val());
 	});
 
+	$('#form-round').change(function() {
+		isRoundDone($(this).val() , $('#form-courseName').val());
+
+	});
+	
 });
+
+function isRoundDone(round, course){
+	
+	$.ajax({
+		url : "HomeController?action=isRoundDone",
+		data : {
+			"filePrefix" : "round#" + round,
+			"course" : course
+		},
+		dataType: "json", 
+		success : function(msg) {
+			if(msg){
+				$("#start").html("See Reports");
+				//TODO: change onSubmit action
+			}
+			else{
+				$("#start").html("Start Simulator");
+				//TODO: change onSubmit action
+			}
+				
+		},
+		error : function(e) {
+			console.log("js: Error in isRoundDone");
+		}
+	});
+	
+}
 
 function checkLog(directory) {
 
@@ -34,6 +66,7 @@ function checkLog(directory) {
 				$(".form-round").removeClass("disabled");
 				$("#start").removeClass("disabled");
 				setRounds(rounds);
+				isRoundDone(1, directory);
 				
 			} else {
 				disable($('#start'), true);

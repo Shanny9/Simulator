@@ -55,18 +55,21 @@ public class LogUtils {
 	public static int getCourseRounds(String courseName) {
 
 		File file = new File(path + File.separator + courseName);
-		file.mkdirs();
+		if(file.exists() && file.isDirectory()){
 
-		File[] settingsFiles = file.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.equals("settings.ser");
+			File[] settingsFiles = file.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.equals("settings.ser");
+				}
+			});
+
+			if (settingsFiles == null || settingsFiles.length == 0) {
+				return 0;
 			}
-		});
-
-		if (settingsFiles == null || settingsFiles.length == 0) {
-			return 0;
+			return openSettings(courseName).getRounds();
 		}
-		return openSettings(courseName).getRounds();
+		else
+			return 0;
 	}
 
 	public static void deleteCourse(String courseName) {

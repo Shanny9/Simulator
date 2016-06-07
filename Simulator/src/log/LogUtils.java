@@ -117,7 +117,7 @@ public class LogUtils {
 
 			FileOutputStream fileOut = new FileOutputStream(path + courseName + newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(SimulationLog.getInstance(courseName));
+			out.writeObject(SimulationLog.getInstance());
 			out.close();
 			fileOut.close();
 			System.out.printf("Log is saved in /tmp/log.ser");

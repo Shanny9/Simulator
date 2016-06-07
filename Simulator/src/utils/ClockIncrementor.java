@@ -9,24 +9,42 @@ public class ClockIncrementor implements Runnable {
 	private static volatile boolean isRunning = false;
 	private static int elapsedTime;
 	private static int remainingTime;
-	private static int finishRound;
 	private static int PAUSE_TIME;
+	private static int ROUND_TIME;
 	private static int sessionTime;
 	private static int RUN_TIME;
 	private static int elapsedRunTime;
 	private static boolean isRunTime;
+	private static ClockIncrementor instance;
+	private static boolean isInitialized;
 
-	public ClockIncrementor(Settings settings, int currentRound) {
-		super();
+	public static void initialize(Settings settings, int currentRound) {
+
+		if (isInitialized){
+			return;
+		}
+		
 		elapsedTime = (currentRound - 1) * settings.getRoundTime();
 		elapsedRunTime = (currentRound - 1) * settings.getRunTime();
 		remainingTime = settings.getPauseTime();
-		finishRound = currentRound * settings.getRoundTime();
 		PAUSE_TIME = settings.getPauseTime();
 		sessionTime = settings.getSessionTime();
 		RUN_TIME = settings.getRunTime();
+		ROUND_TIME = settings.getRoundTime();
 		isRunning = true;
 		isRunTime = false;
+		isInitialized = true;
+	}
+
+	private ClockIncrementor() {
+		isInitialized = false;
+	};
+
+	public static ClockIncrementor getInstance() {
+		if (instance == null) {
+			instance = new ClockIncrementor();
+		}
+		return instance;
 	}
 
 	public static HashMap<String, Object> getClocks() {
@@ -40,8 +58,8 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	public void run() {
-		if (isRunning && elapsedTime < finishRound) {
-
+		if (isRunning) {
+			System.out.println("ClockIncrementor : elapsed time= " + elapsedTime);
 			elapsedTime += 1;
 			remainingTime -= 1;
 
@@ -57,12 +75,21 @@ public class ClockIncrementor implements Runnable {
 
 			} else if (elapsedTime % sessionTime == 0) {
 				// finished run time
-				remainingTime = PAUSE_TIME;
-				isRunTime = false;
-				LogManager.pauseLog(elapsedRunTime, false);
+				
+				if (elapsedTime % ROUND_TIME == 0){
+					// finished round
+					isRunning = false;
+					LogManager.Stop(elapsedRunTime);
+					return;
+					
+				} else{
+					remainingTime = PAUSE_TIME;
+					isRunTime = false;
+					LogManager.pauseLog(elapsedRunTime, false);
+				}
 			}
-		} else {
-			LogManager.Stop(elapsedRunTime);
+		} else{
+			return;
 		}
 	}
 

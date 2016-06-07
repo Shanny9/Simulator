@@ -1,8 +1,5 @@
 package utils;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,30 +34,33 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static void startSimulator(Settings settings, int round) {
-		PrintStream out;
-		try {
-//		out = new PrintStream(new FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
-		out = new PrintStream(new FileOutputStream("C:\\Users\\ROBERT\\Desktop\\output.txt"));
-		System.setOut(out);
-		System.out.println("H");
+		// PrintStream out;
+		// try {
+		// out = new PrintStream(new
+		// FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
+		// out = new PrintStream(new
+		// FileOutputStream("C:\\Users\\ROBERT\\Desktop\\output.txt"));
+		// System.setOut(out);
+		// System.out.println("H");
+		//
+		// } catch (FileNotFoundException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
 
-		} catch (FileNotFoundException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-		}
-		
 		System.out.println("TimerManager: starting simulator");
-		ci = new ClockIncrementor(settings, round);
-		lm = LogManager.getInstance(settings.getCourseName());
-		lm.setRound(round);
-		
-		runNTimes(ci,settings.getRoundTime(), 0, 1,TimeUnit.SECONDS,scheduler);
-		runNTimes(lm,settings.getRoundTime(),0, 1,TimeUnit.SECONDS,scheduler);
-		
+		ci = ClockIncrementor.getInstance();
+		ClockIncrementor.initialize(settings, round);
+
+		lm = LogManager.getInstance();
+		LogManager.initialize(settings.getCourseName(), round);
+
+		runNTimes(ci, settings.getRoundTime()+1, 0, 1, TimeUnit.SECONDS, scheduler);
+		runNTimes(lm, settings.getRoundTime()+1, 0, 1, TimeUnit.SECONDS, scheduler);
 	}
 
 	public static void forcePause() {
-		if (ci == null) {
+		if (ci == null || !ClockIncrementor.isRunning()) {
 			return;
 		}
 		System.err.println("TimerManager: pausing clock...");
@@ -68,15 +68,16 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static void forceResume() {
-		if (ci == null) {
+		if (ci == null || ClockIncrementor.isRunning()) {
 			return;
 		}
 		System.err.println("TimerManager: resuming clock...");
 		ClockIncrementor.forceResume();
 	}
-	
-	public static void runNTimes(Runnable task, int maxRunCount, long initDelay, long period, TimeUnit unit, ScheduledExecutorService executor) {
-	    new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, initDelay, period, unit);
+
+	public static void runNTimes(Runnable task, int maxRunCount, long initDelay, long period, TimeUnit unit,
+			ScheduledExecutorService executor) {
+		new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, initDelay, period, unit);
 	}
 
 }

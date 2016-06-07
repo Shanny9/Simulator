@@ -82,7 +82,7 @@ public class ClientController extends HttpServlet {
 			team = request.getParameter("team");
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
-			boolean isGood = SimulationLog.getInstance(courseName).checkIncident(team, inc_id, time);
+			boolean isGood = SimulationLog.getInstance().checkIncident(SimulationLog.getTeamConst(team), inc_id, time);
 			System.out.println("ClientController: "+ team +" Inc:"+ inc_id + " Time:" + time + " isGood:" + isGood);
 			response.getWriter().print(isGood);
 			break;
@@ -92,8 +92,9 @@ public class ClientController extends HttpServlet {
 			team = request.getParameter("team");
 			inc_id = Integer.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
-			SimulationLog.getInstance(courseName).incidentSolved(team, inc_id, time, isBaught);
-			log.SimulationLog.getInstance(courseName).getSolutionQueue().offer(new SolutionLog(courseName, team, inc_id));
+			
+			SimulationLog.getInstance().incidentSolved(SimulationLog.getTeamConst(team), inc_id, time, isBaught);
+			log.SimulationLog.getInstance().getSolutionQueue().offer(new SolutionLog(courseName, team, inc_id));
 			response.getWriter().print(true);
 			break;
 		case "checkSimulator":
@@ -102,7 +103,7 @@ public class ClientController extends HttpServlet {
 					try {
 						wait(1000);
 					} catch (Throwable e) {
-						e.printStackTrace();
+//						e.printStackTrace();
 					}
 				}
 			}

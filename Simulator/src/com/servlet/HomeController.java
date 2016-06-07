@@ -21,6 +21,7 @@ import com.model.TblGeneral_parameter;
 import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
+import log.SimulationTester;
 import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.PasswordAuthentication;
@@ -34,16 +35,15 @@ public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String courseName;
 	private int round;
-	private SimulationLog simLog;
 	private Settings settings;
 	private String selectedCourseName;
-	
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public HomeController() {
 		super();
-		
+
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class HomeController extends HttpServlet {
 //			  LogUtils.path = resourceUrl.getPath();
 //		}
 		LogUtils.path = getServletContext().getRealPath(File.separator + "logs");
-		
+
 		// General settings
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
@@ -124,9 +124,11 @@ public class HomeController extends HttpServlet {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
 				int pauseTime = settings.getPauseTime();
-
-				TimerManager.startSimulator(settings, round);
-				response.getWriter().print("OK");
+				
+				if (!ClockIncrementor.isRunning()) {
+					TimerManager.startSimulator(settings, round);
+					response.getWriter().print("OK");
+				}
 			}
 			break;
 		case "pauseSimulator":
@@ -141,30 +143,30 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
-			response.getWriter().print(SimulationLog.getInstance(courseName).getEventsForHomeScreen());
+			response.getWriter().print(SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
 		case "solutionStream":
-			if (!ClockIncrementor.isRunning()){
+			if (!ClockIncrementor.isRunning()) {
 				return;
 			}
 
 			prepareResponseToStream(response);
-			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance(courseName).getSolutionQueue();
+			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
 				response.getWriter().write(toStream(solutionQueue.poll()));
 			}
 			break;
 
 		case "profitStream":
-			if (!ClockIncrementor.isRunning()){
+			if (!ClockIncrementor.isRunning()) {
 				return;
 			}
-			
+
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
 			// HashMap<String, Double> profits =
 			// SimulationLog.getInstance().getTeamProfits(currentTime);
-			HashMap<String, Double> profits = SimulationLog.getInstance(courseName).getTeamScores(currentTime);
+			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamScores(currentTime);
 
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
@@ -172,8 +174,8 @@ public class HomeController extends HttpServlet {
 			response.getWriter().write(streamMessage);
 			break;
 
-		case "newCourse":			
-			
+		case "newCourse":
+
 			String courseName = request.getParameter("form-courseName");
 			int rounds = Integer.valueOf(request.getParameter("form-numOfRounds"));
 			int runTime = Integer.valueOf(request.getParameter("form-runTime"));
@@ -181,8 +183,13 @@ public class HomeController extends HttpServlet {
 			int sessionsPerRound = Integer.valueOf(request.getParameter("form-sessions"));
 			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
 
-			Settings s = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
-			new Thread(new log.SimulationTester(s)).start();
+			Settings set = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
+			if (courseName != null){
+				// TODO: why the hell this function is called before the user sent the form?
+				SimulationTester st = SimulationTester.getInstance();
+				SimulationTester.initialize(set);
+				new Thread(st).start();
+			}
 			
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
@@ -196,7 +203,7 @@ public class HomeController extends HttpServlet {
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
 			round = Integer.valueOf(request.getParameter("form-round"));
-			settings = SimulationLog.getInstance(selectedCourseName).getSettings();
+			settings = LogUtils.openSettings(selectedCourseName);
 			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
 			//for client.jsp - app scope attribute
@@ -252,7 +259,7 @@ public class HomeController extends HttpServlet {
 		char[] pass = request.getParameter("form-password").toCharArray();
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
-	
+
 		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
 		TblGeneral_parameter gp = daoGP.getGeneralParameters();
 

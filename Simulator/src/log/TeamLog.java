@@ -103,7 +103,7 @@ public class TeamLog implements Serializable {
 		incLog.setEnd_time(time);
 		int ci_id = incLog.getRoot_ci();
 
-		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectingCis().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
@@ -113,7 +113,7 @@ public class TeamLog implements Serializable {
 
 		if (isBaught) {
 			purchases.put(time, ci_id);
-			profits.set(time, getProfit(time) - SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
+			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
 			// System.out.println("Team " + teamName + ": solution baught at " +
 			// time + "seconds for "
 			// +
@@ -123,7 +123,7 @@ public class TeamLog implements Serializable {
 	}
 
 	void ciSolved(int ci_id, int time) {
-		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectingCis().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
@@ -146,7 +146,7 @@ public class TeamLog implements Serializable {
 		}
 
 		int ci_id = incident_logs.get(inc_id).getRoot_ci();
-		HashSet<Integer> affectedServices = SimulationLog.getInstance(courseName).getAffectingCis().get(ci_id);
+		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 		if (affectedServices != null) {
 			for (Integer service_id : affectedServices) {
 				diff += service_logs.get(service_id).ciUpdate(ci_id, false, time);

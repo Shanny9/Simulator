@@ -21,7 +21,7 @@ var pausePercentage;
 var winnerColor = '#00ff00';
 var looserColor = '#ff0000';
 var regularColor = '#FF9900';
-
+var isSimulatorStarted = false;
 var maromScore;
 var rakiaScore;
 
@@ -74,16 +74,32 @@ var profitListener = function(e) {
 $(document).ready(function() {
 	$.backstretch("./css/home_images/runway.jpg"); // Fullscreen
 	
-	getSettings(courseName);
-	$("#totalRounds").html(settings["rounds"]);
-	$("#sessionsPerRound").html(settings["sessionsPerRound"]);
-	$("#round").html(round);
-	
+	checkSimulator();
+		
 	$("#startSimulator").click(startSimulator);
 	$("#pause").click(pauseSimulator);
 	$("#resume").click(resumeSimulator);
 	console.log("END Document ready");
 });
+
+//checks if the simulator has started
+function checkSimulator() {
+
+	$.ajax({
+		url : "ClientController",
+		data : {
+			action : "checkSimulator",
+		},
+		dataType : "json",
+		timeout : 0,
+		success : function(msg) {
+			startSimulator();
+		},
+		error : function(e) {
+			console.log("js:checkSimulator: Error in checkSimulator.");
+		}
+	});
+}
 
 function setSolutionSource() {
     solutionEventSource = new EventSource("HomeController?action=solutionStream");
@@ -130,6 +146,19 @@ function showEventsInTime() {
 	});
 }
 
+function showPastEvents() {
+	$.each(eventsData, function(i, item) {
+		if (elapsedTime >= item.time) {
+			var row = incidentsOnScreen + 1;
+			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
+			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").html(item.event_id);
+			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)").html(item.time.toHHMMSS());
+			delete eventsData[i];
+			incidentsOnScreen++;
+		}
+	});
+}
+
 function clearEvents(){
 	for(var row=1; row<12; row++)
 		{
@@ -162,6 +191,11 @@ function getSettings() {
 }
 
 function startSimulator() {
+	
+	if (isSimulatorStarted){
+		return;
+	}
+	
 	$.ajax({
 		url : "HomeController",
 		data: {
@@ -172,13 +206,19 @@ function startSimulator() {
 		dataType : "text",
 		async : false,
 		success : function(data) {
-						
+			isSimulatorStarted = true;			
 //			$("#marom-score").html(settings["initCapital"]);
 //			$("#rakia-score").html(settings["initCapital"]);			
-			
+			getSettings(courseName);
+			$("#totalRounds").html(settings["rounds"]);
+			$("#sessionsPerRound").html(settings["sessionsPerRound"]);
+			$("#round").html(round);
 			finishRound = settings["roundTime"] * (settings["lastRoundDone"] + 1);
+			
 			getEvents();
 			getTime();
+			showPastEvents();
+			
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();
 			setProfitSource();

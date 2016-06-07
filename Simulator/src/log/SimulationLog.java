@@ -8,75 +8,80 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.daoImpl.TblGeneralParametersDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.google.gson.JsonObject;
 import com.model.TblService;
 
 public class SimulationLog extends Thread implements Serializable {
-
+	
+	public static final boolean MAROM = true;
+	public static final boolean RAKIA = false;
+	
 	private static final long serialVersionUID = 1L;
 	/**
 	 * The simulation's incidents and their times (key=start_time,
 	 * value=incident_id)
 	 */
-	private HashMap<Integer, Integer> incident_times;
+	private static HashMap<Integer, Integer> incident_times;
 	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
 	 */
-	private HashMap<Integer, HashSet<Integer>> affecting_cis;
+	private static HashMap<Integer, HashSet<Integer>> affecting_cis;
 	/**
 	 * The simulation's map of services and their affecting CIs (key=service_id,
 	 * value=set of affecting CIs)
 	 */
-	private HashMap<Integer, HashSet<Integer>> affected_services;
+	private static HashMap<Integer, HashSet<Integer>> affected_services;
 	/**
 	 * The simulation's incidents and their events (key = incident_id, value=set of events)
 	 */
-	private HashMap<Integer, HashSet<String>> incident_events;
+	private static HashMap<Integer, HashSet<String>> incident_events;
 	/**
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
 	 */
-	private HashMap<Integer, Double> ciSolCosts;
+	private static HashMap<Integer, Double> ciSolCosts;
 	/**
 	 * The simulation's live queue of current solutions
 	 */
-	private LinkedList<SolutionLog> solutionQueue;
+	private static LinkedList<SolutionLog> solutionQueue;
 	/**
 	 * The current round
 	 */
-	private int round;
+	private static int round;
 	/**
 	 * The log of team Marom
 	 */
-	private TeamLog marom;
+	private static TeamLog marom;
 	/**
 	 * The log of team Rakia
 	 */
-	private TeamLog rakia;
+	private static TeamLog rakia;
 	/**
 	 * The Simulation log's instance
 	 */
 	private static SimulationLog instance;
 
-	private Settings settings;
+	private static Settings settings;
+	
+	private static boolean isInitialized;
 
 	// TODO: fix this - should be calculated somehow
-	private double mul = 1;
+	private static double mul = 1;
 
-	SimulationLog(String courseName) {
-		super();
-
-		this.settings = LogUtils.openSettings(courseName);
-		this.round = settings.getLastRoundDone() + 1;
-		this.affecting_cis = LogUtils.getDBAffectingCIs();
-		this.affected_services = LogUtils.getDBAffectedServices();
-		this.ciSolCosts = LogUtils.getCISolCosts();
-		this.incident_times = LogUtils.getIncidentTimes(mul);
-		this.incident_events = LogUtils.getIncidentEvents();
-		this.solutionQueue = new LinkedList<>();
-		double initProfit = settings.getInitCapital();
+	public static void initialize (String courseName) {
+		
+		if (isInitialized){
+			return;
+		}
+		
+		settings = LogUtils.openSettings(courseName);
+		affecting_cis = LogUtils.getDBAffectingCIs();
+		affected_services = LogUtils.getDBAffectedServices();
+		ciSolCosts = LogUtils.getCISolCosts();
+		incident_times = LogUtils.getIncidentTimes(mul);
+		incident_events = LogUtils.getIncidentEvents();
+		solutionQueue = new LinkedList<>();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
@@ -100,14 +105,24 @@ public class SimulationLog extends Thread implements Serializable {
 
 		int duration = settings.getTotalRunTime();
 
-		marom = new TeamLog(courseName, "Marom", initProfit, service_logs, initDiff, incident_logs, duration);
-		rakia = new TeamLog(courseName, "Rakia", initProfit, service_logs_copy, initDiff, incident_logs_copy, duration);
+		marom = new TeamLog(courseName, "Marom", settings.getInitCapital(), service_logs, initDiff, incident_logs, duration);
+		rakia = new TeamLog(courseName, "Rakia", settings.getInitCapital(), service_logs_copy, initDiff, incident_logs_copy, duration);
+		
+		isInitialized = true;
 	}
-
-	public static SimulationLog getInstance(String courseName) {
+	
+	public static void setRound(int currentRound){
+		round = currentRound;
+	}
+	
+	private SimulationLog(){
+		isInitialized = false;
+	};
+	
+	public static SimulationLog getInstance() {
 		if (instance == null) {
 			System.out.println("Log is created");
-			instance = new SimulationLog(courseName);
+			instance = new SimulationLog();
 		}
 		return instance;
 	}
@@ -117,13 +132,11 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The team's name
 	 * @return The team's log
 	 */
-	public TeamLog getTeam(String team) {
-		if (team.equalsIgnoreCase("Marom")) {
+	public TeamLog getTeam(boolean team) {
+		if (team == MAROM) {
 			return marom;
-		} else if (team.equalsIgnoreCase("Rakia")) {
-			return rakia;
 		}
-		return null;
+		return rakia;
 	}
 
 	public HashMap<String, Double> getTeamProfits(int time) {
@@ -202,7 +215,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param isBought
 	 *            True weather the incident was bought. False otherwise.
 	 */
-	public boolean incidentSolved(String team, int inc_id, int time, boolean isBought) {
+	public boolean incidentSolved(boolean team, int inc_id, int time, boolean isBought) {
 		return getTeam(team).incidentSolved(inc_id, time, isBought);
 	}
 
@@ -252,7 +265,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The time to be checked
 	 * @return True if the incident is open. False otherwise.
 	 */
-	public boolean checkIncident(String team, int inc_id, int time) {
+	public boolean checkIncident(boolean team, int inc_id, int time) {
 		return getTeam(team).isIncidentOpen(inc_id, time);
 	}
 
@@ -284,10 +297,6 @@ public class SimulationLog extends Thread implements Serializable {
 
 	public Settings getSettings() {
 		return settings;
-	}
-
-	public void setRound(int round) {
-		this.round = round;
 	}
 
 	public int getRound() {
@@ -322,6 +331,15 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	public void updateSettings(Settings newSettings) {
-		this.settings = newSettings;
+		settings = newSettings;
+	}
+	
+	public static Boolean getTeamConst(String teamName){
+		if (teamName.equalsIgnoreCase("Marom")){
+			return MAROM;
+		} else if (teamName.equalsIgnoreCase("Rakia")){
+			return RAKIA;
+		}
+		return null;
 	}
 }

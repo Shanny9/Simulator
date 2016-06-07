@@ -11,41 +11,52 @@ public class SimulationTester implements Runnable {
 	/**
 	 * The simulation log - for accessing a team
 	 */
-	private SimulationLog simLog;
+	private static SimulationLog simLog;
 	/**
 	 * The simulation's elapsed time
 	 */
-	private int elapsed_time;
+	private static int elapsed_time;
 	/**
 	 * A team for the simulation test
 	 */
-	private TeamLog marom;
+	private static TeamLog marom;
 	/**
 	 * The course's settings
 	 */
-	private Settings settings;
+	private static Settings settings;
 	/**
 	 * A map of services and their SLA times - key=service , value= max time to
 	 * fix
 	 */
-	private HashMap<Integer, Integer> services_sla;
+	private static HashMap<Integer, Integer> services_sla;
 	/**
 	 * A schedule of future solutions - key=service, value=time to solve
 	 */
-	private HashMap<Integer, Integer> solutions_schedule;
+	private static HashMap<Integer, Integer> solutions_schedule;
 
-	private int roundRunTime;
+	private static int roundRunTime;
 
-	private int nextRoundEnd;
+	private static int nextRoundEnd;
 
-	public SimulationTester(Settings settings) {
-		super();
-		LogUtils.saveSettings(settings);
-		this.settings = settings;
-		this.roundRunTime = settings.getRunTime() * settings.getSessionsPerRound();
-		this.nextRoundEnd = roundRunTime;
-		this.simLog = SimulationLog.getInstance(settings.getCourseName());
-		this.marom = simLog.getTeam("marom");
+	private static SimulationTester instance;
+
+	private static boolean isInitialized;
+
+	public static void initialize(Settings courseSettings) {
+
+		if (isInitialized) {
+			return;
+		}
+
+		LogUtils.saveSettings(courseSettings);
+		settings = courseSettings;
+		roundRunTime = settings.getRunTime() * settings.getSessionsPerRound();
+		nextRoundEnd = roundRunTime;
+
+		simLog = SimulationLog.getInstance();
+		SimulationLog.initialize(courseSettings.getCourseName());
+
+		marom = simLog.getTeam(SimulationLog.MAROM);
 
 		HashMap<Integer, String> servicePriorities = LogUtils.getServicePriorities();
 		HashMap<String, Integer> priority_sla = settings.getPriority_sla();
@@ -56,6 +67,18 @@ public class SimulationTester implements Runnable {
 		for (Map.Entry<Integer, String> sp : servicePriorities.entrySet()) {
 			services_sla.put(sp.getKey(), priority_sla.get(sp.getValue()));
 		}
+		isInitialized = true;
+	}
+
+	private SimulationTester() {
+		isInitialized = false;
+	}
+
+	public static SimulationTester getInstance() {
+		if (instance == null) {
+			instance = new SimulationTester();
+		}
+		return instance;
 	}
 
 	@Override

@@ -61,7 +61,7 @@
 					style="width: 60%; margin-right: 10%; margin-left: 20%; text-align: center;">
 
 					<h4>Manage Data</h4>
-					<div id="SupplierTableContainer"></div>
+					<div id="tableContainer"></div>
 
 				</div>
 			</div>

@@ -15,14 +15,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.model.TblSupplier;
 
-public class Controller extends HttpServlet {
+public class DataController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private HashMap<String, Object> JSONROOT = new HashMap<String, Object>();
 
-	private TblSupplierDaoImpl dao;
+	private TblSupplierDaoImpl daoSupplier;
 
-	public Controller() {
-		dao = new TblSupplierDaoImpl();
+	public DataController() {
+		daoSupplier = new TblSupplierDaoImpl();
 	}
 
 	protected void doGet(HttpServletRequest request,
@@ -38,9 +38,20 @@ public class Controller extends HttpServlet {
 		response.setContentType("application/json");
 		
 		String action = request.getParameter("action");
-		List<TblSupplier> supList = new ArrayList<TblSupplier>();
+		String table = request.getParameter("table");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+		switch(table){
+			case "supplier":
+				tblSuppliers(action, request, response, gson);
+				break;
+		}
+		
+	}//end doPost
+	
+  protected void tblSuppliers(String action, HttpServletRequest request,
+		  HttpServletResponse response, Gson gson) throws IOException{
+	  
+	  List<TblSupplier> supList = new ArrayList<TblSupplier>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
@@ -48,9 +59,9 @@ public class Controller extends HttpServlet {
 			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
 			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
-					supList = dao.getAllSuppliers(startPageIndex, recordsPerPage);
+					supList = daoSupplier.getAllSuppliers(startPageIndex, recordsPerPage);
 			        // Get Total Record Count for Pagination
-			        int userCount = dao.getSupplierCount();
+			        int userCount = daoSupplier.getSupplierCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", supList);
@@ -58,11 +69,11 @@ public class Controller extends HttpServlet {
 
 					// Convert Java Object to Json
 					String jsonArray = gson.toJson(JSONROOT);
-					//System.out.println("p: "+request.getParameter("supplierName"));//**
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblSupplier supplier = new TblSupplier();
-					//System.out.println("p: "+request.getParameter("supplierName"));
+					
+					//Set fields
 					if (request.getParameter("supplierName") != null) {
 						String supName = request.getParameter("supplierName");
 						supplier.setSupplierName(supName);
@@ -83,13 +94,14 @@ public class Controller extends HttpServlet {
 						String currency = request.getParameter("currency");
 						supplier.setCurrency(currency);
 					}
-
+					//end set fields
+					
 					if (action.equals("create")) {
 						// Create new record
-						dao.addSupplier(supplier);
+						daoSupplier.addSupplier(supplier);
 					} else if (action.equals("update")) {
 						// Update existing record
-						dao.updateSupplier(supplier);
+						daoSupplier.updateSupplier(supplier);
 					}
 
 					// Return in the format required by jTable plugin
@@ -103,7 +115,7 @@ public class Controller extends HttpServlet {
 					// Delete record
 					if (request.getParameter("supplierName") != null) {
 						String name =request.getParameter("supplierName");
-						dao.deleteSupplier(name);
+						daoSupplier.deleteSupplier(name);
 
 						// Return in the format required by jTable plugin
 						JSONROOT.put("Result", "OK");
@@ -116,7 +128,7 @@ public class Controller extends HttpServlet {
 				else if (action.equals("excel"))
 				{
 					// Export to excel
-					supList = dao.getAllSuppliers();
+					supList = daoSupplier.getAllSuppliers();
 					// Return in the format required by jTable plugin
 					JSONROOT.clear();
 					JSONROOT.put("Records", supList);
@@ -130,6 +142,8 @@ public class Controller extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}
-	}
-}
+		}	
+  }
+  
+  
+}//end class

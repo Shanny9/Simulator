@@ -15,12 +15,12 @@
     <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <servlet-name>Controller</servlet-name>
-    <servlet-class>com.servlet.Controller</servlet-class>
+    <servlet-name>DataController</servlet-name>
+    <servlet-class>com.servlet.DataController</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Controller</servlet-name>
-    <url-pattern>/Controller</url-pattern>
+    <servlet-name>DataController</servlet-name>
+    <url-pattern>/DataController</url-pattern>
   </servlet-mapping>
 
 	<resource-ref>

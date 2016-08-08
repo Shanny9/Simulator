@@ -100,7 +100,6 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblSupplier supplier = new TblSupplier();
-
 				supplier.setSupplierName(rs.getString("supplier_name"));
 				supplier.setSolutionCost(rs.getDouble("solution_cost"));
 				supplier.setIsActive(rs.getByte("isActive"));

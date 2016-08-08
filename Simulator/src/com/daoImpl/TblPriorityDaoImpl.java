@@ -47,7 +47,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 		try {
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setString(1, pk.getUrgency());
-			pStmt.setString(1, pk.getImpact());
+			pStmt.setString(2, pk.getImpact());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -110,7 +110,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
+			while (rs.next()) {//TODO: FIX THIS!
 				TblPriority pr = new TblPriority();
 				TblPriorityPK pk = new TblPriorityPK();
 				pk.setImpact(pr.getId().getImpact());

@@ -14,7 +14,7 @@ public class TblService_Division implements Serializable {
 
 	private TblService_DivisionPK id;
 
-	private byte isActive;
+	private boolean isActive;
 
 	//bi-directional many-to-one association to TblDivision
 	private TblDivision tblDivision;
@@ -33,11 +33,11 @@ public class TblService_Division implements Serializable {
 		this.id = id;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
 
 
@@ -18,6 +17,16 @@ public class TblSolution implements Serializable {
 	private int solutionMarom;
 
 	private int solutionRakia;
+	
+	private boolean isActive;
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	private List<TblIncident> tblIncidents;
 

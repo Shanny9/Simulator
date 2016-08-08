@@ -11,7 +11,10 @@ import java.io.Serializable;
 public class TblService_Department implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private byte isActive;
+	private TblService_DepartmentPK id;
+	
+
+	private boolean isActive;
 
 	//bi-directional many-to-one association to TblDepartment
 	private TblDepartment tblDepartment;
@@ -22,11 +25,11 @@ public class TblService_Department implements Serializable {
 	public TblService_Department() {
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
@@ -45,5 +48,14 @@ public class TblService_Department implements Serializable {
 	public void setTblService(TblService tblService) {
 		this.tblService = tblService;
 	}
+	
+	public TblService_DepartmentPK getId() {
+		return id;
+	}
+
+	public void setId(TblService_DepartmentPK id) {
+		this.id = id;
+	}
+
 
 }

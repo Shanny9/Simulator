@@ -13,6 +13,16 @@ public class TblPriority_Cost implements Serializable {
 	private String pName;
 
 	private double pCost;
+	
+	private boolean isActive;
+
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	public TblPriority_Cost() {
 	}

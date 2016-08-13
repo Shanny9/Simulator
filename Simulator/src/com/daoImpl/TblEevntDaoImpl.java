@@ -24,70 +24,66 @@ public class TblEevntDaoImpl implements TblEventDao {
 
 	@Override
 	public void addEvent(TblEvent event) {
-//		String insertQuery = "INSERT INTO `SIMULATOR`.`tblCourse`\r\n" + "(`course_name`,\r\n" + "`date`,\r\n"
-//				+ "`isActive`,\r\n" + "`lastRoundDone`)\r\n" + "VALUES (?,?,?,?);\r\n";
-//		try {
-//			pStmt = dbConnection.prepareStatement(insertQuery);
-//			pStmt.setString(1, course.getCourseName());
-//			pStmt.setDate(2, new java.sql.Date(course.getDate().getTime()));
-//			pStmt.setByte(3, course.getIsActive());
-//			pStmt.setByte(4, course.getLastRoundDone());
-//			pStmt.executeUpdate();
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
+		String insertQuery = "INSERT INTO tblEvent(event_id, incident_id, service_id, isActive) VALUES (?,?,?,?)";
+		try {
+			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt.setInt(1, event.getEventId());
+			pStmt.setByte(2, event.getTblIncident().getIncidentId());
+			pStmt.setByte(3, event.getTblService().getServiceId());
+			pStmt.setBoolean(4, event.getIsActive());
+			pStmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
-	public void deleteEvent(String name) {
-//		String deleteQuery = "DELETE FROM tblCourse WHERE course_name = ?";
-//		try {
-//			pStmt = dbConnection.prepareStatement(deleteQuery);
-//			pStmt.setString(1, name);
-//			pStmt.executeUpdate();
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
+	public void deleteEvent(int event_id) {
+		String deleteQuery = "DELETE FROM tblEvent WHERE event_id = ?";
+		try {
+			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt.setInt(1, event_id);
+			pStmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
 	public void updateEvent(TblEvent event) {
-//		String updateQuery = "UPDATE `SIMULATOR`.`tblCourse`\r\n" + "SET\r\n" + "`course_name` = ?,\r\n"
-//				+ "`date` = ?,\r\n" + "`isActive` = ?,\r\n" + "`lastRoundDone` = ?\r\n" + "WHERE `course_name` = ?;";
-//		try {
-//			pStmt = dbConnection.prepareStatement(updateQuery);
-//			pStmt.setString(1, course.getCourseName());
-//			pStmt.setDate(2, new java.sql.Date(course.getDate().getTime()));
-//			pStmt.setByte(3, course.getIsActive());
-//			pStmt.setByte(4, course.getLastRoundDone());
-//
-//			pStmt.setString(5, course.getCourseName());
-//			pStmt.executeUpdate();
-//
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
+		String updateQuery = "UPDATE tblEvent SET event_id = ?, incident_id = ?, service_id = ?, isActive = ? WHERE event_id = ?";
+		try {
+			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt.setInt(1, event.getEventId());
+			pStmt.setByte(2, event.getTblIncident().getIncidentId());
+			pStmt.setByte(3, event.getTblService().getServiceId());
+			pStmt.setBoolean(4, event.getIsActive());
+			pStmt.setInt(5, event.getEventId());
+			pStmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
 	public List<TblEvent> getAllEvents(int startPageIndex, int recordsPerPage) {
 		List<TblEvent> events = new ArrayList<TblEvent>();
 
-		String query = "SELECT * FROM tblEvent ORDER BY event_id\n" + "limit " + startPageIndex + ","
-				+ recordsPerPage;
+		String query = "SELECT * FROM tblEvent limit " + startPageIndex + "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblEvent event = new TblEvent();
+
 				event.setEventId(rs.getInt("event_id"));
-				TblIncident inc = new TblIncident();
-				inc.setIncidentId(rs.getByte("incident_id"));
-				event.setTblIncident(inc);
-				TblService ser = new TblService();
-				ser.setServiceId(rs.getByte("service_id"));
-				event.setTblService(ser);
+				TblIncident incident = new TblIncident();
+				incident.setIncidentId(rs.getByte("incident_id"));
+				TblService service = new TblService();
+				service.setServiceId(rs.getByte("service_id"));
+				event.setTblService(service);
+				event.setIsActive(rs.getBoolean("isActive"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -100,19 +96,21 @@ public class TblEevntDaoImpl implements TblEventDao {
 	public List<TblEvent> getAllEvents() {
 		List<TblEvent> events = new ArrayList<TblEvent>();
 
-		String query = "SELECT * FROM tblEvent ORDER BY event_id\n";
+		String query = "SELECT * FROM tblEvent";
+
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblEvent event = new TblEvent();
+
 				event.setEventId(rs.getInt("event_id"));
-				TblIncident inc = new TblIncident();
-				inc.setIncidentId(rs.getByte("incident_id"));
-				event.setTblIncident(inc);
-				TblService ser = new TblService();
-				ser.setServiceId(rs.getByte("service_id"));
-				event.setTblService(ser);
+				TblIncident incident = new TblIncident();
+				incident.setIncidentId(rs.getByte("incident_id"));
+				TblService service = new TblService();
+				service.setServiceId(rs.getByte("service_id"));
+				event.setTblService(service);
+				event.setIsActive(rs.getBoolean("isActive"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -122,36 +120,41 @@ public class TblEevntDaoImpl implements TblEventDao {
 	}
 
 	@Override
-	public TblEvent getEventById(String eventName) {
-//		TblCourse course = null;
-//		String query = "SELECT * FROM tblCourse Where course_name = ?";
-//		try {
-//			pStmt = dbConnection.prepareStatement(query);
-//			pStmt.setString(1, eventName);
-//			ResultSet rs = pStmt.executeQuery();
-//			if (rs.next()) {
-//				course = new TblCourse();
-//				course.setCourseName(rs.getString("course_name"));
-//
-//			}
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
-		return null;
+	public TblEvent getEventById(int event_id) {
+		TblEvent event = new TblEvent();
+		String query = "SELECT * FROM tblEvent WHERE event_id = ?";
+
+		try {
+			pStmt = dbConnection.prepareStatement(query);
+			pStmt.setInt(1, event_id);
+			ResultSet rs = pStmt.executeQuery();
+			rs.next();
+			event.setEventId(rs.getInt("event_id"));
+			TblIncident incident = new TblIncident();
+			incident.setIncidentId(rs.getByte("incident_id"));
+			TblService service = new TblService();
+			service.setServiceId(rs.getByte("service_id"));
+			event.setTblService(service);
+			event.setIsActive(rs.getBoolean("isActive"));
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return event;
 	}
 
 	@Override
 	public int getEventCount() {
 		int count = 0;
-//		try {
-//			Statement stmt = dbConnection.createStatement();
-//			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblCourse;");
-//			while (rs.next()) {
-//				count = rs.getInt("COUNT");
-//			}
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblEvent;");
+			while (rs.next()) {
+				count = rs.getInt("COUNT");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 		return count;
 	}
 }

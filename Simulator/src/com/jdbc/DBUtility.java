@@ -5,29 +5,36 @@ import java.sql.DriverManager;
 
 public class DBUtility {
 	private static Connection connection = null;
+	private static final String driver = "jdbc:mysql";
+	private static final String server = "132.75.252.108";
+	private static final String port = "3306";
+	private static final String schema = "SIMULATOR";
+	private static final String username = "ts2016";
+	private static final String password = "n227u31";
 
 	public synchronized static Connection getConnection() {
-		if (connection != null){
+		if (connection != null) {
 			return connection;
-		}
-		else {
-//			System.out.println("DBUtility: Thread number "+ Thread.currentThread().getId());
-			// Store the database URL in a string
-			/*String serverName = "132.75.252.108";
-			String portNumber = "3306";*/
+		} else {
 
-			String dbUrl = "jdbc:mysql://132.75.252.108:3306/SIMULATOR";
-//			String dbUrl = "jdbc:mysql://localhost:3306/SIMULATOR";
+			String urlPattern = "[driver]://[server]:[port]/[schema]";
+			String dbUrl = urlPattern
+					.replace("[driver]", driver)
+					.replace("[server]", server)
+					.replace("[port]", port)
+					.replace("[schema]", schema);
 
 			try {
-			Class.forName("com.mysql.jdbc.Driver");
-			// set the url, username and password for the database
-			connection = DriverManager.getConnection(dbUrl, "ts2016", "n227u31");
-//			System.out.println("DBUtility: connected successfully.");
+				Class.forName("com.mysql.jdbc.Driver");
+				connection = DriverManager.getConnection(dbUrl, username, password);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return connection;
 		}
+	}
+	
+	public static String getSchemaName(){
+		return schema;
 	}
 }

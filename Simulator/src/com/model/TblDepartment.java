@@ -14,7 +14,7 @@ public class TblDepartment implements Serializable {
 
 	private TblDepartmentPK id;
 
-	private byte isActive;
+	private boolean isActive;
 
 
 	private TblDivision tblDivision;
@@ -33,11 +33,11 @@ public class TblDepartment implements Serializable {
 		this.id = id;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

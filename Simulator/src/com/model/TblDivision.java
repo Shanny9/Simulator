@@ -15,7 +15,7 @@ public class TblDivision implements Serializable {
 
 	private String divisionName;
 
-	private byte isActive;
+	private boolean isActive;
 
 	private List<TblDepartment> tblDepartments;
 
@@ -32,11 +32,11 @@ public class TblDivision implements Serializable {
 		this.divisionName = divisionName;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

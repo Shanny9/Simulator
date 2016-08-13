@@ -48,13 +48,13 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	}
 
 	@Override
-	public void updateDivision(TblDivision division) {
+	public void updateDivision(TblDivision division, String divisionName) {
 		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ? WHERE division_name = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
-			pStmt.setString(3, division.getDivisionName());
+			pStmt.setString(3, divisionName);
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {

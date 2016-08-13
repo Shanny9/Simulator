@@ -8,8 +8,9 @@ $(document).ready(function() {
 //	solutionTable();
 //	priorityCostTable();
 //	serviceTable();
-	serviceDepTable();
+//	serviceDepTable();
 //	serviceDivTable();
+	ciTable();
 	
 });
 
@@ -817,13 +818,13 @@ function ciTable(){
 //				width : '25%',
 				edit : true
 			},
-			supplierLevel2 : {
-				title : 'Name',
+			supplierName1 : { //supplier level 2
+				title : 'Supplier Level 2',
 //				width : '25%',
 				edit : true
 			},
-			supplierLevel3 : {
-				title : 'Name',
+			supplierName2 : { //supplier level 3
+				title : 'Supplier Level 3',
 //				width : '25%',
 				edit : true
 			},
@@ -831,7 +832,7 @@ function ciTable(){
 				title : 'Active?',
 //				width : '20%',
 				type: 'checkbox',
-                values: { 'false': 'False', 'true': 'True' },
+                values: { 'false': 'No', 'true': 'Yes' },
                 defaultValue: 'true',
 				edit : true
 			}
@@ -925,7 +926,7 @@ function CMDBTable(){
 				title : 'Active?',
 //				width : '20%',
 				type: 'checkbox',
-                values: { 'false': 'False', 'true': 'True'},
+                values: { 'false': 'No', 'true': 'Yes'},
                 defaultValue: 'true',
 				edit : true
 			}
@@ -1022,7 +1023,7 @@ function departmentTable(){
 				title : 'Active?',
 //				width : '20%',
 				type: 'checkbox',
-                values: { 'false': 'False', 'true': 'True'},
+                values: { 'false': 'No', 'true': 'Yes'},
                 defaultValue: 'true',
 				edit : true
 			}
@@ -1111,7 +1112,7 @@ function divisionTable(){
 				title : 'Active?',
 //				width : '20%',
 				type: 'checkbox',
-                values: { 'false': 'False', 'true': 'True'},
+                values: { 'false': 'No', 'true': 'Yes'},
                 defaultValue: 'true',
 				edit : true
 			}
@@ -1134,10 +1135,10 @@ function eventTable(){
 	//	editinline:{enable:true},
 	//	toolbarsearch:true,
 		actions : {
-			listAction : 'DataController?action=list&table=division',
-			createAction : 'DataController?action=create&table=division',
-			updateAction : 'DataController?action=update&table=division',
-			deleteAction : 'DataController?action=delete&table=division'
+			listAction : 'DataController?action=list&table=event',
+			createAction : 'DataController?action=create&table=event',
+			updateAction : 'DataController?action=update&table=event',
+			deleteAction : 'DataController?action=delete&table=event'
 		},
 		toolbar: {
 	        items: [{
@@ -1210,7 +1211,7 @@ function eventTable(){
 				title : 'Active?',
 //				width : '20%',
 				type: 'checkbox',
-                values: { 'false': 'False', 'true': 'True'},
+                values: { 'false': 'No', 'true': 'Yes'},
                 defaultValue: 'true',
 				edit : true
 			}

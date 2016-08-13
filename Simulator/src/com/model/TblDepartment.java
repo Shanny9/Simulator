@@ -14,6 +14,10 @@ public class TblDepartment implements Serializable {
 
 	private TblDepartmentPK id;
 
+	private String devisionName;
+
+	private String departmentName;
+	
 	private boolean isActive;
 
 
@@ -24,6 +28,31 @@ public class TblDepartment implements Serializable {
 
 	public TblDepartment() {
 	}
+
+	
+	public String getDevisionName() {
+		return devisionName;
+	}
+
+
+
+	public void setDevisionName(String devisionName) {
+		this.devisionName = devisionName;
+	}
+
+
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+
 
 	public TblDepartmentPK getId() {
 		return this.id;

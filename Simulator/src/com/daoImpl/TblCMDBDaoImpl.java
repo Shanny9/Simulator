@@ -27,8 +27,8 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 		String insertQuery = "INSERT INTO tblCMDB(ci_id, service_id, isActive) VALUES (?,?,?)";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, cmdb.getId().getCiId());
-			pStmt.setByte(2, cmdb.getId().getServiceId());
+			pStmt.setByte(1, cmdb.getCiId());
+			pStmt.setByte(2, cmdb.getServiceId());
 			pStmt.setBoolean(3, cmdb.getIsActive());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
@@ -52,13 +52,16 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 	}
 
 	@Override
-	public void updateCMDB(TblCMDB cmdb) {
-		String updateQuery = "UPDATE tblCMDB SET isActive = ? WHERE ci_id = ? and service_id = ?";
+	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id) {
+		String updateQuery = "UPDATE tblCMDB SET ci_id = ? , service_id = ? , isActive = ? WHERE ci_id = ? and service_id = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setBoolean(1, cmdb.getIsActive());
-			pStmt.setByte(2, cmdb.getId().getCiId());
-			pStmt.setByte(3, cmdb.getId().getServiceId());
+			pStmt.setByte(1, cmdb.getCiId());
+			pStmt.setByte(2, cmdb.getServiceId());
+			pStmt.setBoolean(3, cmdb.getIsActive());
+			pStmt.setByte(4, id.getCiId());
+			pStmt.setByte(5, id.getServiceId());
+			
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -78,10 +81,9 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblCMDB cmdb = new TblCMDB();
-				TblCMDBPK pk = new TblCMDBPK();
-				pk.setCiId(rs.getByte("ci_id"));
-				pk.setServiceId(rs.getByte("service_id"));
-				cmdb.setId(pk);
+				cmdb.setCiId(rs.getByte("ci_id"));
+				cmdb.setServiceId(rs.getByte("service_id"));
+				cmdb.setIsActive(rs.getBoolean("isActive"));
 				ci_services.add(cmdb);
 			}
 		} catch (SQLException e) {
@@ -101,10 +103,9 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblCMDB cmdb = new TblCMDB();
-				TblCMDBPK pk = new TblCMDBPK();
-				pk.setCiId(rs.getByte("ci_id"));
-				pk.setServiceId(rs.getByte("service_id"));
-				cmdb.setId(pk);
+				cmdb.setCiId(rs.getByte("ci_id"));
+				cmdb.setServiceId(rs.getByte("service_id"));
+				cmdb.setIsActive(rs.getBoolean("isActive"));
 				ci_services.add(cmdb);
 			}
 		} catch (SQLException e) {

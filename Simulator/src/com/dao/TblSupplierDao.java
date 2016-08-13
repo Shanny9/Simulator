@@ -8,7 +8,7 @@ public interface TblSupplierDao {
 	
 	public void addSupplier(TblSupplier supplier);
 	public void deleteSupplier(String name);
-	public void updateSupplier(TblSupplier supplier);
+	public void updateSupplier(TblSupplier supplier, String name);
 	public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage);
 	public List<TblSupplier> getAllSuppliers();
 	public TblSupplier getSupplierById(String name);

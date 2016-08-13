@@ -8,7 +8,7 @@ public interface TblDivisionDao {
 	
 	public void addDivision(TblDivision Division);
 	public void deleteDivision(String name);
-	public void updateDivision(TblDivision Division);
+	public void updateDivision(TblDivision Division, String divisionName);
 	public List<TblDivision> getAllDivisions(int startPageIndex, int recordsPerPage);
 	public List<TblDivision> getAllDivisions();
 	public TblDivision getDivisionById(String DivisionName);

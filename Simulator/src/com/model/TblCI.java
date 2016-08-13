@@ -21,10 +21,12 @@ public class TblCI implements Serializable {
 
 	private TblSupplier tblSupplier1;
 
-
+	private String supplierName1;
+	
 	private TblSupplier tblSupplier2;
 
-
+	private String supplierName2;
+	
 	private List<TblResource_CI> tblResourceCis;
 
 
@@ -32,6 +34,32 @@ public class TblCI implements Serializable {
 
 	public TblCI() {
 	}
+
+	
+	
+	public String getSupplierName1() {
+		return supplierName1;
+	}
+
+
+
+	public void setSupplierName1(String supplierName1) {
+		this.supplierName1 = supplierName1;
+	}
+
+
+
+	public String getSupplierName2() {
+		return supplierName2;
+	}
+
+
+
+	public void setSupplierName2(String supplierName2) {
+		this.supplierName2 = supplierName2;
+	}
+
+
 
 	public byte getCiId() {
 		return this.ciId;

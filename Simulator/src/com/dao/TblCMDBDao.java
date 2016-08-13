@@ -9,7 +9,7 @@ public interface TblCMDBDao {
 	
 	public void addCMDB(TblCMDB cmdb);
 	public void deleteCMDB(TblCMDBPK pk);
-	public void updateCMDB(TblCMDB cmdb);
+	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id);
 	public List<TblCMDB> getAllCMDBs(int startPageIndex, int recordsPerPage);
 	public List<TblCMDB> getAllCMDBs();
 	public int getCMDBCount();

@@ -9,7 +9,7 @@ public interface TblDepartmentDao {
 	
 	public void addDepartment(TblDepartment department);
 	public void deleteDepartment(TblDepartmentPK pk);
-	public void updateDepartment(TblDepartment department);
+	public void updateDepartment(TblDepartment department, TblDepartmentPK pk);
 	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage);
 	public List<TblDepartment> getAllDepartments();
 	public TblDepartment getDepartmentById(String divisionName, String departmentName);

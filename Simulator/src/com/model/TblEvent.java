@@ -13,13 +13,38 @@ public class TblEvent implements Serializable {
 	private int eventId;
 
 	private TblIncident tblIncident;
+	
+	private byte incidentId;
 
 	private TblService tblService;
+	
+	private byte serviceId;
 
 	private boolean isActive;
 
 	public TblEvent() {
 	}
+
+	
+	public byte getIncidentId() {
+		return incidentId;
+	}
+
+
+	public void setIncidentId(byte incidentId) {
+		this.incidentId = incidentId;
+	}
+
+
+	public byte getServiceId() {
+		return serviceId;
+	}
+
+
+	public void setServiceId(byte serviceId) {
+		this.serviceId = serviceId;
+	}
+
 
 	public int getEventId() {
 		return this.eventId;

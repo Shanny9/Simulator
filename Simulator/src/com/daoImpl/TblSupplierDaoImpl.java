@@ -49,14 +49,15 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 	}
 
 	@Override
-	public void updateSupplier(TblSupplier supplier) {
-		String updateQuery = "UPDATE tblSupplier SET \n " + "solution_cost = ?, isActive = ?, currency = ? WHERE supplier_name = ?";
+	public void updateSupplier(TblSupplier supplier, String name) {
+		String updateQuery = "UPDATE tblSupplier SET \n " + "supplier_name = ?, solution_cost = ?, isActive = ?, currency = ? WHERE supplier_name = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setDouble(1, supplier.getSolutionCost());
-			pStmt.setByte(2, supplier.getIsActive());
-			pStmt.setString(3, supplier.getCurrency());
-			pStmt.setString(4, supplier.getSupplierName());
+			pStmt.setString(1, supplier.getSupplierName());
+			pStmt.setDouble(2, supplier.getSolutionCost());
+			pStmt.setByte(3, supplier.getIsActive());
+			pStmt.setString(4, supplier.getCurrency());
+			pStmt.setString(5, name);
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {

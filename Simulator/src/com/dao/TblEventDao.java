@@ -8,7 +8,7 @@ public interface TblEventDao {
 	
 	public void addEvent(TblEvent event);
 	public void deleteEvent(int event_id);
-	public void updateEvent(TblEvent event);
+	public void updateEvent(TblEvent event, int eventId);
 	public List<TblEvent> getAllEvents(int startPageIndex, int recordsPerPage);
 	public List<TblEvent> getAllEvents();
 	public TblEvent getEventById(int event_id);

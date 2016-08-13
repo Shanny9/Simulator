@@ -10,24 +10,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import com.daoImpl.TblCIDaoImpl;
+import com.daoImpl.TblCMDBDaoImpl;
+import com.daoImpl.TblDepartmentDaoImpl;
+import com.daoImpl.TblDivisionDaoImpl;
+import com.daoImpl.TblEevntDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
 import com.daoImpl.TblPriorityCostDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblServiceDepartmentDaoImpl;
 import com.daoImpl.TblServiceDivisionDaoImpl;
 import com.daoImpl.TblSolutionDaoImpl;
-
-import com.daoImpl.TblCIDaoImpl;
-import com.daoImpl.TblCMDBDaoImpl;
-import com.daoImpl.TblDepartmentDaoImpl;
-import com.daoImpl.TblDivisionDaoImpl;
-import com.daoImpl.TblEevntDaoImpl;
-
 import com.daoImpl.TblSupplierDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import com.model.TblCI;
+import com.model.TblCMDB;
+import com.model.TblCMDBPK;
+import com.model.TblDepartment;
+import com.model.TblDepartmentPK;
+import com.model.TblDivision;
+import com.model.TblEvent;
 import com.model.TblIncident;
 import com.model.TblPriority_Cost;
 import com.model.TblService;
@@ -36,15 +39,6 @@ import com.model.TblService_DepartmentPK;
 import com.model.TblService_Division;
 import com.model.TblService_DivisionPK;
 import com.model.TblSolution;
-
-import com.model.TblCI;
-import com.model.TblCMDB;
-import com.model.TblCMDBPK;
-import com.model.TblDepartment;
-import com.model.TblDepartmentPK;
-import com.model.TblDivision;
-import com.model.TblEvent;
-
 import com.model.TblSupplier;
 
 public class DataController extends HttpServlet {
@@ -75,6 +69,11 @@ public class DataController extends HttpServlet {
 		daoService = new TblServiceDaoImpl();
 		daoServiceDepartment = new TblServiceDepartmentDaoImpl();
 		daoServiceDivision = new TblServiceDivisionDaoImpl();
+		daoCI = new TblCIDaoImpl();
+		daoCMDB = new TblCMDBDaoImpl();
+		daoDepartment = new TblDepartmentDaoImpl();
+		daoDivision = new TblDivisionDaoImpl();
+		daoEvent = new TblEevntDaoImpl();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -186,8 +185,8 @@ public class DataController extends HttpServlet {
 						daoSupplier.addSupplier(supplier);
 					} else if (action.equals("update")) {
 						// Update existing record
-						System.out.println(request.getParameterMap().get("jtRecordKey").toString());
-						daoSupplier.updateSupplier(supplier);
+						String name = request.getParameter("jtRecordKey_supplierName");
+						daoSupplier.updateSupplier(supplier,name);
 					}
 
 					// Return in the format required by jTable plugin
@@ -924,7 +923,6 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("CI_name") != null) {
 						String CI_name = request.getParameter("CI_name");
 						ci.setCI_name(CI_name);
-
 					}
 
 					if (request.getParameter("ciId") != null) {
@@ -936,6 +934,16 @@ public class DataController extends HttpServlet {
 						Boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
 						ci.setIsActive(isActive);
 					}
+					
+					if (request.getParameter("supplierName1") != null) {
+						String supName1 = request.getParameter("supplierName1");
+						ci.setSupplierName1(supName1);
+					}
+					
+					if (request.getParameter("supplierName2") != null) {
+						String supName2 = request.getParameter("supplierName2");
+						ci.setSupplierName2(supName2);
+					}
 					// end set fields
 
 					if (action.equals("create")) {
@@ -943,7 +951,8 @@ public class DataController extends HttpServlet {
 						daoCI.addCI(ci);
 					} else if (action.equals("update")) {
 						// Update existing record
-						daoCI.updateCI(ci);
+						byte id = Byte.parseByte(request.getParameter("jtRecordKey_ciId"));
+						daoCI.updateCI(ci,id);
 					}
 
 					// Return in the format required by jTable plugin
@@ -977,6 +986,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("Data-tblServiceDep: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", ex.getMessage());
 				String error = gson.toJson(JSONROOT);
@@ -991,7 +1002,6 @@ public class DataController extends HttpServlet {
 		List<TblCMDB> cmdbList = new ArrayList<TblCMDB>();
 		if (action != null) {
 			try {
-				TblCMDBPK pk = new TblCMDBPK();
 				if (action.equals("list")) {
 					// Fetch Data from User Table
 					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
@@ -1014,13 +1024,13 @@ public class DataController extends HttpServlet {
 					// Set fields
 					if (request.getParameter("ciId") != null) {
 						Byte ciId = Byte.parseByte(request.getParameter("ciId"));
-						pk.setCiId(ciId);
+						cmdb.setCiId(ciId);
 					}
 
 					if (request.getParameter("serviceId") != null) {
 						Byte serviceId = Byte.parseByte(request.getParameter("serviceId"));
-						pk.setServiceId(serviceId);
-						cmdb.setId(pk);
+						cmdb.setServiceId(serviceId);
+
 					}
 
 					if (request.getParameter("isActive") != null) {
@@ -1034,7 +1044,12 @@ public class DataController extends HttpServlet {
 						daoCMDB.addCMDB(cmdb);
 					} else if (action.equals("update")) {
 						// Update existing record
-						daoCMDB.updateCMDB(cmdb);
+						byte cId = Byte.parseByte(request.getParameter("jtRecordKey_ciId"));
+						byte sId = Byte.parseByte(request.getParameter("jtRecordKey_serviceId"));
+						TblCMDBPK pk = new TblCMDBPK();
+						pk.setCiId(cId);
+						pk.setServiceId(sId);
+						daoCMDB.updateCMDB(cmdb, pk);
 					}
 
 					// Return in the format required by jTable plugin
@@ -1049,6 +1064,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("ciId") != null && request.getParameter("serviceId") != null) {
 						Byte ciId = Byte.parseByte(request.getParameter("ciId"));
 						Byte serviceId = Byte.parseByte(request.getParameter("serviceId"));
+						TblCMDBPK pk = new TblCMDBPK();
 						pk.setCiId(ciId);
 						pk.setServiceId(serviceId);
 						daoCMDB.deleteCMDB(pk);
@@ -1071,6 +1087,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("Data-tblCMDB: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", ex.getMessage());
 				String error = gson.toJson(JSONROOT);
@@ -1108,13 +1126,12 @@ public class DataController extends HttpServlet {
 					// Set fields
 					if (request.getParameter("departmentName") != null) {
 						String departmentName = request.getParameter("departmentName");
-						pk.setDepartmentName(departmentName);
+						department.setDepartmentName(departmentName);
 					}
 
 					if (request.getParameter("divisionName") != null) {
 						String divisionName = request.getParameter("divisionName");
-						pk.setDevisionName(divisionName);
-						department.setId(pk);
+						department.setDevisionName(divisionName);
 					}
 
 					if (request.getParameter("isActive") != null) {
@@ -1128,7 +1145,11 @@ public class DataController extends HttpServlet {
 						daoDepartment.addDepartment(department);
 					} else if (action.equals("update")) {
 						// Update existing record
-						daoDepartment.updateDepartment(department);
+						String dep = request.getParameter("jtRecordKey_departmentName");
+						String div = request.getParameter("jtRecordKey_divisionName");
+						pk.setDepartmentName(dep);
+						pk.setDevisionName(div);
+						daoDepartment.updateDepartment(department,pk);
 					}
 
 					// Return in the format required by jTable plugin
@@ -1140,7 +1161,7 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("delete")) {
 					// Delete record
-					if (request.getParameter("supplierName") != null && request.getParameter("divisionName") != null) {
+					if (request.getParameter("departmentName") != null && request.getParameter("divisionName") != null) {
 						String departmentName = request.getParameter("departmentName");
 						String divisionName = request.getParameter("divisionName");
 						pk.setDepartmentName(departmentName);
@@ -1165,6 +1186,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("Data-tblDepartment: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", ex.getMessage());
 				String error = gson.toJson(JSONROOT);
@@ -1217,7 +1240,8 @@ public class DataController extends HttpServlet {
 						daoDivision.addDivision(division);
 					} else if (action.equals("update")) {
 						// Update existing record
-						daoDivision.updateDivision(division);
+						String div = request.getParameter("jtRecordKey_divisionName");
+						daoDivision.updateDivision(division, div);
 					}
 
 					// Return in the format required by jTable plugin
@@ -1251,6 +1275,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("Data-tblDivision: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", ex.getMessage());
 				String error = gson.toJson(JSONROOT);
@@ -1286,23 +1312,19 @@ public class DataController extends HttpServlet {
 
 					// Set fields
 					if (request.getParameter("eventId") != null) {
-						Byte eventId = Byte.parseByte(request.getParameter("eventId"));
+						int eventId = Integer.parseInt(request.getParameter("eventId"));
 						event.setEventId(eventId);
 
 					}
 
 					if (request.getParameter("incidentId") != null) {
 						Byte incidentId = Byte.parseByte(request.getParameter("incidentId"));
-						TblIncident incident = new TblIncident();
-						incident.setIncidentId(incidentId);
-						event.setTblIncident(incident);
+						event.setIncidentId(incidentId);
 					}
 					
 					if (request.getParameter("serviceId") != null) {
 						Byte serviceId = Byte.parseByte(request.getParameter("serviceId"));
-						TblService service = new TblService();
-						service.setServiceId(serviceId);
-						event.setTblService(service);
+						event.setServiceId(serviceId);
 					}
 
 					if (request.getParameter("isActive") != null) {
@@ -1316,7 +1338,8 @@ public class DataController extends HttpServlet {
 						daoEvent.addEvent(event);
 					} else if (action.equals("update")) {
 						// Update existing record
-						daoEvent.updateEvent(event);
+						int id = Integer.parseInt(request.getParameter("jtRecordKey_eventId"));
+						daoEvent.updateEvent(event, id);
 					}
 
 					// Return in the format required by jTable plugin
@@ -1329,7 +1352,7 @@ public class DataController extends HttpServlet {
 				} else if (action.equals("delete")) {
 					// Delete record
 					if (request.getParameter("eventId") != null) {
-						Byte eventId = Byte.parseByte(request.getParameter("eventId"));
+						int eventId = Integer.parseInt(request.getParameter("eventId"));
 						daoEvent.deleteEvent(eventId);
 
 						// Return in the format required by jTable plugin
@@ -1350,6 +1373,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("Data-tblEvent: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", ex.getMessage());
 				String error = gson.toJson(JSONROOT);

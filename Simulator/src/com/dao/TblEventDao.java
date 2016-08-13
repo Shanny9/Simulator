@@ -7,10 +7,10 @@ import com.model.TblEvent;
 public interface TblEventDao {
 	
 	public void addEvent(TblEvent event);
-	public void deleteEvent(String name);
+	public void deleteEvent(int event_id);
 	public void updateEvent(TblEvent event);
 	public List<TblEvent> getAllEvents(int startPageIndex, int recordsPerPage);
 	public List<TblEvent> getAllEvents();
-	public TblEvent getEventById(String eventName);
+	public TblEvent getEventById(int event_id);
 	public int getEventCount();
 }

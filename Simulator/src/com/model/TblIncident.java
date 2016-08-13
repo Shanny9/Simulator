@@ -32,8 +32,8 @@ public class TblIncident implements Serializable {
 		return this.incidentId;
 	}
 
-	public void setIncidentId(byte incidentId) {
-		this.incidentId = incidentId;
+	public void setIncidentId(byte i) {
+		this.incidentId = i;
 	}
 
 	public byte getCiId() {

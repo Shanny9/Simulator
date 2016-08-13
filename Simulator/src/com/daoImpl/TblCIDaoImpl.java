@@ -15,37 +15,90 @@ import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblSupplier;
 
-public class TblCIDaoImpl implements TblCIDao{
-	
+public class TblCIDaoImpl implements TblCIDao {
+
 	private Connection dbConnection;
 	private PreparedStatement pStmt;
 
 	public TblCIDaoImpl() {
 		dbConnection = DBUtility.getConnection();
 	}
-	
+
 	@Override
 	public void addCI(TblCI ci) {
-		// TODO Auto-generated method stub
-		
+		String insertQuery = "INSERT INTO tblCI(CI_ID, CI_name, "
+				+ "supplier_level2, supplier_level3, isActive) VALUES (?,?,?,?,?)";
+		try {
+			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt.setByte(1, ci.getCiId());
+			pStmt.setString(2, ci.getCI_name());
+			pStmt.setString(3, ci.getTblSupplier2().getSupplierName());
+			pStmt.setString(4, ci.getTblSupplier2().getSupplierName());
+			pStmt.setBoolean(5, ci.getIsActive());
+			pStmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
-	public void deleteCI(String name) {
-		// TODO Auto-generated method stub
-		
+	public void deleteCI(byte ci_id) {
+		String deleteQuery = "DELETE FROM tblCI WHERE CI_ID = ?";
+		try {
+			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt.setByte(1, ci_id);
+			pStmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+
 	}
 
 	@Override
 	public void updateCI(TblCI ci) {
-		// TODO Auto-generated method stub
-		
+		String updateQuery = "UPDATE tblCI SET CI_ID = ?, CI_name = ?, supplier_level2 = ?, supplier_level3 = ?, isActive = ? WHERE CI_ID = ?";
+		try {
+			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt.setByte(1, ci.getCiId());
+			pStmt.setString(2, ci.getCI_name());
+			pStmt.setString(3, ci.getTblSupplier2().getSupplierName());
+			pStmt.setString(4, ci.getTblSupplier2().getSupplierName());
+			pStmt.setBoolean(5, ci.getIsActive());
+			pStmt.setByte(6, ci.getCiId());
+			pStmt.executeUpdate();
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
 	public List<TblCI> getAllCIs(int startPageIndex, int recordsPerPage) {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<TblCI> cis = new ArrayList<TblCI>();
+
+		String query = "SELECT * FROM tblCI limit " + startPageIndex + "," + recordsPerPage;
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblCI ci = new TblCI();
+
+				ci.setCiId(rs.getByte("CI_ID"));
+				ci.setCI_name(rs.getString("CI_name"));
+				TblSupplier sup = new TblSupplier();
+				sup.setSupplierName(rs.getString("supplier_level2"));
+				ci.setTblSupplier1(sup);
+				sup.setSupplierName(rs.getString("supplier_level3"));
+				ci.setTblSupplier2(sup);
+				ci.setIsActive(rs.getBoolean("isActive"));
+				cis.add(ci);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return cis;
 	}
 
 	@Override
@@ -67,7 +120,7 @@ public class TblCIDaoImpl implements TblCIDao{
 				ci.setTblSupplier1(sup);
 				sup.setSupplierName(rs.getString("supplier_level3"));
 				ci.setTblSupplier2(sup);
-				ci.setIsActive(rs.getByte("isActive"));
+				ci.setIsActive(rs.getBoolean("isActive"));
 				cis.add(ci);
 			}
 		} catch (SQLException e) {
@@ -77,42 +130,43 @@ public class TblCIDaoImpl implements TblCIDao{
 	}
 
 	@Override
-	public TblCI getCIById(String ciName) {
-		// TODO Auto-generated method stub
-		return null;
+	public TblCI getCIById(byte ci_id) {
+
+		TblCI ci = null;
+		String query = "SELECT * FROM tblCI WHERE CI_ID = ?";
+
+		try {
+			pStmt = dbConnection.prepareStatement(query);
+			pStmt.setByte(1, ci_id);
+			ResultSet rs = pStmt.executeQuery();
+			rs.next();
+			ci = new TblCI();
+			ci.setCI_name(rs.getString("CI_name"));
+			TblSupplier sup = new TblSupplier();
+			sup.setSupplierName(rs.getString("supplier_level2"));
+			ci.setTblSupplier1(sup);
+			sup.setSupplierName(rs.getString("supplier_level3"));
+			ci.setTblSupplier2(sup);
+			ci.setIsActive(rs.getBoolean("isActive"));
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return ci;
 	}
 
 	@Override
-	public int getCourseCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public List<JsonObject> getSolutions(String team){
-		List<JsonObject> solutions = new ArrayList<JsonObject>();
-		
-		String teamInDb;
-		if (team.equals("Marom")){
-			teamInDb = "A";
-		} else{
-			teamInDb = "B";
-		}
-		
-		String query = "SELECT CI_ID, solution_" + teamInDb + " FROM tblCI";
-
+	public int getCICount() {
+		int count = 0;
 		try {
 			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblCI;");
 			while (rs.next()) {
-				JsonObject row = new JsonObject();
-				row.addProperty("ciID", rs.getInt("CI_ID"));
-				row.addProperty("solution", rs.getInt("solution_"+teamInDb));
-				
-				solutions.add(row);
+				count = rs.getInt("COUNT");
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
-		return solutions;
+		return count;
 	}
 }

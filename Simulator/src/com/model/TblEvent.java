@@ -16,6 +16,8 @@ public class TblEvent implements Serializable {
 
 	private TblService tblService;
 
+	private boolean isActive;
+
 	public TblEvent() {
 	}
 
@@ -41,6 +43,14 @@ public class TblEvent implements Serializable {
 
 	public void setTblService(TblService tblService) {
 		this.tblService = tblService;
+	}
+
+	public boolean getIsActive() {
+		return this.isActive;
+	}
+	
+	public void setIsActive(boolean isActive){
+		this.isActive = isActive;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.daoImpl;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,14 +32,18 @@ public class DaoImpl {
 
 	}
 
-	public static ResultSet getMetaData(String tblName) {
+	public static ResultSet getColumnType(String tblName, String colName) {
 
 		if (tableNames.contains(tblName)) {
-			String query ="SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='SIMULATOR' and table_name="
-					+ "'"+tblName+ "'";
+			
+			String query ="SELECT column_type FROM INFORMATION_SCHEMA.columns where table_schema=? and table_name=?"
+					+ " and column_name =? ";
 			try {
-				Statement stmt = dbConnection.createStatement();
-				ResultSet rs = stmt.executeQuery(query);
+				PreparedStatement pstmt = dbConnection.prepareStatement(query);
+				pstmt.setString(1, DBUtility.getSchemaName());
+				pstmt.setString(2, tblName);
+				pstmt.setString(3, colName);
+				ResultSet rs = pstmt.executeQuery(query);
 				return rs;
 			}
 
@@ -49,30 +54,5 @@ public class DaoImpl {
 		}
 		else
 			return null;
-	}
-
-	private List<Object> getAllRecords (String tblName){
-		
-		List<Object> records = new ArrayList<Object>();
-
-		String query = "SELECT * FROM "+ tblName;
-
-		try {
-			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {
-				TblSupplier supplier = new TblSupplier();
-				supplier.setSupplierName(rs.getString("supplier_name"));
-				supplier.setSolutionCost(rs.getDouble("solution_cost"));
-				supplier.setIsActive(rs.getByte("isActive"));
-				supplier.setCurrency(rs.getString("currency"));
-				records.add(supplier);
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-		return records;
-	}
-	
-	
+	}	
 }

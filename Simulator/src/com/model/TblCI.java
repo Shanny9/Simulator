@@ -16,7 +16,7 @@ public class TblCI implements Serializable {
 
 	private String CI_name;
 
-	private byte isActive;
+	private boolean isActive;
 
 
 	private TblSupplier tblSupplier1;
@@ -49,11 +49,11 @@ public class TblCI implements Serializable {
 		this.CI_name = CI_name;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

@@ -17,16 +17,32 @@ public class TblIncident implements Serializable {
 
 	private int incidentTime;
 
-	private byte isActive;
+	private boolean isActive;
 
 	private List<TblChange> tblChanges;
 
 	private List<TblEvent> tblEvents;
 
 	private TblSolution tblSolution;
+	
+	private int solutionId;
 
 	public TblIncident() {
 	}
+
+	
+	
+	public int getSolutionId() {
+		return solutionId;
+	}
+
+
+
+	public void setSolutionId(int solutionId) {
+		this.solutionId = solutionId;
+	}
+
+
 
 	public byte getIncidentId() {
 		return this.incidentId;
@@ -52,11 +68,11 @@ public class TblIncident implements Serializable {
 		this.incidentTime = incidentTime;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

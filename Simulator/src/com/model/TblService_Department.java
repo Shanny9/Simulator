@@ -13,6 +13,11 @@ public class TblService_Department implements Serializable {
 
 	private TblService_DepartmentPK id;
 	
+	private byte service_ID;
+
+	private String departmentName;
+	
+	private String divisionName;
 
 	private boolean isActive;
 
@@ -57,5 +62,30 @@ public class TblService_Department implements Serializable {
 		this.id = id;
 	}
 
+	public byte getService_ID() {
+		return service_ID;
+	}
+
+	public void setService_ID(byte service_ID) {
+		this.service_ID = service_ID;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getDivisionName() {
+		return divisionName;
+	}
+
+	public void setDivisionName(String divisionName) {
+		this.divisionName = divisionName;
+	}
+
+	
 
 }

@@ -2581,13 +2581,14 @@ THE SOFTWARE.
                 var fieldValue = record[fieldName];
 
                 if (field.key == true) {
+                	
                     if (field.edit != true) {
                         //Create hidden field for key
                         $editForm.append(self._createInputForHidden(fieldName, fieldValue));
                         continue;
                     } else {
                         //Create a special hidden field for key (since key is be editable)
-                        $editForm.append(self._createInputForHidden('jtRecordKey', fieldValue));
+                        $editForm.append(self._createInputForHidden('jtRecordKey_'+self._fieldList[i], fieldValue));
                     }
                 }
 

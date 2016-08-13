@@ -27,9 +27,9 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 	+ "department_name, isActive) VALUES (?,?,?,?)";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, service.getId().getService_ID());
-			pStmt.setString(2, service.getId().getDivisionName());
-			pStmt.setString(3, service.getId().getDepartmentName());
+			pStmt.setByte(1, service.getService_ID());
+			pStmt.setString(2, service.getDivisionName());
+			pStmt.setString(3, service.getDepartmentName());
 			pStmt.setBoolean(4, service.getIsActive());
 
 			pStmt.executeUpdate();
@@ -91,12 +91,10 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			while (rs.next()) {
 				TblService_Department service = new TblService_Department();
 
-				TblService_DepartmentPK id = new TblService_DepartmentPK();
-				id.setService_ID(rs.getByte("service_id"));
-				id.setDivisionName(rs.getString("devision_name"));
-				id.setDepartmentName(rs.getString("department_name"));
-				
-				service.setId(id);
+				service.setService_ID(rs.getByte("service_id"));
+				service.setDivisionName(rs.getString("devision_name"));
+				service.setDepartmentName(rs.getString("department_name"));
+
 				service.setIsActive(rs.getBoolean("isActive"));
 
 
@@ -120,12 +118,10 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			while (rs.next()) {
 				TblService_Department service = new TblService_Department();
 
-				TblService_DepartmentPK id = new TblService_DepartmentPK();
-				id.setService_ID(rs.getByte("service_id"));
-				id.setDivisionName(rs.getString("devision_name"));
-				id.setDepartmentName(rs.getString("department_name"));
-				
-				service.setId(id);
+				service.setService_ID(rs.getByte("service_id"));
+				service.setDivisionName(rs.getString("devision_name"));
+				service.setDepartmentName(rs.getString("department_name"));
+
 				service.setIsActive(rs.getBoolean("isActive"));
 
 
@@ -152,7 +148,9 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			rs.next();
 			service = new TblService_Department();
 			
-			service.setId(pk);
+			service.setService_ID(pk.getService_ID());
+			service.setDivisionName(pk.getDivisionName());
+			service.setDepartmentName(pk.getDepartmentName());
 			service.setIsActive(rs.getBoolean("isActive"));
 
 

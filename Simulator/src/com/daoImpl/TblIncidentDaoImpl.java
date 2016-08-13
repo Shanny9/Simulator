@@ -10,9 +10,7 @@ import java.util.List;
 
 import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
-import com.model.TblCI;
 import com.model.TblIncident;
-import com.model.TblSolution;
 
 
 public class TblIncidentDaoImpl implements TblIncidentDao {
@@ -38,9 +36,9 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, incident.getIncidentId());
 			pStmt.setInt(2, incident.getIncidentTime());
-			pStmt.setByte(4, incident.getCiId());
-			pStmt.setByte(5, incident.getIsActive());
-			pStmt.setInt(5, incident.getTblSolution().getSolutionId());
+			pStmt.setByte(3, incident.getCiId());
+			pStmt.setBoolean(4, incident.getIsActive());
+			pStmt.setInt(5, incident.getSolutionId());
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -60,7 +58,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	}
 
 	@Override
-	public void updateSupplier(TblIncident incident) {
+	public void updateIncident(TblIncident incident, byte id) {
 		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident`\r\n" + 
 				"SET\r\n" + 
 				"`incident_id` = ?,\r\n" + 
@@ -74,9 +72,9 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			pStmt.setByte(1, incident.getIncidentId());
 			pStmt.setInt(2, incident.getIncidentTime());
 			pStmt.setByte(4, incident.getCiId());
-			pStmt.setByte(5, incident.getIsActive());
+			pStmt.setBoolean(5, incident.getIsActive());
 			pStmt.setInt(5, incident.getTblSolution().getSolutionId());
-			pStmt.setByte(6, incident.getIncidentId());
+			pStmt.setByte(6, id);
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -87,8 +85,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	@Override
 	public List<TblIncident> getAllIncidents(int startPageIndex, int recordsPerPage) {
 		List<TblIncident> incidents = new ArrayList<TblIncident>();
-
-		String query = "SELECT * FROM tblIncident \n" + "limit " + startPageIndex + "," + recordsPerPage;
+		String query = "SELECT * FROM SIMULATOR.tblIncident \n" + "limit " + startPageIndex + "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -99,10 +96,8 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setIncidentId(rs.getByte("incident_id"));
 				incident.setCiId(rs.getByte("ci_id"));
 				incident.setIncidentTime(rs.getInt("incidentTime"));
-				incident.setIsActive(rs.getByte("isActive"));
-				TblSolution sol = new TblSolution();
-				sol.setSolutionId(rs.getInt(rs.getInt("solution_id")));
-				incident.setTblSolution(sol);				
+				incident.setIsActive(rs.getBoolean("isActive"));
+				incident.setSolutionId(rs.getInt("solution_id"));			
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -126,10 +121,8 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setIncidentId(rs.getByte("incident_id"));
 				incident.setCiId(rs.getByte("ci_id"));
 				incident.setIncidentTime(rs.getInt("incidentTime"));
-				incident.setIsActive(rs.getByte("isActive"));
-				TblSolution sol = new TblSolution();
-				sol.setSolutionId(rs.getInt("solution_id"));
-				incident.setTblSolution(sol);				
+				incident.setIsActive(rs.getBoolean("isActive"));
+				incident.setSolutionId(rs.getInt("solution_id"));			
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -139,9 +132,29 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	}
 	
 	@Override
-	public TblIncident getIncidentById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public TblIncident getIncidentById(byte id) {
+		TblIncident inci = null;
+		String query = "SELECT * FROM tblIncident WHERE incident_id = ?";
+
+		try {
+			pStmt = dbConnection.prepareStatement(query);
+			pStmt.setByte(1, id);
+			
+			ResultSet rs = pStmt.executeQuery();
+			rs.next();
+			inci = new TblIncident();
+			
+			inci.setIncidentId(rs.getByte("incident_id"));
+			inci.setIncidentTime(rs.getInt("incidentTime"));
+			inci.setCiId(rs.getByte("ci_id"));
+			inci.setIsActive(rs.getBoolean("isActive"));
+			inci.setSolutionId(rs.getInt("solution_id"));
+
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return inci;
 	}
 
 	@Override

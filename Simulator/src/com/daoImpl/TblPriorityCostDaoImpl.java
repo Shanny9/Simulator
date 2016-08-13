@@ -10,10 +10,8 @@ import java.util.List;
 
 import com.dao.TblPriorityCostDao;
 import com.jdbc.DBUtility;
-import com.model.TblPriority;
-import com.model.TblPriorityPK;
 import com.model.TblPriority_Cost;
-import com.model.TblSupplier;
+
 
 public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 
@@ -29,8 +27,8 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblPriority_Cost`\r\n" + 
 				"(`pName`,\r\n" + 
 				"`pCost`,\r\n" + 
-				"`isActive`,\r\n" + 
-				"(?,?,?);";
+				"`isActive`)\r\n" + 
+				" VALUES (?,?,?);";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, priority.getPName());
@@ -80,7 +78,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 	public List<TblPriority_Cost> getAllPriorityCost(int startPageIndex, int recordsPerPage) {
 		List<TblPriority_Cost> priorities = new ArrayList<TblPriority_Cost>();
 
-		String query = "SELECT * FROM TblPriority_Cost " + "limit " + startPageIndex + ","
+		String query = "SELECT * FROM tblPriority_Cost " + "limit " + startPageIndex + ","
 				+ recordsPerPage;
 
 		try {

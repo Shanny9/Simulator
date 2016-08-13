@@ -8,9 +8,9 @@ public interface TblIncidentDao {
 	
 	public void addIncident(TblIncident incident);
 	public void deleteIncident(Byte id);
-	public void updateSupplier(TblIncident incident);
+	public void updateIncident(TblIncident incident, byte id);
 	public List<TblIncident> getAllIncidents(int startPageIndex, int recordsPerPage);
 	public List<TblIncident> getAllIncidents();
-	public TblIncident getIncidentById(int id);
+	public TblIncident getIncidentById(byte id);
 	public int getIncidentCount();
 }

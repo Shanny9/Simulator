@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
 
 /**
@@ -14,6 +13,10 @@ public class TblService_Division implements Serializable {
 
 	private TblService_DivisionPK id;
 
+	private byte service_ID;
+
+	private String divisionName;
+	
 	private boolean isActive;
 
 	//bi-directional many-to-one association to TblDivision
@@ -24,6 +27,32 @@ public class TblService_Division implements Serializable {
 
 	public TblService_Division() {
 	}
+
+	
+	
+	public byte getService_ID() {
+		return service_ID;
+	}
+
+
+
+	public void setService_ID(byte service_ID) {
+		this.service_ID = service_ID;
+	}
+
+
+
+	public String getDivisionName() {
+		return divisionName;
+	}
+
+
+
+	public void setDivisionName(String divisionName) {
+		this.divisionName = divisionName;
+	}
+
+
 
 	public TblService_DivisionPK getId() {
 		return this.id;

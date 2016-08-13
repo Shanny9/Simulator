@@ -29,8 +29,8 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 	+ " isActive) VALUES (?,?,?)";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, service.getId().getService_ID());
-			pStmt.setString(2, service.getId().getDivisionName());
+			pStmt.setByte(1, service.getService_ID());
+			pStmt.setString(2, service.getDivisionName());
 			pStmt.setBoolean(3, service.getIsActive());
 
 			pStmt.executeUpdate();
@@ -71,13 +71,10 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 			while (rs.next()) {
 				TblService_Division service = new TblService_Division();
 
-				TblService_DivisionPK id = new TblService_DivisionPK();
-				id.setService_ID(rs.getByte("service_id"));
-				id.setDivisionName(rs.getString("division_name"));
+				service.setService_ID(rs.getByte("service_id"));
+				service.setDivisionName(rs.getString("division_name"));
 				
-				service.setId(id);
 				service.setIsActive(rs.getBoolean("isActive"));
-
 
 				services.add(service);
 			}
@@ -99,13 +96,10 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 			while (rs.next()) {
 				TblService_Division service = new TblService_Division();
 
-				TblService_DivisionPK id = new TblService_DivisionPK();
-				id.setService_ID(rs.getByte("service_id"));
-				id.setDivisionName(rs.getString("division_name"));
+				service.setService_ID(rs.getByte("service_id"));
+				service.setDivisionName(rs.getString("division_name"));
 				
-				service.setId(id);
 				service.setIsActive(rs.getBoolean("isActive"));
-
 
 				services.add(service);
 			}
@@ -129,7 +123,8 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 			rs.next();
 			service = new TblService_Division();
 			
-			service.setId(pk);
+			service.setService_ID(pk.getService_ID());
+			service.setDivisionName(pk.getDivisionName());
 			service.setIsActive(rs.getBoolean("isActive"));
 
 
@@ -161,8 +156,8 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 				"	 \" isActive=? WHERE service_id = ? AND division_name=? ";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setByte(1, service.getId().getService_ID());
-			pStmt.setString(2, service.getId().getDivisionName());
+			pStmt.setByte(1, service.getService_ID());
+			pStmt.setString(2, service.getDivisionName());
 			pStmt.setBoolean(3, service.getIsActive());
 			
 			pStmt.setByte(4, pk.getService_ID());

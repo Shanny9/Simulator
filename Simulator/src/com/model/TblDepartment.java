@@ -53,14 +53,14 @@ public class TblDepartment implements Serializable {
 	}
 
 
-
-	public TblDepartmentPK getId() {
-		return this.id;
-	}
-
-	public void setId(TblDepartmentPK id) {
-		this.id = id;
-	}
+//
+//	public TblDepartmentPK getId() {
+//		return this.id;
+//	}
+//
+//	public void setId(TblDepartmentPK id) {
+//		this.id = id;
+//	}
 
 	public boolean getIsActive() {
 		return this.isActive;

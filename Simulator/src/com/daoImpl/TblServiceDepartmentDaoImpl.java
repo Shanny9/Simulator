@@ -61,9 +61,9 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 				"department_name=?, isActive=? WHERE service_id = ? AND devision_name=? AND department_name=?";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setByte(1, service.getId().getService_ID());
-			pStmt.setString(2, service.getId().getDivisionName());
-			pStmt.setString(3, service.getId().getDepartmentName());
+			pStmt.setByte(1, service.getService_ID());
+			pStmt.setString(2, service.getDivisionName());
+			pStmt.setString(3, service.getDepartmentName());
 			pStmt.setBoolean(4, service.getIsActive());
 			
 			pStmt.setByte(5, pk.getService_ID());

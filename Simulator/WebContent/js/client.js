@@ -12,8 +12,20 @@ var settings = new Object();
 //var team = "Marom"; // defined at the beginning of client.jsp
 //var courseName = 'normalCourse'; // defined at the beginning of client.jsp
 
+var pauseEventSource;
+var pauseListener = function(e) {
+	
+	var data = e.data;
+	console.log(data);
+	if (data == 'pause'){
+		clearInterval(clockInterval);
+	} else if (data == 'resume'){
+		clockInterval = setInterval(incrementClock, 1000);
+	}
+}
+
 $(document).ready(
-			
+		
 		function() {
 			/*
 			 * initialize page
@@ -25,7 +37,7 @@ $(document).ready(
 						$(this).removeClass('input-error');
 					});
 			getSolutions();
-			
+			setPauseSource();
 			run(isRunTime);
 			
 			// when a key released in the incident field - updates if the menus could toggle
@@ -124,6 +136,11 @@ $(document).ready(
 //			startSimulator();
 
 		});
+
+function setPauseSource() {
+	pauseEventSource = new EventSource("ClientController?action=pauseOrResume");
+	pauseEventSource.addEventListener('message',pauseListener, false);
+}
 
 function run (isRun){
 	

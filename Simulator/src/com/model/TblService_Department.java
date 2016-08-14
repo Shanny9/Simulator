@@ -54,13 +54,13 @@ public class TblService_Department implements Serializable {
 		this.tblService = tblService;
 	}
 	
-	public TblService_DepartmentPK getId() {
-		return id;
-	}
-
-	public void setId(TblService_DepartmentPK id) {
-		this.id = id;
-	}
+//	public TblService_DepartmentPK getId() {
+//		return id;
+//	}
+//
+//	public void setId(TblService_DepartmentPK id) {
+//		this.id = id;
+//	}
 
 	public byte getService_ID() {
 		return service_ID;

@@ -54,12 +54,13 @@ public class ClockIncrementor implements Runnable {
 		clocks.put("remainingClock", remainingTime);
 		clocks.put("elapsedRunTime", elapsedRunTime);
 		clocks.put("isRunTime", isRunTime);
+		System.out.println("remainingClock: " + remainingTime);
 		return clocks;
 	}
 
 	public void run() {
 		if (isRunning) {
-			System.out.println("ClockIncrementor : elapsed time= " + elapsedTime);
+//			System.out.println("ClockIncrementor : elapsed time= " + elapsedTime);
 			elapsedTime += 1;
 			remainingTime -= 1;
 

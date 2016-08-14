@@ -49,7 +49,7 @@ public class LogManager implements Runnable {
 		if (!isForced) {
 			simLog.fixAllIncidents(time);
 		}
-		System.out.println("Log paused");
+//		System.out.println("Log paused");
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class LogManager implements Runnable {
 	 */
 	public static void resumeLog() {
 		isRunning = true;
-		System.out.println("Log resumed");
+//		System.out.println("Log resumed");
 	}
 
 	/**

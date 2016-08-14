@@ -28,7 +28,7 @@ public class TblSolution implements Serializable {
 		this.isActive = isActive;
 	}
 
-	private List<TblIncident> tblIncidents;
+//	private List<TblIncident> tblIncidents;
 
 	public TblSolution() {
 	}
@@ -57,26 +57,26 @@ public class TblSolution implements Serializable {
 		this.solutionRakia = solutionRakia;
 	}
 
-	public List<TblIncident> getTblIncidents() {
-		return this.tblIncidents;
-	}
-
-	public void setTblIncidents(List<TblIncident> tblIncidents) {
-		this.tblIncidents = tblIncidents;
-	}
-
-	public TblIncident addTblIncident(TblIncident tblIncident) {
-		getTblIncidents().add(tblIncident);
-		tblIncident.setTblSolution(this);
-
-		return tblIncident;
-	}
-
-	public TblIncident removeTblIncident(TblIncident tblIncident) {
-		getTblIncidents().remove(tblIncident);
-		tblIncident.setTblSolution(null);
-
-		return tblIncident;
-	}
+//	public List<TblIncident> getTblIncidents() {
+//		return this.tblIncidents;
+//	}
+//
+//	public void setTblIncidents(List<TblIncident> tblIncidents) {
+//		this.tblIncidents = tblIncidents;
+//	}
+//
+//	public TblIncident addTblIncident(TblIncident tblIncident) {
+//		getTblIncidents().add(tblIncident);
+//		tblIncident.setTblSolution(this);
+//
+//		return tblIncident;
+//	}
+//
+//	public TblIncident removeTblIncident(TblIncident tblIncident) {
+//		getTblIncidents().remove(tblIncident);
+//		tblIncident.setTblSolution(null);
+//
+//		return tblIncident;
+//	}
 
 }

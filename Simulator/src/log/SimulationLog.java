@@ -46,6 +46,14 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private static LinkedList<SolutionLog> solutionQueue;
 	/**
+	 * The current status of the simulation at the server
+	 */
+	private static boolean serverPaused = false;
+	/**
+	 * The current status of the simulation at the client
+	 */
+	private static boolean clientPaused = false;
+	/**
 	 * The current round
 	 */
 	private static int round;
@@ -121,7 +129,7 @@ public class SimulationLog extends Thread implements Serializable {
 	
 	public static SimulationLog getInstance() {
 		if (instance == null) {
-			System.out.println("Log is created");
+//			System.out.println("Log is created");
 			instance = new SimulationLog();
 		}
 		return instance;
@@ -165,9 +173,9 @@ public class SimulationLog extends Thread implements Serializable {
 		HashMap<String, Double> profits = new HashMap<>();
 		profits.put(marom.getTeamName(), maromWithoutInit / targetScore * 100);
 		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetScore * 100);
-		System.out.println("Marom: " + marom.getProfit(time) + ". Rakia: " + rakia.getProfit(time));
-		System.out.println("Marom: " + maromWithoutInit / targetScore * 100 + ". Rakia: " + rakiaWithoutInit / targetScore * 100);
-		System.out.println();
+//		System.out.println("Marom: " + marom.getProfit(time) + ". Rakia: " + rakia.getProfit(time));
+//		System.out.println("Marom: " + maromWithoutInit / targetScore * 100 + ". Rakia: " + rakiaWithoutInit / targetScore * 100);
+//		System.out.println();
 		return profits;
 	}
 
@@ -326,7 +334,7 @@ public class SimulationLog extends Thread implements Serializable {
 				eventList.add(row);
 			}
 		}
-		System.out.println("SimulationLog getEventsForHomeScreen:\n" + eventList);
+//		System.out.println("SimulationLog getEventsForHomeScreen:\n" + eventList);
 		return eventList;
 	}
 
@@ -341,5 +349,21 @@ public class SimulationLog extends Thread implements Serializable {
 			return RAKIA;
 		}
 		return null;
+	}
+	
+	public static boolean getServerPaused(){
+		return serverPaused;
+	}
+	
+	public static void setServerPaused(boolean isPaused){
+		serverPaused = isPaused;
+	}
+	
+	public static boolean getClientPaused(){
+		return clientPaused;
+	}
+	
+	public static void setClientPaused(boolean isPaused){
+		clientPaused = isPaused;
 	}
 }

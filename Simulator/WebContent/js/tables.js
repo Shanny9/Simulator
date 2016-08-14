@@ -7,10 +7,10 @@ $(document).ready(function() {
 //	incidentTable();
 //	solutionTable();
 //	priorityCostTable();
-//	serviceTable();
+	serviceTable();
 //	serviceDepTable();
 //	serviceDivTable();
-	ciTable();
+//	ciTable();
 	
 });
 
@@ -106,10 +106,16 @@ function supplierTable(){
 				currency : {
 					title : 'Currency',
 					width : '25%',
-					options: { 'NIS': 'NIS', 'USD': 'USD'},
+					options: { 'NIS': 'NIS', 'USD': 'USD', 'EUR' : 'EUR'},
 					edit : true
 				}
-			}
+			},
+			formCreated: function (event, data) {
+				data.form.find('[name=supplierName]').attr('maxlength','20');
+				data.form.find('[name=solutionCost]').attr('type','number');
+				data.form.find('[name=solutionCost]').attr('min','0');
+				data.form.find('[name=solutionCost]').attr('max','1.7976931348623157E+308');				
+		    }
 		});
 		$('#tableContainer').jtable('load');
 }
@@ -207,13 +213,17 @@ function incidentTable(){
 				options: { 1: 'Yes', 0: 'No'},
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=incidentId]').attr('maxlength','3');
+			data.form.find('[name=incidentId]').attr('type','number');
+			data.form.find('[name=incidentId]').attr('min','1');
+			data.form.find('[name=incidentId]').attr('max','255');
+	    }
+	    
 	});
 	$('#tableContainer').jtable('load');
 }
-
-
-
 
 function solutionTable(){
 
@@ -309,7 +319,20 @@ function solutionTable(){
 				options: { '1': 'Yes','0': 'No' },
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=solutionId]').attr('maxlength','10');
+			data.form.find('[name=solutionId]').attr('type','number');
+			data.form.find('[name=solutionId]').attr('min','1');
+			
+			data.form.find('[name=solutionMarom]').attr('maxlength','11');
+			data.form.find('[name=solutionMarom]').attr('type','number');
+			data.form.find('[name=solutionMarom]').attr('min','1');
+			
+			data.form.find('[name=solutionRakia]').attr('maxlength','11');
+			data.form.find('[name=solutionRakia]').attr('type','number');
+			data.form.find('[name=solutionRakia]').attr('min','1');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -404,7 +427,13 @@ function priorityCostTable(){
 				options: { '1': 'Yes','0': 'No' },
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=solutionId]').attr('maxlength','10');
+			data.form.find('[name=solutionId]').attr('type','number');
+			data.form.find('[name=solutionId]').attr('min','0');
+			data.form.find('[name=solutionId]').attr('max','1.7976931348623157E+308');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -483,7 +512,8 @@ function serviceTable(){
 				key : true,
 				list : true,
 				edit : true,
-				create : true
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1]]'
 			},
 			serviceCode : {
 				title : 'Code',
@@ -503,7 +533,9 @@ function serviceTable(){
 			},
 			isTechnical : {
 				title : 'Technical?',
-				options: { '1': 'Yes','0': 'No' },
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes' },
+//                defaultValue: 'true',
 				edit : true
 			},
 			supplierLevel2 : {
@@ -526,11 +558,29 @@ function serviceTable(){
 			},
 			isActive : {
 				title : 'Active?',
-	//			type : 'checkbox',
-				options: { '1': 'Yes','0': 'No' },
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes' },
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+//			data.form.find('[name=serviceId]').attr('maxlength','3');
+//			data.form.find('[name=serviceId]').attr('type','number');
+//			data.form.find('[name=serviceId]').attr('min','1');
+//			data.form.find('[name=serviceId]').attr('max','255');
+			
+/*			data.form.find('[name=serviceCode]').attr('maxlength','15');
+			
+			data.form.find('[name=serviceName]').attr('maxlength','60');
+						
+			data.form.find('[name=fixedCost]').attr('type','number');
+			data.form.find('[name=fixedCost]').attr('min','0');
+			data.form.find('[name=fixedCost]').attr('max','1.7976931348623157E+308');
+			
+			data.form.find('[name=fixedIncome]').attr('type','number');
+			data.form.find('[name=fixedIncome]').attr('min','0');
+			data.form.find('[name=fixedIncome]').attr('max','1.7976931348623157E+308');*/
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -634,7 +684,10 @@ function serviceTable(){
 					options: { '1': 'Yes','0': 'No' },
 					edit : true
 				}
-			}
+			},
+			formCreated: function (event, data) {
+				data.form.find('[name=serviceId]').attr('maxlength','3');
+		    }
 		});
 		$('#tableContainer').jtable('load');
 	}
@@ -836,7 +889,11 @@ function ciTable(){
                 defaultValue: 'true',
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=ciId]').attr('maxlength','3');
+			data.form.find('[name=CI_name]').attr('maxlength','60');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1027,7 +1084,10 @@ function departmentTable(){
                 defaultValue: 'true',
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=departmentName]').attr('maxlength','25');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1116,7 +1176,10 @@ function divisionTable(){
                 defaultValue: 'true',
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=devisionName]').attr('maxlength','25');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1215,7 +1278,10 @@ function eventTable(){
                 defaultValue: 'true',
 				edit : true
 			}
-		}
+		},
+		formCreated: function (event, data) {
+			data.form.find('[name=eventId]').attr('maxlength','10');
+	    }
 	});
 	$('#tableContainer').jtable('load');
 }

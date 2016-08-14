@@ -43,15 +43,13 @@ public class TblCMDB implements Serializable {
 		this.serviceId = serviceId;
 	}
 
+//	public TblCMDBPK getId() {
+//		return this.id;
+//	}
 
-
-	public TblCMDBPK getId() {
-		return this.id;
-	}
-
-	public void setId(TblCMDBPK id) {
-		this.id = id;
-	}
+//	public void setId(TblCMDBPK id) {
+//		this.id = id;
+//	}
 	
 	public boolean getIsActive() {
 		return this.isActive;

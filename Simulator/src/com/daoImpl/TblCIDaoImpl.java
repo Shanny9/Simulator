@@ -58,8 +58,8 @@ public class TblCIDaoImpl implements TblCIDao {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, ci.getCiId());
 			pStmt.setString(2, ci.getCI_name());
-			pStmt.setString(3, ci.getTblSupplier2().getSupplierName());
-			pStmt.setString(4, ci.getTblSupplier2().getSupplierName());
+			pStmt.setString(3, ci.getSupplierName1());
+			pStmt.setString(4, ci.getSupplierName2());
 			pStmt.setBoolean(5, ci.getIsActive());
 			pStmt.setByte(6, ciId);
 			pStmt.executeUpdate();

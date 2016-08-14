@@ -254,8 +254,25 @@ function getTime() {
 			elapsedRunTime = Math.floor(data.elapsedRunTime + latency);
 			showTime = Math.floor(remainingClock + latency);
 			
-			console.log("remainingClock " +remainingClock);
-			console.log("latency: "+ latency);
+			var elaspedSessions =  Math.floor(elapsedTime / settings["sessionTime"]);
+			var elapsedInSession = elapsedTime - (elaspedSessions * settings["sessionTime"]);
+			isRunTime = (elapsedInSession > settings["pauseTime"]);
+			
+			// must be after getSettings()
+			if (isRunTime){
+				pausePercentage = settings["pauseTime"] / settings["sessionTime"] * 100;
+				runPercentage = (elapsedInSession - settings["pauseTime"]) / settings["sessionTime"] * 100;
+			} else {
+				// in pause time
+				runPercentage = 0;
+				pausePercentage = (elapsedInSession / settings["sessionTime"]) * 100;
+			}
+			
+			console.log("runPercentage: " + runPercentage);
+			console.log("pausePercentage: " + pausePercentage);
+			
+//			console.log("remainingClock " +remainingClock);
+//			console.log("latency: "+ latency);
 		},
 		error : function(e) {
 			console.log("js:getTime: Error in getting time.");

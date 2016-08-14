@@ -73,7 +73,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			pStmt.setInt(2, incident.getIncidentTime());
 			pStmt.setByte(4, incident.getCiId());
 			pStmt.setBoolean(5, incident.getIsActive());
-			pStmt.setInt(5, incident.getTblSolution().getSolutionId());
+			pStmt.setInt(5, incident.getSolutionId());
 			pStmt.setByte(6, id);
 			pStmt.executeUpdate();
 

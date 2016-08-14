@@ -31,7 +31,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			pStmt.setByte(1, service.getServiceId());
 			pStmt.setString(2, service.getServiceCode());
 			pStmt.setString(3, service.getServiceName());
-			pStmt.setByte(4, service.getIsTechnical());
+			pStmt.setBoolean(4, service.getIsTechnical());
 			pStmt.setString(5, service.getSupplierLevel2());
 			pStmt.setString(6, service.getSupplierLevel3());
 			pStmt.setDouble(7, service.getFixedCost());
@@ -68,7 +68,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			pStmt.setByte(1, service.getServiceId());
 			pStmt.setString(2, service.getServiceCode());
 			pStmt.setString(3, service.getServiceName());
-			pStmt.setByte(4, service.getIsTechnical());
+			pStmt.setBoolean(4, service.getIsTechnical());
 			pStmt.setString(5, service.getSupplierLevel2());
 			pStmt.setString(6, service.getSupplierLevel3());
 			pStmt.setDouble(7, service.getFixedCost());
@@ -103,7 +103,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
 				service.setIsActive(rs.getBoolean("isActive"));
-				service.setIsTechnical(rs.getByte("isTechnical"));
+				service.setIsTechnical(rs.getBoolean("isTechnical"));
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
@@ -134,7 +134,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
 				service.setIsActive(rs.getBoolean("isActive"));
-				service.setIsTechnical(rs.getByte("isTechnical"));
+				service.setIsTechnical(rs.getBoolean("isTechnical"));
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
@@ -165,7 +165,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			service.setFixedIncome(rs.getDouble("fixed_income"));
 			service.setImpact(rs.getString("impact"));
 			service.setIsActive(rs.getBoolean("isActive"));
-			service.setIsTechnical(rs.getByte("isTechnical"));
+			service.setIsTechnical(rs.getBoolean("isTechnical"));
 			service.setServiceId(rs.getByte("service_id"));
 			service.setServiceCode(rs.getString("service_code"));
 			service.setServiceName(rs.getString("service_name"));

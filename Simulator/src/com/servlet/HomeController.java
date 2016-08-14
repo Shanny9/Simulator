@@ -62,12 +62,13 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		if(LogUtils.path.isEmpty())
-//		{
-//			ServletContext context = getServletConfig().getServletContext();
-//			  URL resourceUrl = context.getResource("WEB-INF"+File.separator+"logs");
-//			  LogUtils.path = resourceUrl.getPath();
-//		}
+		// if(LogUtils.path.isEmpty())
+		// {
+		// ServletContext context = getServletConfig().getServletContext();
+		// URL resourceUrl =
+		// context.getResource("WEB-INF"+File.separator+"logs");
+		// LogUtils.path = resourceUrl.getPath();
+		// }
 		LogUtils.path = getServletContext().getRealPath(File.separator + "logs");
 
 		// General settings
@@ -87,13 +88,14 @@ public class HomeController extends HttpServlet {
 
 			switch (authenticate(request)) {
 			case 1:
-/*				if(getServletContext().getAttribute("isLogged")!=null)
-					response.sendRedirect("login.jsp");
-				else{*/
+				/*
+				 * if(getServletContext().getAttribute("isLogged")!=null)
+				 * response.sendRedirect("login.jsp"); else{
+				 */
 				request.getSession().setAttribute("isLogged", "1");
-//				getServletContext().setAttribute("isLogged", "1");
+				// getServletContext().setAttribute("isLogged", "1");
 				response.sendRedirect("opening.jsp");
-//				}
+				// }
 				break;
 			case 2:
 				request.getSession().setAttribute("team", "Marom");
@@ -118,29 +120,25 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(clocks));
 			break;
 		case "startSimulator":
-//			courseName = request.getParameter("courseName"); // V replace with selectedCourseName
-//			round = Integer.valueOf(request.getParameter("round"));
-//			settings = SimulationLog.getInstance(courseName).getSettings(); // V remove this
+			// courseName = request.getParameter("courseName"); // V replace
+			// with selectedCourseName
+			// round = Integer.valueOf(request.getParameter("round"));
+			// settings = SimulationLog.getInstance(courseName).getSettings();
+			// // V remove this
 			if (settings != null) {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
 				int pauseTime = settings.getPauseTime();
-				
+
 				if (!ClockIncrementor.isRunning()) {
 					TimerManager.startSimulator(settings, round);
 					response.getWriter().print("OK");
 				}
 			}
 			break;
-		case "pauseSimulator":
-			TimerManager.forcePause();
-			break;
-		case "resumeSimulator":
-			TimerManager.forceResume();
-			break;
-		case "getSettings": //TODO: check that it happens after start simulator
-//			courseName = request.getParameter("courseName");
-//			settings = LogUtils.openSettings(courseName); // V remove this
+		case "getSettings": // TODO: check that it happens after start simulator
+			// courseName = request.getParameter("courseName");
+			// settings = LogUtils.openSettings(courseName); // V remove this
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
@@ -185,13 +183,14 @@ public class HomeController extends HttpServlet {
 			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
 
 			Settings set = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
-			if (courseName != null){
-				// TODO: why the hell this function is called before the user sent the form?
+			if (courseName != null) {
+				// TODO: why the hell this function is called before the user
+				// sent the form?
 				SimulationTester st = SimulationTester.getInstance();
 				SimulationTester.initialize(set);
 				new Thread(st).start();
 			}
-			
+
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkLog":
@@ -204,28 +203,37 @@ public class HomeController extends HttpServlet {
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
 			round = Integer.valueOf(request.getParameter("form-round"));
-			
+
 			settings = LogUtils.openSettings(selectedCourseName);
 			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
-			//for client.jsp - app scope attribute
-			//*if Admin changes the course after client.jsp is on, client.jsp need to refresh.
+			// for client.jsp - app scope attribute
+			// *if Admin changes the course after client.jsp is on, client.jsp
+			// need to refresh.
 			getServletContext().setAttribute("selectedCourseName", selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
-			
+
 		case "isRoundDone":
 			String filePrefix = request.getParameter("filePrefix");
 			String course = request.getParameter("course");
-			response.getWriter().print(checkFile(filePrefix,course));
+			response.getWriter().print(checkFile(filePrefix, course));
+			break;
+		case "pauseSimulator":
+			TimerManager.forcePause();
+			log.SimulationLog.setServerPaused(true);
+			break;
+		case "resumeSimulator":
+			TimerManager.forceResume();
+			log.SimulationLog.setServerPaused(false);
 			break;
 		}
 	}
-	
-	private boolean checkFile(String prefix, String course){
+
+	private boolean checkFile(String prefix, String course) {
 		final String p = prefix;
 		File file = new File(LogUtils.path + File.separator + course);
-		if(file.exists() && file.isDirectory()){
+		if (file.exists() && file.isDirectory()) {
 
 			File[] settingsFiles = file.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -237,8 +245,7 @@ public class HomeController extends HttpServlet {
 				return false;
 			}
 			return true;
-		}
-		else
+		} else
 			return false;
 	}
 
@@ -251,29 +258,6 @@ public class HomeController extends HttpServlet {
 
 	}
 
-	/*
-	 * protected HashMap<String, Object> getTimes(String courseName) {
-	 * TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
-	 * HashMap<String, Object> timesMap = new HashMap<String, Object>();
-	 * 
-	 * TblCourseDaoImpl daoCourse = new TblCourseDaoImpl(); TblCourse course =
-	 * daoCourse.getCourseById(courseName); int round =
-	 * course.getLastRoundDone() + 1;
-	 * 
-	 * timesMap.put("sessionTime", daoGP.getSessionTime());
-	 * timesMap.put("roundTime", daoGP.getRoundTime());
-	 * timesMap.put("numOfRounds",
-	 * daoGP.getGeneralParameters().getNumOfRounds()); timesMap.put("pauseTime",
-	 * daoGP.getGeneralParameters().getPauseTime()); timesMap.put("runTime",
-	 * daoGP.getGeneralParameters().getRunTime());
-	 * timesMap.put("sessionsPerRound",
-	 * daoGP.getGeneralParameters().getSessionsPerRound());
-	 * timesMap.put("totalTime", daoGP.getTotalTime());
-	 * timesMap.put("currentRound", round new
-	 * TblCourseDaoImpl().getCourseById(courseName). getLastRoundDone()+1 );
-	 * return timesMap; }
-	 */
-
 	/**
 	 * uses utils.PasswordAuthentication to verify password from the client
 	 * 
@@ -283,7 +267,7 @@ public class HomeController extends HttpServlet {
 	protected int authenticate(HttpServletRequest request) {
 		int result;
 		char[] user = request.getParameter("form-username").toCharArray();
-		System.out.println("HomeController: username= " + request.getParameter("form-username"));
+//		System.out.println("HomeController: username= " + request.getParameter("form-username"));
 		char[] pass = request.getParameter("form-password").toCharArray();
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
@@ -342,26 +326,27 @@ public class HomeController extends HttpServlet {
 		return streamMessage;
 	}
 
-//	private List<JsonObject> getEvents(Settings settings) {
-//
-//		List<JsonObject> events = new ArrayList<JsonObject>();
-//		String query = Queries.eventsForHomeTable;
-//		try {
-//			Statement stmt = DBUtility.getConnection().createStatement();
-//			ResultSet rs = stmt.executeQuery(query);
-//			while (rs.next()) {
-//				JsonObject row = new JsonObject();
-//				row.addProperty("time", rs.getInt("incidentTime"));
-//				row.addProperty("event_id", rs.getInt("event_id"));
-//				events.add(row);
-//			}
-//		} catch (SQLException e) {
-//			System.err.println(e.getMessage());
-//		}
-//		return events;
-//	}
+	// private List<JsonObject> getEvents(Settings settings) {
+	//
+	// List<JsonObject> events = new ArrayList<JsonObject>();
+	// String query = Queries.eventsForHomeTable;
+	// try {
+	// Statement stmt = DBUtility.getConnection().createStatement();
+	// ResultSet rs = stmt.executeQuery(query);
+	// while (rs.next()) {
+	// JsonObject row = new JsonObject();
+	// row.addProperty("time", rs.getInt("incidentTime"));
+	// row.addProperty("event_id", rs.getInt("event_id"));
+	// events.add(row);
+	// }
+	// } catch (SQLException e) {
+	// System.err.println(e.getMessage());
+	// }
+	// return events;
+	// }
 
 	/*
-	 * more bug fixes. @HomeController: convertToSimulTime method fixed + new method - stretch
+	 * more bug fixes. @HomeController: convertToSimulTime method fixed + new
+	 * method - stretch
 	 */
 }

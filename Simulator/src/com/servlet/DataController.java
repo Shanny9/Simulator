@@ -578,7 +578,7 @@ public class DataController extends HttpServlet {
 					}
 					
 					if (request.getParameter("isTechnical") != null) {
-						byte tech = Byte.parseByte(request.getParameter("isTechnical"));
+						Boolean tech = Boolean.parseBoolean(request.getParameter("isTechnical"));
 						ser.setIsTechnical(tech);
 					}
 					

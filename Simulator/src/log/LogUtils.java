@@ -253,12 +253,12 @@ public class LogUtils {
 		TblCMDBDao dao = new TblCMDBDaoImpl();
 
 		for (TblCMDB cmdb : dao.getAllCMDBs()) {
-			int ci = cmdb.getId().getCiId();
+			int ci = cmdb.getCiId();
 			HashSet<Integer> services = dbAffectingCis.get(ci);
 			if (services == null) {
 				services = new HashSet<Integer>();
 			}
-			services.add((int) cmdb.getId().getServiceId());
+			services.add((int) cmdb.getServiceId());
 			dbAffectingCis.put(ci, services);
 		}
 		return dbAffectingCis;
@@ -291,12 +291,12 @@ public class LogUtils {
 		TblCMDBDao dao = new TblCMDBDaoImpl();
 
 		for (TblCMDB cmdb : dao.getAllCMDBs()) {
-			int service = cmdb.getId().getServiceId();
+			int service = cmdb.getServiceId();
 			HashSet<Integer> cis = dbAffectedServices.get(service);
 			if (cis == null) {
 				cis = new HashSet<Integer>();
 			}
-			cis.add((int) cmdb.getId().getCiId());
+			cis.add((int) cmdb.getCiId());
 			dbAffectedServices.put(service, cis);
 		}
 		return dbAffectedServices;
@@ -310,7 +310,7 @@ public class LogUtils {
 		TblCIDao dao = new TblCIDaoImpl();
 		for (TblCI ci : dao.getAllCIs()) {
 			int ci_id = ci.getCiId();
-			String supName = ci.getTblSupplier2().getSupplierName();
+			String supName = ci.getSupplierName1();
 			TblSupplier sup = new TblSupplierDaoImpl().getSupplierById(supName);
 			int mul = 1;
 			switch (sup.getCurrency()) {
@@ -384,7 +384,7 @@ public class LogUtils {
 		TblEventDao dao = new TblEevntDaoImpl();
 
 		for (TblEvent event : dao.getAllEvents()) {
-			int incident = event.getTblIncident().getIncidentId();
+			int incident = event.getIncidentId();
 			HashSet<String> events = incident_events.get(incident);
 			if (events == null) {
 				events = new HashSet<String>();

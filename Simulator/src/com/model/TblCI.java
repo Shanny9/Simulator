@@ -85,21 +85,21 @@ public class TblCI implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public TblSupplier getTblSupplier1() {
-		return this.tblSupplier1;
-	}
+//	public TblSupplier getTblSupplier1() {
+//		return this.tblSupplier1;
+//	}
 
-	public void setTblSupplier1(TblSupplier tblSupplier1) {
-		this.tblSupplier1 = tblSupplier1;
-	}
+//	public void setTblSupplier1(TblSupplier tblSupplier1) {
+//		this.tblSupplier1 = tblSupplier1;
+//	}
 
-	public TblSupplier getTblSupplier2() {
-		return this.tblSupplier2;
-	}
+//	public TblSupplier getTblSupplier2() {
+//		return this.tblSupplier2;
+//	}
 
-	public void setTblSupplier2(TblSupplier tblSupplier2) {
-		this.tblSupplier2 = tblSupplier2;
-	}
+//	public void setTblSupplier2(TblSupplier tblSupplier2) {
+//		this.tblSupplier2 = tblSupplier2;
+//	}
 
 	public List<TblResource_CI> getTblResourceCis() {
 		return this.tblResourceCis;

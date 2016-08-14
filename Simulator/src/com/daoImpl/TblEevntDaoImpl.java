@@ -54,8 +54,8 @@ public class TblEevntDaoImpl implements TblEventDao {
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setInt(1, event.getEventId());
-			pStmt.setByte(2, event.getTblIncident().getIncidentId());
-			pStmt.setByte(3, event.getTblService().getServiceId());
+			pStmt.setByte(2, event.getIncidentId());
+			pStmt.setByte(3, event.getServiceId());
 			pStmt.setBoolean(4, event.getIsActive());
 			pStmt.setInt(5, eventId);
 			pStmt.executeUpdate();

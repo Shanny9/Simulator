@@ -54,13 +54,13 @@ public class TblService_Division implements Serializable {
 
 
 
-	public TblService_DivisionPK getId() {
-		return this.id;
-	}
-
-	public void setId(TblService_DivisionPK id) {
-		this.id = id;
-	}
+//	public TblService_DivisionPK getId() {
+//		return this.id;
+//	}
+//
+//	public void setId(TblService_DivisionPK id) {
+//		this.id = id;
+//	}
 
 	public boolean getIsActive() {
 		return this.isActive;

@@ -54,21 +54,21 @@ public class TblEvent implements Serializable {
 		this.eventId = eventId;
 	}
 
-	public TblIncident getTblIncident() {
-		return this.tblIncident;
-	}
-
-	public void setTblIncident(TblIncident tblIncident) {
-		this.tblIncident = tblIncident;
-	}
-
-	public TblService getTblService() {
-		return this.tblService;
-	}
-
-	public void setTblService(TblService tblService) {
-		this.tblService = tblService;
-	}
+//	public TblIncident getTblIncident() {
+//		return this.tblIncident;
+//	}
+//
+//	public void setTblIncident(TblIncident tblIncident) {
+//		this.tblIncident = tblIncident;
+//	}
+//
+//	public TblService getTblService() {
+//		return this.tblService;
+//	}
+//
+//	public void setTblService(TblService tblService) {
+//		this.tblService = tblService;
+//	}
 
 	public boolean getIsActive() {
 		return this.isActive;

@@ -12,6 +12,15 @@
 <!-- Include one of jTable styles. -->
 <link href="css/metro/blue/jtable.css" rel="stylesheet" type="text/css" />
 <link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+<!-- <link href="css/metroblue_jquery-ui.css" rel="stylesheet" type="text/css" /> -->
+<style>
+.ui-dialog{
+	min-width:350px;
+}
+/* .formError{
+	margin-top: -35px
+} */
+</style>
 
 <link href="css/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
 
@@ -86,9 +95,10 @@
 				</ul>
 			</div>
 			<!--side bar-->
+		<div class="push"></div>
 		</div>
 		<!--container-fluid-->
-
+		
 		<%@ include file="footer.html"%>
 	</div>
 	<!--background-image-->

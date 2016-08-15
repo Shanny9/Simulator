@@ -1,6 +1,7 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
@@ -60,7 +64,6 @@ public class DataController extends HttpServlet {
 	private TblDivisionDaoImpl daoDivision;
 	private TblEevntDaoImpl daoEvent;
 
-
 	public DataController() {
 		daoSupplier = new TblSupplierDaoImpl();
 		daoSolution = new TblSolutionDaoImpl();
@@ -88,49 +91,87 @@ public class DataController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
-		String action = request.getParameter("action");
-		String table = request.getParameter("table");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-		switch(table){
-			case "supplier":
-				tblSuppliers(action, request, response, gson);
+		String options = request.getParameter("options");
+		String key = request.getParameter("key");
+
+		if (options != null) {
+			JSONObject jo = new JSONObject();
+			
+			JSONArray optionArr = null;
+			switch (options) {
+			case "ci":
+				optionArr = toOptionArray(daoCI.getAllCIs(), "ciId", "CI_name");
 				break;
 			case "solution":
-				tblSolution(action, request, response, gson);
+				optionArr = toOptionArray(daoSolution.getAllSolutions(), "solutionId", "solutionId");
 				break;
-			case "incident":
-				tblIncident(action, request, response, gson);
-				break;
-			case "priority":
-				tblPriorityCost(action, request, response, gson);
-				break;
-			case "service":
-				tblService(action, request, response, gson);
-				break;
-			case "serviceDepartment":
-				tblServiceDepartment(action, request, response, gson);
-				break;
-			case "serviceDivision":
-				tblServiceDivision(action, request, response, gson);
-				break;
-			case "ci":
-				tblCIs(action, request, response, gson);
-				break;
-			case "cmdb":
-				tblCMDBs(action, request, response, gson);
-				break;
-			case "department":
-				tblDepartments(action, request, response, gson);
+			case "supplier":
+				optionArr = toOptionArray(daoSupplier.getAllSuppliers(), "supplierName", "supplierName");
 				break;
 			case "division":
-				tblDivisions(action, request, response, gson);
+				optionArr = toOptionArray(daoDivision.getAllDivisions(),"divisionName", "divisionName");
 				break;
-			case "event":
-				tblEvents(action, request, response, gson);
+			case "department":
+				optionArr = toOptionArray(daoDepartment.getAllDepartments(), "departmentName", "departmentName");
 				break;
+			case "service":
+				optionArr = toOptionArray(daoService.getAllServices(), "serviceId", "serviceName");
+				break;
+			case "incident":
+				optionArr = toOptionArray(daoIncident.getAllIncidents(), "incidentId", "incidentId");
+				break;
+			}
+			jo.put("Result", "OK");
+			jo.put("Options", optionArr);
+			response.getWriter().print(jo);
+			return;
 		}
-	}// end doPost
+
+		String action = request.getParameter("action");
+		String table = request.getParameter("table");
+
+		switch (table) {
+		case "supplier":
+			tblSuppliers(action, request, response, gson);
+			break;
+		case "solution":
+			tblSolution(action, request, response, gson);
+			break;
+		case "incident":
+			tblIncident(action, request, response, gson);
+			break;
+		case "priority":
+			tblPriorityCost(action, request, response, gson);
+			break;
+		case "service":
+			tblService(action, request, response, gson);
+			break;
+		case "serviceDepartment":
+			tblServiceDepartment(action, request, response, gson);
+			break;
+		case "serviceDivision":
+			tblServiceDivision(action, request, response, gson);
+			break;
+		case "ci":
+			tblCIs(action, request, response, gson);
+			break;
+		case "cmdb":
+			tblCMDBs(action, request, response, gson);
+			break;
+		case "department":
+			tblDepartments(action, request, response, gson);
+			break;
+		case "division":
+			tblDivisions(action, request, response, gson);
+			break;
+		case "event":
+			tblEvents(action, request, response, gson);
+			break;
+		}
+	}// end
+		// doPost
 
 	protected void tblSuppliers(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
@@ -186,7 +227,7 @@ public class DataController extends HttpServlet {
 					} else if (action.equals("update")) {
 						// Update existing record
 						String name = request.getParameter("jtRecordKey_supplierName");
-						daoSupplier.updateSupplier(supplier,name);
+						daoSupplier.updateSupplier(supplier, name);
 					}
 
 					// Return in the format required by jTable plugin
@@ -227,23 +268,23 @@ public class DataController extends HttpServlet {
 				response.getWriter().print(error);
 			}
 
-		}	
-  }
-  
-  protected void tblSolution(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblSolution> solList = new ArrayList<TblSolution>();
+		}
+	}
+
+	protected void tblSolution(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
+			throws IOException {
+
+		List<TblSolution> solList = new ArrayList<TblSolution>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
 					solList = daoSolution.getAllSolutions(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoSolution.getSolutionCount();
+					// Get Total Record Count for Pagination
+					int userCount = daoSolution.getSolutionCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", solList);
@@ -254,12 +295,12 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblSolution sol = new TblSolution();
-					
-					//Set fields
+
+					// Set fields
 					if (request.getParameter("solutionId") != null) {
 						int solId = Integer.parseInt(request.getParameter("solutionId"));
 						sol.setSolutionId(solId);
-						
+
 					}
 
 					if (request.getParameter("solutionMarom") != null) {
@@ -271,13 +312,13 @@ public class DataController extends HttpServlet {
 						int rakia = Integer.parseInt(request.getParameter("solutionRakia"));
 						sol.setSolutionRakia(rakia);
 					}
-					
+
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						sol.setActive(active);
 					}
-					//end set fields
-					
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoSolution.addSolution(sol);
@@ -307,9 +348,7 @@ public class DataController extends HttpServlet {
 						String jsonArray = gson.toJson(JSONROOT);
 						response.getWriter().print(jsonArray);
 					}
-				}
-				else if (action.equals("excel"))
-				{
+				} else if (action.equals("excel")) {
 					// Export to excel
 					solList = daoSolution.getAllSolutions();
 					// Return in the format required by jTable plugin
@@ -327,23 +366,23 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
-  
-  protected void tblIncident(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblIncident> inciList = new ArrayList<TblIncident>();
+		}
+	}
+
+	protected void tblIncident(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
+			throws IOException {
+
+		List<TblIncident> inciList = new ArrayList<TblIncident>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
 					inciList = daoIncident.getAllIncidents(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoIncident.getIncidentCount();
+					// Get Total Record Count for Pagination
+					int userCount = daoIncident.getIncidentCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", inciList);
@@ -355,11 +394,11 @@ public class DataController extends HttpServlet {
 				} else if (action.equals("create") || action.equals("update")) {
 					TblIncident inci = new TblIncident();
 
-					//Set fields
+					// Set fields
 					if (request.getParameter("incidentId") != null) {
 						byte inciId = Byte.parseByte(request.getParameter("incidentId"));
 						inci.setIncidentId(inciId);
-						
+
 					}
 
 					if (request.getParameter("ciId") != null) {
@@ -371,18 +410,18 @@ public class DataController extends HttpServlet {
 						int inciTime = Integer.parseInt(request.getParameter("incidentTime"));
 						inci.setIncidentTime(inciTime);
 					}
-					
+
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						inci.setIsActive(active);
 					}
-					
+
 					if (request.getParameter("solutionId") != null) {
 						int solId = Integer.parseInt(request.getParameter("solutionId"));
 						inci.setSolutionId(solId);
 					}
-					//end set fields
-					
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoIncident.addIncident(inci);
@@ -412,9 +451,7 @@ public class DataController extends HttpServlet {
 						String jsonArray = gson.toJson(JSONROOT);
 						response.getWriter().print(jsonArray);
 					}
-				}
-				else if (action.equals("excel"))
-				{
+				} else if (action.equals("excel")) {
 					// Export to excel
 					inciList = daoIncident.getAllIncidents();
 					// Return in the format required by jTable plugin
@@ -432,23 +469,23 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
-  
-  protected void tblPriorityCost(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblPriority_Cost> pcList = new ArrayList<TblPriority_Cost>();
+		}
+	}
+
+	protected void tblPriorityCost(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
+			throws IOException {
+
+		List<TblPriority_Cost> pcList = new ArrayList<TblPriority_Cost>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
 					pcList = daoPriorityCost.getAllPriorityCost(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoPriorityCost.getPriorityCostCount();
+					// Get Total Record Count for Pagination
+					int userCount = daoPriorityCost.getPriorityCostCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", pcList);
@@ -459,12 +496,12 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblPriority_Cost pc = new TblPriority_Cost();
-					
-					//Set fields
+
+					// Set fields
 					if (request.getParameter("pName") != null) {
 						String pName = request.getParameter("pName");
 						pc.setPName(pName);
-						
+
 					}
 
 					if (request.getParameter("pCost") != null) {
@@ -476,9 +513,9 @@ public class DataController extends HttpServlet {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						pc.setIsActive(active);
 					}
-					
-					//end set fields
-					
+
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoPriorityCost.addPriorityCost(pc);
@@ -508,9 +545,7 @@ public class DataController extends HttpServlet {
 						String jsonArray = gson.toJson(JSONROOT);
 						response.getWriter().print(jsonArray);
 					}
-				}
-				else if (action.equals("excel"))
-				{
+				} else if (action.equals("excel")) {
 					// Export to excel
 					pcList = daoPriorityCost.getAllPriorityCost();
 					// Return in the format required by jTable plugin
@@ -528,23 +563,23 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
-  
-  protected void tblService(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblService> serviceList = new ArrayList<TblService>();
+		}
+	}
+
+	protected void tblService(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
+			throws IOException {
+
+		List<TblService> serviceList = new ArrayList<TblService>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
 					serviceList = daoService.getAllServices(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoService.getServiceCount();
+					// Get Total Record Count for Pagination
+					int userCount = daoService.getServiceCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", serviceList);
@@ -555,8 +590,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblService ser = new TblService();
-					
-					//Set fields
+
+					// Set fields
 					if (request.getParameter("serviceId") != null) {
 						byte sId = Byte.parseByte(request.getParameter("serviceId"));
 						ser.setServiceId(sId);
@@ -566,7 +601,7 @@ public class DataController extends HttpServlet {
 						double fixedC = Double.parseDouble(request.getParameter("fixedCost"));
 						ser.setFixedCost(fixedC);
 					}
-					
+
 					if (request.getParameter("fixedIncome") != null) {
 						double fixedI = Double.parseDouble(request.getParameter("fixedIncome"));
 						ser.setFixedIncome(fixedI);
@@ -576,44 +611,44 @@ public class DataController extends HttpServlet {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						ser.setIsActive(active);
 					}
-					
+
 					if (request.getParameter("isTechnical") != null) {
 						Boolean tech = Boolean.parseBoolean(request.getParameter("isTechnical"));
 						ser.setIsTechnical(tech);
 					}
-					
+
 					if (request.getParameter("serviceCode") != null) {
 						String code = request.getParameter("serviceCode");
 						ser.setServiceCode(code);
 					}
-					
+
 					if (request.getParameter("serviceName") != null) {
 						String name = request.getParameter("serviceName");
 						ser.setServiceName(name);
 					}
-					
+
 					if (request.getParameter("supplierLevel2") != null) {
 						String level2 = request.getParameter("supplierLevel2");
 						ser.setSupplierLevel2(level2);
 					}
-					
+
 					if (request.getParameter("supplierLevel3") != null) {
 						String level3 = request.getParameter("supplierLevel3");
 						ser.setSupplierLevel3(level3);
 					}
-					
+
 					if (request.getParameter("urgency") != null) {
 						String urgency = request.getParameter("urgency");
 						ser.setUrgency(urgency);
 					}
-					
+
 					if (request.getParameter("impact") != null) {
 						String im = request.getParameter("impact");
 						ser.setImpact(im);
 					}
-					
-					//end set fields
-					
+
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoService.addService(ser);
@@ -643,9 +678,7 @@ public class DataController extends HttpServlet {
 						String jsonArray = gson.toJson(JSONROOT);
 						response.getWriter().print(jsonArray);
 					}
-				}
-				else if (action.equals("excel"))
-				{
+				} else if (action.equals("excel")) {
 					// Export to excel
 					serviceList = daoService.getAllServices();
 					// Return in the format required by jTable plugin
@@ -663,23 +696,23 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
-  
-  protected void tblServiceDepartment(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblService_Department> serDepList = new ArrayList<TblService_Department>();
+		}
+	}
+
+	protected void tblServiceDepartment(String action, HttpServletRequest request, HttpServletResponse response,
+			Gson gson) throws IOException {
+
+		List<TblService_Department> serDepList = new ArrayList<TblService_Department>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
-			        serDepList = daoServiceDepartment.getAllServiceDepartments(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoServiceDepartment.getServiceDepartmentCount();
+					serDepList = daoServiceDepartment.getAllServiceDepartments(startPageIndex, recordsPerPage);
+					// Get Total Record Count for Pagination
+					int userCount = daoServiceDepartment.getServiceDepartmentCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", serDepList);
@@ -690,31 +723,31 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblService_Department ser = new TblService_Department();
-					
-					//Set fields
+
+					// Set fields
 					if (request.getParameter("service_ID") != null) {
 						byte serId = Byte.parseByte(request.getParameter("service_ID"));
 						ser.setService_ID(serId);
-						
+
 					}
 
 					if (request.getParameter("departmentName") != null) {
 						String departmentName = request.getParameter("departmentName");
 						ser.setDepartmentName(departmentName);
 					}
-					
+
 					if (request.getParameter("divisionName") != null) {
 						String divisionName = request.getParameter("divisionName");
 						ser.setDivisionName(divisionName);
 					}
-					
+
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						ser.setIsActive(active);
 					}
 
-					//end set fields
-					
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoServiceDepartment.addServiceDepartment(ser);
@@ -749,22 +782,21 @@ public class DataController extends HttpServlet {
 								pk.setService_ID(serId);
 								pk.setDepartmentName(departmentName);
 								pk.setDivisionName(divisionName);
-								
+
 								daoServiceDepartment.deleteServiceDepartment(pk);
 
-								// Return in the format required by jTable plugin
+								// Return in the format required by jTable
+								// plugin
 								JSONROOT.put("Result", "OK");
 
 								// Convert Java Object to Json
 								String jsonArray = gson.toJson(JSONROOT);
 								response.getWriter().print(jsonArray);
-								}
 							}
 						}
-					
-				}
-				else if (action.equals("excel"))
-				{
+					}
+
+				} else if (action.equals("excel")) {
 					// Export to excel
 					serDepList = daoServiceDepartment.getAllServiceDepartments();
 					// Return in the format required by jTable plugin
@@ -782,23 +814,23 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
-  
-  protected void tblServiceDivision(String action, HttpServletRequest request,
-		  HttpServletResponse response, Gson gson) throws IOException{
-	  
-	  List<TblService_Division> serDivList = new ArrayList<TblService_Division>();
+		}
+	}
+
+	protected void tblServiceDivision(String action, HttpServletRequest request, HttpServletResponse response,
+			Gson gson) throws IOException {
+
+		List<TblService_Division> serDivList = new ArrayList<TblService_Division>();
 		if (action != null) {
 			try {
 				if (action.equals("list")) {
 					// Fetch Data from User Table
-			        int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
-			        int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
+					int startPageIndex = Integer.parseInt(request.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request.getParameter("jtPageSize"));
 					// Fetch Data from Supplier Table
-			        serDivList = daoServiceDivision.getAllServiceDivisions(startPageIndex, recordsPerPage);
-			        // Get Total Record Count for Pagination
-			        int userCount = daoServiceDivision.getServiceDivisionCount();
+					serDivList = daoServiceDivision.getAllServiceDivisions(startPageIndex, recordsPerPage);
+					// Get Total Record Count for Pagination
+					int userCount = daoServiceDivision.getServiceDivisionCount();
 					// Return in the format required by jTable plugin
 					JSONROOT.put("Result", "OK");
 					JSONROOT.put("Records", serDivList);
@@ -809,26 +841,26 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("create") || action.equals("update")) {
 					TblService_Division ser = new TblService_Division();
-					
-					//Set fields
+
+					// Set fields
 					if (request.getParameter("service_ID") != null) {
 						byte serId = Byte.parseByte(request.getParameter("service_ID"));
 						ser.setService_ID(serId);
-						
+
 					}
-					
+
 					if (request.getParameter("divisionName") != null) {
 						String divisionName = request.getParameter("divisionName");
 						ser.setDivisionName(divisionName);
 					}
-					
+
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request.getParameter("isActive"));
 						ser.setIsActive(active);
 					}
 
-					//end set fields
-					
+					// end set fields
+
 					if (action.equals("create")) {
 						// Create new record
 						daoServiceDivision.addServiceDivision(ser);
@@ -853,26 +885,24 @@ public class DataController extends HttpServlet {
 					// Delete record
 					if (request.getParameter("service_ID") != null) {
 						byte serId = Byte.parseByte(request.getParameter("service_ID"));
-							if (request.getParameter("divisionName") != null) {
-								String divisionName = request.getParameter("divisionName");
-								TblService_DivisionPK pk = new TblService_DivisionPK();
-								pk.setService_ID(serId);
-								pk.setDivisionName(divisionName);
-								
-								daoServiceDivision.deleteServiceDivision(pk);
+						if (request.getParameter("divisionName") != null) {
+							String divisionName = request.getParameter("divisionName");
+							TblService_DivisionPK pk = new TblService_DivisionPK();
+							pk.setService_ID(serId);
+							pk.setDivisionName(divisionName);
 
-								// Return in the format required by jTable plugin
-								JSONROOT.put("Result", "OK");
+							daoServiceDivision.deleteServiceDivision(pk);
 
-								// Convert Java Object to Json
-								String jsonArray = gson.toJson(JSONROOT);
-								response.getWriter().print(jsonArray);
-								}
+							// Return in the format required by jTable plugin
+							JSONROOT.put("Result", "OK");
+
+							// Convert Java Object to Json
+							String jsonArray = gson.toJson(JSONROOT);
+							response.getWriter().print(jsonArray);
 						}
-					
-				}
-				else if (action.equals("excel"))
-				{
+					}
+
+				} else if (action.equals("excel")) {
 					// Export to excel
 					serDivList = daoServiceDivision.getAllServiceDivisions();
 					// Return in the format required by jTable plugin
@@ -890,8 +920,8 @@ public class DataController extends HttpServlet {
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
-		}	
-  }
+		}
+	}
 
 	protected void tblCIs(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
@@ -918,7 +948,7 @@ public class DataController extends HttpServlet {
 				} else if (action.equals("create") || action.equals("update")) {
 					TblCI ci = new TblCI();
 					Byte ciId = null;
-					
+
 					// Set fields
 					if (request.getParameter("CI_name") != null) {
 						String CI_name = request.getParameter("CI_name");
@@ -934,12 +964,12 @@ public class DataController extends HttpServlet {
 						Boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
 						ci.setIsActive(isActive);
 					}
-					
+
 					if (request.getParameter("supplierName1") != null) {
 						String supName1 = request.getParameter("supplierName1");
 						ci.setSupplierName1(supName1);
 					}
-					
+
 					if (request.getParameter("supplierName2") != null) {
 						String supName2 = request.getParameter("supplierName2");
 						ci.setSupplierName2(supName2);
@@ -952,7 +982,7 @@ public class DataController extends HttpServlet {
 					} else if (action.equals("update")) {
 						// Update existing record
 						byte id = Byte.parseByte(request.getParameter("jtRecordKey_ciId"));
-						daoCI.updateCI(ci,id);
+						daoCI.updateCI(ci, id);
 					}
 
 					// Return in the format required by jTable plugin
@@ -995,7 +1025,7 @@ public class DataController extends HttpServlet {
 			}
 		}
 	}
-	
+
 	protected void tblCMDBs(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
 
@@ -1096,7 +1126,7 @@ public class DataController extends HttpServlet {
 			}
 		}
 	}
-	
+
 	protected void tblDepartments(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
 
@@ -1149,7 +1179,7 @@ public class DataController extends HttpServlet {
 						String div = request.getParameter("jtRecordKey_divisionName");
 						pk.setDepartmentName(dep);
 						pk.setDevisionName(div);
-						daoDepartment.updateDepartment(department,pk);
+						daoDepartment.updateDepartment(department, pk);
 					}
 
 					// Return in the format required by jTable plugin
@@ -1161,7 +1191,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("delete")) {
 					// Delete record
-					if (request.getParameter("departmentName") != null && request.getParameter("divisionName") != null) {
+					if (request.getParameter("departmentName") != null
+							&& request.getParameter("divisionName") != null) {
 						String departmentName = request.getParameter("departmentName");
 						String divisionName = request.getParameter("divisionName");
 						pk.setDepartmentName(departmentName);
@@ -1195,7 +1226,7 @@ public class DataController extends HttpServlet {
 			}
 		}
 	}
-	
+
 	protected void tblDivisions(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
 
@@ -1284,7 +1315,7 @@ public class DataController extends HttpServlet {
 			}
 		}
 	}
-	
+
 	protected void tblEvents(String action, HttpServletRequest request, HttpServletResponse response, Gson gson)
 			throws IOException {
 
@@ -1321,7 +1352,7 @@ public class DataController extends HttpServlet {
 						Byte incidentId = Byte.parseByte(request.getParameter("incidentId"));
 						event.setIncidentId(incidentId);
 					}
-					
+
 					if (request.getParameter("serviceId") != null) {
 						Byte serviceId = Byte.parseByte(request.getParameter("serviceId"));
 						event.setServiceId(serviceId);
@@ -1383,5 +1414,37 @@ public class DataController extends HttpServlet {
 		}
 	}
 
-}// end class
+	private <T> JSONArray toOptionArray(List<T> table, String key, String display) {
+		
+		JSONArray optionArray = new JSONArray();
+		Class<? extends Object> objClass = table.get(0).getClass();
+		Field keyField;
+		Field displayField;
+		String keyResult;
+		String displayResult;
+		
+		try {
+			keyField = objClass.getDeclaredField(key);
+			displayField = objClass.getDeclaredField(display);
 
+			keyField.setAccessible(true);
+			displayField.setAccessible(true);
+
+			for (T record : table) {
+				keyResult = keyField.get(record).toString();
+				displayResult = displayField.get(record).toString();
+				
+				JSONObject option = new JSONObject();
+				option.put("DisplayText", displayResult);
+				option.put("Value", keyResult);
+				optionArray.add(option);
+			}
+			
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return optionArray;
+	}
+
+}// end class

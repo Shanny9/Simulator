@@ -34,8 +34,6 @@ public class TblCI implements Serializable {
 
 	public TblCI() {
 	}
-
-	
 	
 	public String getSupplierName1() {
 		return supplierName1;

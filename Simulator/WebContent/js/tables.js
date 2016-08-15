@@ -3,11 +3,11 @@
  */
 $(document).ready(function() {
 	
-//	supplierTable();
+	supplierTable();
 //	incidentTable();
 //	solutionTable();
 //	priorityCostTable();
-	serviceTable();
+//	serviceTable();
 //	serviceDepTable();
 //	serviceDivTable();
 //	ciTable();
@@ -90,12 +90,14 @@ function supplierTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					inputClass: 'validate[required,maxSize[20]]'
 				},
 				solutionCost : {
 					title : 'Solution Cost',
 					width : '25%',
-					edit : true
+					edit : true,
+					inputClass: 'validate[required,custom[number],min[0],max[1.7976931348623157E+308]]'
 				},
 				isActive : {
 					title : 'Active?',
@@ -110,12 +112,25 @@ function supplierTable(){
 					edit : true
 				}
 			},
-			formCreated: function (event, data) {
-				data.form.find('[name=supplierName]').attr('maxlength','20');
-				data.form.find('[name=solutionCost]').attr('type','number');
-				data.form.find('[name=solutionCost]').attr('min','0');
-				data.form.find('[name=solutionCost]').attr('max','1.7976931348623157E+308');				
-		    }
+            //Initialize validation logic when a form is created
+            formCreated: function (event, data) {
+                data.form.validationEngine();
+                data.form.find('[name=supplierName]').attr('maxlength','20');
+            },
+            //Validate form when it is being submitted
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            //Dispose validation logic when form is closed
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+//			formCreated: function (event, data) {
+//				data.form.find('[name=solutionCost]').attr('type','number');
+//				data.form.find('[name=solutionCost]').attr('min','0');
+//				data.form.find('[name=solutionCost]').attr('max','1.7976931348623157E+308');				
+//		    }
 		});
 		$('#tableContainer').jtable('load');
 }
@@ -194,7 +209,8 @@ function incidentTable(){
 				key : true,
 				list : true,
 				edit : false,
-				create : true
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
 			},
 			incidentTime : {
 				title : 'Incident Time',
@@ -214,12 +230,26 @@ function incidentTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=incidentId]').attr('maxlength','3');
-			data.form.find('[name=incidentId]').attr('type','number');
-			data.form.find('[name=incidentId]').attr('min','1');
-			data.form.find('[name=incidentId]').attr('max','255');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=incidentId]').attr('maxlength','3');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+//		formCreated: function (event, data) {
+//			
+//			data.form.find('[name=incidentId]').attr('type','number');
+//			data.form.find('[name=incidentId]').attr('min','1');
+//			data.form.find('[name=incidentId]').attr('max','255');
+//	    }
 	    
 	});
 	$('#tableContainer').jtable('load');
@@ -320,19 +350,35 @@ function solutionTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=solutionId]').attr('maxlength','10');
-			data.form.find('[name=solutionId]').attr('type','number');
-			data.form.find('[name=solutionId]').attr('min','1');
-			
-			data.form.find('[name=solutionMarom]').attr('maxlength','11');
-			data.form.find('[name=solutionMarom]').attr('type','number');
-			data.form.find('[name=solutionMarom]').attr('min','1');
-			
-			data.form.find('[name=solutionRakia]').attr('maxlength','11');
-			data.form.find('[name=solutionRakia]').attr('type','number');
-			data.form.find('[name=solutionRakia]').attr('min','1');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=solutionId]').attr('maxlength','10');
+            data.form.find('[name=solutionMarom]').attr('maxlength','11');
+            data.form.find('[name=solutionRakia]').attr('maxlength','11');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+//		formCreated: function (event, data) {
+//			
+//			data.form.find('[name=solutionId]').attr('type','number');
+//			data.form.find('[name=solutionId]').attr('min','1');
+//			
+//			
+//			data.form.find('[name=solutionMarom]').attr('type','number');
+//			data.form.find('[name=solutionMarom]').attr('min','1');
+//			
+//			
+//			data.form.find('[name=solutionRakia]').attr('type','number');
+//			data.form.find('[name=solutionRakia]').attr('min','1');
+//	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -428,12 +474,25 @@ function priorityCostTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=solutionId]').attr('maxlength','10');
-			data.form.find('[name=solutionId]').attr('type','number');
-			data.form.find('[name=solutionId]').attr('min','0');
-			data.form.find('[name=solutionId]').attr('max','1.7976931348623157E+308');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=solutionId]').attr('maxlength','10');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+//		formCreated: function (event, data) {		
+//			data.form.find('[name=solutionId]').attr('type','number');
+//			data.form.find('[name=solutionId]').attr('min','0');
+//			data.form.find('[name=solutionId]').attr('max','1.7976931348623157E+308');
+//	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -513,23 +572,27 @@ function serviceTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,custom[integer],min[1]]'
+				inputClass: 'validate[required,custom[integer],min[1],max[255]]'
 			},
 			serviceCode : {
 				title : 'Code',
-				edit : true
+				edit : true,
+				inputClass: 'validate[maxSize[15]]'
 			},
 			serviceName : {
 				title : 'Name',
-				edit : true
+				edit : true,
+				inputClass: 'validate[maxSize[60]]'
 			},
 			fixedCost : {
 				title : 'Fixed Cost',
-				edit : true
+				edit : true,
+				inputClass: 'validate[required,custom[number],min[0],max[1.7976931348623157E+308]]'
 			},
 			fixedIncome : {
 				title : 'Fixed Income',
-				edit : true
+				edit : true,
+				inputClass: 'validate[required,custom[number],min[0],max[1.7976931348623157E+308]]'
 			},
 			isTechnical : {
 				title : 'Technical?',
@@ -563,7 +626,23 @@ function serviceTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=serviceId]').attr('maxlength','3');
+            data.form.find('[name=serviceCode]').attr('maxlength','15');
+            data.form.find('[name=serviceName]').attr('maxlength','60');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+//		formCreated: function (event, data) {
 //			data.form.find('[name=serviceId]').attr('maxlength','3');
 //			data.form.find('[name=serviceId]').attr('type','number');
 //			data.form.find('[name=serviceId]').attr('min','1');
@@ -580,7 +659,7 @@ function serviceTable(){
 			data.form.find('[name=fixedIncome]').attr('type','number');
 			data.form.find('[name=fixedIncome]').attr('min','0');
 			data.form.find('[name=fixedIncome]').attr('max','1.7976931348623157E+308');*/
-	    }
+//	    }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -685,9 +764,21 @@ function serviceTable(){
 					edit : true
 				}
 			},
-			formCreated: function (event, data) {
-				data.form.find('[name=serviceId]').attr('maxlength','3');
-		    }
+            //Initialize validation logic when a form is created
+            formCreated: function (event, data) {
+                data.form.validationEngine();
+                data.form.find('[name=serviceId]').attr('maxlength','3');
+            },
+            //Validate form when it is being submitted
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            //Dispose validation logic when form is closed
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+
 		});
 		$('#tableContainer').jtable('load');
 	}
@@ -784,7 +875,20 @@ function serviceTable(){
 					options: { '1': 'Yes','0': 'No' },
 					edit : true
 				}
-			}
+			},
+            //Initialize validation logic when a form is created
+            formCreated: function (event, data) {
+                data.form.validationEngine();
+            },
+            //Validate form when it is being submitted
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            //Dispose validation logic when form is closed
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
 		});
 		$('#tableContainer').jtable('load');
 	}
@@ -890,10 +994,22 @@ function ciTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
 			data.form.find('[name=ciId]').attr('maxlength','3');
 			data.form.find('[name=CI_name]').attr('maxlength','60');
-	    }
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -987,7 +1103,20 @@ function CMDBTable(){
                 defaultValue: 'true',
 				edit : true
 			}
-		}
+		},
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1085,9 +1214,21 @@ function departmentTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=departmentName]').attr('maxlength','25');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=departmentName]').attr('maxlength','25');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1177,9 +1318,20 @@ function divisionTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=devisionName]').attr('maxlength','25');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=devisionName]').attr('maxlength','25');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
 	});
 	$('#tableContainer').jtable('load');
 }
@@ -1279,9 +1431,21 @@ function eventTable(){
 				edit : true
 			}
 		},
-		formCreated: function (event, data) {
-			data.form.find('[name=eventId]').attr('maxlength','10');
-	    }
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=eventId]').attr('maxlength','10');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+
 	});
 	$('#tableContainer').jtable('load');
 }

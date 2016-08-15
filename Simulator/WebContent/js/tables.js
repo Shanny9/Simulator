@@ -214,7 +214,8 @@ function incidentTable(){
 			},
 			incidentTime : {
 				title : 'Incident Time',
-				edit : true
+				edit : true,
+				inputClass: 'validate[required]'
 			},
 			ciId : {
 				title : 'Configuration Item',
@@ -330,17 +331,20 @@ function solutionTable(){
 				key : true,
 				list : true,
 				edit : true,
-				create : true
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1],maxSize[10]]'
 			},
 			solutionMarom : {
 				title : 'Marom',
 				width : '25%',
-				edit : true
+				edit : true,
+				inputClass: 'validate[custom[integer],min[1],maxSize[11]]'
 			},
 			solutionRakia : {
 				title : 'Rakia',
 				width : '20%',
-				edit : true
+				edit : true,
+				inputClass: 'validate[custom[integer],min[1],maxSize[11]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -458,13 +462,14 @@ function priorityCostTable(){
 				key : true,
 				list : true,
 				edit : true,
-//				options: { 'Low': 'Low', 'Medium': 'Medium', 'High': 'High','Critical': 'Critical','Major': 'Major'},
-				create : true
+				create : true,
+				//foreign key dropdown
 			},
 			pCost : {
 				title : 'Cost',
 				width : '25%',
-				edit : true
+				edit : true,
+				inputClass: 'validate[required,custom[number],min[0],max[1.7976931348623157E+308]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -477,7 +482,6 @@ function priorityCostTable(){
         //Initialize validation logic when a form is created
         formCreated: function (event, data) {
             data.form.validationEngine();
-            data.form.find('[name=solutionId]').attr('maxlength','10');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -489,9 +493,9 @@ function priorityCostTable(){
             data.form.validationEngine('detach');
         }
 //		formCreated: function (event, data) {		
-//			data.form.find('[name=solutionId]').attr('type','number');
-//			data.form.find('[name=solutionId]').attr('min','0');
-//			data.form.find('[name=solutionId]').attr('max','1.7976931348623157E+308');
+//			data.form.find('[name=pCost]').attr('type','number');
+//			data.form.find('[name=pCost]').attr('min','0');
+//			data.form.find('[name=pCost]').attr('max','1.7976931348623157E+308');
 //	    }
 	});
 	$('#tableContainer').jtable('load');
@@ -738,7 +742,8 @@ function serviceTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					
 				},
 				departmentName : {
 					title : 'Department Name',
@@ -759,7 +764,7 @@ function serviceTable(){
 				isActive : {
 					title : 'Active?',
 					width : '25%',
-		//			type : 'checkbox',
+					type : 'checkbox',
 					options: { '1': 'Yes','0': 'No' },
 					edit : true
 				}
@@ -871,8 +876,8 @@ function serviceTable(){
 				isActive : {
 					title : 'Active?',
 					width : '25%',
-		//			type : 'checkbox',
-					options: { '1': 'Yes','0': 'No' },
+					type : 'checkbox',
+					values: { 'false': 'No', 'true': 'Yes' },
 					edit : true
 				}
 			},
@@ -968,12 +973,14 @@ function ciTable(){
 				key : true,
 				list : true,
 				edit : false,
-				create : true
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
 			},
 			CI_name : {
 				title : 'Name',
 //				width : '25%',
-				edit : true
+				edit : true,
+				inputClass: 'validate[maxSize[60]]'
 			},
 			supplierName1 : { //supplier level 2
 				title : 'Supplier Level 2',
@@ -1195,10 +1202,11 @@ function departmentTable(){
 				key : true,
 				list : true,
 				edit : true,
-				create : true
+				create : true,
+				inputClass: 'validate[required,maxSize[25]]'
 			},
 			devisionName : {
-				title : 'Devision Name',
+				title : 'Division Name',
 				key : true,
 //				width : '25%',
 				list : true,
@@ -1302,12 +1310,13 @@ function divisionTable(){
 	    },
 		fields : {
 			devisionName : {
-				title : 'Devision Name',
+				title : 'Division Name',
 				key : true,
 //				width : '25%',
 				list : true,
 				edit : true,
-				create : true
+				create : true,
+				inputClass: 'validate[required,maxSize[25]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1339,7 +1348,7 @@ function divisionTable(){
 function eventTable(){
 	
 	$('#tableContainer').jtable({
-		title : 'Departments List',
+		title : 'Event List',
 		paging: true, //Set paging enabled
 		pageSize: 7, //Set page size
 		pageSizes: [7,10,20],
@@ -1409,6 +1418,7 @@ function eventTable(){
 				key : true,
 //				width : '25%',
 				edit : true,
+				inputClass: 'validate[required,custom[integer],maxSize[10]]'
 			},
 			incidentId : {
 				title : 'Incident ID',

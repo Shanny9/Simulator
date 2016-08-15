@@ -20,8 +20,8 @@ function supplierTable(){
 		$('#tableContainer').jtable({
 			title : 'Suppliers List',
 			paging: true, //Set paging enabled
-			pageSize: 7, //Set page size
-			pageSizes: [7,10,15],
+			pageSize: 10, //Set page size
+			pageSizes: [10,15,20],
 			selecting: true,
 			selectingCheckboxes: true,
 			multiselect: true,
@@ -125,8 +125,8 @@ function incidentTable(){
 	$('#tableContainer').jtable({
 		title : 'Incidents List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,15],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -202,7 +202,8 @@ function incidentTable(){
 			},
 			ciId : {
 				title : 'Configuration Item',
-				edit : true
+				edit : true,
+				options: 'DataController?options=ci'
 			},
 			solutionId : {
 				title : 'Solution',
@@ -230,8 +231,8 @@ function solutionTable(){
 	$('#tableContainer').jtable({
 		title : 'Solution List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,15],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -342,8 +343,8 @@ function priorityCostTable(){
 	$('#tableContainer').jtable({
 		title : 'Priority List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,15],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -443,8 +444,8 @@ function serviceTable(){
 	$('#tableContainer').jtable({
 		title : 'Service List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,15],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -535,7 +536,7 @@ function serviceTable(){
 				title : 'Technical?',
 				type: 'checkbox',
                 values: { 'false': 'No', 'true': 'Yes' },
-//                defaultValue: 'true',
+                defaultValue: 'false',
 				edit : true
 			},
 			supplierLevel2 : {
@@ -589,8 +590,8 @@ function serviceTable(){
 		$('#tableContainer').jtable({
 			title : 'Service-Department List',
 			paging: true, //Set paging enabled
-			pageSize: 7, //Set page size
-			pageSizes: [7,10,15],
+			pageSize: 10, //Set page size
+			pageSizes: [10,15,20],
 			selecting: true,
 			selectingCheckboxes: true,
 			multiselect: true,
@@ -697,8 +698,8 @@ function serviceTable(){
 		$('#tableContainer').jtable({
 			title : 'Service-Division List',
 			paging: true, //Set paging enabled
-			pageSize: 7, //Set page size
-			pageSizes: [7,10,15],
+			pageSize: 10, //Set page size
+			pageSizes: [10,15,20],
 			selecting: true,
 			selectingCheckboxes: true,
 			multiselect: true,
@@ -794,8 +795,8 @@ function ciTable(){
 	$('#tableContainer').jtable({
 		title : 'Configuration Items List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,20],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -903,8 +904,8 @@ function CMDBTable(){
 	$('#tableContainer').jtable({
 		title : 'Configuration Items Management List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,20],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -997,8 +998,8 @@ function departmentTable(){
 	$('#tableContainer').jtable({
 		title : 'Departments List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,20],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -1097,8 +1098,8 @@ function divisionTable(){
 	$('#tableContainer').jtable({
 		title : 'Departments List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,20],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,
@@ -1189,8 +1190,8 @@ function eventTable(){
 	$('#tableContainer').jtable({
 		title : 'Departments List',
 		paging: true, //Set paging enabled
-		pageSize: 7, //Set page size
-		pageSizes: [7,10,20],
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
 		selecting: true,
 		selectingCheckboxes: true,
 		multiselect: true,

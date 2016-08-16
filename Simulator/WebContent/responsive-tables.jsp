@@ -4,12 +4,27 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
         <title> ModularAdmin - Free Dashboard Theme | HTML Version </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/vendor.css">
+        
+        
+		        <!-- Include one of jTable styles. -->
+		<link href="css/metro/blue/jtable.css" rel="stylesheet" type="text/css" />
+		<link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+		
+		<link href="css/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
+		
+<style>
+.ui-dialog{
+	min-width:350px;
+}
+</style>
+        
         <!-- Theme initialization -->
         <script>
             var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
@@ -24,6 +39,31 @@
                 document.write('<link rel="stylesheet" id="theme-style" href="css/app.css">');
             }
         </script>
+        
+         <script src="js/vendor.js"></script>
+        <script src="js/app.js"></script>
+        
+        <!-- Include jTable script file. -->
+		<script src="js/jquery-1.8.2.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.jtable.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.jtable.editinline.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.jtable.toolbarsearch.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/exportToExcel.js" type="text/javascript" charset="utf-8"></script>
+		
+		<!-- Include Validator Engine files -->
+		<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script src="js/tables.js"></script>
+		        
+	<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+	%>        
+		        
     </head>
 
     <body>
@@ -273,194 +313,13 @@
                 <article class="content responsive-tables-page">
                     <div class="title-block">
                         <h1 class="title">
-		Responsive Tables
-	</h1>
+							Responsive Tables
+						</h1>
                         <p class="title-description"> When blocks aren't enough </p>
                     </div>
-                    <section class="section">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-block">
-                                        <div class="card-title-block">
-                                            <h3 class="title">
-							Responsive simple
-						</h3> </div>
-                                        <section class="example">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-bordered table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Table heading</th>
-                                                            <th>Table heading</th>
-                                                            <th>Table heading</th>
-                                                            <th>Table heading</th>
-                                                            <th>Table heading</th>
-                                                            <th>Table heading</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                            <td>Table cell</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </section>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <section class="section" id="tableContainer">
                     </section>
-                    <section class="section">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-block">
-                                        <div class="card-title-block">
-                                            <h3 class="title">
-							Responsive flip-scroll
-						</h3> </div>
-                                        <section class="example">
-                                            <div class="table-flip-scroll">
-                                                <table class="table table-striped table-bordered table-hover flip-content">
-                                                    <thead class="flip-header">
-                                                        <tr>
-                                                            <th>Rendering engine</th>
-                                                            <th>Browser</th>
-                                                            <th>Platform(s)</th>
-                                                            <th>Engine version</th>
-                                                            <th>CSS grade</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr class="odd gradeX">
-                                                            <td>Trident</td>
-                                                            <td>Internet Explorer 4.0</td>
-                                                            <td>Win 95+</td>
-                                                            <td class="center">4</td>
-                                                            <td class="center">X</td>
-                                                        </tr>
-                                                        <tr class="even gradeC">
-                                                            <td>Trident</td>
-                                                            <td>Internet Explorer 5.0</td>
-                                                            <td>Win 95+</td>
-                                                            <td class="center">5</td>
-                                                            <td class="center">C</td>
-                                                        </tr>
-                                                        <tr class="odd gradeA">
-                                                            <td>Trident</td>
-                                                            <td>Internet Explorer 5.5</td>
-                                                            <td>Win 95+</td>
-                                                            <td class="center">5.5</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="even gradeA">
-                                                            <td>Trident</td>
-                                                            <td>Internet Explorer 6</td>
-                                                            <td>Win 98+</td>
-                                                            <td class="center">6</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="odd gradeA">
-                                                            <td>Trident</td>
-                                                            <td>Internet Explorer 7</td>
-                                                            <td>Win XP SP2+</td>
-                                                            <td class="center">7</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="even gradeA">
-                                                            <td>Trident</td>
-                                                            <td>AOL browser (AOL desktop)</td>
-                                                            <td>Win XP</td>
-                                                            <td class="center">6</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Firefox 1.0</td>
-                                                            <td>Win 98+ / OSX.2+</td>
-                                                            <td class="center">1.7</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Firefox 1.5</td>
-                                                            <td>Win 98+ / OSX.2+</td>
-                                                            <td class="center">1.8</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Firefox 2.0</td>
-                                                            <td>Win 98+ / OSX.2+</td>
-                                                            <td class="center">1.8</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Firefox 3.0</td>
-                                                            <td>Win 2k+ / OSX.3+</td>
-                                                            <td class="center">1.9</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Camino 1.0</td>
-                                                            <td>OSX.2+</td>
-                                                            <td class="center">1.8</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                        <tr class="gradeA">
-                                                            <td>Gecko</td>
-                                                            <td>Camino 1.5</td>
-                                                            <td>OSX.3+</td>
-                                                            <td class="center">1.8</td>
-                                                            <td class="center">A</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </section>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                 
                 </article>
                 <footer class="footer">
                     <div class="footer-block buttons"> <iframe class="footer-github-btn" src="https://ghbtns.com/github-btn.html?user=modularcode&repo=modular-admin-html&type=star&count=true" frameborder="0" scrolling="0" width="140px" height="20px"></iframe> </div>
@@ -537,8 +396,7 @@
                 <div class="color-secondary"></div>
             </div>
         </div>
-        <script src="js/vendor.js"></script>
-        <script src="js/app.js"></script>
+
     </body>
 
 </html>

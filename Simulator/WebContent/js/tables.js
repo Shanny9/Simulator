@@ -3,11 +3,11 @@
  */
 $(document).ready(function() {
 	
-	supplierTable();
+//	supplierTable();
 //	incidentTable();
 //	solutionTable();
 //	priorityCostTable();
-//	serviceTable();
+	serviceTable();
 //	serviceDepTable();
 //	serviceDivTable();
 //	ciTable();

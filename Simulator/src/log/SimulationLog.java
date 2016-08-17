@@ -22,29 +22,29 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's incidents and their times (key=start_time,
 	 * value=incident_id)
 	 */
-	private static HashMap<Integer, Integer> incident_times;
+	private HashMap<Integer, Integer> incident_times;
 	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
 	 */
-	private static HashMap<Integer, HashSet<Integer>> affecting_cis;
+	private HashMap<Integer, HashSet<Integer>> affecting_cis;
 	/**
 	 * The simulation's map of services and their affecting CIs (key=service_id,
 	 * value=set of affecting CIs)
 	 */
-	private static HashMap<Integer, HashSet<Integer>> affected_services;
+	private HashMap<Integer, HashSet<Integer>> affected_services;
 	/**
 	 * The simulation's incidents and their events (key = incident_id, value=set of events)
 	 */
-	private static HashMap<Integer, HashSet<String>> incident_events;
+	private HashMap<Integer, HashSet<String>> incident_events;
 	/**
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
 	 */
-	private static HashMap<Integer, Double> ciSolCosts;
+	private HashMap<Integer, Double> ciSolCosts;
 	/**
 	 * The simulation's live queue of current solutions
 	 */
-	private static LinkedList<SolutionLog> solutionQueue;
+	private LinkedList<SolutionLog> solutionQueue;
 	/**
 	 * The current status of the simulation at the server
 	 */
@@ -56,15 +56,15 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * The current round
 	 */
-	private static int round;
+	private int round;
 	/**
 	 * The log of team Marom
 	 */
-	private static TeamLog marom;
+	private TeamLog marom;
 	/**
 	 * The log of team Rakia
 	 */
-	private static TeamLog rakia;
+	private TeamLog rakia;
 	/**
 	 * The Simulation log's instance
 	 */
@@ -77,7 +77,7 @@ public class SimulationLog extends Thread implements Serializable {
 	// TODO: fix this - should be calculated somehow
 	private static double mul = 1;
 
-	public static void initialize (String courseName) {
+	public void initialize (String courseName) {
 		
 		if (isInitialized){
 			return;
@@ -119,7 +119,7 @@ public class SimulationLog extends Thread implements Serializable {
 		isInitialized = true;
 	}
 	
-	public static void setRound(int currentRound){
+	public void setRound(int currentRound){
 		round = currentRound;
 	}
 	

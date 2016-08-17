@@ -54,7 +54,7 @@ public class SimulationTester implements Runnable {
 		nextRoundEnd = roundRunTime;
 
 		simLog = SimulationLog.getInstance();
-		SimulationLog.initialize(courseSettings.getCourseName());
+		simLog.initialize(courseSettings.getCourseName());
 
 		marom = simLog.getTeam(SimulationLog.MAROM);
 

@@ -276,6 +276,7 @@ public class TeamLog implements Serializable {
 
 	/**
 	 * @return The team's Mean Time to Restore Service (MTRS)
+	 * In case of no failures, returns 0
 	 */
 	public double getMTRS() {
 		int trs = 0;
@@ -285,7 +286,40 @@ public class TeamLog implements Serializable {
 			trs += sl.getTRS();
 			failures += sl.getNumOfFailures();
 		}
+
+		if (failures == 0) {
+			return 0;
+		}
 		return (double) trs / failures;
+	}
+
+	/**
+	 * @return The team's Mean Between Failures (MTBF)
+	 * In case of no failures, returns -1
+	 */
+	public double getMTBF() {
+		int tbf = 0;
+		int failures = 0;
+		for (ServiceLog sl : service_logs.values()) {
+			tbf += sl.getTotalUpTime();
+			failures += sl.getNumOfFailures();
+		}
+		if (failures == 0) {
+			return -1;
+		}
+
+		return (double) tbf / failures;
+	}
+	/**
+	 * @return the mean time of the team's availability percentage
+	 */
+	public double getUpTimePercentage() {
+		int sum = 0;
+
+		for (ServiceLog sl : service_logs.values()) {
+			sum += sl.getUpTimePercentage();
+		}
+		return (double) sum / service_logs.size();
 	}
 
 	public String toString() {

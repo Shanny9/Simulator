@@ -118,8 +118,20 @@ public class ServiceLog implements Serializable {
 			return (double) times.get(1);
 		}
 
-		int totalUpTime = times.size()-1 - getTRS();
-		return (double) totalUpTime / failures;
+		return (double) getTotalUpTime() / failures;
+	}
+	
+	public int getTotalUpTime(){
+		return times.size()-1 - getTRS();
+	}
+	
+	public double getUpTimePercentage(){
+		int failures = getNumOfFailures();
+		if (failures == 0) {
+			// returns the total up-time duration
+			return 1;
+		}
+		return (double) getTotalUpTime() / times.get(times.size()-1);
 	}
 
 	/**

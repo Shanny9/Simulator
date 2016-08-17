@@ -39,7 +39,7 @@ import utils.Queries;
 
 public class LogUtils {
 
-	public static String path = "";
+	private static String path = "";
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
 	private static final String filePrefix = "round#";
 	private static final boolean deleteHistory = true;
@@ -113,17 +113,17 @@ public class LogUtils {
 	public static void saveLog(String courseName, final int round) {
 		try {
 
-			File file = new File(path + File.separator + courseName + "/");
+			File file = new File(path + File.separator + courseName + File.separator);
 			file.mkdirs();
 
 			final String newFileName = generateFileName(round);
 
-			FileOutputStream fileOut = new FileOutputStream(path + courseName + newFileName);
+			FileOutputStream fileOut = new FileOutputStream(path + File.separator +courseName + File.separator + newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(SimulationLog.getInstance());
 			out.close();
 			fileOut.close();
-			System.out.printf("Log is saved in /tmp/log.ser");
+			System.out.printf("Log is saved");
 
 			if (deleteHistory) {
 				File[] matchingFiles = file.listFiles(new FilenameFilter() {
@@ -151,11 +151,16 @@ public class LogUtils {
 	 *            The round of the simulation
 	 * @return The simulation log given the course and the round
 	 */
-	public static SimulationLog openLog(String course, int round) {
+	public static SimulationLog openLog(String course, final int round) {
 		try {
-			String fileName = generateFileName(round);
-
-			FileInputStream fileIn = new FileInputStream(path + File.separator + course + File.separator + fileName);
+			File file = new File(path + File.separator + course);
+			File[] matchingFiles = file.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.startsWith(filePrefix + round) && name.endsWith("ser");
+				}
+			});
+			
+			FileInputStream fileIn = new FileInputStream(matchingFiles[0]);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
 			in.close();
@@ -433,5 +438,13 @@ public class LogUtils {
 			cnfe.printStackTrace();
 		}
 		return obj;
+	}
+	
+	public static void setPath(String pathToSet){
+		path = pathToSet;
+	}
+	
+	public static String getPath(){
+		return path;
 	}
 }

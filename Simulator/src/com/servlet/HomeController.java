@@ -69,7 +69,7 @@ public class HomeController extends HttpServlet {
 		// context.getResource("WEB-INF"+File.separator+"logs");
 		// LogUtils.path = resourceUrl.getPath();
 		// }
-		LogUtils.path = getServletContext().getRealPath(File.separator + "logs");
+		LogUtils.setPath(getServletContext().getRealPath(File.separator + "logs"));
 
 		// General settings
 		response.setCharacterEncoding("UTF-8");
@@ -79,7 +79,7 @@ public class HomeController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		// System.out.println("action= " + action);
-
+		System.out.println(vis_utils.DataMaker.getTeamMT("check",1));
 		switch (action) {
 
 		case "authenticate":
@@ -232,7 +232,7 @@ public class HomeController extends HttpServlet {
 
 	private boolean checkFile(String prefix, String course) {
 		final String p = prefix;
-		File file = new File(LogUtils.path + File.separator + course);
+		File file = new File(LogUtils.getPath() + File.separator + course);
 		if (file.exists() && file.isDirectory()) {
 
 			File[] settingsFiles = file.listFiles(new FilenameFilter() {

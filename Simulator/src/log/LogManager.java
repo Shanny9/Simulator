@@ -14,8 +14,8 @@ public class LogManager implements Runnable {
 		}
 
 		simLog = SimulationLog.getInstance();
-		SimulationLog.initialize(courseName);
-		SimulationLog.setRound(round);
+		simLog.initialize(courseName);
+		simLog.setRound(round);
 		
 		course = courseName;
 		

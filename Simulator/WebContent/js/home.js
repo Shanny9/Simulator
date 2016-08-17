@@ -1,4 +1,4 @@
-﻿﻿var client_time;
+﻿var client_time;
 var real_time;
 var offset;
 var runTime;

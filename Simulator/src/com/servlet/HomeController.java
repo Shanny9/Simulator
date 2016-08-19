@@ -79,7 +79,7 @@ public class HomeController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		// System.out.println("action= " + action);
-		System.out.println(vis_utils.DataMaker.getTeamMT("check",1));
+		System.out.println(vis_utils.DataMaker.getTeamMT("17-08-16",1));
 		switch (action) {
 
 		case "authenticate":

@@ -58,7 +58,8 @@ public class SimulationTester implements Runnable {
 
 		marom = simLog.getTeam(SimulationLog.MAROM);
 
-		HashMap<Integer, String> servicePriorities = LogUtils.getServicePriorities();
+		HashMap<Integer, String> servicePriorities = LogUtils
+				.getServicePriorities();
 		HashMap<String, Integer> priority_sla = settings.getPriority_sla();
 
 		solutions_schedule = new HashMap<>();
@@ -120,10 +121,14 @@ public class SimulationTester implements Runnable {
 			}
 
 			// 4. convert service to CI and solve it
-			Set<Integer> services_to_solve = solutions_schedule.entrySet().stream()
-					.filter(p -> p.getValue() == elapsed_time)
-					.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())).keySet();
-
+//			Set<Integer> services_to_solve = solutions_schedule.entrySet().stream()
+//					.filter(p -> p.getValue() == elapsed_time)
+//					.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())).keySet();
+			HashSet<Integer> services_to_solve = new HashSet<>();
+			for(Map.Entry<Integer, Integer> e:solutions_schedule.entrySet()) {
+				if(e.getValue().equals(elapsed_time))
+					services_to_solve.add(e.getKey());
+			}
 			if (services_to_solve != null && !services_to_solve.isEmpty()) {
 				Set<Integer> cis_to_solve = new HashSet<>();
 				for (Integer service : services_to_solve) {
@@ -140,7 +145,13 @@ public class SimulationTester implements Runnable {
 					// 5. un-schedule services that are up
 					for (Integer ci : cis_to_solve) {
 						HashSet<Integer> fixed_services = simLog.getAffectingCis().get(ci);
-						fixed_services.removeIf(s -> !marom.getService_logs().get(s).isUp());
+//						fixed_services.removeIf(s -> !marom.getService_logs().get(s).isUp());
+						HashSet<Integer> cloned_fixed_services = (HashSet<Integer>) fixed_services.clone();
+						for (Integer fs : cloned_fixed_services){
+							if (marom.getService_logs().get(fs).isUp()){
+								fixed_services.remove(fs);
+							}
+						}
 
 						if (fixed_services != null && !fixed_services.isEmpty()) {
 							for (Integer fixed_service : fixed_services) {

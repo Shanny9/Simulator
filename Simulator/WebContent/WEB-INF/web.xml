@@ -6,9 +6,10 @@
         </listener-class>
   </listener>
   <listener>
-  <listener-class>
+    <listener-class>
              utils.SessionCounterListener 
-        </listener-class></listener>
+        </listener-class>
+  </listener>
   <display-name>Home</display-name>
   <welcome-file-list>
     <welcome-file>opening.jsp</welcome-file>
@@ -22,17 +23,10 @@
     <servlet-name>DataController</servlet-name>
     <url-pattern>/DataController</url-pattern>
   </servlet-mapping>
-
-	<resource-ref>
-
-		<description>ITIL Simulator</description>
-
-		<res-ref-name>jdbc/SIMULATOR</res-ref-name>
-
-		<res-type>javax.sql.DataSource</res-type>
-
-		<res-auth>Container</res-auth>
-
-	</resource-ref>
-
+  <resource-ref>
+    <description>ITIL Simulator</description>
+    <res-ref-name>jdbc/SIMULATOR</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
 </web-app>

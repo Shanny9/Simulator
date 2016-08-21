@@ -1101,7 +1101,7 @@ li {
 				}
 			});
 		}
-		function setLineChart(serviceId){
+		function setLineChart(serviceId){ 
 //		$(document).ready(
 //				function() {
 					getMTBFforLineChart(serviceId);

@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Gentellela Alela! |</title>
+<title>Reports</title>
 
 <!-- Bootstrap -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -19,11 +19,14 @@
 <link href="css/iCheck-blue.css" rel="stylesheet">
 
 <!-- bootstrap-progressbar -->
-<link
+<!-- <link
 	href="../vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-	rel="stylesheet">
+	rel="stylesheet"> -->
 <!-- JQVMap -->
-<link href="../vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
+<!-- <link href="../vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" /> -->
+
+<!-- Select2 -->
+<link href="css/select2.min.css" rel="stylesheet">
 
 <!-- Custom Theme Style -->
 <link href="css/custom.min.css" rel="stylesheet">
@@ -56,7 +59,7 @@ li {
 					<div class="clearfix"></div>
 
 					<!-- menu profile quick info -->
-<!-- 					<div class="profile">
+					<!-- 					<div class="profile">
 						<div class="profile_pic">
 							<img src="images/img.jpg" alt="..."
 								class="img-circle profile_img">
@@ -316,13 +319,18 @@ li {
 									<h3>
 										Network Activities <small>Graph title sub-title</small>
 									</h3>
+									
+									<select  id="serviceSelection" style="min-width: 300px">
+									<option value=0>All Services</option>
+									</select>
 								</div>
 								<div class="col-md-6">
-									<div id="reportrange" class="pull-right"
-										style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-										<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span>December
-											30, 2014 - January 28, 2015</span> <b class="caret"></b>
-									</div>
+
+<!-- 										<div id="reportrange" class="pull-right"
+											style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span>December
+												30, 2014 - January 28, 2015</span> <b class="caret"></b>
+										</div> -->
 								</div>
 							</div>
 
@@ -335,12 +343,12 @@ li {
 								</div>
 							</div>
 							<div class="col-md-3 col-sm-3 col-xs-12 bg-white">
-								<div class="x_title">
-									<h2>Top Campaign Performance</h2>
+								<div id='mtbf-plot-legend' class="x_title">
+<!-- 									<h2>Top Campaign Performance</h2> -->
 									<div class="clearfix"></div>
 								</div>
 
-								<div class="col-md-12 col-sm-12 col-xs-6">
+<!-- 								<div class="col-md-12 col-sm-12 col-xs-6">
 									<div>
 										<p>Facebook Campaign</p>
 										<div class="">
@@ -379,7 +387,7 @@ li {
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 
 							</div>
 
@@ -1044,10 +1052,13 @@ li {
 	<script src="js/charts/jquery.flot.time.js"></script>
 	<script src="js/charts/jquery.flot.stack.js"></script>
 	<script src="js/charts/jquery.flot.resize.js"></script>
+
 	<!-- Flot plugins -->
 	<script src="js/charts/jquery.flot.orderBars.js"></script>
 	<script src="js/charts/jquery.flot.spline.min.js"></script>
 	<script src="js/charts/curvedLines.js"></script>
+	<script src="js/charts/jquery.flot.axislabels.js"></script>
+	<script src="js/charts/jquery.flot.tooltip.min.js"></script>
 	<!-- DateJS -->
 	<script src="js/charts/date.js"></script>
 	<!-- JQVMap -->
@@ -1055,27 +1066,57 @@ li {
 	<script src="js/charts/jquery.vmap.world.js"></script>
 	<script src="js/charts/jquery.vmap.sampledata.js"></script>
 	<!-- bootstrap-daterangepicker -->
-	<script src="js/moment/moment.min.js"></script>
-	<script src="js/datepicker/daterangepicker.js"></script>
+<!-- 	<script src="js/moment/moment.min.js"></script>
+	<script src="js/datepicker/daterangepicker.js"></script> -->
+
+	 <!-- Select2 -->
+    <script src="js/select2.full.js"></script>
 
 	<!-- Custom Theme Scripts -->
 	<script src="js/custom.min.js"></script>
 
 	<!-- Flot -->
 	<script>
-		$(document).ready(
-				function() {
-					var data1 = [ [ gd(2012, 1, 1), 17 ],
-							[ gd(2012, 1, 2), 74 ], [ gd(2012, 1, 3), 6 ],
-							[ gd(2012, 1, 4), 39 ], [ gd(2012, 1, 5), 20 ],
-							[ gd(2012, 1, 6), 85 ], [ gd(2012, 1, 7), 7 ] ];
+		var marom, rakia;
+		function getMTBFforLineChart(serviceId) { //has to be before select2 script
+			$('#serviceSelection option[value="0"]').attr("selected",true);
+			$.ajax({
+				url : "DashboardController",
+				data : {
+					action : "getMTBFforLineChart",
+					service : serviceId
+				},
+				dataType : "json",
+				async : false,
+				success : function(data) {
 
-					var data2 = [ [ gd(2012, 1, 1), 82 ],
-							[ gd(2012, 1, 2), 23 ], [ gd(2012, 1, 3), 66 ],
-							[ gd(2012, 1, 4), 9 ], [ gd(2012, 1, 5), 119 ],
-							[ gd(2012, 1, 6), 6 ], [ gd(2012, 1, 7), 9 ] ];
+					marom = data.maromData;
+					rakia = data.rakiaData;
+					console.log("data marom " + marom);
+					console.log("data rakia " + rakia);
+
+				},
+				error : function(e) {
+					console.log("Error in getMTBFforLineChart");
+				}
+			});
+		}
+		function setLineChart(serviceId){
+//		$(document).ready(
+//				function() {
+					getMTBFforLineChart(serviceId);
+					var data = [{
+							label: "Marom",
+							data: marom
+					},
+					{
+						label: "Rakia",
+						data: rakia
+					}
+					];
+
 					$("#canvas_dahs").length
-							&& $.plot($("#canvas_dahs"), [ data1, data2 ], {
+							&& $.plot($("#canvas_dahs"), data, {
 								series : {
 									lines : {
 										show : false,
@@ -1101,33 +1142,98 @@ li {
 									borderWidth : 1,
 									color : '#fff'
 								},
-								colors : [ "rgba(38, 185, 154, 0.38)",
-										"rgba(3, 88, 106, 0.38)" ],
+								colors : [ "rgba(52, 152, 219, 0.38)",
+										"rgba(38, 120, 174, 0.70)" ],
+								axisLabels : {
+									show : true
+								},
+						        xaxes: [{
+						            axisLabel: 'Round',
+						        }],
+						        yaxes: [{
+						            axisLabel: 'Mean Time Between Failures (MTBF)',
+						        }], 
 								xaxis : {
 									tickColor : "rgba(51, 51, 51, 0.06)",
-									mode : "time",
-									tickSize : [ 1, "day" ],
+									//									tickSize : [ 1, "day" ],
+									tickDecimals : 0,
 									//tickLength: 10,
-									axisLabel : "Date",
+/* 									axisLabel : "Round",
 									axisLabelUseCanvas : true,
 									axisLabelFontSizePixels : 12,
 									axisLabelFontFamily : 'Verdana, Arial',
-									axisLabelPadding : 10
+									axisLabelPadding : 10 */
 								},
 								yaxis : {
 									ticks : 8,
 									tickColor : "rgba(51, 51, 51, 0.06)",
 								},
-								tooltip : false
+/* 								tooltip :{
+									show: true,
+									content: "%s | x: %x; y: %y",
+									lines: true
+								}, */
+								legend: {
+								    show: true,
+								    labelFormatter: function(label, series) {
+								        // series is the series object for the label
+								        return '<a href="#' + label + '">' + label + '</a>';
+								    },
+		//						    labelBoxBorderColor: color
+								    noColumns: 0,
+								    position: "ne",
+								    labelBoxBorderColor: '#fff',
+								    margin: [2,2]
+//								    margin: number of pixels or [x margin, y margin]
+//								    container: '#mtbf-plot-legend'
+
+								}
 							});
 
 					function gd(year, month, day) {
 						return new Date(year, month - 1, day).getTime();
 					}
-				});
+//				});
+		}
 	</script>
 	<!-- /Flot -->
+	
+    <!-- Select2 -->
+    <script>
+      var services;
+      function getServices(){
+    		$.ajax({
+				url : "DashboardController",
+				data : {
+					action : "getServiceList",
+				},
+				dataType : "json",
+				async : false,
+				success : function(data) {
 
+					services = data;
+
+				},
+				error : function(e) {
+					console.log("Error in getServices");
+				}
+			});
+      }
+      $(document).ready(function() {
+    	  getServices();
+    	  setLineChart(0); //all services default
+        $("#serviceSelection").select2({
+          allowClear: true,
+          data: services
+        }).on("change", function(e) {
+            console.log("change val=" +  $("#serviceSelection").val());
+            setLineChart($("#serviceSelection").val());
+          });
+
+     });//end doc ready
+    </script>
+    <!-- /Select2 -->
+    
 	<!-- JQVMap -->
 	<script>
 		$(document).ready(function() {
@@ -1181,25 +1287,25 @@ li {
 				success : function(data) {
 
 					pieData = data;
-/* 					for (var i = 0; i < pieData.marom.labels.length; i++) {
-						
-						pieData.marom.labels[i] = pieData.marom.labels[i] +" " +
-						pieData.marom.percentages[i]*100 + "%";
-					} */
+					/* 					for (var i = 0; i < pieData.marom.labels.length; i++) {
+					
+					 pieData.marom.labels[i] = pieData.marom.labels[i] +" " +
+					 pieData.marom.percentages[i]*100 + "%";
+					 } */
 				},
 				error : function(e) {
 					console.log("Error in getPieData");
 				}
 			});
 		}
-		
-		function makeLabels(percentages){
+
+		function makeLabels(percentages) {
 			var i = 0;
-			 $('#my-doughnut-legend').find('li').each(function(){
-				 var current = $(this);
-				 current.append("&nbsp;"+percentages[i]*100+"%");
-				 i++;
-		        });
+			$('#my-doughnut-legend').find('li').each(function() {
+				var current = $(this);
+				current.append("&nbsp;" + percentages[i] * 100 + "%");
+				i++;
+			});
 		}
 
 		$(document)
@@ -1387,5 +1493,6 @@ li {
 		gauge.setTextField(document.getElementById("gauge-text"));
 	</script>
 	<!-- /gauge.js -->
+	
 </body>
 </html>

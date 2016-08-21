@@ -110,7 +110,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's MTBF (Mean Time Between Failures)
 	 */
-	synchronized Double getMTBF() {
+	public synchronized Double getMTBF() {
 
 		int failures = getNumOfFailures();
 		if (failures == 0) {
@@ -137,7 +137,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's MTRS (Mean Time to Restore the Service)
 	 */
-	synchronized double getMTRS() {
+	public synchronized double getMTRS() {
 
 		int failures = getNumOfFailures();
 		if (failures == 0) {

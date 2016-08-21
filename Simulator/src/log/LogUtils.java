@@ -19,6 +19,8 @@ import java.util.HashSet;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
+import utils.Queries;
+
 import com.dao.TblCIDao;
 import com.dao.TblCMDBDao;
 import com.dao.TblEventDao;
@@ -34,8 +36,6 @@ import com.model.TblCMDB;
 import com.model.TblEvent;
 import com.model.TblIncident;
 import com.model.TblSupplier;
-
-import utils.Queries;
 
 public class LogUtils {
 
@@ -120,7 +120,12 @@ public class LogUtils {
 
 			FileOutputStream fileOut = new FileOutputStream(path + File.separator +courseName + File.separator + newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(SimulationLog.getInstance());
+			SimulationLog simLog = SimulationLog.getInstance();
+			Settings sett = simLog.getSettings();
+			int lastRoundDone = Math.max(sett.getLastRoundDone(), round);
+			simLog.getSettings().setLastRoundDone(lastRoundDone);
+			LogUtils.saveSettings(sett);
+			out.writeObject(simLog);
 			out.close();
 			fileOut.close();
 			System.out.printf("Log is saved");

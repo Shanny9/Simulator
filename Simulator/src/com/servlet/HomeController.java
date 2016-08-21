@@ -39,6 +39,8 @@ public class HomeController extends HttpServlet {
 	private Settings settings;
 	private String selectedCourseName;
 
+	private boolean tempBool = false;
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -51,8 +53,8 @@ public class HomeController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
 
@@ -60,8 +62,8 @@ public class HomeController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		// if(LogUtils.path.isEmpty())
 		// {
 		// ServletContext context = getServletConfig().getServletContext();
@@ -69,7 +71,8 @@ public class HomeController extends HttpServlet {
 		// context.getResource("WEB-INF"+File.separator+"logs");
 		// LogUtils.path = resourceUrl.getPath();
 		// }
-		LogUtils.setPath(getServletContext().getRealPath(File.separator + "logs"));
+		LogUtils.setPath(getServletContext().getRealPath(
+				File.separator + "logs"));
 
 		// General settings
 		response.setCharacterEncoding("UTF-8");
@@ -79,7 +82,7 @@ public class HomeController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		// System.out.println("action= " + action);
-		System.out.println(vis_utils.DataMaker.getTeamMT("17-08-16",1));
+		// System.out.println(vis_utils.DataMaker.getTeamMT("17-08-16",1));
 		switch (action) {
 
 		case "authenticate":
@@ -125,6 +128,7 @@ public class HomeController extends HttpServlet {
 			// round = Integer.valueOf(request.getParameter("round"));
 			// settings = SimulationLog.getInstance(courseName).getSettings();
 			// // V remove this
+
 			if (settings != null) {
 				int runTime = settings.getRunTime();
 				int roundTime = settings.getRoundTime();
@@ -142,47 +146,58 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
-			response.getWriter().print(SimulationLog.getInstance().getEventsForHomeScreen());
+			response.getWriter().print(
+					SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
-		case "solutionStream":
-			if (!ClockIncrementor.isRunning()) {
+		case "solutionStream":		
+			SimulationLog simLog = SimulationLog.getInstance();
+			if (!simLog.isInitiaized()) {
 				return;
 			}
 
 			prepareResponseToStream(response);
-			LinkedList<SolutionLog> solutionQueue = log.SimulationLog.getInstance().getSolutionQueue();
+			LinkedList<SolutionLog> solutionQueue = log.SimulationLog
+					.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
 				response.getWriter().write(toStream(solutionQueue.poll()));
 			}
 			break;
 
 		case "profitStream":
-			if (!ClockIncrementor.isRunning()) {
-				return;
-			}
 
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
 			// HashMap<String, Double> profits =
 			// SimulationLog.getInstance().getTeamProfits(currentTime);
-			HashMap<String, Double> profits = SimulationLog.getInstance().getTeamScores(currentTime);
 
+			SimulationLog simLogg = SimulationLog.getInstance();
+			if (!simLogg.isInitiaized()) {
+				return;
+			}
+			
+			HashMap<String, Double> profits = simLogg.getTeamScores(currentTime);
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
-			streamMessage += "{\"team\": \"rakia\", \"profit\": \"" + profits.get("Rakia").intValue() + "\"}]\n\n";
+			streamMessage += "{\"team\": \"rakia\", \"profit\": \""
+					+ profits.get("Rakia").intValue() + "\"}]\n\n";
 			response.getWriter().write(streamMessage);
 			break;
 
 		case "newCourse":
 
 			String courseName = request.getParameter("form-courseName");
-			int rounds = Integer.valueOf(request.getParameter("form-numOfRounds"));
+			int rounds = Integer.valueOf(request
+					.getParameter("form-numOfRounds"));
 			int runTime = Integer.valueOf(request.getParameter("form-runTime"));
-			int pauseTime = Integer.valueOf(request.getParameter("form-pauseTime"));
-			int sessionsPerRound = Integer.valueOf(request.getParameter("form-sessions"));
-			double initCapital = Double.valueOf(request.getParameter("form-initCapital"));
+			int pauseTime = Integer.valueOf(request
+					.getParameter("form-pauseTime"));
+			int sessionsPerRound = Integer.valueOf(request
+					.getParameter("form-sessions"));
+			double initCapital = Double.valueOf(request
+					.getParameter("form-initCapital"));
 
-			Settings set = new Settings(courseName, rounds, runTime, pauseTime, sessionsPerRound, initCapital);
+			Settings set = new Settings(courseName, rounds, runTime, pauseTime,
+					sessionsPerRound, initCapital);
 			if (courseName != null) {
 				// TODO: why the hell this function is called before the user
 				// sent the form?
@@ -194,7 +209,9 @@ public class HomeController extends HttpServlet {
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkLog":
-			response.getWriter().write(gson.toJson(LogUtils.getCourseRounds(request.getParameter("directory"))));
+			response.getWriter().write(
+					gson.toJson(LogUtils.getCourseRounds(request
+							.getParameter("directory"))));
 			break;
 		case "getCourses":
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
@@ -205,12 +222,14 @@ public class HomeController extends HttpServlet {
 			round = Integer.valueOf(request.getParameter("form-round"));
 
 			settings = LogUtils.openSettings(selectedCourseName);
-			request.getSession().setAttribute("selectedCourseName", selectedCourseName);
+			request.getSession().setAttribute("selectedCourseName",
+					selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
 			// for client.jsp - app scope attribute
 			// *if Admin changes the course after client.jsp is on, client.jsp
 			// need to refresh.
-			getServletContext().setAttribute("selectedCourseName", selectedCourseName);
+			getServletContext().setAttribute("selectedCourseName",
+					selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
 
@@ -267,7 +286,8 @@ public class HomeController extends HttpServlet {
 	protected int authenticate(HttpServletRequest request) {
 		int result;
 		char[] user = request.getParameter("form-username").toCharArray();
-//		System.out.println("HomeController: username= " + request.getParameter("form-username"));
+		// System.out.println("HomeController: username= " +
+		// request.getParameter("form-username"));
 		char[] pass = request.getParameter("form-password").toCharArray();
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
@@ -280,18 +300,21 @@ public class HomeController extends HttpServlet {
 																	// 16
 
 		// Admin
-		if (au.authenticate(user, gp.getHomeUser()) && au.authenticate(pass, gp.getHomePass())) {
+		if (au.authenticate(user, gp.getHomeUser())
+				&& au.authenticate(pass, gp.getHomePass())) {
 			result = 1;
 		}
 		// Team
 		else {
 			// Marom
-			if (String.valueOf(user).equals("Marom") && String.valueOf(pass).equals("m"))
+			if (String.valueOf(user).equals("Marom")
+					&& String.valueOf(pass).equals("m"))
 				result = 2;
 
 			else {
 				// Rakia
-				if (String.valueOf(user).equals("Rakia") && String.valueOf(pass).equals("r"))
+				if (String.valueOf(user).equals("Rakia")
+						&& String.valueOf(pass).equals("r"))
 					result = 3;
 
 				// Invalid details
@@ -325,28 +348,4 @@ public class HomeController extends HttpServlet {
 
 		return streamMessage;
 	}
-
-	// private List<JsonObject> getEvents(Settings settings) {
-	//
-	// List<JsonObject> events = new ArrayList<JsonObject>();
-	// String query = Queries.eventsForHomeTable;
-	// try {
-	// Statement stmt = DBUtility.getConnection().createStatement();
-	// ResultSet rs = stmt.executeQuery(query);
-	// while (rs.next()) {
-	// JsonObject row = new JsonObject();
-	// row.addProperty("time", rs.getInt("incidentTime"));
-	// row.addProperty("event_id", rs.getInt("event_id"));
-	// events.add(row);
-	// }
-	// } catch (SQLException e) {
-	// System.err.println(e.getMessage());
-	// }
-	// return events;
-	// }
-
-	/*
-	 * more bug fixes. @HomeController: convertToSimulTime method fixed + new
-	 * method - stretch
-	 */
 }

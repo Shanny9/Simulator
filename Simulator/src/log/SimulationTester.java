@@ -148,7 +148,7 @@ public class SimulationTester implements Runnable {
 //						fixed_services.removeIf(s -> !marom.getService_logs().get(s).isUp());
 						HashSet<Integer> cloned_fixed_services = (HashSet<Integer>) fixed_services.clone();
 						for (Integer fs : cloned_fixed_services){
-							if (marom.getService_logs().get(fs).isUp()){
+							if (marom.getService_log(fs).isUp()){
 								fixed_services.remove(fs);
 							}
 						}

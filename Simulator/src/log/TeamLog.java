@@ -196,10 +196,10 @@ public class TeamLog implements Serializable {
 	}
 
 	/**
-	 * @return The team's service_logs
+	 * @return A team's service_log
 	 */
-	HashMap<Integer, ServiceLog> getService_logs() {
-		return service_logs;
+	public ServiceLog getService_log(int service) {
+		return service_logs.get(service);
 	}
 
 	/**

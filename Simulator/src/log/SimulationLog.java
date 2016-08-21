@@ -22,7 +22,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's incidents and their times (key=start_time,
 	 * value=incident_id)
 	 */
-	private HashMap<Integer, Integer> incident_times;
+	private HashMap<Integer, Integer> incident_times = new HashMap<>();
 	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
@@ -44,7 +44,7 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * The simulation's live queue of current solutions
 	 */
-	private LinkedList<SolutionLog> solutionQueue;
+	private LinkedList<SolutionLog> solutionQueue = new LinkedList<>();;
 	/**
 	 * The current status of the simulation at the server
 	 */
@@ -89,7 +89,6 @@ public class SimulationLog extends Thread implements Serializable {
 		ciSolCosts = LogUtils.getCISolCosts();
 		incident_times = LogUtils.getIncidentTimes(mul);
 		incident_events = LogUtils.getIncidentEvents();
-		solutionQueue = new LinkedList<>();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 		HashMap<Integer, Double> serviceDownTimeCosts = LogUtils.getServiceDownTimeCosts();
@@ -120,6 +119,7 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 	
 	public void setRound(int currentRound){
+		System.out.println("SimulationLog: round is set to " + currentRound);
 		round = currentRound;
 	}
 	
@@ -155,7 +155,16 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	public HashMap<String, Double> getTeamScores(int time) {
-		int targetScore = settings.getTargetScores().get(round - 1); //TODO: fix this!
+		HashMap<String, Double> profits = new HashMap<>();
+		
+		if (round == 0){
+			System.err.println("SimulationLog: If I'm printed there is a thread problem");
+			profits.put("Marom", (double) 0);
+			profits.put("Rakia", (double) 0);
+			return profits;
+		}
+		
+		int targetScore = settings.getTargetScores().get(round - 1); 
 		int initCapital = (int) settings.getInitCapital();
 		//TODO: prevent targetWithoughtInit from being negative/zero
 
@@ -170,7 +179,6 @@ public class SimulationLog extends Thread implements Serializable {
 			rakiaWithoutInit = 0;
 		}
 
-		HashMap<String, Double> profits = new HashMap<>();
 		profits.put(marom.getTeamName(), maromWithoutInit / targetScore * 100);
 		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetScore * 100);
 //		System.out.println("Marom: " + marom.getProfit(time) + ". Rakia: " + rakia.getProfit(time));
@@ -365,5 +373,9 @@ public class SimulationLog extends Thread implements Serializable {
 	
 	public static void setClientPaused(boolean isPaused){
 		clientPaused = isPaused;
+	}
+	
+	public boolean isInitiaized(){
+		return isInitialized;
 	}
 }

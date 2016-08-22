@@ -203,7 +203,7 @@ li {
 						<ul class="nav navbar-nav navbar-right">
 							<li class=""><a href="javascript:;"
 								class="user-profile dropdown-toggle" data-toggle="dropdown"
-								aria-expanded="false"> <img src="images/img.jpg" alt="">John
+								aria-expanded="false"> <!-- <img src="images/img.jpg" alt=""> -->John
 									Doe <span class=" fa fa-angle-down"></span>
 							</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -223,26 +223,26 @@ li {
 							</a>
 								<ul id="menu1" class="dropdown-menu list-unstyled msg_list"
 									role="menu">
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
+									<li><a> <span class="image"><img src=""
+												alt="Profile Image" /></span> <span> <span>John
 													Smith</span> <span class="time">3 mins ago</span>
 										</span> <span class="message"> Film festivals used to be
 												do-or-die moments for movie makers. They were where... </span>
 									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
+									<li><a> <span class="image"><img src=""
+												alt="Profile Image" /></span> <span> <span>John
 													Smith</span> <span class="time">3 mins ago</span>
 										</span> <span class="message"> Film festivals used to be
 												do-or-die moments for movie makers. They were where... </span>
 									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
+									<li><a> <span class="image"><img src=""
+												alt="Profile Image" /></span> <span> <span>John
 													Smith</span> <span class="time">3 mins ago</span>
 										</span> <span class="message"> Film festivals used to be
 												do-or-die moments for movie makers. They were where... </span>
 									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
+									<li><a> <span class="image"><img src=""
+												alt="Profile Image" /></span> <span> <span>John
 													Smith</span> <span class="time">3 mins ago</span>
 										</span> <span class="message"> Film festivals used to be
 												do-or-die moments for movie makers. They were where... </span>
@@ -317,16 +317,16 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										Network Activities <small>Graph title sub-title</small>
+										Mean Time Between Failures <small>per round</small>
 									</h3>
-									
-									<select  id="serviceSelection" style="min-width: 300px">
-									<option value=0>All Services</option>
-									</select>
 								</div>
+								<select id="serviceSelection" style="min-width: 300px">
+									<option value=0>All Services</option>
+								</select>
+
 								<div class="col-md-6">
 
-<!-- 										<div id="reportrange" class="pull-right"
+									<!-- 										<div id="reportrange" class="pull-right"
 											style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
 											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span>December
 												30, 2014 - January 28, 2015</span> <b class="caret"></b>
@@ -338,17 +338,17 @@ li {
 								<div id="placeholder33" style="height: 260px; display: none"
 									class="demo-placeholder"></div>
 								<div style="width: 100%;">
-									<div id="canvas_dahs" class="demo-placeholder"
-										style="width: 100%; height: 270px;"></div>
+									<canvas id="canvas_dahs" class="demo-placeholder"
+										style="width: 100%; height: 270px;"></canvas>
 								</div>
 							</div>
-							<div class="col-md-3 col-sm-3 col-xs-12 bg-white">
-								<div id='mtbf-plot-legend' class="x_title">
-<!-- 									<h2>Top Campaign Performance</h2> -->
+							<!-- 							<div class="col-md-3 col-sm-3 col-xs-12 bg-white"> -->
+							<!-- 								<div id='mtbf-plot-legend' class="x_title">
+																		<h2>Top Campaign Performance</h2>
 									<div class="clearfix"></div>
-								</div>
+								</div> -->
 
-<!-- 								<div class="col-md-12 col-sm-12 col-xs-6">
+							<!-- 								<div class="col-md-12 col-sm-12 col-xs-6">
 									<div>
 										<p>Facebook Campaign</p>
 										<div class="">
@@ -389,8 +389,68 @@ li {
 									</div>
 								</div> -->
 
+							<!-- </div> -->
+
+							<div class="clearfix"></div>
+						</div>
+					</div>
+
+				</div>
+				<br />
+
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="dashboard_graph">
+
+							<div class="row x_title">
+								<div class="col-md-6">
+									<h3>
+										Mean Time Between Failures <small>per team</small>
+									</h3>
+								</div>
+
+								<div class="col-md-6"></div>
 							</div>
 
+							<div class="col-md-9 col-sm-9 col-xs-12">
+								<div id="placeholder33" style="height: 260px; display: none"
+									class="demo-placeholder"></div>
+								<div style="width: 100%;">
+									<canvas id="canvas_team" class="demo-placeholder"
+										style="width: 100%; height: 270px;"></canvas>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+
+				</div>
+				<br />
+				
+								<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="dashboard_graph">
+
+							<div class="row x_title">
+								<div class="col-md-6">
+									<h3>
+										Mean Time Between Failures <small>per service</small>
+									</h3>
+								</div>
+								<select id="roundSelection" style="min-width: 300px">
+									<option value=0>All Rounds</option>
+								</select>
+								<div class="col-md-6"></div>
+							</div>
+
+							<div class="col-md-9 col-sm-9 col-xs-12">
+								<div id="placeholder33" style="height: 260px; display: none"
+									class="demo-placeholder"></div>
+								<div style="width: 100%;">
+									<canvas id="canvas_service" class="demo-placeholder"
+										style="width: 100%; height: 270px;"></canvas>
+								</div>
+							</div>
 							<div class="clearfix"></div>
 						</div>
 					</div>
@@ -1036,10 +1096,7 @@ li {
 	<script src="js/nprogress.js"></script>
 	<!-- Chart.js -->
 	<script src="js/charts/Chart.min.js"></script>
-
-
-	<!-- gauge.js -->
-	<script src="js/charts/gauge.min.js"></script>
+	
 	<!-- bootstrap-progressbar -->
 	<script src="js/charts/bootstrap-progressbar.min.js"></script>
 	<!-- iCheck -->
@@ -1066,24 +1123,148 @@ li {
 	<script src="js/charts/jquery.vmap.world.js"></script>
 	<script src="js/charts/jquery.vmap.sampledata.js"></script>
 	<!-- bootstrap-daterangepicker -->
-<!-- 	<script src="js/moment/moment.min.js"></script>
+	<!-- 	<script src="js/moment/moment.min.js"></script>
 	<script src="js/datepicker/daterangepicker.js"></script> -->
 
-	 <!-- Select2 -->
-    <script src="js/select2.full.js"></script>
+	<!-- Select2 -->
+	<script src="js/select2.full.js"></script>
 
 	<!-- Custom Theme Scripts -->
 	<script src="js/custom.min.js"></script>
 
-	<!-- Flot -->
-	<script>
-		var marom, rakia;
-		function getMTBFforLineChart(serviceId) { //has to be before select2 script
-			$('#serviceSelection option[value="0"]').attr("selected",true);
+		<script>
+		var marom, rakia, labels;
+		function getMTBFPerService(roundId) { //has to be before select2 script
 			$.ajax({
 				url : "DashboardController",
 				data : {
-					action : "getMTBFforLineChart",
+					action : "getMTBFPerService",
+					round : roundId
+				},
+				dataType : "json",
+				async : false,
+				success : function(data) {
+
+					marom = data.maromData;
+					rakia = data.rakiaData;
+					labels = data.labels;
+
+				},
+				error : function(e) {
+					console.log("Error in getMTBFPerService");
+				}
+			});
+		}
+		function setBarChartPerService(roundId) {
+			getMTBFPerService(roundId);
+			var barData = {
+				labels : labels,
+				datasets : [ {
+					label : "Marom",
+					backgroundColor : "rgba(76, 164, 224, 1)",
+					data : marom
+				},
+
+				{
+					label : "Rakia",
+					backgroundColor : "rgba(28, 97, 142, 1)",
+					data : rakia
+				} ]
+			};
+			console.log(barData);
+			var ctx = document.getElementById('canvas_service').getContext('2d');
+			new Chart(ctx, {
+				type : 'horizontalBar',
+				data : barData,
+				options : {
+						  scales: {
+						    yAxes: [{
+						      scaleLabel: {
+						        display: true,
+						        labelString: 'Services'
+						      }
+						    }],
+						    xAxes: [{
+							      scaleLabel: {
+							        display: true,
+							        labelString: 'Mean Time Between Failures (Seconds)'
+							      }
+							    }]
+						  }     
+						}
+			});
+	
+		}
+	</script>
+	
+	<!-- Chart -->
+	<script>
+	//TODO: add course name as a parameter
+	var colors = new Array("#D56AA0", "#7D82B8", "#613F75","#993955","#271F30"); //5 color for 5 rounds MAX
+	var rounds = new Array();
+	var teams;
+	function getMTBFPerTeam(serviceId) { //has to be before select2 script
+		$.ajax({
+			url : "DashboardController",
+			data : {
+				action : "getMTBFPerTeam",
+				service : serviceId
+			},
+			dataType : "json",
+			async : false,
+			success : function(data) {
+
+				for(var i=0; i<Object.keys(data).length-1;i++){
+					var name = "round#"+ (i+1);
+					rounds.push(data[name]);
+				}
+				teams = data["labels"];
+			},
+			error : function(e) {
+				console.log("Error in getMTBFPerTeam");
+			}
+		});
+	}
+	function setBarChartPerTeam(serviceId) {
+		getMTBFPerTeam(serviceId);
+		var dataArr = new Array();
+		for(var i=0;i<rounds.length;i++){
+			var item = new Object();
+			item.label = "Round "+(i+1);
+			item.backgroundColor =colors[i];
+			item.data = rounds[i];
+			dataArr.push(item);
+		}
+		
+		var barDataTeams = {
+			labels : teams,
+			datasets : dataArr
+		};
+		console.log(barDataTeams);
+		var ctx = document.getElementById('canvas_team');
+		new Chart(ctx, {
+			type : 'bar',
+			data : barDataTeams,
+			options : {
+					  scales: {
+					    yAxes: [{
+					      scaleLabel: {
+					        display: true,
+					        labelString: 'Mean Time Between Failures (Seconds)'
+					      }
+					    }]
+					  }     
+					}
+		});
+	}
+	</script>
+	<script>
+		var marom, rakia, labels;
+		function getMTBFPerRound(serviceId) { //has to be before select2 script
+			$.ajax({
+				url : "DashboardController",
+				data : {
+					action : "getMTBFPerRound",
 					service : serviceId
 				},
 				dataType : "json",
@@ -1092,117 +1273,55 @@ li {
 
 					marom = data.maromData;
 					rakia = data.rakiaData;
-					console.log("data marom " + marom);
-					console.log("data rakia " + rakia);
+					labels = data.labels;
 
 				},
 				error : function(e) {
-					console.log("Error in getMTBFforLineChart");
+					console.log("Error in getMTBFPerRound");
 				}
 			});
 		}
-		function setLineChart(serviceId){ 
-//		$(document).ready(
-//				function() {
-					getMTBFforLineChart(serviceId);
-					var data = [{
-							label: "Marom",
-							data: marom
-					},
-					{
-						label: "Rakia",
-						data: rakia
-					}
-					];
+		function setBarChart(serviceId) {
+			getMTBFPerRound(serviceId);
+			var barData = {
+				labels : labels,
+				datasets : [ {
+					label : "Marom",
+					backgroundColor : "rgba(76, 164, 224, 1)",
+					data : marom
+				},
 
-					$("#canvas_dahs").length
-							&& $.plot($("#canvas_dahs"), data, {
-								series : {
-									lines : {
-										show : false,
-										fill : true
-									},
-									splines : {
-										show : true,
-										tension : 0.4,
-										lineWidth : 1,
-										fill : 0.4
-									},
-									points : {
-										radius : 0,
-										show : true
-									},
-									shadowSize : 2
-								},
-								grid : {
-									verticalLines : true,
-									hoverable : true,
-									clickable : true,
-									tickColor : "#d5d5d5",
-									borderWidth : 1,
-									color : '#fff'
-								},
-								colors : [ "rgba(52, 152, 219, 0.38)",
-										"rgba(38, 120, 174, 0.70)" ],
-								axisLabels : {
-									show : true
-								},
-						        xaxes: [{
-						            axisLabel: 'Round',
-						        }],
-						        yaxes: [{
-						            axisLabel: 'Mean Time Between Failures (MTBF)',
-						        }], 
-								xaxis : {
-									tickColor : "rgba(51, 51, 51, 0.06)",
-									//									tickSize : [ 1, "day" ],
-									tickDecimals : 0,
-									//tickLength: 10,
-/* 									axisLabel : "Round",
-									axisLabelUseCanvas : true,
-									axisLabelFontSizePixels : 12,
-									axisLabelFontFamily : 'Verdana, Arial',
-									axisLabelPadding : 10 */
-								},
-								yaxis : {
-									ticks : 8,
-									tickColor : "rgba(51, 51, 51, 0.06)",
-								},
-/* 								tooltip :{
-									show: true,
-									content: "%s | x: %x; y: %y",
-									lines: true
-								}, */
-								legend: {
-								    show: true,
-								    labelFormatter: function(label, series) {
-								        // series is the series object for the label
-								        return '<a href="#' + label + '">' + label + '</a>';
-								    },
-		//						    labelBoxBorderColor: color
-								    noColumns: 0,
-								    position: "ne",
-								    labelBoxBorderColor: '#fff',
-								    margin: [2,2]
-//								    margin: number of pixels or [x margin, y margin]
-//								    container: '#mtbf-plot-legend'
-
-								}
-							});
-
-					function gd(year, month, day) {
-						return new Date(year, month - 1, day).getTime();
-					}
-//				});
+				{
+					label : "Rakia",
+					backgroundColor : "rgba(28, 97, 142, 1)",
+					data : rakia
+				} ]
+			};
+			console.log(barData);
+			var ctx = document.getElementById('canvas_dahs');
+			new Chart(ctx, {
+				type : 'bar',
+				data : barData,
+				options : {
+						  scales: {
+						    yAxes: [{
+						      scaleLabel: {
+						        display: true,
+						        labelString: 'Mean Time Between Failures (Seconds)'
+						      }
+						    }]
+						  }     
+						}
+			});
 		}
 	</script>
-	<!-- /Flot -->
-	
-    <!-- Select2 -->
-    <script>
-      var services;
-      function getServices(){
-    		$.ajax({
+	<!-- /Chart -->
+
+	<!-- Select2 -->
+	<script>
+		var servicesForSelection, roundsForSelection;
+		function getServices() {
+			$.ajax({
 				url : "DashboardController",
 				data : {
 					action : "getServiceList",
@@ -1211,29 +1330,93 @@ li {
 				async : false,
 				success : function(data) {
 
-					services = data;
+					servicesForSelection = data;
 
 				},
 				error : function(e) {
 					console.log("Error in getServices");
 				}
 			});
-      }
-      $(document).ready(function() {
-    	  getServices();
-    	  setLineChart(0); //all services default
-        $("#serviceSelection").select2({
-          allowClear: true,
-          data: services
-        }).on("change", function(e) {
-            console.log("change val=" +  $("#serviceSelection").val());
-            setLineChart($("#serviceSelection").val());
-          });
+		}
+		
+		function getRounds() {
+			$.ajax({
+				url : "DashboardController",
+				data : {
+					action : "getRoundList",
+				},
+				dataType : "json",
+				async : false,
+				success : function(data) {
 
-     });//end doc ready
-    </script>
-    <!-- /Select2 -->
-    
+					roundsForSelection = data;
+
+				},
+				error : function(e) {
+					console.log("Error in getRounds");
+				}
+			});
+		}
+		
+		var resetCanvas = function(element){
+			var id = element.attr('id');
+			var parent = element.parent();
+			var width = element.css("width");
+			var height = element.css("height");
+			console.log("w "+ width + "h "+ height);
+			  element.remove(); // this is my <canvas> element
+			  parent.append('<canvas id="' + id + '"></canvas>');
+			  var canvas = document.getElementById(id);
+			  $('#'+id).addClass("demo-placeholder");
+			  var ctx = canvas.getContext('2d');
+			  ctx.canvas.style.width = width; // resize width
+			  ctx.canvas.style.height = height; // resize height
+
+			  
+			};
+			
+		$(document).ready(function() {
+			//get data for combo boxes
+			getServices();
+			getRounds();
+			
+			//set charts
+			setBarChart(0); //all services default 
+			setBarChartPerTeam(0);
+			setBarChartPerService(0);
+			
+			$("#serviceSelection").select2({
+				allowClear : true,
+				data : servicesForSelection
+			}).on("change", function(e) {
+				var serSelection = $("#serviceSelection").val();
+				console.log("change val(service)=" + serSelection);
+				//MTBF per round
+				resetCanvas($("#canvas_dahs"));
+				setBarChart(serSelection);
+				//MTBF per team
+				//clear old data
+				rounds = new Array();
+				resetCanvas($("#canvas_team"));
+				
+				setBarChartPerTeam(serSelection);
+			});
+			
+			$("#roundSelection").select2({
+				allowClear : true,
+				data : roundsForSelection
+			}).on("change", function(e) {
+				var rSelection = $("#roundSelection").val();
+				console.log("change val(round)=" + rSelection);
+				//clear old data
+				resetCanvas($("#canvas_service"));
+				setBarChartPerService(rSelection);
+			});
+
+		});//end doc ready
+	</script>
+	<!-- /Select2 -->
+
 	<!-- JQVMap -->
 	<script>
 		$(document).ready(function() {
@@ -1493,6 +1676,6 @@ li {
 		gauge.setTextField(document.getElementById("gauge-text"));
 	</script>
 	<!-- /gauge.js -->
-	
+
 </body>
 </html>

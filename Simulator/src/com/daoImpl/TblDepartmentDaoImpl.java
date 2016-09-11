@@ -23,36 +23,31 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 	}
 
 	@Override
-	public void addDepartment(TblDepartment department) {
+	public void addDepartment(TblDepartment department) throws SQLException {
 		String insertQuery = "INSERT INTO tblDepartment(department_name, devision_name, isActive) VALUES (?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, department.getDepartmentName());
 			pStmt.setString(2, department.getDevisionName());
 			pStmt.setBoolean(3, department.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 	}
 
 	@Override
-	public void deleteDepartment(TblDepartmentPK pk) {
+	public void deleteDepartment(TblDepartmentPK pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblDepartment WHERE devision_name = ? and department_name = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setString(1, pk.getDevisionName());
 			pStmt.setString(2, pk.getDepartmentName());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void updateDepartment(TblDepartment department, TblDepartmentPK pk) {
+	public void updateDepartment(TblDepartment department, TblDepartmentPK pk) throws SQLException {
 		String updateQuery = "UPDATE tblDepartment SET department_name = ?, devision_name=?, isActive = ? WHERE devision_name = ? and department_name = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(2, department.getDevisionName());
 			pStmt.setBoolean(3, department.getIsActive());
@@ -61,9 +56,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			pStmt.setString(4, pk.getDevisionName());
 			pStmt.setString(5, pk.getDepartmentName());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override

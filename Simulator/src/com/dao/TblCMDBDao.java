@@ -1,5 +1,6 @@
 package com.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.model.TblCMDB;
@@ -7,9 +8,9 @@ import com.model.TblCMDBPK;
 
 public interface TblCMDBDao {
 	
-	public void addCMDB(TblCMDB cmdb);
-	public void deleteCMDB(TblCMDBPK pk);
-	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id);
+	public void addCMDB(TblCMDB cmdb) throws SQLException;
+	public void deleteCMDB(TblCMDBPK pk) throws SQLException;
+	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id) throws SQLException;
 	public List<TblCMDB> getAllCMDBs(int startPageIndex, int recordsPerPage);
 	public List<TblCMDB> getAllCMDBs();
 	public int getCMDBCount();

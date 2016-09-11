@@ -9,6 +9,7 @@ var showTime;
 var session;
 var elapsedTime = 0;
 var settings = new Object();
+var currentRound; // init at startSimulator
 //var team = "Marom"; // defined at the beginning of client.jsp
 //var courseName = 'normalCourse'; // defined at the beginning of client.jsp
 
@@ -169,6 +170,13 @@ function showPrice(){
 }
 
 function incrementClock() {
+	
+/*	// Disable purchasing during rounds 1 and 2.
+	if(currentRound > 1)
+		disablePurchase(true);
+	else
+		disablePurchase(false);*/
+	
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
 	elapsedTime++;
@@ -201,9 +209,12 @@ function incrementClock() {
 
 function startSimulator() {
 	getSettings(courseName); // must not be called outside&before startSimulator.
+	currentRound = settings["currentRound"];//TODO:
+	console.log(currentRound);
 	finishRound = settings["roundTime"] * (settings["currentRound"] + 1);
 	getTime();
 	clockInterval = setInterval(incrementClock, 1000);
+	
 }
 
 function getTime() {

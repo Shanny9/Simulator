@@ -14,6 +14,10 @@ public class TblPriority implements Serializable {
 
 	private String priorityName;
 
+	private String urgency;
+
+	private String impact;
+	
 	public String getPriorityName() {
 		return priorityName;
 	}
@@ -21,6 +25,26 @@ public class TblPriority implements Serializable {
 	public void setPriorityName(String priorityName) {
 		this.priorityName = priorityName;
 	}
+
+	
+	
+	public String getUrgency() {
+		return urgency;
+	}
+
+	public void setUrgency(String urgency) {
+		this.urgency = urgency;
+	}
+
+	public String getImpact() {
+		return impact;
+	}
+
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+
+
 
 	private TblLevel tblLevel1;
 

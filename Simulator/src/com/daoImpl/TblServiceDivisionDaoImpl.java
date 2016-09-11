@@ -23,36 +23,31 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 	}
 	
 	@Override
-	public void addServiceDivision(TblService_Division service) {
+	public void addServiceDivision(TblService_Division service) throws SQLException {
 
 		String insertQuery = "INSERT INTO tblService_Division (service_id, division_name, " 
 	+ " isActive) VALUES (?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setBoolean(3, service.getIsActive());
 
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 
 	@Override
-	public void deleteServiceDivision(TblService_DivisionPK pk) {
+	public void deleteServiceDivision(TblService_DivisionPK pk) throws SQLException {
 
 		String deleteQuery = "DELETE FROM tblService_Division WHERE service_id = ? AND"
 				+ " division_name=?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, pk.getService_ID());
 			pStmt.setString(2, pk.getDivisionName());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 		
 		
 	}
@@ -151,10 +146,10 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 
 	@Override
 	public void updateServiceDivision(TblService_Division service,
-			TblService_DivisionPK pk) {
-		String updateQuery = "UPDATE tblService_Division SET \n " + "service_id=?, division_name=?, \" \r\n" + 
-				"	 \" isActive=? WHERE service_id = ? AND division_name=? ";
-		try {
+			TblService_DivisionPK pk) throws SQLException {
+		String updateQuery = "UPDATE tblService_Division SET \n " + "service_id=?, division_name=?,  \r\n" + 
+				" isActive=? WHERE service_id = ? AND division_name=? ";
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
@@ -165,9 +160,6 @@ public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 		
 	}
 

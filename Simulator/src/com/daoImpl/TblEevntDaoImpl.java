@@ -22,36 +22,32 @@ public class TblEevntDaoImpl implements TblEventDao {
 	}
 
 	@Override
-	public void addEvent(TblEvent event) {
+	public void addEvent(TblEvent event) throws SQLException {
 		String insertQuery = "INSERT INTO tblEvent(event_id, incident_id, service_id, isActive) VALUES (?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setInt(1, event.getEventId());
 			pStmt.setByte(2, event.getIncidentId());
 			pStmt.setByte(3, event.getServiceId());
 			pStmt.setBoolean(4, event.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deleteEvent(int event_id) {
+	public void deleteEvent(int event_id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblEvent WHERE event_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setInt(1, event_id);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void updateEvent(TblEvent event, int eventId) {
+	public void updateEvent(TblEvent event, int eventId) throws SQLException {
 		String updateQuery = "UPDATE tblEvent SET event_id = ?, incident_id = ?, service_id = ?, isActive = ? WHERE event_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setInt(1, event.getEventId());
 			pStmt.setByte(2, event.getIncidentId());
@@ -59,9 +55,7 @@ public class TblEevntDaoImpl implements TblEventDao {
 			pStmt.setBoolean(4, event.getIsActive());
 			pStmt.setInt(5, eventId);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override

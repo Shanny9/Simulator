@@ -149,6 +149,12 @@
 									<div class="txt-score regular center">
 										<span id="session">1</span>/<span id="sessionsPerRound">?</span>
 									</div>
+									<br><br><br><br>
+									<!-- START/RESUME/PAUSE btn -->
+									<div id="funcBtn" class="txt-score regular center">
+										<span class="start">START</span>
+									</div> 
+									<!-- START/RESUME/PAUSE btn -->
 								</td>
 								<td>
 									<table class="score-tbl event-tbl">

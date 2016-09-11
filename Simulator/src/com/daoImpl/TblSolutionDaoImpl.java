@@ -22,11 +22,11 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 	}
 	
 	@Override
-	public void addSolution(TblSolution sol) {
+	public void addSolution(TblSolution sol) throws SQLException {
 
 		String insertQuery = "INSERT INTO tblSolution (solution_id, solution_marom, " 
 	+ "solution_rakia, isActive) VALUES (?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setInt(1, sol.getSolutionId());
 			pStmt.setInt(2, sol.getSolutionMarom());
@@ -34,34 +34,28 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 			pStmt.setBoolean(4, sol.isActive());
 
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 		
 	}
 
 	@Override
-	public void deleteSolution(int id) {
+	public void deleteSolution(int id) throws SQLException {
 
 		String deleteQuery = "DELETE FROM tblSolution WHERE solution_id = ? ";
-		
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setInt(1, id);
 
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 
 	}
 
 	@Override
-	public void updateSolution(TblSolution sol, int id) {
+	public void updateSolution(TblSolution sol, int id) throws SQLException {
 
 		String updateQuery = "UPDATE tblSolution SET \n " + "solution_id=?, solution_marom=?, \r\n" + 
 				"solution_rakia=?, isActive=? WHERE solution_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setInt(1, sol.getSolutionId());
 			pStmt.setInt(2, sol.getSolutionMarom());
@@ -72,9 +66,6 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 
 	}
 

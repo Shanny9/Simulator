@@ -3129,7 +3129,18 @@ THE SOFTWARE.
             $row.data('deleting', true);
 
             var postData = {};
-            postData[self._keyField] = self._getKeyValueOfRecord($row.data('record'));
+            //adding ALL the key fields -Shanny
+            for (var i = 0; i < self._fieldList.length; i++) {
+
+                var fieldName = self._fieldList[i];
+                var field = self.options.fields[fieldName];
+                var fieldValue = $row.data('record')[fieldName];
+
+                if (field.key == true) {
+                	 postData[fieldName] = fieldValue;
+                }
+            }
+           
             
             //deleteAction may be a function, check if it is
             if (!url && $.isFunction(self.options.actions.deleteAction)) {

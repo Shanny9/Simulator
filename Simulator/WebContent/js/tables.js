@@ -2,23 +2,78 @@
  * 
  */
 $(document).ready(function() {
+
+	switch(tbl){
+	case "tblCi":
+		ciTable();
+		break;
+	case "tblCMDB":
+		CMDBTable();
+		break;
+	case "tblDepartment":
+		departmentTable();
+		break;
+	case "tblDivision":
+		divisionTable();
+		break;
+	case "tblEvent":
+		eventTable();
+		break;
+	case "tblIncident":
+		incidentTable();
+		break;
+	case "tblPriorityCost":
+		priorityCostTable();
+		break;
+	case "tblService":
+		serviceTable();
+		break;
+	case "tblServiceDep":
+		serviceDepTable();
+		break;
+	case "tblServiceDiv":
+		serviceDivTable();
+		break;
+	case "tblSolution":
+		solutionTable();
+		break;
+	case "tblSupplier":
+		supplierTable();
+		break;
+	default:
+			ciTable();
+	}
+	// Overrides the default autocomplete filter function to search only from the beginning of the string
+	$.ui.autocomplete.filter = function (array, term) {
+	    var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
+	    return $.grep(array, function (value) {
+	        return matcher.test(value.label || value.value || value);
+	    });
+	};
 	
-//	supplierTable();
-//	incidentTable();
-//	solutionTable();
-//	priorityCostTable();
-	serviceTable();
-//	serviceDepTable();
-//	serviceDivTable();
-//	ciTable();
+    $( "#search" ).autocomplete({
+        source: getTabelsNames(),
+        select: function ( event, ui ) {
+        	$("#search").html(ui.item.label);
+        	window.location.href = ui.item.value1;
+        	
+          }
+      });
 	
 });
 
 
-function supplierTable(){
 
+function supplierTable(){
+	$("#tblTitle").append("Supplier List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblSupplier").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 		$('#tableContainer').jtable({
-			title : 'Suppliers List',
+			title : 'Supplier List',
 			paging: true, //Set paging enabled
 			pageSize: 10, //Set page size
 			pageSizes: [10,15,20],
@@ -102,7 +157,9 @@ function supplierTable(){
 				isActive : {
 					title : 'Active?',
 					width : '20%',
-					options: { '1': 'Yes', '0': 'No'},
+					type : 'checkbox',
+					values: {'false': 'No' , 'true': 'Yes'},
+					defaultValue: 'true',
 					edit : true
 				},
 				currency : {
@@ -136,7 +193,13 @@ function supplierTable(){
 }
 
 function incidentTable(){
-
+	$("#tblTitle").append("Incident List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblIncident").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Incidents List',
 		paging: true, //Set paging enabled
@@ -208,7 +271,7 @@ function incidentTable(){
 				title : 'Incident ID',
 				key : true,
 				list : true,
-				edit : false,
+				edit : true,
 				create : true,
 				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
 			},
@@ -224,11 +287,14 @@ function incidentTable(){
 			},
 			solutionId : {
 				title : 'Solution',
-				edit : true
+				edit : true,
+				options: 'DataController?options=solution'
 			},
 			isActive : {
 				title : 'Active?',
-				options: { 1: 'Yes', 0: 'No'},
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes' },
+                defaultValue: 'true',
 				edit : true
 			}
 		},
@@ -258,7 +324,13 @@ function incidentTable(){
 }
 
 function solutionTable(){
-
+	$("#tblTitle").append("Solution List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblSolution").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Solution List',
 		paging: true, //Set paging enabled
@@ -339,19 +411,19 @@ function solutionTable(){
 				title : 'Marom',
 				width : '25%',
 				edit : true,
-				inputClass: 'validate[custom[integer],min[1],maxSize[11]]'
+				inputClass: 'validate[required,custom[integer],min[1],maxSize[11]]'
 			},
 			solutionRakia : {
 				title : 'Rakia',
 				width : '20%',
 				edit : true,
-				inputClass: 'validate[custom[integer],min[1],maxSize[11]]'
+				inputClass: 'validate[required,custom[integer],min[1],maxSize[11]]'
 			},
 			isActive : {
 				title : 'Active?',
-				width : '25%',
-	//			type : 'checkbox',
-				options: { '1': 'Yes','0': 'No' },
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes' },
+                defaultValue: 'true',
 				edit : true
 			}
 		},
@@ -389,7 +461,13 @@ function solutionTable(){
 }
 
 function priorityCostTable(){
-
+	$("#tblTitle").append("Priority Cost List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblPriorityCost").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Priority List',
 		paging: true, //Set paging enabled
@@ -464,6 +542,7 @@ function priorityCostTable(){
 				list : true,
 				edit : true,
 				create : true,
+				options: 'DataController?options=priority'
 				//foreign key dropdown
 			},
 			pCost : {
@@ -474,9 +553,10 @@ function priorityCostTable(){
 			},
 			isActive : {
 				title : 'Active?',
-				width : '25%',
-	//			type : 'checkbox',
-				options: { '1': 'Yes','0': 'No' },
+//				width : '20%',
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes'},
+                defaultValue: 'true',
 				edit : true
 			}
 		},
@@ -503,7 +583,13 @@ function priorityCostTable(){
 }
 
 function serviceTable(){
-
+	$("#tblTitle").append("Service List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblService").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Service List',
 		paging: true, //Set paging enabled
@@ -607,27 +693,30 @@ function serviceTable(){
 				edit : true
 			},
 			supplierLevel2 : {
-				title : 'Supplier Level 2',
-				edit : true
+				title : 'Supplier L2',
+				edit : true,
+				options: 'DataController?options=supplier',
 			},
 			supplierLevel3 : {
-				title : 'Supplier Level 3',
-				edit : true
+				title : 'Supplier L3',
+				edit : true,
+				options: 'DataController?options=supplier'
 			},
 			urgency : {
 				title : 'Urgency',
-				options: { 'Low': 'Low','Medium': 'Medium', 'High': 'High'},
+				options: 'DataController?options=level',
 				edit : true
 			},
 			impact : {
 				title : 'Impact',
-				options: { 'Low': 'Low','Medium': 'Medium', 'High': 'High'},
+				options: 'DataController?options=level',
 				edit : true
 			},
 			isActive : {
 				title : 'Active?',
 				type: 'checkbox',
                 values: { 'false': 'No', 'true': 'Yes' },
+                defaultValue: 'true',
 				edit : true
 			}
 		},
@@ -669,7 +758,13 @@ function serviceTable(){
 	$('#tableContainer').jtable('load');
 }
 	function serviceDepTable(){
-
+		$("#tblTitle").append("Service - Department Relation");
+		
+		$( "#ulTables" ).children().removeClass();
+		$("#tblServiceDep").addClass("selected");
+		
+		$( "#tableContainer" ).remove();
+		$( "#tbl" ).append('<div id="tableContainer"></div>');
 		$('#tableContainer').jtable({
 			title : 'Service-Department List',
 			paging: true, //Set paging enabled
@@ -744,6 +839,7 @@ function serviceTable(){
 					list : true,
 					edit : true,
 					create : true,
+					options: 'DataController?options=service'
 					
 				},
 				departmentName : {
@@ -752,7 +848,8 @@ function serviceTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					options: 'DataController?options=department'
 				},
 				divisionName : {
 					title : 'Division Name',
@@ -760,13 +857,15 @@ function serviceTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					options: 'DataController?options=division'
 				},
 				isActive : {
 					title : 'Active?',
 					width : '25%',
 					type : 'checkbox',
-					options: { '1': 'Yes','0': 'No' },
+	                values: { 'false': 'No', 'true': 'Yes'},
+	                defaultValue: 'true',
 					edit : true
 				}
 			},
@@ -790,7 +889,13 @@ function serviceTable(){
 	}
 
 	function serviceDivTable(){
-
+		$("#tblTitle").append("Service - Division Relation");
+		
+		$( "#ulTables" ).children().removeClass();
+		$("#tblServiceDiv").addClass("selected");
+		
+		$( "#tableContainer" ).remove();
+		$( "#tbl" ).append('<div id="tableContainer"></div>');
 		$('#tableContainer').jtable({
 			title : 'Service-Division List',
 			paging: true, //Set paging enabled
@@ -864,7 +969,8 @@ function serviceTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					options: 'DataController?options=service'
 				},
 				divisionName : {
 					title : 'Division Name',
@@ -872,13 +978,15 @@ function serviceTable(){
 					key : true,
 					list : true,
 					edit : true,
-					create : true
+					create : true,
+					options: 'DataController?options=division'
 				},
 				isActive : {
 					title : 'Active?',
 					width : '25%',
 					type : 'checkbox',
 					values: { 'false': 'No', 'true': 'Yes' },
+					defaultVaue: true,
 					edit : true
 				}
 			},
@@ -900,7 +1008,13 @@ function serviceTable(){
 	}
 
 function ciTable(){
+	$("#tblTitle").append("Configuration Item List");
 	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblCi").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Configuration Items List',
 		paging: true, //Set paging enabled
@@ -973,7 +1087,7 @@ function ciTable(){
 //				width : '30%',
 				key : true,
 				list : true,
-				edit : false,
+				edit : true,
 				create : true,
 				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
 			},
@@ -986,12 +1100,14 @@ function ciTable(){
 			supplierName1 : { //supplier level 2
 				title : 'Supplier Level 2',
 //				width : '25%',
-				edit : true
+				edit : true,
+				options:  'DataController?options=supplier'
 			},
 			supplierName2 : { //supplier level 3
 				title : 'Supplier Level 3',
 //				width : '25%',
-				edit : true
+				edit : true,
+				options:  'DataController?options=supplier'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1023,7 +1139,13 @@ function ciTable(){
 }
 
 function CMDBTable(){
+	$("#tblTitle").append("Configuration Items Management List");
 	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblCMDB").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Configuration Items Management List',
 		paging: true, //Set paging enabled
@@ -1091,17 +1213,22 @@ function CMDBTable(){
 	    },
 		fields : {
 			ciId : {
-				title : 'CI ID',
+				title : 'Configuration Item',
 //				width : '30%',
 				key : true,
 				list : true,
-				edit : false,
-				create : true
+				edit : true,
+				create : true,
+				options:  'DataController?options=ci'
 			},
 			serviceId : {
-				title : 'Service ID',
+				title : 'Service',
+				key : true,
 //				width : '25%',
-				edit : true
+				list : true,
+				edit : true,
+				create : true,
+				options:  'DataController?options=service'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1130,9 +1257,16 @@ function CMDBTable(){
 }
 
 function departmentTable(){
+	$("#tblTitle").append("Department List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblDepartment").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	
 	$('#tableContainer').jtable({
-		title : 'Departments List',
+		title : 'Department List',
 		paging: true, //Set paging enabled
 		pageSize: 10, //Set page size
 		pageSizes: [10,15,20],
@@ -1212,7 +1346,8 @@ function departmentTable(){
 //				width : '25%',
 				list : true,
 				edit : true,
-				create : true
+				create : true,
+				options:  'DataController?options=division'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1243,9 +1378,15 @@ function departmentTable(){
 }
 
 function divisionTable(){
+	$("#tblTitle").append("Division List");
 	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblDivision").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
-		title : 'Departments List',
+		title : 'Division List',
 		paging: true, //Set paging enabled
 		pageSize: 10, //Set page size
 		pageSizes: [10,15,20],
@@ -1310,7 +1451,7 @@ function divisionTable(){
 	          ]
 	    },
 		fields : {
-			devisionName : {
+			divisionName : {
 				title : 'Division Name',
 				key : true,
 //				width : '25%',
@@ -1347,7 +1488,13 @@ function divisionTable(){
 }
 
 function eventTable(){
+	$("#tblTitle").append("Event List");
 	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblEvent").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
 	$('#tableContainer').jtable({
 		title : 'Event List',
 		paging: true, //Set paging enabled
@@ -1418,20 +1565,28 @@ function eventTable(){
 				title : 'Event ID',
 				key : true,
 //				width : '25%',
+				list : true,
 				edit : true,
+				create : true,
 				inputClass: 'validate[required,custom[integer],maxSize[10]]'
 			},
 			incidentId : {
 				title : 'Incident ID',
 				key : true,
 //				width : '25%',
+				list : true,
 				edit : true,
+				create : true,
+				options:  'DataController?options=incident'
 			},
 			serviceId : {
-				title : 'Service ID',
+				title : 'Service',
 				key : true,
 //				width : '25%',
+				list : true,
 				edit : true,
+				create : true,
+				options:  'DataController?options=service'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1459,5 +1614,20 @@ function eventTable(){
 
 	});
 	$('#tableContainer').jtable('load');
+}
+
+function getTabelsNames(){
+	var tNames = new Array();
+	
+	$( "#ulTables" ).children().each(function(){
+		var it = new Object();
+		it.label = $(this).text();
+		it.value1 = $(this).children().attr('href');
+		
+		tNames.push(it);
+
+	});
+	console.log(tNames);
+	return tNames;
 }
 

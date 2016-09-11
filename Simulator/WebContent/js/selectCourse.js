@@ -10,7 +10,7 @@ $(document).ready(function() {
 	getCourses();
 	disable($("#start"), true);
 	disable($("#form-round"), true);
-	checkSubmit();
+//	checkSubmit();
 	$('#form-courseName').change(function() {
 		checkLog($(this).val());
 	});
@@ -33,7 +33,7 @@ function isRoundDone(round, course){
 		dataType: "json", 
 		success : function(msg) {
 			if(msg){
-				$("#start").html("See Reports");
+				$("#start").html("Start Over");
 				//TODO: change onSubmit action
 			}
 			else{
@@ -52,36 +52,46 @@ function isRoundDone(round, course){
 function checkLog(directory) {
 
 	$('#form-round').find('option').remove().end();
-
-	$.ajax({
-		url : "HomeController?action=checkLog",
-		data : {
-			"directory" : directory
-		},
-		dataType: "json", 
-		success : function(rounds) {
-			if (rounds > 0) {
-				disable($('#start'), false);
-				disable($('#form-round'), false);
-				$(".form-round").removeClass("disabled");
-				$("#start").removeClass("disabled");
-				setRounds(rounds);
-				isRoundDone(1, directory);
-				
-			} else {
-				disable($('#start'), true);
-				disable($('#form-round'), true);
-				$(".form-round").addClass("disabled");
-				$("#start").addClass("disabled");
-				if (directory != "") {
-					$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message
+	
+	if($("#form-courseName").val() == ""){
+		disable($('#start'), true);
+		disable($('#form-round'), true);
+		$(".form-round").addClass("disabled");
+		$("#start").addClass("disabled");
+	}
+	else{
+		$.ajax({
+			url : "HomeController?action=getRounds",
+			data : {
+				"directory" : directory
+			},
+			dataType: "json", 
+			success : function(rounds) {
+				if (rounds > 0) {
+					disable($('#start'), false);
+					disable($('#form-round'), false);
+					$(".form-round").removeClass("disabled");
+					$("#start").removeClass("disabled");
+					setRounds(rounds);
+					isRoundDone(1, directory);
+					
+				} else {
+					disable($('#start'), true);
+					disable($('#form-round'), true);
+					$(".form-round").addClass("disabled");
+					$("#start").addClass("disabled");
+					if (directory != "") {
+						$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message
+					}
 				}
+			},
+			error : function(e) {
+				console.log("js: Error in checkLog");
 			}
-		},
-		error : function(e) {
-			console.log("js: Error in checkLog");
-		}
-	});
+		});
+	}
+	
+	
 }
 
 function setRounds(rounds) {
@@ -116,9 +126,9 @@ function checkSubmit(){
 
     $('.create-form').on('submit', function(e) {
     	
-    	if( $("#start").prop("diabled") == true )
+    	if( $("#start").prop("disabled") == true )
     	{
-    		console.log($("#start").prop("diabled"));
+    		console.log($("#start").prop("disabled"));
     		e.preventDefault(); 
     	}
 

@@ -130,20 +130,20 @@ public class SimulationTester implements Runnable {
 					services_to_solve.add(e.getKey());
 			}
 			if (services_to_solve != null && !services_to_solve.isEmpty()) {
-				Set<Integer> cis_to_solve = new HashSet<>();
+				Set<Byte> cis_to_solve = new HashSet<>();
 				for (Integer service : services_to_solve) {
 					cis_to_solve.addAll(simLog.getAffectedServices().get(service));
 				}
 
 				if (cis_to_solve != null && !cis_to_solve.isEmpty()) {
-					for (Integer ci : cis_to_solve) {
+					for (Byte ci : cis_to_solve) {
 						marom.ciSolved(ci, elapsed_time);
 					}
 					System.out.println(
 							"SimulationTester: " + elapsed_time + " services " + services_to_solve + " are solved");
 
 					// 5. un-schedule services that are up
-					for (Integer ci : cis_to_solve) {
+					for (Byte ci : cis_to_solve) {
 						HashSet<Integer> fixed_services = simLog.getAffectingCis().get(ci);
 //						fixed_services.removeIf(s -> !marom.getService_logs().get(s).isUp());
 						HashSet<Integer> cloned_fixed_services = (HashSet<Integer>) fixed_services.clone();

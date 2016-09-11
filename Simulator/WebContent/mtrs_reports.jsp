@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Reports</title>
+<title>MTRS Reports</title>
 
 <!-- Bootstrap -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -44,153 +44,52 @@ li {
 }
 </style>
 
+	<!-- jQuery -->
+	<script src="js/jquery-1.11.3.min.js"></script>
+	<!-- logout -->
+<%
+	response.setHeader("Cache-Control", "no-cache");
+	response.setHeader("Cache-Control", "no-store");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+%>
+
+<%
+	if (session.getAttribute("isLogged") == null) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+%>
+	<!-- course selection -->
+	<%
+
+	String requestCourse = request.getParameter("form-courseName");
+	Object sessionCourse = session.getAttribute("selectedCourseName");
+	if (requestCourse == null && sessionCourse == null) {
+		response.sendRedirect("selectCourse_reports.jsp");
+	}
+	else{
+		if(sessionCourse == null){
+			session.setAttribute("selectedCourseName", requestCourse);
+		}
+%>
+
+<script type="text/javascript">
+				var courseName = '<%=session.getAttribute("selectedCourseName")%>';
+
+	console.log("Course Selected: " + courseName);
+</script>
+<%
+	}
+%>
+
 </head>
 
 <body class="nav-md">
 	<div class="container body">
 		<div class="main_container">
-			<div class="col-md-3 left_col">
-				<div class="left_col scroll-view">
-					<div class="navbar nav_title" style="border: 0;">
-						<a href="index.html" class="site_title"><i class="fa fa-paw"></i>
-							<span>Gentellela Alela!</span></a>
-					</div>
-
-					<div class="clearfix"></div>
-
-					<!-- menu profile quick info -->
-					<!-- 					<div class="profile">
-						<div class="profile_pic">
-							<img src="images/img.jpg" alt="..."
-								class="img-circle profile_img">
-						</div>
-						<div class="profile_info">
-							<span>Welcome,</span>
-							<h2>John Doe</h2>
-						</div>
-					</div> -->
-					<!-- /menu profile quick info -->
-
-					<br />
-
-					<!-- sidebar menu -->
-					<div id="sidebar-menu"
-						class="main_menu_side hidden-print main_menu">
-						<div class="menu_section">
-							<h3>General</h3>
-							<ul class="nav side-menu">
-								<li><a><i class="fa fa-home"></i> Home <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="index.html">Dashboard</a></li>
-										<li><a href="index2.html">Dashboard2</a></li>
-										<li><a href="index3.html">Dashboard3</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-edit"></i> Forms <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="form.html">General Form</a></li>
-										<li><a href="form_advanced.html">Advanced Components</a></li>
-										<li><a href="form_validation.html">Form Validation</a></li>
-										<li><a href="form_wizards.html">Form Wizard</a></li>
-										<li><a href="form_upload.html">Form Upload</a></li>
-										<li><a href="form_buttons.html">Form Buttons</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-desktop"></i> UI Elements <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="general_elements.html">General Elements</a></li>
-										<li><a href="media_gallery.html">Media Gallery</a></li>
-										<li><a href="typography.html">Typography</a></li>
-										<li><a href="icons.html">Icons</a></li>
-										<li><a href="glyphicons.html">Glyphicons</a></li>
-										<li><a href="widgets.html">Widgets</a></li>
-										<li><a href="invoice.html">Invoice</a></li>
-										<li><a href="inbox.html">Inbox</a></li>
-										<li><a href="calendar.html">Calendar</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-table"></i> Tables <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="tables.html">Tables</a></li>
-										<li><a href="tables_dynamic.html">Table Dynamic</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-bar-chart-o"></i> Data
-										Presentation <span class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="chartjs.html">Chart JS</a></li>
-										<li><a href="chartjs2.html">Chart JS2</a></li>
-										<li><a href="morisjs.html">Moris JS</a></li>
-										<li><a href="echarts.html">ECharts</a></li>
-										<li><a href="other_charts.html">Other Charts</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-clone"></i>Layouts <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="fixed_sidebar.html">Fixed Sidebar</a></li>
-										<li><a href="fixed_footer.html">Fixed Footer</a></li>
-									</ul></li>
-							</ul>
-						</div>
-						<div class="menu_section">
-							<h3>Live On</h3>
-							<ul class="nav side-menu">
-								<li><a><i class="fa fa-bug"></i> Additional Pages <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="e_commerce.html">E-commerce</a></li>
-										<li><a href="projects.html">Projects</a></li>
-										<li><a href="project_detail.html">Project Detail</a></li>
-										<li><a href="contacts.html">Contacts</a></li>
-										<li><a href="profile.html">Profile</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-windows"></i> Extras <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="page_403.html">403 Error</a></li>
-										<li><a href="page_404.html">404 Error</a></li>
-										<li><a href="page_500.html">500 Error</a></li>
-										<li><a href="plain_page.html">Plain Page</a></li>
-										<li><a href="login.html">Login Page</a></li>
-										<li><a href="pricing_tables.html">Pricing Tables</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-sitemap"></i> Multilevel Menu <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="#level1_1">Level One</a>
-										<li><a>Level One<span class="fa fa-chevron-down"></span></a>
-											<ul class="nav child_menu">
-												<li class="sub_menu"><a href="level2.html">Level
-														Two</a></li>
-												<li><a href="#level2_1">Level Two</a></li>
-												<li><a href="#level2_2">Level Two</a></li>
-											</ul></li>
-										<li><a href="#level1_2">Level One</a></li>
-									</ul></li>
-								<li><a href="javascript:void(0)"><i
-										class="fa fa-laptop"></i> Landing Page <span
-										class="label label-success pull-right">Coming Soon</span></a></li>
-							</ul>
-						</div>
-
-					</div>
-					<!-- /sidebar menu -->
-
-					<!-- /menu footer buttons -->
-					<div class="sidebar-footer hidden-small">
-						<a data-toggle="tooltip" data-placement="top" title="Settings">
-							<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-							<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="Lock"> <span
-							class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="Logout">
-							<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-						</a>
-					</div>
-					<!-- /menu footer buttons -->
-				</div>
-			</div>
+		<!-- Side Menu -->
+		<%@ include file="sideMenu.jsp"%>
 
 			<!-- top navigation -->
 			<div class="top_nav">
@@ -427,7 +326,7 @@ li {
 				</div>
 				<br />
 				
-								<div class="row">
+				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="dashboard_graph">
 
@@ -448,7 +347,7 @@ li {
 									class="demo-placeholder"></div>
 								<div style="width: 100%;">
 									<canvas id="canvas_service" class="demo-placeholder"
-										style="width: 100%; height: 270px;"></canvas>
+										style="width: 100%; height: 400px;"></canvas>
 								</div>
 							</div>
 							<div class="clearfix"></div>
@@ -457,7 +356,58 @@ li {
 
 				</div>
 				<br />
+				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="dashboard_graph">
 
+							<div class="row x_title">
+								<div class="col-md-6">
+									<h3>
+										MTRS <small>...</small>
+									</h3>
+								</div>
+								<select id="teamSelectMTRS" style="min-width: 120px">
+										<option value="both">Both Teams</option>
+										<option value=1>Marom</option>
+										<option value=2>Rakia</option>
+								</select>
+								<select id="roundSelectMTRS" style="min-width: 120px">
+										<option value=0>All Rounds</option>
+								</select>
+								<select id="serviceSelectMTRS" style="min-width: 280px">
+										<option value=0>All Services</option>
+								</select>
+								<div class="col-md-6"></div>
+							</div>
+
+							<div class="col-md-9 col-sm-9 col-xs-12">
+								<div id="placeholder33" style="height: 260px; display: none"
+									class="demo-placeholder"></div>
+								<table>
+								<tr>
+									<td>
+										<div style="width: 100%;">
+											<canvas id="canvas_mtrsPie" class="demo-placeholder"
+												style="width: 100%; height: 270px;"></canvas>
+										</div>
+									</td>
+<!-- 									<td>
+										<select id="roundSelection" style="min-width: 300px; margin-bottom:10px">
+											<option value=0>All Rounds</option>
+										</select>
+									</td> -->
+								</tr>
+
+								</table>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+
+				</div>
+				<br/>
+				
 				<div class="row">
 
 
@@ -1086,8 +1036,7 @@ li {
 		</div>
 	</div>
 
-	<!-- jQuery -->
-	<script src="js/jquery-1.11.3.min.js"></script>
+
 	<!-- Bootstrap -->
 	<script src="js/bootstrap-3.3.5.min.js"></script>
 	<!-- FastClick -->
@@ -1101,8 +1050,7 @@ li {
 	<script src="js/charts/bootstrap-progressbar.min.js"></script>
 	<!-- iCheck -->
 	<script src="js/icheck.min.js"></script>
-	<!-- Skycons -->
-	<script src="js/charts/skycons.js"></script>
+
 	<!-- Flot -->
 	<script src="js/charts/jquery.flot.js"></script>
 	<script src="js/charts/jquery.flot.pie.js"></script>
@@ -1116,566 +1064,16 @@ li {
 	<script src="js/charts/curvedLines.js"></script>
 	<script src="js/charts/jquery.flot.axislabels.js"></script>
 	<script src="js/charts/jquery.flot.tooltip.min.js"></script>
-	<!-- DateJS -->
-	<script src="js/charts/date.js"></script>
-	<!-- JQVMap -->
-	<script src="js/charts/jquery.vmap.js"></script>
-	<script src="js/charts/jquery.vmap.world.js"></script>
-	<script src="js/charts/jquery.vmap.sampledata.js"></script>
-	<!-- bootstrap-daterangepicker -->
-	<!-- 	<script src="js/moment/moment.min.js"></script>
-	<script src="js/datepicker/daterangepicker.js"></script> -->
+
 
 	<!-- Select2 -->
 	<script src="js/select2.full.js"></script>
 
 	<!-- Custom Theme Scripts -->
-	<script src="js/custom.min.js"></script>
+	<script src="js/custom.js"></script>
 
-		<script>
-		var marom, rakia, labels;
-		function getMTBFPerService(roundId) { //has to be before select2 script
-			$.ajax({
-				url : "DashboardController",
-				data : {
-					action : "getMTBFPerService",
-					round : roundId
-				},
-				dataType : "json",
-				async : false,
-				success : function(data) {
-
-					marom = data.maromData;
-					rakia = data.rakiaData;
-					labels = data.labels;
-
-				},
-				error : function(e) {
-					console.log("Error in getMTBFPerService");
-				}
-			});
-		}
-		function setBarChartPerService(roundId) {
-			getMTBFPerService(roundId);
-			var barData = {
-				labels : labels,
-				datasets : [ {
-					label : "Marom",
-					backgroundColor : "rgba(76, 164, 224, 1)",
-					data : marom
-				},
-
-				{
-					label : "Rakia",
-					backgroundColor : "rgba(28, 97, 142, 1)",
-					data : rakia
-				} ]
-			};
-			console.log(barData);
-			var ctx = document.getElementById('canvas_service').getContext('2d');
-			new Chart(ctx, {
-				type : 'horizontalBar',
-				data : barData,
-				options : {
-						  scales: {
-						    yAxes: [{
-						      scaleLabel: {
-						        display: true,
-						        labelString: 'Services'
-						      }
-						    }],
-						    xAxes: [{
-							      scaleLabel: {
-							        display: true,
-							        labelString: 'Mean Time Between Failures (Seconds)'
-							      }
-							    }]
-						  }     
-						}
-			});
-	
-		}
-	</script>
-	
-	<!-- Chart -->
-	<script>
-	//TODO: add course name as a parameter
-	var colors = new Array("#D56AA0", "#7D82B8", "#613F75","#993955","#271F30"); //5 color for 5 rounds MAX
-	var rounds = new Array();
-	var teams;
-	function getMTBFPerTeam(serviceId) { //has to be before select2 script
-		$.ajax({
-			url : "DashboardController",
-			data : {
-				action : "getMTBFPerTeam",
-				service : serviceId
-			},
-			dataType : "json",
-			async : false,
-			success : function(data) {
-
-				for(var i=0; i<Object.keys(data).length-1;i++){
-					var name = "round#"+ (i+1);
-					rounds.push(data[name]);
-				}
-				teams = data["labels"];
-			},
-			error : function(e) {
-				console.log("Error in getMTBFPerTeam");
-			}
-		});
-	}
-	function setBarChartPerTeam(serviceId) {
-		getMTBFPerTeam(serviceId);
-		var dataArr = new Array();
-		for(var i=0;i<rounds.length;i++){
-			var item = new Object();
-			item.label = "Round "+(i+1);
-			item.backgroundColor =colors[i];
-			item.data = rounds[i];
-			dataArr.push(item);
-		}
-		
-		var barDataTeams = {
-			labels : teams,
-			datasets : dataArr
-		};
-		console.log(barDataTeams);
-		var ctx = document.getElementById('canvas_team');
-		new Chart(ctx, {
-			type : 'bar',
-			data : barDataTeams,
-			options : {
-					  scales: {
-					    yAxes: [{
-					      scaleLabel: {
-					        display: true,
-					        labelString: 'Mean Time Between Failures (Seconds)'
-					      }
-					    }]
-					  }     
-					}
-		});
-	}
-	</script>
-	<script>
-		var marom, rakia, labels;
-		function getMTBFPerRound(serviceId) { //has to be before select2 script
-			$.ajax({
-				url : "DashboardController",
-				data : {
-					action : "getMTBFPerRound",
-					service : serviceId
-				},
-				dataType : "json",
-				async : false,
-				success : function(data) {
-
-					marom = data.maromData;
-					rakia = data.rakiaData;
-					labels = data.labels;
-
-				},
-				error : function(e) {
-					console.log("Error in getMTBFPerRound");
-				}
-			});
-		}
-		function setBarChart(serviceId) {
-			getMTBFPerRound(serviceId);
-			var barData = {
-				labels : labels,
-				datasets : [ {
-					label : "Marom",
-					backgroundColor : "rgba(76, 164, 224, 1)",
-					data : marom
-				},
-
-				{
-					label : "Rakia",
-					backgroundColor : "rgba(28, 97, 142, 1)",
-					data : rakia
-				} ]
-			};
-			console.log(barData);
-			var ctx = document.getElementById('canvas_dahs');
-			new Chart(ctx, {
-				type : 'bar',
-				data : barData,
-				options : {
-						  scales: {
-						    yAxes: [{
-						      scaleLabel: {
-						        display: true,
-						        labelString: 'Mean Time Between Failures (Seconds)'
-						      }
-						    }]
-						  }     
-						}
-			});
-		}
-	</script>
-	<!-- /Chart -->
-
-	<!-- Select2 -->
-	<script>
-		var servicesForSelection, roundsForSelection;
-		function getServices() {
-			$.ajax({
-				url : "DashboardController",
-				data : {
-					action : "getServiceList",
-				},
-				dataType : "json",
-				async : false,
-				success : function(data) {
-
-					servicesForSelection = data;
-
-				},
-				error : function(e) {
-					console.log("Error in getServices");
-				}
-			});
-		}
-		
-		function getRounds() {
-			$.ajax({
-				url : "DashboardController",
-				data : {
-					action : "getRoundList",
-				},
-				dataType : "json",
-				async : false,
-				success : function(data) {
-
-					roundsForSelection = data;
-
-				},
-				error : function(e) {
-					console.log("Error in getRounds");
-				}
-			});
-		}
-		
-		var resetCanvas = function(element){
-			var id = element.attr('id');
-			var parent = element.parent();
-			var width = element.css("width");
-			var height = element.css("height");
-			console.log("w "+ width + "h "+ height);
-			  element.remove(); // this is my <canvas> element
-			  parent.append('<canvas id="' + id + '"></canvas>');
-			  var canvas = document.getElementById(id);
-			  $('#'+id).addClass("demo-placeholder");
-			  var ctx = canvas.getContext('2d');
-			  ctx.canvas.style.width = width; // resize width
-			  ctx.canvas.style.height = height; // resize height
-
-			  
-			};
-			
-		$(document).ready(function() {
-			//get data for combo boxes
-			getServices();
-			getRounds();
-			
-			//set charts
-			setBarChart(0); //all services default 
-			setBarChartPerTeam(0);
-			setBarChartPerService(0);
-			
-			$("#serviceSelection").select2({
-				allowClear : true,
-				data : servicesForSelection
-			}).on("change", function(e) {
-				var serSelection = $("#serviceSelection").val();
-				console.log("change val(service)=" + serSelection);
-				//MTBF per round
-				resetCanvas($("#canvas_dahs"));
-				setBarChart(serSelection);
-				//MTBF per team
-				//clear old data
-				rounds = new Array();
-				resetCanvas($("#canvas_team"));
-				
-				setBarChartPerTeam(serSelection);
-			});
-			
-			$("#roundSelection").select2({
-				allowClear : true,
-				data : roundsForSelection
-			}).on("change", function(e) {
-				var rSelection = $("#roundSelection").val();
-				console.log("change val(round)=" + rSelection);
-				//clear old data
-				resetCanvas($("#canvas_service"));
-				setBarChartPerService(rSelection);
-			});
-
-		});//end doc ready
-	</script>
-	<!-- /Select2 -->
-
-	<!-- JQVMap -->
-	<script>
-		$(document).ready(function() {
-			$('#world-map-gdp').vectorMap({
-				map : 'world_en',
-				backgroundColor : null,
-				color : '#ffffff',
-				hoverOpacity : 0.7,
-				selectedColor : '#666666',
-				enableZoom : true,
-				showTooltip : true,
-				values : sample_data,
-				scaleColors : [ '#E6F2F0', '#149B7E' ],
-				normalizeFunction : 'polynomial'
-			});
-		});
-	</script>
-	<!-- /JQVMap -->
-
-	<!-- Skycons -->
-	<script>
-		$(document)
-				.ready(
-						function() {
-							var icons = new Skycons({
-								"color" : "#73879C"
-							}), list = [ "clear-day", "clear-night",
-									"partly-cloudy-day", "partly-cloudy-night",
-									"cloudy", "rain", "sleet", "snow", "wind",
-									"fog" ], i;
-
-							for (i = list.length; i--;)
-								icons.set(list[i], list[i]);
-
-							icons.play();
-						});
-	</script>
-	<!-- /Skycons -->
-
-	<!-- Doughnut Chart -->
-	<script>
-		var pieData;
-		function getPieData() {
-			$.ajax({
-				url : "DashboardController",
-				data : {
-					action : "getPieData",
-				},
-				dataType : "json",
-				async : false,
-				success : function(data) {
-
-					pieData = data;
-					/* 					for (var i = 0; i < pieData.marom.labels.length; i++) {
-					
-					 pieData.marom.labels[i] = pieData.marom.labels[i] +" " +
-					 pieData.marom.percentages[i]*100 + "%";
-					 } */
-				},
-				error : function(e) {
-					console.log("Error in getPieData");
-				}
-			});
-		}
-
-		function makeLabels(percentages) {
-			var i = 0;
-			$('#my-doughnut-legend').find('li').each(function() {
-				var current = $(this);
-				current.append("&nbsp;" + percentages[i] * 100 + "%");
-				i++;
-			});
-		}
-
-		$(document)
-				.ready(
-						function() {
-							getPieData();
-
-							var options = {
-								legend : true,
-								responsive : false
-							};
-
-							var dougnut = new Chart(document
-									.getElementById("canvas1"), {
-								type : 'pie',
-								tooltipFillColor : "rgba(51, 51, 51, 0.55)",
-								data : {
-									labels : pieData.marom.labels,
-									datasets : [ {
-										data : pieData.marom.percentages,
-										backgroundColor : [
-										//            "#BDC3C7",
-										//            "#9B59B6",
-										"#26B99A", "#E74C3C"
-										//          "#3498DB"
-										],
-										hoverBackgroundColor : [
-										//            "#CFD4D8",
-										//            "#B370CF",
-										"#36CAAB", "#E95E4F"
-										//              "#49A9EA"
-										]
-									} ]
-								},
-								options : options
-							});
-							document.getElementById('my-doughnut-legend').innerHTML = dougnut
-									.generateLegend();
-							makeLabels(pieData.marom.percentages);
-						});
-	</script>
-	<!-- /Doughnut Chart -->
-
-	<!-- bootstrap-daterangepicker -->
-	<script>
-		$(document)
-				.ready(
-						function() {
-
-							var cb = function(start, end, label) {
-								console.log(start.toISOString(), end
-										.toISOString(), label);
-								$('#reportrange span').html(
-										start.format('MMMM D, YYYY') + ' - '
-												+ end.format('MMMM D, YYYY'));
-							};
-
-							var optionSet1 = {
-								startDate : moment().subtract(29, 'days'),
-								endDate : moment(),
-								minDate : '01/01/2012',
-								maxDate : '12/31/2015',
-								dateLimit : {
-									days : 60
-								},
-								showDropdowns : true,
-								showWeekNumbers : true,
-								timePicker : false,
-								timePickerIncrement : 1,
-								timePicker12Hour : true,
-								ranges : {
-									'Today' : [ moment(), moment() ],
-									'Yesterday' : [
-											moment().subtract(1, 'days'),
-											moment().subtract(1, 'days') ],
-									'Last 7 Days' : [
-											moment().subtract(6, 'days'),
-											moment() ],
-									'Last 30 Days' : [
-											moment().subtract(29, 'days'),
-											moment() ],
-									'This Month' : [ moment().startOf('month'),
-											moment().endOf('month') ],
-									'Last Month' : [
-											moment().subtract(1, 'month')
-													.startOf('month'),
-											moment().subtract(1, 'month')
-													.endOf('month') ]
-								},
-								opens : 'left',
-								buttonClasses : [ 'btn btn-default' ],
-								applyClass : 'btn-small btn-primary',
-								cancelClass : 'btn-small',
-								format : 'MM/DD/YYYY',
-								separator : ' to ',
-								locale : {
-									applyLabel : 'Submit',
-									cancelLabel : 'Clear',
-									fromLabel : 'From',
-									toLabel : 'To',
-									customRangeLabel : 'Custom',
-									daysOfWeek : [ 'Su', 'Mo', 'Tu', 'We',
-											'Th', 'Fr', 'Sa' ],
-									monthNames : [ 'January', 'February',
-											'March', 'April', 'May', 'June',
-											'July', 'August', 'September',
-											'October', 'November', 'December' ],
-									firstDay : 1
-								}
-							};
-							$('#reportrange span').html(
-									moment().subtract(29, 'days').format(
-											'MMMM D, YYYY')
-											+ ' - '
-											+ moment().format('MMMM D, YYYY'));
-							$('#reportrange').daterangepicker(optionSet1, cb);
-							$('#reportrange').on('show.daterangepicker',
-									function() {
-										console.log("show event fired");
-									});
-							$('#reportrange').on('hide.daterangepicker',
-									function() {
-										console.log("hide event fired");
-									});
-							$('#reportrange')
-									.on(
-											'apply.daterangepicker',
-											function(ev, picker) {
-												console
-														.log("apply event fired, start/end dates are "
-																+ picker.startDate
-																		.format('MMMM D, YYYY')
-																+ " to "
-																+ picker.endDate
-																		.format('MMMM D, YYYY'));
-											});
-							$('#reportrange').on('cancel.daterangepicker',
-									function(ev, picker) {
-										console.log("cancel event fired");
-									});
-							$('#options1').click(
-									function() {
-										$('#reportrange').data(
-												'daterangepicker').setOptions(
-												optionSet1, cb);
-									});
-							$('#options2').click(
-									function() {
-										$('#reportrange').data(
-												'daterangepicker').setOptions(
-												optionSet2, cb);
-									});
-							$('#destroy').click(
-									function() {
-										$('#reportrange').data(
-												'daterangepicker').remove();
-									});
-						});
-	</script>
-	<!-- /bootstrap-daterangepicker -->
-
-	<!-- gauge.js -->
-	<script>
-		var opts = {
-			lines : 12,
-			angle : 0,
-			lineWidth : 0.4,
-			pointer : {
-				length : 0.75,
-				strokeWidth : 0.042,
-				color : '#1D212A'
-			},
-			limitMax : 'false',
-			colorStart : '#1ABC9C',
-			colorStop : '#1ABC9C',
-			strokeColor : '#F0F3F3',
-			generateGradient : true
-		};
-		var target = document.getElementById('foo'), gauge = new Gauge(target)
-				.setOptions(opts);
-
-		gauge.maxValue = 6000;
-		gauge.animationSpeed = 32;
-		gauge.set(3200);
-		gauge.setTextField(document.getElementById("gauge-text"));
-	</script>
-	<!-- /gauge.js -->
+	<!-- MTRS Graphs -->
+	<script src="js/mtrs.js"></script>
 
 </body>
 </html>

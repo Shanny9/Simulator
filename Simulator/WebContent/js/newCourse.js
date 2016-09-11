@@ -58,8 +58,8 @@ function checkLog(directory) {
 		},
 		async: false,
 		dataType: "json", 
-		success : function(rounds) {
-			if (rounds>0) {
+		success : function(courseExists) {
+			if (courseExists) {
 				//the course already exists
 				//TODO: fix error pop-up
 				$('#err').slideToggle("slow").delay(3000).slideToggle("slow"); // shows err message

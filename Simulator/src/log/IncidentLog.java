@@ -28,7 +28,7 @@ public class IncidentLog implements Serializable{
 	/**
 	 * @return the incident_id
 	 */
-	int getIncident_id() {
+	public int getIncident_id() {
 		return incident_id;
 	}
 
@@ -63,6 +63,10 @@ public class IncidentLog implements Serializable{
 
 	boolean isOpen(int time) {
 		return time > start_time && end_time == 0;
+	}
+	
+	public int getDuration(){
+		return end_time - start_time;
 	}
 
 	public String toString() {

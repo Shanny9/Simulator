@@ -32,7 +32,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's map of services and their affecting CIs (key=service_id,
 	 * value=set of affecting CIs)
 	 */
-	private HashMap<Integer, HashSet<Integer>> affected_services;
+	private HashMap<Byte, HashSet<Byte>> affected_services;
 	/**
 	 * The simulation's incidents and their events (key = incident_id, value=set of events)
 	 */
@@ -70,7 +70,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private static SimulationLog instance;
 
-	private static Settings settings;
+	private Settings settings;
 	
 	private static boolean isInitialized;
 
@@ -199,7 +199,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @return The simulation's map of services and their affecting CIs
 	 *         (key=service_id, value=set of affecting CIs)
 	 */
-	HashMap<Integer, HashSet<Integer>> getAffectedServices() {
+	HashMap<Byte, HashSet<Byte>> getAffectedServices() {
 		return affected_services;
 	}
 
@@ -377,5 +377,18 @@ public class SimulationLog extends Thread implements Serializable {
 	
 	public boolean isInitiaized(){
 		return isInitialized;
+	}
+	
+	public double getMTBF(boolean team){
+		Double mtbf = getTeam(team).getMTBF();
+		if (mtbf == null){
+			//mtbf = round time
+			return settings.getRoundTime();
+		}
+		return mtbf;
+	}
+	
+	public double getMTRS(boolean team){
+		return getTeam(team).getMTRS();
 	}
 }

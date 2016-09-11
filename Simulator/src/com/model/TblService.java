@@ -20,7 +20,7 @@ public class TblService implements Serializable {
 
 	private boolean isActive;
 
-	private Boolean isTechnical;
+	private boolean isTechnical;
 
 	private String serviceCode;
 
@@ -106,11 +106,11 @@ public class TblService implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public Boolean getIsTechnical() {
+	public boolean getIsTechnical() {
 		return this.isTechnical;
 	}
 
-	public void setIsTechnical(Boolean isTechnical) {
+	public void setIsTechnical(boolean isTechnical) {
 		this.isTechnical = isTechnical;
 	}
 

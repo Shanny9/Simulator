@@ -3,6 +3,8 @@ package com.servlet;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,12 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.TblGeneralParametersDao;
-import com.daoImpl.TblGeneralParametersDaoImpl;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.model.TblGeneral_parameter;
-
 import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
@@ -27,6 +23,12 @@ import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.PasswordAuthentication;
 import utils.TimerManager;
+
+import com.dao.TblGeneralParametersDao;
+import com.daoImpl.TblGeneralParametersDaoImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.model.TblGeneral_parameter;
 
 /**
  * Servlet implementation class HomeController
@@ -38,8 +40,6 @@ public class HomeController extends HttpServlet {
 	private int round;
 	private Settings settings;
 	private String selectedCourseName;
-
-	private boolean tempBool = false;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -64,13 +64,7 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// if(LogUtils.path.isEmpty())
-		// {
-		// ServletContext context = getServletConfig().getServletContext();
-		// URL resourceUrl =
-		// context.getResource("WEB-INF"+File.separator+"logs");
-		// LogUtils.path = resourceUrl.getPath();
-		// }
+
 		LogUtils.setPath(getServletContext().getRealPath(
 				File.separator + "logs"));
 
@@ -79,7 +73,7 @@ public class HomeController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+		
 		String action = request.getParameter("action");
 		// System.out.println("action= " + action);
 		// System.out.println(vis_utils.DataMaker.getTeamMT("17-08-16",1));
@@ -123,26 +117,14 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(clocks));
 			break;
 		case "startSimulator":
-			// courseName = request.getParameter("courseName"); // V replace
-			// with selectedCourseName
-			// round = Integer.valueOf(request.getParameter("round"));
-			// settings = SimulationLog.getInstance(courseName).getSettings();
-			// // V remove this
-
 			if (settings != null) {
-				int runTime = settings.getRunTime();
-				int roundTime = settings.getRoundTime();
-				int pauseTime = settings.getPauseTime();
-
 				if (!ClockIncrementor.isRunning()) {
 					TimerManager.startSimulator(settings, round);
 					response.getWriter().print("OK");
 				}
 			}
 			break;
-		case "getSettings": // TODO: check that it happens after start simulator
-			// courseName = request.getParameter("courseName");
-			// settings = LogUtils.openSettings(courseName); // V remove this
+		case "getSettings":
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
@@ -167,8 +149,6 @@ public class HomeController extends HttpServlet {
 
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
-			// HashMap<String, Double> profits =
-			// SimulationLog.getInstance().getTeamProfits(currentTime);
 
 			SimulationLog simLogg = SimulationLog.getInstance();
 			if (!simLogg.isInitiaized()) {
@@ -193,7 +173,7 @@ public class HomeController extends HttpServlet {
 					.getParameter("form-pauseTime"));
 			int sessionsPerRound = Integer.valueOf(request
 					.getParameter("form-sessions"));
-			double initCapital = Double.valueOf(request
+			int initCapital = Integer.valueOf(request
 					.getParameter("form-initCapital"));
 
 			Settings set = new Settings(courseName, rounds, runTime, pauseTime,
@@ -209,9 +189,16 @@ public class HomeController extends HttpServlet {
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkLog":
-			response.getWriter().write(
-					gson.toJson(LogUtils.getCourseRounds(request
-							.getParameter("directory"))));
+			boolean courseExists = (LogUtils.openSettings(request
+					.getParameter("directory")) != null)? true : false;
+			
+			response.getOutputStream().print(courseExists);
+			break;
+		case "getRounds":
+			int tot_rounds =  LogUtils.openSettings(request
+					.getParameter("directory")).getRounds();
+//			System.out.println("total rounds "+ tot_rounds);
+			response.getWriter().write(gson.toJson(tot_rounds));
 			break;
 		case "getCourses":
 			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
@@ -246,6 +233,14 @@ public class HomeController extends HttpServlet {
 			TimerManager.forceResume();
 			log.SimulationLog.setServerPaused(false);
 			break;
+		case "getDoneCourses": //courses with at least 1 round done
+			ArrayList<String> courses = new ArrayList<String>(Arrays.asList(LogUtils.getCourses()));
+			for(int i=0; i<courses.size(); i++){
+				if(!checkFile("round", courses.get(i)))
+					courses.remove(i);
+			}
+			response.getWriter().write(gson.toJson(courses));
+ 			break;
 		}
 	}
 

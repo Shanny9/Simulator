@@ -22,10 +22,10 @@ public class TblCIDaoImpl implements TblCIDao {
 	}
 
 	@Override
-	public void addCI(TblCI ci) {
+	public void addCI(TblCI ci) throws SQLException {
 		String insertQuery = "INSERT INTO tblCI(CI_ID, CI_name, "
 				+ "supplier_level2, supplier_level3, isActive) VALUES (?,?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, ci.getCiId());
 			pStmt.setString(2, ci.getCI_name());
@@ -33,28 +33,24 @@ public class TblCIDaoImpl implements TblCIDao {
 			pStmt.setString(4, ci.getSupplierName2());
 			pStmt.setBoolean(5, ci.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deleteCI(byte ci_id) {
+	public void deleteCI(byte ci_id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblCI WHERE CI_ID = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, ci_id);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 
 	}
 
 	@Override
-	public void updateCI(TblCI ci, byte ciId) {
+	public void updateCI(TblCI ci, byte ciId) throws SQLException {
 		String updateQuery = "UPDATE tblCI SET CI_ID = ?, CI_name = ?, supplier_level2 = ?, supplier_level3 = ?, isActive = ? WHERE CI_ID = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, ci.getCiId());
 			pStmt.setString(2, ci.getCI_name());
@@ -64,9 +60,6 @@ public class TblCIDaoImpl implements TblCIDao {
 			pStmt.setByte(6, ciId);
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 	}
 
 	@Override

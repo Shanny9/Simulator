@@ -1,5 +1,6 @@
 package com.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.model.TblDepartment;
@@ -7,9 +8,9 @@ import com.model.TblDepartmentPK;
 
 public interface TblDepartmentDao {
 	
-	public void addDepartment(TblDepartment department);
-	public void deleteDepartment(TblDepartmentPK pk);
-	public void updateDepartment(TblDepartment department, TblDepartmentPK pk);
+	public void addDepartment(TblDepartment department) throws SQLException;
+	public void deleteDepartment(TblDepartmentPK pk) throws SQLException;
+	public void updateDepartment(TblDepartment department, TblDepartmentPK pk) throws SQLException;
 	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage);
 	public List<TblDepartment> getAllDepartments();
 	public TblDepartment getDepartmentById(String divisionName, String departmentName);

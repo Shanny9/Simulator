@@ -23,44 +23,40 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 	}
 
 	@Override
-	public void addPriorityCost(TblPriority_Cost priority) {
+	public void addPriorityCost(TblPriority_Cost priority) throws SQLException {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblPriority_Cost`\r\n" + 
 				"(`pName`,\r\n" + 
 				"`pCost`,\r\n" + 
 				"`isActive`)\r\n" + 
 				" VALUES (?,?,?);";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
 			pStmt.setBoolean(3, priority.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deletePriorityCost(String pk) {
+	public void deletePriorityCost(String pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblPriority_Cost WHERE pName = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setString(1, pk);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void updatePriorityCost(TblPriority_Cost priority, String name) {
+	public void updatePriorityCost(TblPriority_Cost priority, String name) throws SQLException {
 		String updateQuery = "UPDATE `SIMULATOR`.`tblPriority_Cost`\r\n" + 
 				"SET\r\n" + 
 				"`pName` = ?,\r\n" + 
 				"`pCost` = ?,\r\n" + 
 				"`isActive` = ?\r\n" + 
 				"WHERE `pName` = ?;";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
@@ -69,9 +65,6 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 	}
 
 	@Override

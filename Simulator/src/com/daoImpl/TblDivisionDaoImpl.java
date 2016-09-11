@@ -22,44 +22,37 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	}
 
 	@Override
-	public void addDivision(TblDivision division) {
+	public void addDivision(TblDivision division) throws SQLException {
 		String insertQuery = "INSERT INTO tblDivision(division_name, isActive) VALUES (?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deleteDivision(String name) {
+	public void deleteDivision(String name) throws SQLException {
 		String deleteQuery = "DELETE FROM tblDivision WHERE division_name = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setString(1, name);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 
 	}
 
 	@Override
-	public void updateDivision(TblDivision division, String divisionName) {
+	public void updateDivision(TblDivision division, String divisionName) throws SQLException {
 		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ? WHERE division_name = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
 			pStmt.setString(3, divisionName);
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 	}
 
 	@Override

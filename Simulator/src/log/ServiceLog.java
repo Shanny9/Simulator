@@ -50,38 +50,74 @@ public class ServiceLog implements Serializable {
 		this.diff = fixed_income - fixed_cost;
 		this.isFinished = false;
 		this.times = new ArrayList<>();
-		times.add(0);
+		addTime(0);
 	}
 
 	/**
 	 * Updates the service's status (up/ down)
 	 * 
-	 * @param time The time of update
+	 * @param time
+	 *            The time of update
 	 */
 	synchronized void updateStatus(int time) {
 		if (isFinished) {
 			return;
 		}
-		times.add(time);
-		diff = ((isUp()) ? (fixed_income - fixed_cost) : (-fixed_cost - down_cost));
-
+		
+		try {
+			if (time < 0) {
+				throw new Exception("updateStatus exception: time is negative");
+			}			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		addTime(time);
+		diff = ((isUp()) ? (fixed_income - fixed_cost)
+				: (-fixed_cost - down_cost));
 	}
 	
+	private void addTime(int time){
+		
+		try {
+			if (times.size() > 0 && time < times.get(times.size()-1)){
+				throw new Exception("updateStatus exception: time is smaller than last time");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		times.add(time);
+	}
+
 	/**
 	 * @return The service's gain/ loss of money per second
 	 */
-	synchronized double getDiff(){
+	synchronized double getDiff() {
 		return diff;
 	}
 
 	/**
 	 * Adds an end time to the service
 	 * 
-	 * @param time The time of stop
+	 * @param time
+	 *            The time of stop
 	 */
 	synchronized void stop(int time) {
+		try {
+			if (time < 0) {
+				throw new Exception("stop exception: time is negative");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		if (!isFinished) {
-			times.add(time);
+			addTime(time);
 		}
 		isFinished = true;
 	}
@@ -120,18 +156,30 @@ public class ServiceLog implements Serializable {
 
 		return (double) getTotalUpTime() / failures;
 	}
-	
-	public int getTotalUpTime(){
-		return times.size()-1 - getTRS();
+
+	public int getTotalUpTime() {
+		int upTime = times.size() - 1 - getTRS();
+
+//		try {
+//			if (upTime < 0) {
+//				throw new Exception(
+//						"getTotalUpTime exception: upTime is negative");
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		return upTime;
 	}
-	
-	public double getUpTimePercentage(){
+
+	public double getUpTimePercentage() {
 		int failures = getNumOfFailures();
 		if (failures == 0) {
 			// returns the total up-time duration
 			return 1;
 		}
-		return (double) getTotalUpTime() / times.get(times.size()-1);
+		return (double) getTotalUpTime() / times.get(times.size() - 1);
 	}
 
 	/**
@@ -144,26 +192,49 @@ public class ServiceLog implements Serializable {
 			// returns 0 because there were no failures
 			return 0d;
 		}
-				
+
 		return (double) getTRS() / failures;
 	}
-	
+
 	/**
-	 * @return The total duration that the services was down 
+	 * @return The total duration that the services was down
 	 */
-	int getTRS(){
+	int getTRS() {
 		int totalDownTime = 0;
 		for (int index = 3; index < times.size(); index += 2) {
 			totalDownTime += times.get(index) - times.get(index - 1);
 		}
+
+//		try {
+//			if (totalDownTime < 0) {
+//				throw new Exception("getTRS exception: TRS is negative");
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
 		return totalDownTime;
 	}
-	
+
 	/**
 	 * @return The number of time the service was down
 	 */
-	int getNumOfFailures(){
-		return (times.size() - 1) / 2;
+	int getNumOfFailures() {
+
+		int numOfFailures = (times.size() - 1) / 2;
+
+//		try {
+//			if (numOfFailures < 0) {
+//				throw new Exception(
+//						"getNumOfFailures exception: numOfFailures is negative");
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		return numOfFailures;
 	}
 
 	/**
@@ -187,11 +258,11 @@ public class ServiceLog implements Serializable {
 		}
 		return diff - oldDiff;
 	}
-	
+
 	/**
 	 * @return The service's ID
 	 */
-	synchronized int getId(){
+	synchronized int getId() {
 		return service_id;
 	}
 
@@ -205,8 +276,8 @@ public class ServiceLog implements Serializable {
 			return times.size() % 2 == 0;
 		}
 	}
-	
-	synchronized public String toString(){
+
+	synchronized public String toString() {
 		return "Service id= " + service_id + ", Times: " + times.toString();
 	}
 }

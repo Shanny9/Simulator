@@ -24,6 +24,7 @@ var regularColor = '#FF9900';
 var isSimulatorStarted = false;
 var maromScore;
 var rakiaScore;
+var isFinishedRound = false; //TODO: initialize it when round is over.
 
 var solutionEventSource;
 var profitEventSource;
@@ -76,11 +77,43 @@ $(document).ready(function() {
 	
 	checkSimulator();
 		
-	$("#startSimulator").click(startSimulator);
-	$("#pause").click(pauseSimulator);
-	$("#resume").click(resumeSimulator);
+	$("#funcBtn").click(function(){
+		var theClass = $("#funcBtn span").attr('class');
+		if(theClass === "start"){
+			startSimulator();
+			setPauseBtn();
+		}
+		if(theClass === "pause" && !isFinishedRound){
+			pauseSimulator();
+			setResumeBtn();
+		}
+		if(theClass === "resume" && !isFinishedRound){
+			resumeSimulator();
+			setPauseBtn();
+		}
+		if(isFinishedRound){
+			setFinish();
+		}
+	});
+//	$("#pause").click(pauseSimulator);
+//	$("#resume").click(resumeSimulator);
 	console.log("END Document ready");
 });
+
+function setPauseBtn(){
+	$(".start").removeClass("start").addClass("pause").html("PAUSE");
+	$(".resume").removeClass("resume").addClass("pause").html("PAUSE");
+	
+}
+function setResumeBtn(){
+	$(".pause").removeClass("pause").addClass("resume").html("RESUME");
+}
+function setFinish(){
+	$(".start").removeClass("start").addClass("finish").html("FINISHED");
+	$(".resume").removeClass("resume").addClass("finish").html("FINISHED");
+	$(".pause").removeClass("pause").addClass("finish").html("FINISHED");
+	$("#funcBtn").css("cursor","default");
+}
 
 //checks if the simulator has started
 function checkSimulator() {
@@ -361,6 +394,7 @@ function incrementClock() {
 
 		if (elapsedTime % settings["roundTime"] == 0) {
 			// finished round
+			isFinishedRound = true;
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);

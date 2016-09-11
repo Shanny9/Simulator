@@ -23,7 +23,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	}
 
 	@Override
-	public void addIncident(TblIncident incident) {
+	public void addIncident(TblIncident incident) throws SQLException {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident`\r\n" + 
 				"(`incident_id`,\r\n" + 
 				"`incidentTime`,\r\n" + 
@@ -32,7 +32,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				"`solution_id`)\r\n" + 
 				"VALUES\r\n" + 
 				"(?,?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, incident.getIncidentId());
 			pStmt.setInt(2, incident.getIncidentTime());
@@ -40,25 +40,21 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			pStmt.setBoolean(4, incident.getIsActive());
 			pStmt.setInt(5, incident.getSolutionId());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deleteIncident(Byte id) {
+	public void deleteIncident(Byte id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblIncident WHERE incident_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, id);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void updateIncident(TblIncident incident, byte id) {
+	public void updateIncident(TblIncident incident, byte id) throws SQLException {
 		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident`\r\n" + 
 				"SET\r\n" + 
 				"`incident_id` = ?,\r\n" + 
@@ -67,19 +63,16 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				"`isActive` = ?,\r\n" + 
 				"`solution_id` = ?\r\n" + 
 				"WHERE `incident_id` = ?;";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, incident.getIncidentId());
 			pStmt.setInt(2, incident.getIncidentTime());
-			pStmt.setByte(4, incident.getCiId());
-			pStmt.setBoolean(5, incident.getIsActive());
+			pStmt.setByte(3, incident.getCiId());
+			pStmt.setBoolean(4, incident.getIsActive());
 			pStmt.setInt(5, incident.getSolutionId());
 			pStmt.setByte(6, id);
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 	}
 
 	@Override

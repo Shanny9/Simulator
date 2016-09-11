@@ -2,9 +2,12 @@ package com.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +23,9 @@ import com.daoImpl.TblDepartmentDaoImpl;
 import com.daoImpl.TblDivisionDaoImpl;
 import com.daoImpl.TblEevntDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
+import com.daoImpl.TblLevelDaoImpl;
 import com.daoImpl.TblPriorityCostDaoImpl;
+import com.daoImpl.TblPriorityDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblServiceDepartmentDaoImpl;
 import com.daoImpl.TblServiceDivisionDaoImpl;
@@ -63,6 +68,9 @@ public class DataController extends HttpServlet {
 	private TblDepartmentDaoImpl daoDepartment;
 	private TblDivisionDaoImpl daoDivision;
 	private TblEevntDaoImpl daoEvent;
+	
+	private TblPriorityDaoImpl daoPriority;
+	private TblLevelDaoImpl daoLevel;
 
 	public DataController() {
 		daoSupplier = new TblSupplierDaoImpl();
@@ -77,6 +85,8 @@ public class DataController extends HttpServlet {
 		daoDepartment = new TblDepartmentDaoImpl();
 		daoDivision = new TblDivisionDaoImpl();
 		daoEvent = new TblEevntDaoImpl();
+		daoPriority = new TblPriorityDaoImpl();
+		daoLevel = new TblLevelDaoImpl();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -121,6 +131,12 @@ public class DataController extends HttpServlet {
 				break;
 			case "incident":
 				optionArr = toOptionArray(daoIncident.getAllIncidents(), "incidentId", "incidentId");
+				break;
+			case "priority":
+				optionArr = toOptionArray(daoPriority.getAllPriorities(), "priorityName", "priorityName");
+				break;
+			case "level":
+				optionArr = toOptionArray(daoLevel.getAllLevels(), "level", "level");
 				break;
 			}
 			jo.put("Result", "OK");
@@ -211,7 +227,7 @@ public class DataController extends HttpServlet {
 					}
 
 					if (request.getParameter("isActive") != null) {
-						byte isActive = Byte.parseByte(request.getParameter("isActive"));
+						boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
 						supplier.setIsActive(isActive);
 					}
 
@@ -263,7 +279,8 @@ public class DataController extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println("Data-tblSupplier: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -362,7 +379,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblSolution: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -465,7 +483,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblIncident: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -559,7 +578,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblPriorityCost: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -692,7 +712,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblService: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -810,7 +831,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblServiceDep: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -916,7 +938,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblServiceDiv: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -994,8 +1017,8 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				} else if (action.equals("delete")) {
 					// Delete record
-					if (request.getParameter("CiId") != null) {
-						Byte CiId = Byte.parseByte(request.getParameter("CiId"));
+					if (request.getParameter("ciId") != null) {
+						Byte CiId = Byte.parseByte(request.getParameter("ciId"));
 						daoCI.deleteCI(CiId);
 
 						// Return in the format required by jTable plugin
@@ -1016,10 +1039,11 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
-				System.out.println("Data-tblServiceDep: " + ex.getMessage());
+//				ex.printStackTrace();
+				System.out.println("Data-tblCi: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -1120,7 +1144,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblCMDB: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -1158,9 +1183,9 @@ public class DataController extends HttpServlet {
 						String departmentName = request.getParameter("departmentName");
 						department.setDepartmentName(departmentName);
 					}
-
-					if (request.getParameter("divisionName") != null) {
-						String divisionName = request.getParameter("divisionName");
+					
+					if (request.getParameter("devisionName") != null) {
+						String divisionName = request.getParameter("devisionName");
 						department.setDevisionName(divisionName);
 					}
 
@@ -1176,7 +1201,7 @@ public class DataController extends HttpServlet {
 					} else if (action.equals("update")) {
 						// Update existing record
 						String dep = request.getParameter("jtRecordKey_departmentName");
-						String div = request.getParameter("jtRecordKey_divisionName");
+						String div = request.getParameter("jtRecordKey_devisionName");
 						pk.setDepartmentName(dep);
 						pk.setDevisionName(div);
 						daoDepartment.updateDepartment(department, pk);
@@ -1192,9 +1217,9 @@ public class DataController extends HttpServlet {
 				} else if (action.equals("delete")) {
 					// Delete record
 					if (request.getParameter("departmentName") != null
-							&& request.getParameter("divisionName") != null) {
+							&& request.getParameter("devisionName") != null) {
 						String departmentName = request.getParameter("departmentName");
-						String divisionName = request.getParameter("divisionName");
+						String divisionName = request.getParameter("devisionName");
 						pk.setDepartmentName(departmentName);
 						pk.setDevisionName(divisionName);
 						daoDepartment.deleteDepartment(pk);
@@ -1220,7 +1245,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblDepartment: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -1309,7 +1335,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblDivision: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -1407,7 +1434,8 @@ public class DataController extends HttpServlet {
 				ex.printStackTrace();
 				System.out.println("Data-tblEvent: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
-				JSONROOT.put("Message", ex.getMessage());
+				JSONROOT.put("Message", 
+						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
 				String error = gson.toJson(JSONROOT);
 				response.getWriter().print(error);
 			}
@@ -1445,6 +1473,28 @@ public class DataController extends HttpServlet {
 			e.printStackTrace();
 		}
 		return optionArray;
+	}
+	
+	private String getErrorMsg(int errCode, String errMsg, String action){
+		switch(errCode){
+		case 1062:
+			Pattern pattern = Pattern.compile("'(.*?)'");
+			Matcher matcher = pattern.matcher(errMsg);
+			String key = "";
+			if(matcher.find())
+				key = matcher.group(1);
+			return "Key '"+key+"' already exists. (Duplicate Error)";
+		case 1451:
+			Pattern pat = Pattern.compile("`(.*?)`");
+			Matcher match = pat.matcher(errMsg);
+			String tbl = "";
+			if(match.find()){
+				match.find();
+				tbl = match.group(1);
+			}
+			return "Cannot " + action + "row because it is connected to table '"+tbl+"'. (Foreign-Key Constraint)";
+		}
+		return "Error not specified.";
 	}
 
 }// end class

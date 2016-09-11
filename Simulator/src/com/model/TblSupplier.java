@@ -17,7 +17,7 @@ public class TblSupplier implements Serializable {
 
 	private String currency;
 
-	private byte isActive;
+	private boolean isActive;
 
 	private double solutionCost;
 
@@ -44,11 +44,11 @@ public class TblSupplier implements Serializable {
 		this.currency = currency;
 	}
 
-	public byte getIsActive() {
+	public boolean getIsActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(byte isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

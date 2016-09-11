@@ -88,11 +88,9 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority pr = new TblPriority();
-				TblPriorityPK pk = new TblPriorityPK();
-				pk.setImpact(pr.getId().getImpact());
-				pk.setUrgency(pr.getId().getUrgency());
-				pr.setId(pk);
-				pr.setPriorityName(pr.getPriorityName());
+				pr.setImpact(rs.getString("impact"));
+				pr.setUrgency(rs.getString("urgency"));
+				pr.setPriorityName(rs.getString("priorityName"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -102,21 +100,22 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	}
 
 	@Override
+	/**
+	 * gets all priorities by DISTINCT NAMES
+	 */
 	public List<TblPriority> getAllPriorities() {
 		List<TblPriority> priorities = new ArrayList<TblPriority>();
 
-		String query = "SELECT * FROM tblPriority";
+		String query = "SELECT distinct priorityName FROM tblPriority";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			while (rs.next()) {//TODO: FIX THIS!
+			while (rs.next()) {
 				TblPriority pr = new TblPriority();
-				TblPriorityPK pk = new TblPriorityPK();
-				pk.setImpact(pr.getId().getImpact());
-				pk.setUrgency(pr.getId().getUrgency());
-				pr.setId(pk);
-				pr.setPriorityName(pr.getPriorityName());
+//				pr.setImpact(rs.getString("impact"));
+//				pr.setUrgency(rs.getString("urgency"));
+				pr.setPriorityName(rs.getString("priorityName"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {

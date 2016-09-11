@@ -1864,7 +1864,6 @@
 			var fieldHeight 	=  field.height();
 			var promptHeight = promptElmt.height();
 
-
 			// is the form contained in an overflown container?
 			promptTopPosition = promptleftPosition = 0;
 			// compensation for the arrow

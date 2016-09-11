@@ -1,10 +1,14 @@
 package log;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,16 +30,19 @@ import com.dao.TblCIDao;
 import com.dao.TblCMDBDao;
 import com.dao.TblEventDao;
 import com.dao.TblIncidentDao;
+import com.dao.TblServiceDao;
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblEevntDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
+import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblSupplierDaoImpl;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblEvent;
 import com.model.TblIncident;
+import com.model.TblService;
 import com.model.TblSupplier;
 
 public class LogUtils {
@@ -42,6 +50,7 @@ public class LogUtils {
 	private static String path = "";
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
 	private static final String filePrefix = "round#";
+	// TODO: ask user if he wants to override existing logs
 	private static final boolean deleteHistory = true;
 
 	/**
@@ -54,8 +63,8 @@ public class LogUtils {
 	 */
 	public static int getCourseRounds(String courseName) {
 
-		File file = new File(path + File.separator + courseName);
-		if(file.exists() && file.isDirectory()){
+		File file = new File(getPath() + File.separator + courseName);
+		if (file.exists() && file.isDirectory()) {
 
 			File[] settingsFiles = file.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -67,14 +76,13 @@ public class LogUtils {
 				return 0;
 			}
 			return openSettings(courseName).getRounds();
-		}
-		else
+		} else
 			return 0;
 	}
 
 	public static void deleteCourse(String courseName) {
 
-		File file = new File(path + File.separator + courseName);
+		File file = new File(getPath() + File.separator + courseName);
 		if (!file.exists()) {
 			return;
 		}
@@ -92,7 +100,7 @@ public class LogUtils {
 	 */
 	public static String[] getCourses() {
 
-		File file = new File(path);
+		File file = new File(getPath());
 		String[] directories = file.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File current, String name) {
@@ -113,12 +121,15 @@ public class LogUtils {
 	public static void saveLog(String courseName, final int round) {
 		try {
 
-			File file = new File(path + File.separator + courseName + File.separator);
+			File file = new File(getPath() + File.separator + courseName
+					+ File.separator);
 			file.mkdirs();
 
 			final String newFileName = generateFileName(round);
 
-			FileOutputStream fileOut = new FileOutputStream(path + File.separator +courseName + File.separator + newFileName);
+			FileOutputStream fileOut = new FileOutputStream(getPath()
+					+ File.separator + courseName + File.separator
+					+ newFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			SimulationLog simLog = SimulationLog.getInstance();
 			Settings sett = simLog.getSettings();
@@ -133,7 +144,9 @@ public class LogUtils {
 			if (deleteHistory) {
 				File[] matchingFiles = file.listFiles(new FilenameFilter() {
 					public boolean accept(File dir, String name) {
-						return name.startsWith(filePrefix + round) && name.endsWith("ser") && !name.equals(newFileName);
+						return name.startsWith(filePrefix + round)
+								&& name.endsWith("ser")
+								&& !name.equals(newFileName);
 					}
 				});
 
@@ -158,12 +171,19 @@ public class LogUtils {
 	 */
 	public static SimulationLog openLog(String course, final int round) {
 		try {
-			File file = new File(path + File.separator + course);
+			// checks that the log file exists
+			File file = new File(getPath() + File.separator + course);
 			File[] matchingFiles = file.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return name.startsWith(filePrefix + round) && name.endsWith("ser");
+					return name.startsWith(filePrefix + round)
+							&& name.endsWith("ser");
 				}
 			});
+			
+			if (matchingFiles == null || matchingFiles.length == 0) {
+				// TODO: tell the user log file is missing
+				return null;
+			}
 			
 			FileInputStream fileIn = new FileInputStream(matchingFiles[0]);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -188,22 +208,32 @@ public class LogUtils {
 	 */
 	public static void saveSettings(Settings settings) {
 
-		File file = new File(path + File.separator + settings.getCourseName());
+		File file = new File(getPath() + File.separator
+				+ settings.getCourseName());
 		file.mkdirs();
 
-		FileOutputStream fileOut;
+		FileOutputStream fos;
 		try {
-			fileOut = new FileOutputStream(
-					path + File.separator + settings.getCourseName() + File.separator + "settings.ser");
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(settings);
-			out.close();
-			fileOut.close();
-			System.out.println("settings for course " + settings.getCourseName() + " were saved in " + path);
+			String fullPath = getPath() + File.separator
+					+ settings.getCourseName() + File.separator
+					+ "settings.ser";
+			fos = new FileOutputStream(fullPath);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(settings);
+			oos.close();
+			fos.close();
+
+			fullPath = fullPath.replace("settings.ser", "settings.txt");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fullPath));
+			String txt = settings.toString().replace("\n",
+					System.lineSeparator());
+			bw.write(txt);
+			bw.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("settings for course " + settings.getCourseName()
+				+ " were saved in " + getPath());
 	}
 
 	/**
@@ -215,33 +245,111 @@ public class LogUtils {
 	 */
 	public static Settings openSettings(String courseName) {
 		try {
+			// checks if course directory exists
+			File file = new File(getPath() + File.separator + courseName);
+			if (!file.exists() || !file.isDirectory()) {
+				// TODO: tell the user the course directory is missing
+				return null;
+			}
 
-			FileInputStream fileIn = new FileInputStream(
-					path + File.separator + courseName + File.separator + "settings.ser");
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			Settings settings = (Settings) in.readObject();
-			in.close();
-			fileIn.close();
-			return settings;
-		} catch (IOException i) {
+			// checks for settings.ser in the course directory
+			File[] settingsFiles = file.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.equals("settings.ser")
+							|| name.equals("settings.txt");
+				}
+			});
+
+			if (settingsFiles == null || settingsFiles.length == 0) {
+				// TODO: tell the user settings.ser is missing
+				return null;
+			}
+
+			String fileName = settingsFiles[0].getName();
+			String fullPath = getPath() + File.separator + courseName
+					+ File.separator + fileName;
+
+			if (fileName.endsWith(".ser")) {
+				FileInputStream fileIn = new FileInputStream(fullPath);
+				ObjectInputStream in = new ObjectInputStream(fileIn);
+				Settings settings = (Settings) in.readObject();
+				in.close();
+				fileIn.close();
+				return settings;
+
+			} else if (fileName.endsWith(".txt")) {
+				fullPath = fullPath.replace("settings.ser", "settings.txt");
+				try (BufferedReader buffer = new BufferedReader(new FileReader(
+						fullPath))) {
+					String line;
+					String input = "";
+					while ((line = buffer.readLine()) != null) {
+						input += line;
+					}
+
+					int start_bracket_index = input.indexOf("[");
+					int end_bracket_index = input.indexOf("]");
+					String exp;
+					int expLen;
+					ArrayList<String> expressions = new ArrayList<String>();
+					do {
+						exp = input.substring(start_bracket_index + 1,
+								end_bracket_index);
+						expressions.add(exp);
+						input = input.substring(end_bracket_index + 1);
+
+						start_bracket_index = input.indexOf("[");
+						end_bracket_index = input.indexOf("]");
+						expLen = end_bracket_index - start_bracket_index;
+					} while (expLen > 0);
+					
+					String course = expressions.get(0);
+					int rounds = Integer.parseInt(expressions.get(1));
+					int runTime = Integer.parseInt(expressions.get(2));
+					int pauseTime = Integer.parseInt(expressions.get(3));
+					int sessionsPerRound = Integer.parseInt(expressions.get(4));
+					int initialCapital = Integer.parseInt(expressions.get(5));
+					int lastRoundDone = Integer.parseInt(expressions.get(6));
+					String[] targetScores = expressions.get(7).replace(" ", "")
+							.split(",");
+					ArrayList<Integer> scores = new ArrayList<Integer>();
+					for (int i = 0; i < targetScores.length; i++) {
+						scores.add(Integer.parseInt(targetScores[i]));
+					}
+					HashMap<String, Integer> priority_sla = new HashMap<>();
+					priority_sla.put("Low",
+							Integer.parseInt(expressions.get(8)));
+					priority_sla.put("Medium",
+							Integer.parseInt(expressions.get(9)));
+					priority_sla.put("High",
+							Integer.parseInt(expressions.get(10)));
+					priority_sla.put("Major",
+							Integer.parseInt(expressions.get(11)));
+					priority_sla.put("Critical",
+							Integer.parseInt(expressions.get(12)));
+
+					Settings sett = new Settings(course, rounds, runTime,
+							pauseTime, sessionsPerRound, initialCapital);
+					sett.setLastRoundDone(lastRoundDone);
+					sett.setTargetScores(scores);
+					sett.setPriority_sla(priority_sla);
+					LogUtils.saveSettings(sett);
+
+					return sett;
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (IOException | ClassNotFoundException i) {
+			// TODO: tell the user reading the file has failed. May occur if the
+			// Settings class has changed.
 			i.printStackTrace();
-		} catch (ClassNotFoundException c) {
-			System.out.println("Log class not found");
-			c.printStackTrace();
+			return null;
 		}
 		return null;
-	}
 
-	// /**
-	// * Generates a path given the course name
-	// *
-	// * @param courseName
-	// * The name of the course
-	// * @return The path to the directory of the course's log
-	// */
-	// private static String generatePath(String courseName) {
-	// return path + courseName + "/";
-	// }
+	}
 
 	/**
 	 * Generates a file name given the simulation's round
@@ -251,7 +359,8 @@ public class LogUtils {
 	 * @return The file name of the requested log
 	 */
 	private static String generateFileName(int round) {
-		String dateString = new SimpleDateFormat(date_time_foramt).format(new Date());
+		String dateString = new SimpleDateFormat(date_time_foramt)
+				.format(new Date());
 		return filePrefix + round + " - " + dateString + ".ser";
 	}
 
@@ -273,21 +382,21 @@ public class LogUtils {
 		}
 		return dbAffectingCis;
 	}
-	
+
 	/**
-	 * @return
+	 * @return A map of CIs and their incidents
 	 */
-	static HashMap<Integer, HashSet<Integer>> getCIsAndTheirIncidents() {
-		HashMap<Integer, HashSet<Integer>> ci_incidents = new HashMap<>();
+	static HashMap<Byte, HashSet<Byte>> getCIsAndTheirIncidents() {
+		HashMap<Byte, HashSet<Byte>> ci_incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 
 		for (TblIncident incident : dao.getAllIncidents()) {
-			int ci = incident.getCiId();
-			HashSet<Integer> incidents = ci_incidents.get(ci);
+			byte ci = incident.getCiId();
+			HashSet<Byte> incidents = ci_incidents.get(ci);
 			if (incidents == null) {
-				incidents = new HashSet<Integer>();
+				incidents = new HashSet<Byte>();
 			}
-			incidents.add((int) incident.getIncidentId());
+			incidents.add(incident.getIncidentId());
 			ci_incidents.put(ci, incidents);
 		}
 		return ci_incidents;
@@ -296,17 +405,17 @@ public class LogUtils {
 	/**
 	 * @return A map of the services and their affecting CIs
 	 */
-	static HashMap<Integer, HashSet<Integer>> getDBAffectedServices() {
-		HashMap<Integer, HashSet<Integer>> dbAffectedServices = new HashMap<>();
+	static HashMap<Byte, HashSet<Byte>> getDBAffectedServices() {
+		HashMap<Byte, HashSet<Byte>> dbAffectedServices = new HashMap<>();
 		TblCMDBDao dao = new TblCMDBDaoImpl();
 
 		for (TblCMDB cmdb : dao.getAllCMDBs()) {
-			int service = cmdb.getServiceId();
-			HashSet<Integer> cis = dbAffectedServices.get(service);
+			byte service = cmdb.getServiceId();
+			HashSet<Byte> cis = dbAffectedServices.get(service);
 			if (cis == null) {
-				cis = new HashSet<Integer>();
+				cis = new HashSet<Byte>();
 			}
-			cis.add((int) cmdb.getCiId());
+			cis.add(cmdb.getCiId());
 			dbAffectedServices.put(service, cis);
 		}
 		return dbAffectedServices;
@@ -324,6 +433,7 @@ public class LogUtils {
 			TblSupplier sup = new TblSupplierDaoImpl().getSupplierById(supName);
 			int mul = 1;
 			switch (sup.getCurrency()) {
+			// TODO: hard-coded currencies and values. Can be stored somewhere
 			case "NIS":
 				mul = 1;
 				break;
@@ -350,7 +460,8 @@ public class LogUtils {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.serviceDownCosts);
 			while (rs.next()) {
-				serviceCosts.put(rs.getInt("service_id"), rs.getDouble("down_cost"));
+				serviceCosts.put(rs.getInt("service_id"),
+						rs.getDouble("down_cost"));
 			}
 			return serviceCosts;
 		} catch (SQLException e) {
@@ -381,7 +492,8 @@ public class LogUtils {
 		HashMap<Integer, Integer> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		for (TblIncident inc : dao.getAllIncidents()) {
-			incidents.put((int) (inc.getIncidentTime() * mul), (int) inc.getIncidentId());
+			incidents.put((int) (inc.getIncidentTime() * mul),
+					(int) inc.getIncidentId());
 		}
 		return incidents;
 	}
@@ -404,6 +516,37 @@ public class LogUtils {
 		}
 		return incident_events;
 	}
+	
+	/**
+	 * @return The incidents and their affected services
+	 */
+	public static HashMap<Byte, HashSet<Byte>> getServiceIncidents() {
+		HashMap<Byte, HashSet<Byte>> service_incidents = new HashMap<>();
+		TblServiceDao dao = new TblServiceDaoImpl();
+		HashMap<Byte, HashSet<Byte>> affected_services = LogUtils.getDBAffectedServices();
+		HashMap<Byte, HashSet<Byte>> ci_incidents = LogUtils.getCIsAndTheirIncidents();
+		
+		for (TblService service : dao.getAllServices()) {
+			HashSet<Byte> incidents = service_incidents.get(service.getServiceId());
+			if (incidents == null) {
+				incidents = new HashSet<Byte>();
+			}
+			
+			HashSet<Byte> affecting_cis = affected_services.get(service.getServiceId());
+			if (affecting_cis == null){
+				continue;
+			}
+			
+			HashSet<Byte> affecting_incidents = new HashSet<>();
+			for (byte ci : affecting_cis){
+				affecting_incidents.addAll(ci_incidents.get(ci));
+			}
+			
+			incidents.addAll(affecting_incidents);
+			service_incidents.put(service.getServiceId(), incidents);
+		}
+		return service_incidents;
+	}
 
 	static HashMap<Integer, String> getServicePriorities() {
 		HashMap<Integer, String> servicePriority = new HashMap<>();
@@ -411,7 +554,8 @@ public class LogUtils {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.servicePriorities);
 			while (rs.next()) {
-				servicePriority.put(rs.getInt("service_id"), rs.getString("priorityName"));
+				servicePriority.put(rs.getInt("service_id"),
+						rs.getString("priorityName"));
 			}
 			return servicePriority;
 		} catch (SQLException e) {
@@ -435,7 +579,8 @@ public class LogUtils {
 
 			// Make an input stream from the byte array and read
 			// a copy of the object back in.
-			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+			ObjectInputStream in = new ObjectInputStream(
+					new ByteArrayInputStream(bos.toByteArray()));
 			obj = in.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -444,12 +589,12 @@ public class LogUtils {
 		}
 		return obj;
 	}
-	
-	public static void setPath(String pathToSet){
+
+	public static void setPath(String pathToSet) {
 		path = pathToSet;
 	}
-	
-	public static String getPath(){
+
+	public static String getPath() {
 		return path;
 	}
 }

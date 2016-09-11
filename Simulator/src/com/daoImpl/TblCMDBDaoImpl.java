@@ -23,38 +23,32 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 	}
 
 	@Override
-	public void addCMDB(TblCMDB cmdb) {
+	public void addCMDB(TblCMDB cmdb) throws SQLException {
 		String insertQuery = "INSERT INTO tblCMDB(ci_id, service_id, isActive) VALUES (?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, cmdb.getCiId());
 			pStmt.setByte(2, cmdb.getServiceId());
 			pStmt.setBoolean(3, cmdb.getIsActive());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 
 	}
 
 	@Override
-	public void deleteCMDB(TblCMDBPK pk) {
+	public void deleteCMDB(TblCMDBPK pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblCMDB WHERE ci_id = ? and service_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, pk.getCiId());
 			pStmt.setByte(2, pk.getServiceId());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 
 	}
 
 	@Override
-	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id) {
+	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id) throws SQLException {
 		String updateQuery = "UPDATE tblCMDB SET ci_id = ? , service_id = ? , isActive = ? WHERE ci_id = ? and service_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, cmdb.getCiId());
 			pStmt.setByte(2, cmdb.getServiceId());
@@ -64,9 +58,6 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 
 	}
 

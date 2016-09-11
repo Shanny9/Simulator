@@ -8,6 +8,23 @@ body {
 	position: relative;
 }
 
+/*Button*/
+div#funcBtn {
+	cursor: pointer;
+}
+
+.start, .resume {
+	color: #5cb85c;
+}
+
+.pause {
+	color: #d9534f;
+}
+
+.finish {
+	color: #fff;
+}
+
 #progress {
 	background: rgba(0, 0, 0, 1);
 	border: 0px solid rgba(245, 245, 245, 1);

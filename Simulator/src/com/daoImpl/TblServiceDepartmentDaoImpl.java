@@ -22,10 +22,10 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 		dbConnection = DBUtility.getConnection();
 	}
 	@Override
-	public void addServiceDepartment(TblService_Department service) {
+	public void addServiceDepartment(TblService_Department service) throws SQLException {
 		String insertQuery = "INSERT INTO tblService_Department (service_id, devision_name, " 
 	+ "department_name, isActive) VALUES (?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
@@ -33,33 +33,29 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setBoolean(4, service.getIsActive());
 
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 
 	@Override
-	public void deleteServiceDepartment(TblService_DepartmentPK pk) {
+	public void deleteServiceDepartment(TblService_DepartmentPK pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblService_Department WHERE service_id = ? AND"
 				+ " devision_name=? AND department_name=?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, pk.getService_ID());
 			pStmt.setString(2, pk.getDivisionName());
 			pStmt.setString(3, pk.getDepartmentName());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 
 	@Override
-	public void updateServiceDepartment(TblService_Department service, TblService_DepartmentPK pk) {
+	public void updateServiceDepartment(TblService_Department service, TblService_DepartmentPK pk) throws SQLException {
 		String updateQuery = "UPDATE tblService_Department SET \n " + "service_id=?, devision_name=?,  \r\n" + 
 				"department_name=?, isActive=? WHERE service_id = ? AND devision_name=? AND department_name=?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
@@ -71,9 +67,6 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setString(7, pk.getDepartmentName());
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
 		
 	}
 

@@ -23,10 +23,10 @@ public class TblServiceDaoImpl implements TblServiceDao{
 	}
 	
 	@Override
-	public void addService(TblService service) {
+	public void addService(TblService service) throws SQLException {
 		String insertQuery = "INSERT INTO tblService(service_id, service_code, " 
 	+ "service_name, isTechnical, supplier_level2, supplier_level3, fixed_cost,fixed_income, isActive, urgency, impact ) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-		try {
+
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, service.getServiceId());
 			pStmt.setString(2, service.getServiceCode());
@@ -40,30 +40,26 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			pStmt.setString(10, service.getUrgency());
 			pStmt.setString(11, service.getImpact());
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 
 	@Override
-	public void deleteService(Byte id) {
+	public void deleteService(Byte id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblService WHERE service_id = ?";
-		try {
+
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setByte(1, id);
 			pStmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 
 	@Override
-	public void updateService(TblService service, byte id) {
-		String updateQuery = "UPDATE tblService SET \n " + "service_id=?, service_code=?, \" \r\n" + 
-				"	 \"service_name=?, isTechnical=?, supplier_level2=?, supplier_level3=?, fixed_cost=? ,fixed_income=?, isActive=?, urgency=?, impact=?  WHERE service_id = ?";
-		try {
+	public void updateService(TblService service, byte id) throws SQLException {
+		String updateQuery = "UPDATE tblService SET \n " + "service_id=?, service_code=?, \n" + 
+				" service_name=?, isTechnical=?, supplier_level2=?, supplier_level3=?, fixed_cost=? ,fixed_income=?, isActive=?, urgency=?, impact=?  WHERE service_id = ?";
+
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, service.getServiceId());
 			pStmt.setString(2, service.getServiceCode());
@@ -80,9 +76,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			pStmt.setByte(12, id);
 			pStmt.executeUpdate();
 
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 		
 	}
 

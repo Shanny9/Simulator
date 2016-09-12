@@ -14,7 +14,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * Counts how many CI's the service depends on, are currently down
 	 */
-	private HashSet<Integer> cisDown;
+	private HashSet<Byte> cisDown;
 	/**
 	 * Even cells = UP, odd cells = DOWN
 	 */
@@ -38,9 +38,9 @@ public class ServiceLog implements Serializable {
 	/**
 	 * The service's ID
 	 */
-	private int service_id;
+	private byte service_id;
 
-	ServiceLog(int id, double fixed_cost, double fixed_income, double down_cost) {
+	ServiceLog(byte id, double fixed_cost, double fixed_income, double down_cost) {
 		super();
 		this.service_id = id;
 		this.cisDown = new HashSet<>();
@@ -81,8 +81,12 @@ public class ServiceLog implements Serializable {
 	private void addTime(int time){
 		
 		try {
+			if (time < 0){
+				throw new Exception("addTime exception: time ( " + time + " ) is negative");
+			}
+			
 			if (times.size() > 0 && time < times.get(times.size()-1)){
-				throw new Exception("updateStatus exception: time is smaller than last time");
+				throw new Exception("addTime exception: time ( " + time + " ) is smaller than last time ( " + times.get(times.size()-1) + " )");
 			}
 			
 		} catch (Exception e) {
@@ -108,8 +112,8 @@ public class ServiceLog implements Serializable {
 	 */
 	synchronized void stop(int time) {
 		try {
-			if (time < 0) {
-				throw new Exception("stop exception: time is negative");
+			if (time <= 0) {
+				throw new Exception("stop exception: time ( " + time + " ) is incorrect");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -118,8 +122,8 @@ public class ServiceLog implements Serializable {
 
 		if (!isFinished) {
 			addTime(time);
+			isFinished = true;
 		}
-		isFinished = true;
 	}
 
 	/**
@@ -158,17 +162,16 @@ public class ServiceLog implements Serializable {
 	}
 
 	public int getTotalUpTime() {
-		int upTime = times.size() - 1 - getTRS();
+		int upTime = times.get(times.size() - 1) - getTRS();
 
-//		try {
-//			if (upTime < 0) {
-//				throw new Exception(
-//						"getTotalUpTime exception: upTime is negative");
-//			}
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			if (upTime < 0) {
+				throw new Exception("getTotalUpTime exception: upTime ( " + upTime + " ) is incorrect");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return upTime;
 	}
@@ -200,19 +203,16 @@ public class ServiceLog implements Serializable {
 	 * @return The total duration that the services was down
 	 */
 	int getTRS() {
-		int totalDownTime = 0;
-		for (int index = 3; index < times.size(); index += 2) {
+		
+		if (times.size() == 2){
+			// no failures
+			return 0;
+		}
+		
+		int totalDownTime = 0;		
+		for (int index = 2; index < times.size(); index += 2) {
 			totalDownTime += times.get(index) - times.get(index - 1);
 		}
-
-//		try {
-//			if (totalDownTime < 0) {
-//				throw new Exception("getTRS exception: TRS is negative");
-//			}
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
 		return totalDownTime;
 	}
@@ -224,15 +224,15 @@ public class ServiceLog implements Serializable {
 
 		int numOfFailures = (times.size() - 1) / 2;
 
-//		try {
-//			if (numOfFailures < 0) {
-//				throw new Exception(
-//						"getNumOfFailures exception: numOfFailures is negative");
-//			}
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			if (numOfFailures < 0) {
+				throw new Exception(
+						"getNumOfFailures exception: numOfFailures (" + numOfFailures + ") is negative");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return numOfFailures;
 	}
@@ -242,7 +242,7 @@ public class ServiceLog implements Serializable {
 	 * service's status. The function returns the change in the service's profit
 	 * gain speed.
 	 */
-	synchronized double ciUpdate(int ci_id, boolean isUp, int time) {
+	synchronized double ciUpdate(byte ci_id, boolean isUp, int time) {
 		double oldDiff = diff;
 		if (isUp) {
 			// if all CIs ARE DOWN, updates service status
@@ -262,7 +262,7 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's ID
 	 */
-	synchronized int getId() {
+	synchronized byte getId() {
 		return service_id;
 	}
 

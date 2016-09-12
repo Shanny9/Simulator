@@ -7,8 +7,8 @@ public class IncidentLog implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int incident_id;
-	private int root_ci;
+	private byte incident_id;
+	private byte root_ci;
 	private int start_time;
 	private int end_time;
 
@@ -18,7 +18,7 @@ public class IncidentLog implements Serializable{
 	 * @param start_time
 	 * @param end_time
 	 */
-	public IncidentLog(int incident_id, int root_ci, int start_time) {
+	public IncidentLog(byte incident_id, byte root_ci, int start_time) {
 		super();
 		this.incident_id = incident_id;
 		this.root_ci = root_ci;
@@ -28,14 +28,14 @@ public class IncidentLog implements Serializable{
 	/**
 	 * @return the incident_id
 	 */
-	public int getIncident_id() {
+	public byte getIncident_id() {
 		return incident_id;
 	}
 
 	/**
 	 * @return the root_ci
 	 */
-	int getRoot_ci() {
+	byte getRoot_ci() {
 		return root_ci;
 	}
 

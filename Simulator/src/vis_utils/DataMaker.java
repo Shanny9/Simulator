@@ -67,7 +67,7 @@ public class DataMaker {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMTBFPerRound(String courseName, Integer service) {
+	public static JSONObject getMTBFPerRound(String courseName, Byte service) {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
@@ -108,7 +108,7 @@ public class DataMaker {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMTBFPerTeam(String courseName, Integer service) {
+	public static JSONObject getMTBFPerTeam(String courseName, Byte service) {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
@@ -208,7 +208,7 @@ public class DataMaker {
 // ****************** MTRS ******************
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMTRSPerRound(String courseName, Integer service) {
+	public static JSONObject getMTRSPerRound(String courseName, Byte service) {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
@@ -249,7 +249,7 @@ public class DataMaker {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMTRSPerTeam(String courseName, Integer service) {
+	public static JSONObject getMTRSPerTeam(String courseName, Byte service) {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
@@ -408,7 +408,7 @@ public class DataMaker {
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject getMTRSPieData(String course, String team,
-			int round, int service_id, ArrayList<String> ranges) {
+			int round, byte service_id, ArrayList<String> ranges) {
 		/**
 		 * array of all requested rounds
 		 */

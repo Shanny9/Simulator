@@ -188,6 +188,10 @@ public class LogUtils {
 			FileInputStream fileIn = new FileInputStream(matchingFiles[0]);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
+			
+			//REMOVE THIS
+			TeamLog marom = log.getTeam(true);
+			
 			in.close();
 			fileIn.close();
 			return log;
@@ -367,17 +371,17 @@ public class LogUtils {
 	/**
 	 * @return A map of the CI's and their affected services
 	 */
-	static HashMap<Integer, HashSet<Integer>> getDBAffectingCIs() {
-		HashMap<Integer, HashSet<Integer>> dbAffectingCis = new HashMap<>();
+	static HashMap<Byte, HashSet<Byte>> getDBAffectingCIs() {
+		HashMap<Byte, HashSet<Byte>> dbAffectingCis = new HashMap<>();
 		TblCMDBDao dao = new TblCMDBDaoImpl();
 
 		for (TblCMDB cmdb : dao.getAllCMDBs()) {
-			int ci = cmdb.getCiId();
-			HashSet<Integer> services = dbAffectingCis.get(ci);
+			byte ci = cmdb.getCiId();
+			HashSet<Byte> services = dbAffectingCis.get(ci);
 			if (services == null) {
-				services = new HashSet<Integer>();
+				services = new HashSet<Byte>();
 			}
-			services.add((int) cmdb.getServiceId());
+			services.add((byte) cmdb.getServiceId());
 			dbAffectingCis.put(ci, services);
 		}
 		return dbAffectingCis;
@@ -424,11 +428,11 @@ public class LogUtils {
 	/**
 	 * @return The CIs and their costs
 	 */
-	static HashMap<Integer, Double> getCISolCosts() {
-		HashMap<Integer, Double> ciSolCosts = new HashMap<>();
+	static HashMap<Byte, Double> getCISolCosts() {
+		HashMap<Byte, Double> ciSolCosts = new HashMap<>();
 		TblCIDao dao = new TblCIDaoImpl();
 		for (TblCI ci : dao.getAllCIs()) {
-			int ci_id = ci.getCiId();
+			byte ci_id = ci.getCiId();
 			String supName = ci.getSupplierName1();
 			TblSupplier sup = new TblSupplierDaoImpl().getSupplierById(supName);
 			int mul = 1;
@@ -454,13 +458,13 @@ public class LogUtils {
 	/**
 	 * @return The services' down-time costs
 	 */
-	static HashMap<Integer, Double> getServiceDownTimeCosts() {
-		HashMap<Integer, Double> serviceCosts = new HashMap<>();
+	static HashMap<Byte, Double> getServiceDownTimeCosts() {
+		HashMap<Byte, Double> serviceCosts = new HashMap<>();
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.serviceDownCosts);
 			while (rs.next()) {
-				serviceCosts.put(rs.getInt("service_id"),
+				serviceCosts.put(rs.getByte("service_id"),
 						rs.getDouble("down_cost"));
 			}
 			return serviceCosts;
@@ -473,12 +477,12 @@ public class LogUtils {
 	/**
 	 * @return Initialized incident logs
 	 */
-	static HashMap<Integer, IncidentLog> getIncidentLogs() {
-		HashMap<Integer, IncidentLog> incidents = new HashMap<>();
+	static HashMap<Byte, IncidentLog> getIncidentLogs() {
+		HashMap<Byte, IncidentLog> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		for (TblIncident inc : dao.getAllIncidents()) {
-			int inc_id = (int) inc.getIncidentId();
-			int ci_id = (int) inc.getCiId();
+			byte inc_id = (byte) inc.getIncidentId();
+			byte ci_id = (byte) inc.getCiId();
 			int start_time = inc.getIncidentTime();
 			incidents.put(inc_id, new IncidentLog(inc_id, ci_id, start_time));
 		}
@@ -486,27 +490,27 @@ public class LogUtils {
 	}
 
 	/**
-	 * @return The incidents and their timings
+	 * @return The incidents and their timings (key= time, value= incident)
 	 */
-	static HashMap<Integer, Integer> getIncidentTimes(double mul) {
-		HashMap<Integer, Integer> incidents = new HashMap<>();
+	static HashMap<Integer, Byte> getIncidentTimes(double mul) {
+		HashMap<Integer, Byte> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		for (TblIncident inc : dao.getAllIncidents()) {
 			incidents.put((int) (inc.getIncidentTime() * mul),
-					(int) inc.getIncidentId());
+					(byte) inc.getIncidentId());
 		}
 		return incidents;
 	}
 
 	/**
-	 * @return The incidents and their events
+	 * @return The incidents and their events (key= incident, value= set of events)
 	 */
-	public static HashMap<Integer, HashSet<String>> getIncidentEvents() {
-		HashMap<Integer, HashSet<String>> incident_events = new HashMap<>();
+	public static HashMap<Byte, HashSet<String>> getIncidentEvents() {
+		HashMap<Byte, HashSet<String>> incident_events = new HashMap<>();
 		TblEventDao dao = new TblEevntDaoImpl();
 
 		for (TblEvent event : dao.getAllEvents()) {
-			int incident = event.getIncidentId();
+			byte incident = event.getIncidentId();
 			HashSet<String> events = incident_events.get(incident);
 			if (events == null) {
 				events = new HashSet<String>();
@@ -518,7 +522,7 @@ public class LogUtils {
 	}
 	
 	/**
-	 * @return The incidents and their affected services
+	 * @return The services and their affecting incidents (key= services, value= affecting incidents)
 	 */
 	public static HashMap<Byte, HashSet<Byte>> getServiceIncidents() {
 		HashMap<Byte, HashSet<Byte>> service_incidents = new HashMap<>();
@@ -538,7 +542,7 @@ public class LogUtils {
 			}
 			
 			HashSet<Byte> affecting_incidents = new HashSet<>();
-			for (byte ci : affecting_cis){
+			for (Byte ci : affecting_cis){
 				affecting_incidents.addAll(ci_incidents.get(ci));
 			}
 			
@@ -548,13 +552,16 @@ public class LogUtils {
 		return service_incidents;
 	}
 
-	static HashMap<Integer, String> getServicePriorities() {
-		HashMap<Integer, String> servicePriority = new HashMap<>();
+	/**
+	 * @return A map of services and their priorities (key= service, value= priority name)
+	 */
+	static HashMap<Byte, String> getServicePriorities() {
+		HashMap<Byte, String> servicePriority = new HashMap<>();
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.servicePriorities);
 			while (rs.next()) {
-				servicePriority.put(rs.getInt("service_id"),
+				servicePriority.put(rs.getByte("service_id"),
 						rs.getString("priorityName"));
 			}
 			return servicePriority;

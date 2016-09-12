@@ -29,7 +29,7 @@ public class ClientController extends HttpServlet {
 	// V get this from client in checkSimulator
 	private String courseName; /* = "normalCourse"; */
 	private String team;
-	private int inc_id;
+	private byte inc_id;
 	private int time;
 	private static final long serialVersionUID = 1L;
 
@@ -80,7 +80,7 @@ public class ClientController extends HttpServlet {
 			break;
 		case "checkIncident":
 			team = request.getParameter("team");
-			inc_id = Integer.valueOf(request.getParameter("inc_id"));
+			inc_id = Byte.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
 			boolean isGood = SimulationLog.getInstance().checkIncident(SimulationLog.getTeamConst(team), inc_id, time);
 //			System.out.println("ClientController: " + team + " Inc:" + inc_id + " Time:" + time + " isGood:" + isGood);
@@ -90,7 +90,7 @@ public class ClientController extends HttpServlet {
 			isBaught = true;
 		case "sendSolution":
 			team = request.getParameter("team");
-			inc_id = Integer.valueOf(request.getParameter("inc_id"));
+			inc_id = Byte.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
 
 			SimulationLog.getInstance().incidentSolved(SimulationLog.getTeamConst(team), inc_id, time, isBaught);

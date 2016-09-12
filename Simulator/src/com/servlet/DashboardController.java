@@ -69,21 +69,38 @@ public class DashboardController extends HttpServlet {
 		// selectedService));
 		// break;
 		case "getMTBFPerRound":
-			Integer selectedService1 = Integer.parseInt(request
+			Integer selectedServiceMTBF1 = Integer.parseInt(request
 					.getParameter("service"));
 			response.getWriter().print(
-					DataMaker.getMTBFPerRound(course, selectedService1));
+					DataMaker.getMTBFPerRound(course, selectedServiceMTBF1));
+			break;
+		case "getMTRSPerRound":
+			Integer selectedServiceMTRS1 = Integer.parseInt(request
+					.getParameter("service"));
+			response.getWriter().print(
+					DataMaker.getMTRSPerRound(course, selectedServiceMTRS1));
 			break;
 		case "getMTBFPerTeam":
-			Integer selectedService2 = Integer.parseInt(request
+			Integer selectedServiceMTBF2 = Integer.parseInt(request
 					.getParameter("service"));
 			response.getWriter().print(
-					DataMaker.getMTBFPerTeam(course, selectedService2));
+					DataMaker.getMTBFPerTeam(course, selectedServiceMTBF2));
+			break;
+		case "getMTRSPerTeam":
+			Integer selectedServiceMTRS2 = Integer.parseInt(request
+					.getParameter("service"));
+			response.getWriter().print(
+					DataMaker.getMTRSPerTeam(course, selectedServiceMTRS2));
 			break;
 		case "getMTBFPerService":
-			Integer round = Integer.parseInt(request.getParameter("round"));
+			Integer roundMTBF = Integer.parseInt(request.getParameter("round"));
 			response.getWriter().print(
-					DataMaker.getMTBFPerService(course, round));
+					DataMaker.getMTBFPerService(course, roundMTBF));
+			break;
+		case "getMTRSPerService":
+			Integer roundMTRS = Integer.parseInt(request.getParameter("round"));
+			response.getWriter().print(
+					DataMaker.getMTBFPerService(course, roundMTRS));
 			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();

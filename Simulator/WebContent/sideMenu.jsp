@@ -55,7 +55,7 @@
                   <li><a><i class="fa fa-bar-chart"></i> Reports <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="mtbf_reports.jsp">Mean Time Between Failure</a></li>
-                      <li><a href="mtrs_reports.jsp">MTRS</a></li>
+                      <li><a href="mtrs_reports.jsp">Mean Time to Restore Service</a></li>
                     </ul>
                   </li>
 

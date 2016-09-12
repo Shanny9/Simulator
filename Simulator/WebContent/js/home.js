@@ -395,6 +395,7 @@ function incrementClock() {
 		if (elapsedTime % settings["roundTime"] == 0) {
 			// finished round
 			isFinishedRound = true;
+			setFinish();
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);

@@ -204,6 +204,148 @@ public class DataMaker {
 		obj.put("labels", labels);
 		return obj;
 	}
+	
+// ****************** MTRS ******************
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getMTRSPerRound(String courseName, Integer service) {
+
+		JSONObject obj = new JSONObject();
+		JSONArray labels = new JSONArray();
+		JSONArray arrMarom = null;
+		JSONArray arrRakia = null;
+		arrMarom = new JSONArray();
+		arrRakia = new JSONArray();
+
+		Settings settings = LogUtils.openSettings(courseName);
+		int lastRoundDone = settings.getLastRoundDone();
+
+		for (int r = 1; r <= lastRoundDone; r++) {
+
+			SimulationLog simLog = log.LogUtils.openLog(courseName, r);
+			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+
+			double mtrsMarom;
+			double mtrsRakia;
+			if (service == null || service == 0) {
+				// all services
+				mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
+				mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
+			} else {
+				// selected service
+				mtrsMarom = marom.getService_log(service).getMTRS();
+				mtrsRakia = rakia.getService_log(service).getMTRS();
+			}
+
+			arrMarom.add(mtrsMarom);
+			arrRakia.add(mtrsRakia);
+			labels.add("Round " + r);
+		}
+		obj.put("maromData", arrMarom);
+		obj.put("rakiaData", arrRakia);
+		obj.put("labels", labels);
+		return obj;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getMTRSPerTeam(String courseName, Integer service) {
+
+		JSONObject obj = new JSONObject();
+		JSONArray labels = new JSONArray();
+		labels.add("Marom");
+		labels.add("Rakia");
+
+		Settings settings = LogUtils.openSettings(courseName);
+		int lastRoundDone = settings.getLastRoundDone();
+
+		for (int r = 1; r <= lastRoundDone; r++) {
+			JSONArray roundArr = new JSONArray();
+
+			SimulationLog simLog = log.LogUtils.openLog(courseName, r);
+			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+
+			double mtrsMarom;
+			double mtrsRakia;
+			if (service == null || service == 0) {
+				// all services
+				mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
+				mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
+			} else {
+				// selected service
+				mtrsMarom = marom.getService_log(service).getMTRS();
+				mtrsRakia = rakia.getService_log(service).getMTRS();
+			}
+
+			roundArr.add(mtrsMarom);
+			roundArr.add(mtrsRakia);
+			obj.put("round#" + r, roundArr);
+			obj.put("labels", labels);
+		}
+		return obj;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getMTRSPerService(String courseName, Integer round) {
+
+		JSONObject obj = new JSONObject();
+		JSONArray labels = new JSONArray();
+		List<TblService> services = new TblServiceDaoImpl().getAllServices();
+
+		Settings settings = LogUtils.openSettings(courseName);
+		int lastRoundDone = settings.getLastRoundDone();
+		if (round > lastRoundDone) {
+			return null;
+		}
+		ArrayList<ArrayList<Double>> mtrsAllRoundsMarom = new ArrayList<>();
+		ArrayList<ArrayList<Double>> mtrsAllRoundsRakia = new ArrayList<>();
+
+		JSONArray mtrsAvgMarom = new JSONArray();
+		JSONArray mtrsAvgRakia = new JSONArray();
+
+		boolean firstIteration = true;
+		for (int r = 1; r <= lastRoundDone; r++) {
+
+			// quits calculation of unselected rounds
+			if (round != 0 && round != r) {
+				continue;
+			}
+
+			ArrayList<Double> roundMTRSMarom = new ArrayList<>();
+			ArrayList<Double> roundMTRSRakia = new ArrayList<>();
+			SimulationLog simLog = log.LogUtils.openLog(courseName, r);
+
+			for (TblService service : services) {
+
+				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+
+				double mtrsMarom = marom.getService_log(service.getServiceId())
+						.getMTRS();
+				double mtrsRakia = rakia.getService_log(service.getServiceId())
+						.getMTRS();
+
+				roundMTRSMarom.add(mtrsMarom);
+				roundMTRSRakia.add(mtrsRakia);
+
+				if (firstIteration) {
+					labels.add(service.getServiceName());
+				}
+			}
+			mtrsAllRoundsMarom.add(roundMTRSMarom);
+			mtrsAllRoundsRakia.add(roundMTRSRakia);
+			firstIteration = false;
+		}
+		mtrsAvgMarom = calcAVG(mtrsAllRoundsMarom);
+		mtrsAvgRakia = calcAVG(mtrsAllRoundsRakia);
+
+		obj.put("maromData", mtrsAvgMarom);
+		obj.put("rakiaData", mtrsAvgRakia);
+		obj.put("labels", labels);
+		return obj;
+	}
+// ************** END MTRS ******************
 
 	@SuppressWarnings("unchecked")
 	private static JSONArray calcAVG(ArrayList<ArrayList<Double>> arr_all_rounds) {

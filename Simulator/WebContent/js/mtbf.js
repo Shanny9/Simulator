@@ -153,7 +153,7 @@
 				}
 			});
 		}
-		function setBarChart(serviceId) {
+		function setBarChartPerRound(serviceId) {
 			getMTBFPerRound(serviceId);
 			var barData = {
 				labels : labels,
@@ -245,14 +245,14 @@
 
 			  
 			};
-		// *** document ready - for graphs with Select ***	
+// *** document ready - for graphs with Select ***	
 		$(document).ready(function() {
 			//get data for combo boxes
 			getServices();
 			getRounds();
 			
 			//set charts
-			setBarChart(0); //all services default 
+			setBarChartPerRound(0); //all services default 
 			setBarChartPerTeam(0);
 			setBarChartPerService(0);
 
@@ -265,7 +265,7 @@
 				console.log("change val(service)=" + serSelection);
 				//MTBF per round
 				resetCanvas($("#canvas_dahs"));
-				setBarChart(serSelection);
+				setBarChartPerRound(serSelection);
 				//MTBF per team
 				//clear old data
 				rounds = new Array();

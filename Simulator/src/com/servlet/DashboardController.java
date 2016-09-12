@@ -100,7 +100,7 @@ public class DashboardController extends HttpServlet {
 		case "getMTRSPerService":
 			Integer roundMTRS = Integer.parseInt(request.getParameter("round"));
 			response.getWriter().print(
-					DataMaker.getMTBFPerService(course, roundMTRS));
+					DataMaker.getMTRSPerService(course, roundMTRS));
 			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();

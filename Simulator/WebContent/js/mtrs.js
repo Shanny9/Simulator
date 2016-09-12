@@ -276,6 +276,8 @@ function setBarChartPerService(roundId) {
 	};
 	console.log(barData);
 	var ctx = document.getElementById('canvas_service').getContext('2d');
+	ctx.canvas.width = 500;
+	ctx.canvas.height = 400;
 	new Chart(ctx, {
 		type : 'horizontalBar',
 		data : barData,
@@ -312,7 +314,7 @@ $(document).ready(function() {
 	setBarChartPerRound(0); //all services default 
 	setBarChartPerTeam(0);
 	setBarChartPerService(0);
-//	setMTRSpie("both", 0, 0);
+	setMTRSpie("both", 0, 0);
 	
 	$("#serviceSelection").select2({
 		allowClear : true,

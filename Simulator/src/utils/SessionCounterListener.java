@@ -12,13 +12,13 @@ public class SessionCounterListener implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		sessionCount.incrementAndGet();
-		System.out.println(sessionCount.get());
+//		System.out.println(sessionCount.get());
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		sessionCount.decrementAndGet();
-		System.out.println(sessionCount.get());
+//		System.out.println(sessionCount.get());
 
 	}
 

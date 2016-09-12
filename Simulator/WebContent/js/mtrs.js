@@ -126,7 +126,7 @@ function setBarChartPerTeam(serviceId) {
 var mtrsPieData;
 function getMTRSPieData(team, round, service) {
 	// first range must start at 0
-	var labels = [ "0-2", "2-4", "4-6", "6-8" ];
+	var labels = [ "0-9", "9-18", "18-27", "27-36" , "36-45" ];
 	$.ajax({
 		url : "DashboardController",
 		data : {
@@ -151,7 +151,7 @@ function getMTRSPieData(team, round, service) {
 
 function setMTRSpie(team, round, service) {
 	getMTRSPieData(team, round, service);
-	var labels = [ "0-2", "2-4", "4-6", "6-8" ];
+	var labels = [ "0-9", "9-18", "18-27", "27-36" , "36-45" ];
 	var tempData = [ 20, 30, 40, 80 ];
 	/*
 	 * var options = { legend : true, responsive : false };
@@ -314,7 +314,7 @@ $(document).ready(function() {
 	setBarChartPerRound(0); //all services default 
 	setBarChartPerTeam(0);
 	setBarChartPerService(0);
-	setMTRSpie("both", 0, 0);
+	setMTRSpie("both", 0, 8);
 	
 	$("#serviceSelection").select2({
 		allowClear : true,

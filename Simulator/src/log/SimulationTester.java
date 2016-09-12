@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SimulationTester implements Runnable {
 	/**
@@ -28,11 +28,11 @@ public class SimulationTester implements Runnable {
 	 * A map of services and their SLA times - key=service , value= max time to
 	 * fix
 	 */
-	private static HashMap<Integer, Integer> services_sla;
+	private static HashMap<Byte, Integer> services_sla;
 	/**
 	 * A schedule of future solutions - key=service, value=time to solve
 	 */
-	private static HashMap<Integer, Integer> solutions_schedule;
+	private static HashMap<Byte, Integer> solutions_schedule;
 
 	private static int roundRunTime;
 
@@ -58,14 +58,14 @@ public class SimulationTester implements Runnable {
 
 		marom = simLog.getTeam(SimulationLog.MAROM);
 
-		HashMap<Integer, String> servicePriorities = LogUtils
+		HashMap<Byte, String> servicePriorities = LogUtils
 				.getServicePriorities();
 		HashMap<String, Integer> priority_sla = settings.getPriority_sla();
 
 		solutions_schedule = new HashMap<>();
 		services_sla = new HashMap<>();
 
-		for (Map.Entry<Integer, String> sp : servicePriorities.entrySet()) {
+		for (Map.Entry<Byte, String> sp : servicePriorities.entrySet()) {
 			services_sla.put(sp.getKey(), priority_sla.get(sp.getValue()));
 		}
 		isInitialized = true;
@@ -93,11 +93,11 @@ public class SimulationTester implements Runnable {
 			}
 
 			// 2. start incidents
-			HashSet<Integer> affected_services = null;
+			HashSet<Byte> affected_services = null;
 			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
 
-				int inc_id = simLog.getIncidentTimes().get(elapsed_time);
-				int ci_id = marom.getIncident_logs().get(inc_id).getRoot_ci();
+				byte inc_id = simLog.getIncidentTimes().get(elapsed_time);
+				byte ci_id = marom.getIncident_logs().get(inc_id).getRoot_ci();
 				affected_services = simLog.getAffectingCis().get(ci_id);
 
 				marom.incidentStarted(inc_id, elapsed_time);
@@ -113,7 +113,7 @@ public class SimulationTester implements Runnable {
 
 			// 3. schedule services that are down
 			if (affected_services != null && !affected_services.isEmpty()) {
-				for (Integer aff_service : affected_services) {
+				for (Byte aff_service : affected_services) {
 
 					int time_to_solve = Math.min(
 							elapsed_time + services_sla.get(aff_service),
@@ -133,14 +133,14 @@ public class SimulationTester implements Runnable {
 			// .filter(p -> p.getValue() == elapsed_time)
 			// .collect(Collectors.toMap(p -> p.getKey(), p ->
 			// p.getValue())).keySet();
-			HashSet<Integer> services_to_solve = new HashSet<>();
-			for (Map.Entry<Integer, Integer> e : solutions_schedule.entrySet()) {
+			HashSet<Byte> services_to_solve = new HashSet<>();
+			for (Entry<Byte, Integer> e : solutions_schedule.entrySet()) {
 				if (e.getValue().equals(elapsed_time))
 					services_to_solve.add(e.getKey());
 			}
 			if (services_to_solve != null && !services_to_solve.isEmpty()) {
 				Set<Byte> cis_to_solve = new HashSet<>();
-				for (Integer service : services_to_solve) {
+				for (Byte service : services_to_solve) {
 					HashSet<Byte> affecting_cis = simLog.getAffectedServices()
 							.get(service);
 					if (affecting_cis != null) {
@@ -157,20 +157,21 @@ public class SimulationTester implements Runnable {
 
 					// 5. un-schedule services that are up
 					for (Byte ci : cis_to_solve) {
-						HashSet<Integer> fixed_services = simLog
+						HashSet<Byte> fixed_services = simLog
 								.getAffectingCis().get(ci);
 						// fixed_services.removeIf(s ->
 						// !marom.getService_logs().get(s).isUp());
-						HashSet<Integer> cloned_fixed_services = (HashSet<Integer>) fixed_services
+						@SuppressWarnings("unchecked")
+						HashSet<Byte> cloned_fixed_services = (HashSet<Byte>) fixed_services
 								.clone();
-						for (Integer fs : cloned_fixed_services) {
+						for (Byte fs : cloned_fixed_services) {
 							if (marom.getService_log(fs).isUp()) {
 								fixed_services.remove(fs);
 							}
 						}
 
 						if (fixed_services != null && !fixed_services.isEmpty()) {
-							for (Integer fixed_service : fixed_services) {
+							for (Byte fixed_service : fixed_services) {
 								solutions_schedule.remove(fixed_service);
 							}
 						}

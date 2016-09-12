@@ -85,7 +85,7 @@ public class LogManager implements Runnable {
 			elapsed_time++;
 
 			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
-				int inc_id = simLog.getIncidentTimes().get(elapsed_time);
+				byte inc_id = simLog.getIncidentTimes().get(elapsed_time);
 				simLog.incidentStarted(inc_id, elapsed_time);
 			}
 			simLog.updateTeamProfits(elapsed_time);

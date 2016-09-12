@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * TeamLog records and calculates the team's services, purchases and profits
@@ -24,17 +25,21 @@ public class TeamLog implements Serializable {
 	 */
 	private String teamName;
 	/**
+	 * The current round
+	 */
+	private int round;
+	/**
 	 * The team's incident logs
 	 */
-	private HashMap<Integer, IncidentLog> incident_logs;
+	private HashMap<Byte, IncidentLog> incident_logs;
 	/**
 	 * The team's service logs
 	 */
-	private HashMap<Integer, ServiceLog> service_logs;
+	private HashMap<Byte, ServiceLog> service_logs;
 	/**
 	 * The team's list of purchases: key=time, value=ci_id
 	 */
-	private HashMap<Integer, Integer> purchases;
+	private HashMap<Integer, Byte> purchases;
 	/**
 	 * The team's history of profits;
 	 */
@@ -58,12 +63,13 @@ public class TeamLog implements Serializable {
 	 * @param incident_logs
 	 *            the team's initial incident logs
 	 */
-	TeamLog(String courseName, String teamName, double initProfit, HashMap<Integer, ServiceLog> service_logs,
-			double initDiff, HashMap<Integer, IncidentLog> incident_logs, int duration) {
+	TeamLog(String courseName, String teamName, int round, HashMap<Byte, ServiceLog> service_logs,
+			double initDiff, HashMap<Byte, IncidentLog> incident_logs) {
 
 		super();
 		this.courseName = courseName;
 		this.teamName = teamName;
+		this.round = round;
 		this.purchases = new HashMap<>();
 		this.service_logs = new HashMap<>();
 		this.incident_logs = new HashMap<>();
@@ -71,6 +77,10 @@ public class TeamLog implements Serializable {
 		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
 		this.incident_logs.putAll(incident_logs);
+		
+	}
+	
+	void setInitProfit(double initProfit, int duration){
 		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
 		this.profits.set(0, initProfit);
 	}
@@ -93,7 +103,7 @@ public class TeamLog implements Serializable {
 	 * @param isBaught
 	 *            True if the incident was solved, otherwise false.
 	 */
-	synchronized boolean incidentSolved(int inc_id, int time, boolean isBaught) {
+	synchronized boolean incidentSolved(byte inc_id, int time, boolean isBaught) {
 
 		if (isFinished || !isIncidentOpen(inc_id, time)) {
 			return false;
@@ -101,12 +111,12 @@ public class TeamLog implements Serializable {
 
 		IncidentLog incLog = incident_logs.get(inc_id);
 		incLog.setEnd_time(time);
-		int ci_id = incLog.getRoot_ci();
+		byte ci_id = incLog.getRoot_ci();
 
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
-			for (Integer service_id : affectedServices) {
+			for (Byte service_id : affectedServices) {
 				diff += service_logs.get(service_id).ciUpdate(ci_id, true, time);
 			}
 		}
@@ -122,11 +132,19 @@ public class TeamLog implements Serializable {
 		return true;
 	}
 
-	void ciSolved(int ci_id, int time) {
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+	void ciSolved(byte ci_id, int time) {
+		if (time < 0){
+			try {
+				throw new Exception("ciSolved exception: time (" + time + ") is negative");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
-			for (Integer service_id : affectedServices) {
+			for (Byte service_id : affectedServices) {
 				diff += service_logs.get(service_id).ciUpdate(ci_id, true, time);
 			}
 		}
@@ -140,15 +158,24 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            The time when the incident started
 	 */
-	synchronized void incidentStarted(int inc_id, int time) {
+	synchronized void incidentStarted(byte inc_id, int time) {
 		if (isFinished) {
 			return;
 		}
+		
+		if (time < 0){
+			try {
+				throw new Exception("incidentStarted exception: time (" + time + ") is negative");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		int ci_id = incident_logs.get(inc_id).getRoot_ci();
-		HashSet<Integer> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+		byte ci_id = incident_logs.get(inc_id).getRoot_ci();
+		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
 		if (affectedServices != null) {
-			for (Integer service_id : affectedServices) {
+			for (Byte service_id : affectedServices) {
 				diff += service_logs.get(service_id).ciUpdate(ci_id, false, time);
 			}
 		}
@@ -198,14 +225,14 @@ public class TeamLog implements Serializable {
 	/**
 	 * @return A team's service_log
 	 */
-	public ServiceLog getService_log(int service) {
+	public ServiceLog getService_log(byte service) {
 		return service_logs.get(service);
 	}
 
 	/**
 	 * @return The team's purchases (key= time, value=ci_id)
 	 */
-	HashMap<Integer, Integer> getPurchaces() {
+	HashMap<Integer, Byte> getPurchaces() {
 		return purchases;
 	}
 
@@ -236,7 +263,7 @@ public class TeamLog implements Serializable {
 	 *            The time to check
 	 * @return True if the incident is open. False otherwise.
 	 */
-	boolean isIncidentOpen(int inc_id, int time) {
+	boolean isIncidentOpen(byte inc_id, int time) {
 		if (time < 0 || inc_id <= 0) {
 			return false;
 		}
@@ -260,7 +287,7 @@ public class TeamLog implements Serializable {
 	 *            Current time
 	 */
 	public void fixAllIncidents(int time) {
-		for (int inc_id : incident_logs.keySet()) {
+		for (byte inc_id : incident_logs.keySet()) {
 			if (incident_logs.get(inc_id).isOpen(time)) {
 				// TODO: change false back to true
 				incidentSolved(inc_id, time, false);
@@ -275,12 +302,12 @@ public class TeamLog implements Serializable {
 		return profits;
 	}
 	
-	HashMap<Integer, IncidentLog> getIncident_logs() {
+	HashMap<Byte, IncidentLog> getIncident_logs() {
 		return incident_logs;
 	}
 	
-	public HashMap<Integer, IncidentLog> getClosedIncident_logs() {
-		HashMap<Integer,IncidentLog> result = new HashMap<>();
+	public HashMap<Byte, IncidentLog> getClosedIncident_logs() {
+		HashMap<Byte,IncidentLog> result = new HashMap<>();
 		for (IncidentLog incLog : incident_logs.values()){
 			if (!incLog.isOpen()){
 				result.put(incLog.getIncident_id(),incLog);
@@ -347,7 +374,7 @@ public class TeamLog implements Serializable {
 			str += sl.toString() + "\n";
 		}
 		str += "\nPurchases\n--------\n";
-		for (Map.Entry<Integer, Integer> entry : purchases.entrySet()) {
+		for (Entry<Integer, Byte> entry : purchases.entrySet()) {
 			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
 		}
 		return str;

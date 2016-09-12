@@ -69,25 +69,25 @@ public class DashboardController extends HttpServlet {
 		// selectedService));
 		// break;
 		case "getMTBFPerRound":
-			Integer selectedServiceMTBF1 = Integer.parseInt(request
+			Byte selectedServiceMTBF1 = Byte.parseByte(request
 					.getParameter("service"));
 			response.getWriter().print(
 					DataMaker.getMTBFPerRound(course, selectedServiceMTBF1));
 			break;
 		case "getMTRSPerRound":
-			Integer selectedServiceMTRS1 = Integer.parseInt(request
+			Byte selectedServiceMTRS1 = Byte.parseByte(request
 					.getParameter("service"));
 			response.getWriter().print(
 					DataMaker.getMTRSPerRound(course, selectedServiceMTRS1));
 			break;
 		case "getMTBFPerTeam":
-			Integer selectedServiceMTBF2 = Integer.parseInt(request
+			Byte selectedServiceMTBF2 = Byte.parseByte(request
 					.getParameter("service"));
 			response.getWriter().print(
 					DataMaker.getMTBFPerTeam(course, selectedServiceMTBF2));
 			break;
 		case "getMTRSPerTeam":
-			Integer selectedServiceMTRS2 = Integer.parseInt(request
+			Byte selectedServiceMTRS2 = Byte.parseByte(request
 					.getParameter("service"));
 			response.getWriter().print(
 					DataMaker.getMTRSPerTeam(course, selectedServiceMTRS2));
@@ -127,7 +127,7 @@ public class DashboardController extends HttpServlet {
 			response.getWriter().print(roundsList);
 			break;
 		case "getMTRSPieData":
-			Integer mtrsServices = Integer.parseInt(request
+			Byte mtrsServices = Byte.parseByte(request
 					.getParameter("service"));
 			Integer selectedRound = Integer.parseInt(request
 					.getParameter("round"));
@@ -137,7 +137,6 @@ public class DashboardController extends HttpServlet {
 			ArrayList<String> ranges  = new ArrayList<>(Arrays.asList(strRanges));
 			response.getWriter().print(
 					DataMaker.getMTRSPieData(course, selectedTeam, selectedRound, mtrsServices, ranges));
-			
 		}
 
 	}

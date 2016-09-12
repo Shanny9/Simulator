@@ -216,7 +216,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										Mean Time Between Failures <small>per round</small>
+										Mean Time to Restore Service <small>per round</small>
 									</h3>
 								</div>
 								<select id="serviceSelection" style="min-width: 300px">
@@ -304,7 +304,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										Mean Time Between Failures <small>per team</small>
+										Mean Time to Restore Service <small>per team</small>
 									</h3>
 								</div>
 
@@ -333,7 +333,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										Mean Time Between Failures <small>per service</small>
+										Mean Time to Restore Service <small>per service</small>
 									</h3>
 								</div>
 								<select id="roundSelection" style="min-width: 300px">
@@ -364,7 +364,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										MTRS <small>...</small>
+										Mean Time to Restore Service <small>...</small>
 									</h3>
 								</div>
 								<select id="teamSelectMTRS" style="min-width: 120px">

@@ -546,7 +546,6 @@ public class DataMaker {
 				}
 			}
 
-			
 			for (int i = 1; i < rangeCountAL.size(); i++) {
 				if (rangeCountAL.get(i).getRange().getLower() != rangeCountAL
 						.get(i - 1).getRange().getUpper()) {

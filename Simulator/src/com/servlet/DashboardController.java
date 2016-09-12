@@ -116,8 +116,8 @@ public class DashboardController extends HttpServlet {
 					.getParameter("round"));
 			String selectedTeam = request
 					.getParameter("team");
-
-			ArrayList<String> ranges  = new ArrayList<>(Arrays.asList(new String[]{"1-2","2-3","3-4","4-5"}));
+			String[] strRanges = request.getParameterValues("ranges[]");
+			ArrayList<String> ranges  = new ArrayList<>(Arrays.asList(strRanges));
 			response.getWriter().print(
 					DataMaker.getMTRSPieData(course, selectedTeam, selectedRound, mtrsServices, ranges));
 			

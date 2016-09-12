@@ -219,6 +219,11 @@ public class TeamLog implements Serializable {
 		for (ServiceLog service : service_logs.values()) {
 			service.stop(time);
 		}
+		for (IncidentLog inc_log : incident_logs.values()){
+			if (inc_log.getEnd_time() == 0 && inc_log.getStart_time() <= time){
+				inc_log.setEnd_time(time);
+			}
+		}
 		this.isFinished = true;
 	}
 
@@ -269,9 +274,19 @@ public class TeamLog implements Serializable {
 	public ArrayList<Double> getProfits() {
 		return profits;
 	}
-
-	public HashMap<Integer, IncidentLog> getIncident_logs() {
+	
+	HashMap<Integer, IncidentLog> getIncident_logs() {
 		return incident_logs;
+	}
+	
+	public HashMap<Integer, IncidentLog> getClosedIncident_logs() {
+		HashMap<Integer,IncidentLog> result = new HashMap<>();
+		for (IncidentLog incLog : incident_logs.values()){
+			if (!incLog.isOpen()){
+				result.put(incLog.getIncident_id(),incLog);
+			}
+		}
+		return result;
 	}
 
 	/**

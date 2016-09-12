@@ -4,7 +4,8 @@
 // Pie Chart(ranges) -MTRS
 var mtrsPieData;
 function getMTRSPieData(team, round, service) {
-	var labels = [ "1-2", "3-4", "5-6", "7-8" ];
+	// first range must start at 0
+	var labels = [ "0-2", "2-4", "4-6", "6-8" ];
 	$.ajax({
 		url : "DashboardController",
 		data : {
@@ -29,7 +30,7 @@ function getMTRSPieData(team, round, service) {
 
 function setMTRSpie(team, round, service) {
 	getMTRSPieData(team, round, service);
-	var labels = [ "1-2", "3-4", "5-6", "7-8" ];
+	var labels = [ "0-2", "2-4", "4-6", "6-8" ];
 	var tempData = [ 20, 30, 40, 80 ];
 	/*
 	 * var options = { legend : true, responsive : false };

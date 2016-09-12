@@ -325,17 +325,17 @@ public class DataMaker {
 				// specific team - adds the team's incident logs to
 				// @team_inc_log
 				team_inc_logs = (HashSet<IncidentLog>) simLog
-						.getTeam(teamConst).getIncident_logs().values();
+						.getTeam(teamConst).getClosedIncident_logs().values();
 			} else {
 				// both teams - adds both teams' incident logs to @team_inc_log
 				team_inc_logs.addAll(simLog.getTeam(SimulationLog.MAROM)
-						.getIncident_logs().values());
+						.getClosedIncident_logs().values());
 				team_inc_logs.addAll(simLog.getTeam(SimulationLog.RAKIA)
-						.getIncident_logs().values());
+						.getClosedIncident_logs().values());
 			}
-
+			
 			if (service_id != 0) {
-				// secific service - takes only relevant logs and adds them
+				// specific service - takes only relevant logs and adds them
 				// to @relevant_inc_logs
 				for (IncidentLog inc_log : team_inc_logs) {
 					if (service_incidents.get(service_id).contains(
@@ -392,7 +392,6 @@ public class DataMaker {
 		}
 
 		boolean isValid() {
-			//TODO: check why we need this condition !=0 -->false ??
 			if (rangeCountAL.get(0).getRange().getLower() != 0) {
 				return false;
 			}
@@ -404,7 +403,7 @@ public class DataMaker {
 			}
 
 			for (int i = 1; i < rangeCountAL.size(); i++) {
-				if (rangeCountAL.get(i).getRange().getUpper() != rangeCountAL
+				if (rangeCountAL.get(i).getRange().getLower() != rangeCountAL
 						.get(i - 1).getRange().getUpper()) {
 					return false;
 				}

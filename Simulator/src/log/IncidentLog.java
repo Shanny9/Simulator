@@ -61,8 +61,14 @@ public class IncidentLog implements Serializable{
 		this.end_time = end_time;
 	}
 
+	// to be used during the simulation
 	boolean isOpen(int time) {
 		return time > start_time && end_time == 0;
+	}
+	
+	// to be used only after the simulation ended 
+	boolean isOpen() {
+		return end_time == 0;
 	}
 	
 	public int getDuration(){

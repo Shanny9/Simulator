@@ -149,6 +149,9 @@ public class HomeController extends HttpServlet {
 
 			prepareResponseToStream(response);
 			int currentTime = ClockIncrementor.getRunTime();
+			if (currentTime == 0){
+				return;
+			}
 
 			SimulationLog simLogg = SimulationLog.getInstance();
 			if (!simLogg.isInitiaized()) {

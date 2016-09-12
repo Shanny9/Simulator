@@ -829,8 +829,9 @@
 			if (options.addSuccessCssClassToField && !options.isError)
 				field.addClass(options.addSuccessCssClassToField);
 
-			if (options.addFailureCssClassToField && options.isError)
+			if (options.addFailureCssClassToField && options.isError){
 				field.addClass(options.addFailureCssClassToField);
+			}
 		},
 
 		 /********************

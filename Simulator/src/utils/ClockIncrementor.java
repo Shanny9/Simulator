@@ -7,33 +7,37 @@ import log.Settings;
 
 public class ClockIncrementor implements Runnable {
 	private static volatile boolean isRunning = false;
+	private static Settings settings;
 	private static int elapsedTime;
 	private static int remainingTime;
 	private static int PAUSE_TIME;
 	private static int ROUND_TIME;
-	private static int sessionTime;
+	private static int SESSION_TIME;
 	private static int RUN_TIME;
 	private static int elapsedRunTime;
 	private static boolean isRunTime;
 	private static ClockIncrementor instance;
 	private static boolean isInitialized;
 
-	public static void initialize(Settings settings, int currentRound) {
+	public static void initialize(Settings _settings) {
 
 		if (isInitialized){
+			System.err.println("ClockIncrementor initialize method failed: ClockIncrementor is already running");
 			return;
 		}
 		
-		elapsedTime = (currentRound - 1) * settings.getRoundTime();
-		elapsedRunTime = (currentRound - 1) * settings.getRunTime();
-		remainingTime = settings.getPauseTime();
+		settings = _settings;
+
+		// initializes constants
 		PAUSE_TIME = settings.getPauseTime();
-		sessionTime = settings.getSessionTime();
+		SESSION_TIME = settings.getSessionTime();
 		RUN_TIME = settings.getRunTime();
 		ROUND_TIME = settings.getRoundTime();
-		isRunning = true;
-		isRunTime = false;
+		
+		initVariables();
+		
 		isInitialized = true;
+		System.out.println("ClockIncrementor: ClockIncrementor is initialized.");
 	}
 
 	private ClockIncrementor() {
@@ -54,13 +58,11 @@ public class ClockIncrementor implements Runnable {
 		clocks.put("remainingClock", remainingTime);
 		clocks.put("elapsedRunTime", elapsedRunTime);
 		clocks.put("isRunTime", isRunTime);
-		System.out.println("remainingClock: " + remainingTime);
 		return clocks;
 	}
 
 	public void run() {
 		if (isRunning) {
-//			System.out.println("ClockIncrementor : elapsed time= " + elapsedTime);
 			elapsedTime += 1;
 			remainingTime -= 1;
 
@@ -68,22 +70,25 @@ public class ClockIncrementor implements Runnable {
 				elapsedRunTime++;
 			}
 
-			if ((elapsedTime + RUN_TIME) % sessionTime == 0) {
+			if ((elapsedTime + RUN_TIME) % SESSION_TIME == 0) {
 				// finished pause time
 				remainingTime = RUN_TIME;
 				isRunTime = true;
 				LogManager.resumeLog();
 
-			} else if (elapsedTime % sessionTime == 0) {
+			} else if (elapsedTime % SESSION_TIME == 0) {
 				// finished run time
 				
 				if (elapsedTime % ROUND_TIME == 0){
 					// finished round
 					isRunning = false;
-					LogManager.Stop(elapsedRunTime);
+					LogManager.stop(elapsedRunTime);
+					initVariables();
+					System.out.println("ClockIncrementor: Round " + settings.getLastRoundDone()  + " is finished.");
 					return;
 					
 				} else{
+					// starts pause time
 					remainingTime = PAUSE_TIME;
 					isRunTime = false;
 					LogManager.pauseLog(elapsedRunTime, false);
@@ -93,6 +98,14 @@ public class ClockIncrementor implements Runnable {
 			return;
 		}
 	}
+	
+	private static void initVariables(){
+		elapsedTime = settings.getRoundTime();
+		elapsedRunTime = settings.getRunTime();
+		remainingTime = settings.getPauseTime();
+		isRunning = true;
+		isRunTime = false;
+	}
 
 	public static int getRunTime() {
 		return elapsedRunTime;
@@ -101,11 +114,13 @@ public class ClockIncrementor implements Runnable {
 	public static void forcePause() {
 		isRunning = false;
 		LogManager.pauseLog(elapsedRunTime, true);
+		System.out.println("ClockIncrementor: Paused (elapsed time is " + elapsedTime + " sec.)");
 	}
 
 	public static void forceResume() {
 		isRunning = true;
 		LogManager.resumeLog();
+		System.out.println("ClockIncrementor: Resumed.");
 	}
 
 	public static boolean isRunning() {

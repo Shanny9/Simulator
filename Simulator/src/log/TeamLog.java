@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -15,19 +14,10 @@ import java.util.Map.Entry;
 public class TeamLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * The course's name
-	 */
-	private String courseName;
 	/**
 	 * The team's name
 	 */
 	private String teamName;
-	/**
-	 * The current round
-	 */
-	private int round;
 	/**
 	 * The team's incident logs
 	 */
@@ -63,13 +53,11 @@ public class TeamLog implements Serializable {
 	 * @param incident_logs
 	 *            the team's initial incident logs
 	 */
-	TeamLog(String courseName, String teamName, int round, HashMap<Byte, ServiceLog> service_logs,
+	TeamLog(String teamName, HashMap<Byte, ServiceLog> service_logs,
 			double initDiff, HashMap<Byte, IncidentLog> incident_logs) {
 
 		super();
-		this.courseName = courseName;
 		this.teamName = teamName;
-		this.round = round;
 		this.purchases = new HashMap<>();
 		this.service_logs = new HashMap<>();
 		this.incident_logs = new HashMap<>();

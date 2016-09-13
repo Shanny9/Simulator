@@ -1,37 +1,61 @@
 package log;
 
 public class LogManager implements Runnable {
-	private static SimulationLog simLog;
 	private static boolean isRunning;
 	private static int elapsed_time;
-	private static String course;
 	private static LogManager instance;
 	private static boolean isInitialized;
 
-	public static void initialize(String courseName, int round) {
+	/**
+	 * Initializes the simulation log (can be activated only once)
+	 * 
+	 * @param setings
+	 */
+	public static void initialize(Settings setings) {
 		if (isInitialized) {
+			System.err.println("LogManager initialize method failed: LogManager is already running");
 			return;
 		}
 
-		simLog = SimulationLog.getInstance();
-		simLog.initialize(courseName);
-		simLog.setRound(round);
-		
-		course = courseName;
-		
+		SimulationLog.getInstance().initialize(setings);
 		isRunning = false;
 		isInitialized = true;
 	}
 
+	/**
+	 * Sets the round of the simulation log
+	 * 
+	 * @param setings
+	 */
+	public static void setRound(int round) {
+		SimulationLog.getInstance().setRound(round);
+	}
+
+	/**
+	 * Constructor
+	 */
 	private LogManager() {
 		isInitialized = false;
 	}
 
+	/**
+	 * Singleton
+	 * 
+	 * @return
+	 */
 	public static LogManager getInstance() {
 		if (instance == null) {
 			instance = new LogManager();
 		}
 		return instance;
+	}
+	
+	/**
+	 * Indicates if the {@code SimulationLog} has started.
+	 * @return true of the {@code SimulationLog} has started or false otherwise.
+	 */
+	public static boolean isInitialized(){
+		return isInitialized;
 	}
 
 	/**
@@ -47,61 +71,52 @@ public class LogManager implements Runnable {
 	public static void pauseLog(int time, boolean isForced) {
 		isRunning = false;
 		if (!isForced) {
-			simLog.fixAllIncidents(time);
+			SimulationLog.getInstance().fixAllIncidents(time);
 		}
-//		System.out.println("Log paused");
 	}
 
 	/**
-	 * Resumes the log.
+	 * Resumes the simulation log.
 	 */
 	public static void resumeLog() {
 		isRunning = true;
-//		System.out.println("Log resumed");
 	}
 
 	/**
-	 * Stops the log. Puts end times to both teams' services.
+	 * Stops the simulation log. Puts end times to both teams' services.
 	 * 
 	 * @param time
 	 *            The time of the stop
 	 */
-	public static void Stop(int time) {
-		if (!isRunning){
+	public static void stop(int time) {
+		if (!isRunning) {
 			return;
 		}
-		
+
 		isRunning = false;
-		simLog.stopLogs(time);
-		System.out.println("Log stopped");
-		log.LogUtils.saveLog(course, simLog.getRound());
+		SimulationLog.getInstance().stopLogs(time);
+		System.out.println("LogManager: Log stopped");
+		log.LogUtils.saveLog(SimulationLog.getInstance().getSettings()
+				.getCourseName(), SimulationLog.getInstance().getRound());
 	}
 
+	/**
+	 * Calls the {@code incidentStarted} method of the {@code SimulationLog}
+	 * when time is right and calls {@code updateTeamProfits} method every
+	 * second.
+	 */
 	@Override
 	public void run() {
-		// long start = System.nanoTime();
 		if (isRunning) {
-			// should occur every second
+			// occurs every second
 			elapsed_time++;
 
-			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
-				byte inc_id = simLog.getIncidentTimes().get(elapsed_time);
-				simLog.incidentStarted(inc_id, elapsed_time);
+			if (SimulationLog.getInstance().getIncidentTimes().containsKey(elapsed_time)) {
+				byte inc_id = SimulationLog.getInstance().getIncidentTimes().get(elapsed_time);
+				SimulationLog.getInstance().incidentStarted(inc_id, elapsed_time);
 			}
-			simLog.updateTeamProfits(elapsed_time);
-
-			// System.out.println("Marom: " +
-			// simLog.getTeam("marom").getProfits());
-			// System.out.println("Rakia: " +
-			// simLog.getTeam("rakia").getProfits());
-			// System.out.println("");
+			SimulationLog.getInstance().updateTeamProfits(elapsed_time);
 		}
-		/*
-		 * long end = System.nanoTime(); System.out.println(end-start);
-		 */
-	}
-
-	public void setRound(int round) {
 
 	}
 }

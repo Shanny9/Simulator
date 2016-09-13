@@ -45,8 +45,8 @@ public class ClientController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
 		doPost(request, response);
 	}
@@ -55,18 +55,20 @@ public class ClientController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		// General settings
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
 		// check that courseName is set
-		Object selectedCourse = getServletContext().getAttribute("selectedCourseName");
+		Object selectedCourse = getServletContext().getAttribute(
+				"selectedCourseName");
 		if (courseName == null && selectedCourse != null) {
 			courseName = (String) selectedCourse;
-//			System.out.println("ClientController: selected course - " + courseName);
+			System.out.println("ClientController: Course '"
+					+ courseName + "' is selcted.");
 		}
 
 		// get the action
@@ -76,14 +78,18 @@ public class ClientController extends HttpServlet {
 		case "getSolutions":
 			// System.out.println("ClientController: getSolutions= " +
 			// getSolutions());
-			response.getWriter().print(new GsonBuilder().setPrettyPrinting().create().toJson(getSolutions()));
+			response.getWriter().print(
+					new GsonBuilder().setPrettyPrinting().create()
+							.toJson(getSolutions()));
 			break;
 		case "checkIncident":
 			team = request.getParameter("team");
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
-			boolean isGood = SimulationLog.getInstance().checkIncident(SimulationLog.getTeamConst(team), inc_id, time);
-//			System.out.println("ClientController: " + team + " Inc:" + inc_id + " Time:" + time + " isGood:" + isGood);
+			boolean isGood = SimulationLog.getInstance().checkIncident(
+					SimulationLog.getTeamConst(team), inc_id, time);
+			// System.out.println("ClientController: " + team + " Inc:" + inc_id
+			// + " Time:" + time + " isGood:" + isGood);
 			response.getWriter().print(isGood);
 			break;
 		case "buySolution":
@@ -93,8 +99,10 @@ public class ClientController extends HttpServlet {
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
 			time = ClockIncrementor.getRunTime();
 
-			SimulationLog.getInstance().incidentSolved(SimulationLog.getTeamConst(team), inc_id, time, isBaught);
-			log.SimulationLog.getInstance().getSolutionQueue().offer(new SolutionLog(courseName, team, inc_id));
+			SimulationLog.getInstance().incidentSolved(
+					SimulationLog.getTeamConst(team), inc_id, time, isBaught);
+			log.SimulationLog.getInstance().getSolutionQueue()
+					.offer(new SolutionLog(courseName, team, inc_id));
 			response.getWriter().print(true);
 			break;
 		case "checkSimulator":
@@ -111,7 +119,8 @@ public class ClientController extends HttpServlet {
 			break;
 
 		case "pauseOrResume":
-			while (log.SimulationLog.getServerPaused() == log.SimulationLog.getClientPaused()) {
+			while (log.SimulationLog.getServerPaused() == log.SimulationLog
+					.getClientPaused()) {
 				synchronized (this) {
 					try {
 						wait(1000);
@@ -122,9 +131,12 @@ public class ClientController extends HttpServlet {
 			}
 			response.setContentType("text/event-stream");
 			response.setCharacterEncoding("UTF-8");
-			String pauseMsg = "retry: 1000\ndata: " + ((log.SimulationLog.getServerPaused()) ? "pause" : "resume") + "\n\n";
+			String pauseMsg = "retry: 1000\ndata: "
+					+ ((log.SimulationLog.getServerPaused()) ? "pause"
+							: "resume") + "\n\n";
 			response.getWriter().write(pauseMsg);
-			log.SimulationLog.setClientPaused(log.SimulationLog.getServerPaused());
+			log.SimulationLog.setClientPaused(log.SimulationLog
+					.getServerPaused());
 			break;
 		}
 	}
@@ -135,9 +147,13 @@ public class ClientController extends HttpServlet {
 			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(Queries.solutionsForClient);
 			while (rs.next()) {
-				solutions.put(rs.getInt("incident_id"),
-						new SolutionElement(rs.getInt("incident_id"), rs.getInt("solution_marom"),
-								rs.getInt("solution_rakia"), rs.getDouble("solution_cost"), rs.getString("currency")));
+				solutions.put(
+						rs.getInt("incident_id"),
+						new SolutionElement(rs.getInt("incident_id"), rs
+								.getInt("solution_marom"), rs
+								.getInt("solution_rakia"), rs
+								.getDouble("solution_cost"), rs
+								.getString("currency")));
 			}
 			return solutions;
 		} catch (SQLException e) {

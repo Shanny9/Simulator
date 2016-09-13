@@ -3,7 +3,6 @@ package com.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.model.TblChange;
 import com.model.TblLevel;
 
 public interface TblLevelDao {

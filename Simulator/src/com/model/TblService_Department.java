@@ -10,8 +10,6 @@ import java.io.Serializable;
  */
 public class TblService_Department implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	private TblService_DepartmentPK id;
 	
 	private byte service_ID;
 

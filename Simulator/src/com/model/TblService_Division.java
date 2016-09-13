@@ -11,8 +11,6 @@ import java.io.Serializable;
 public class TblService_Division implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private TblService_DivisionPK id;
-
 	private byte service_ID;
 
 	private String divisionName;

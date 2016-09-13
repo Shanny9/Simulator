@@ -1,7 +1,6 @@
 package com.daoImpl;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,14 +9,11 @@ import java.util.List;
 
 import com.dao.TblLevelDao;
 import com.jdbc.DBUtility;
-import com.model.TblChange;
 import com.model.TblLevel;
-import com.model.TblPriority;
 
 public class TblLevelDaoImpl implements TblLevelDao {
 	
 	private Connection dbConnection;
-	private PreparedStatement pStmt;
 	
 	public TblLevelDaoImpl() {
 		dbConnection = DBUtility.getConnection();

@@ -18,13 +18,8 @@ public class TblCI implements Serializable {
 
 	private boolean isActive;
 
-
-	private TblSupplier tblSupplier1;
-
 	private String supplierName1;
 	
-	private TblSupplier tblSupplier2;
-
 	private String supplierName2;
 	
 	private List<TblResource_CI> tblResourceCis;

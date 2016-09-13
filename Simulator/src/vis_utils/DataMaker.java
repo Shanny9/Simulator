@@ -3,7 +3,6 @@ package vis_utils;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -558,7 +557,7 @@ public class DataMaker {
 		void addValue(int val) {
 			for (int i = 0; i < rangeCountAL.size(); i++) {
 				if (rangeCountAL.get(i).getRange().inRange(val)) {
-					rangeCountAL.get(i).addCount(val);
+					rangeCountAL.get(i).addCount(1);
 				}
 			}
 		}

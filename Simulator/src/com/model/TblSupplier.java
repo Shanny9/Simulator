@@ -1,8 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
 
 
 /**
@@ -20,10 +18,6 @@ public class TblSupplier implements Serializable {
 	private boolean isActive;
 
 	private double solutionCost;
-
-	private List<TblCI> tblCis1;
-
-	private List<TblCI> tblCis2;
 
 	public TblSupplier() {
 	}

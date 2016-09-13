@@ -11,12 +11,8 @@ public class TblEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private int eventId;
-
-	private TblIncident tblIncident;
 	
 	private byte incidentId;
-
-	private TblService tblService;
 	
 	private byte serviceId;
 

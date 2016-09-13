@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Settings implements Serializable {
 	/**
@@ -245,5 +244,53 @@ public class Settings implements Serializable {
 				+ "] NIS\nLast round done: [" + lastRoundDone
 				+ "]\nTarget scores: " + printTargetScores()
 				+ "\nPriority_sla: " + printPrioritySLA();
+	}
+
+	public static Settings extractFromText(String text) {
+		try{
+		int start_bracket_index = text.indexOf("[");
+		int end_bracket_index = text.indexOf("]");
+		String exp;
+		int expLen;
+		ArrayList<String> expressions = new ArrayList<String>();
+		do {
+			exp = text.substring(start_bracket_index + 1, end_bracket_index);
+			expressions.add(exp);
+			text = text.substring(end_bracket_index + 1);
+
+			start_bracket_index = text.indexOf("[");
+			end_bracket_index = text.indexOf("]");
+			expLen = end_bracket_index - start_bracket_index;
+		} while (expLen > 0);
+
+		String course = expressions.get(0);
+		int rounds = Integer.parseInt(expressions.get(1));
+		int runTime = Integer.parseInt(expressions.get(2));
+		int pauseTime = Integer.parseInt(expressions.get(3));
+		int sessionsPerRound = Integer.parseInt(expressions.get(4));
+		int initialCapital = Integer.parseInt(expressions.get(5));
+		int lastRoundDone = Integer.parseInt(expressions.get(6));
+		String[] targetScores = expressions.get(7).replace(" ", "").split(",");
+		ArrayList<Integer> scores = new ArrayList<Integer>();
+		for (int i = 0; i < targetScores.length; i++) {
+			scores.add(Integer.parseInt(targetScores[i]));
+		}
+		HashMap<String, Integer> priority_sla = new HashMap<>();
+		priority_sla.put("Low", Integer.parseInt(expressions.get(8)));
+		priority_sla.put("Medium", Integer.parseInt(expressions.get(9)));
+		priority_sla.put("High", Integer.parseInt(expressions.get(10)));
+		priority_sla.put("Major", Integer.parseInt(expressions.get(11)));
+		priority_sla.put("Critical", Integer.parseInt(expressions.get(12)));
+
+		Settings sett = new Settings(course, rounds, runTime, pauseTime,
+				sessionsPerRound, initialCapital);
+		sett.setLastRoundDone(lastRoundDone);
+		sett.setTargetScores(scores);
+		sett.setPriority_sla(priority_sla);
+		return sett;
+		} catch (Exception e){
+			System.err.println("Settings: extractFromText method failed. File 'settings.txt' is corrupted.");
+			return null;
+		}
 	}
 }

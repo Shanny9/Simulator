@@ -45,16 +45,21 @@ public class SimulationTester implements Runnable {
 	public static void initialize(Settings courseSettings) {
 
 		if (isInitialized) {
+			System.err.println("SimulationTester initialize method failed: SimulationTester is already running");
+			return;
+		}
+		
+		if (settings.getTargetScores().isEmpty()){
+			System.err.println("SimulationTester initialize method failed: target scores are already calculated.");
 			return;
 		}
 
-		LogUtils.saveSettings(courseSettings);
 		settings = courseSettings;
 		roundRunTime = settings.getRunTime() * settings.getSessionsPerRound();
 		nextRoundEnd = roundRunTime;
 
 		simLog = SimulationLog.getInstance();
-		simLog.initialize(courseSettings.getCourseName());
+		simLog.initialize(settings);
 
 		marom = simLog.getTeam(SimulationLog.MAROM);
 
@@ -89,7 +94,6 @@ public class SimulationTester implements Runnable {
 			// 1. calculate the round and its end time
 			if (elapsed_time % roundRunTime == 0) {
 				nextRoundEnd += nextRoundEnd;
-				System.out.println("");
 			}
 
 			// 2. start incidents
@@ -103,11 +107,11 @@ public class SimulationTester implements Runnable {
 				marom.incidentStarted(inc_id, elapsed_time);
 
 				if (simLog.getAffectingCis().get(ci_id) != null) {
-					System.out
-							.println("SimulationTester: " + elapsed_time
-									+ " services "
-									+ simLog.getAffectingCis().get(ci_id)
-									+ " are down");
+//					System.out
+//							.println("SimulationTester: " + elapsed_time
+//									+ " services "
+//									+ simLog.getAffectingCis().get(ci_id)
+//									+ " are down");
 				}
 			}
 
@@ -120,9 +124,9 @@ public class SimulationTester implements Runnable {
 							nextRoundEnd);
 					if (solutions_schedule.putIfAbsent(aff_service,
 							time_to_solve) == null) {
-						System.out.println("SimulationTester: " + elapsed_time
-								+ " service " + aff_service
-								+ " fix is scheduled to " + time_to_solve);
+//						System.out.println("SimulationTester: " + elapsed_time
+//								+ " service " + aff_service
+//								+ " fix is scheduled to " + time_to_solve);
 					}
 				}
 			}
@@ -152,8 +156,8 @@ public class SimulationTester implements Runnable {
 					for (Byte ci : cis_to_solve) {
 						marom.ciSolved(ci, elapsed_time);
 					}
-					System.out.println("SimulationTester: " + elapsed_time
-							+ " services " + services_to_solve + " are solved");
+//					System.out.println("SimulationTester: " + elapsed_time
+//							+ " services " + services_to_solve + " are solved");
 
 					// 5. un-schedule services that are up
 					for (Byte ci : cis_to_solve) {
@@ -203,6 +207,6 @@ public class SimulationTester implements Runnable {
 		settings.setTargetScores(targetScores);
 		LogUtils.saveSettings(settings);
 		simLog.updateSettings(settings);
-		System.out.println(targetScores);
+		System.out.println("SimulationTester: test is finished.");
 	}
 }

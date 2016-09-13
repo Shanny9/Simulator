@@ -74,20 +74,12 @@ public class SimulationLog extends Thread implements Serializable {
 
 	private Settings settings;
 
-	private String courseName;
-
-	private static boolean isInitialized;
-
 	// TODO: fix this - should be calculated somehow
 	private static double mul = 1;
 
-	public void initialize(String courseName) {
+	public void initialize(Settings _settings) {
 
-		if (isInitialized) {
-			return;
-		}
-		this.courseName = courseName;
-		settings = LogUtils.openSettings(courseName);
+		settings = _settings;
 		affecting_cis = LogUtils.getDBAffectingCIs();
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
@@ -131,16 +123,15 @@ public class SimulationLog extends Thread implements Serializable {
 		HashMap<Byte, IncidentLog> incident_logs_current_round_copy = (HashMap<Byte, IncidentLog>) LogUtils
 				.copy(incident_logs_current_round);
 
-		marom = new TeamLog(courseName, "Marom", round, service_logs, initDiff,
+		marom = new TeamLog("Marom", service_logs, initDiff,
 				incident_logs_current_round);
-		rakia = new TeamLog(courseName, "Rakia", round, service_logs_copy,
-				initDiff, incident_logs_current_round_copy);
+		rakia = new TeamLog("Rakia", service_logs_copy, initDiff,
+				incident_logs_current_round_copy);
 
-		isInitialized = true;
+		System.out.println("SimulationLog: SimulationLog is initalized.");
 	}
 
 	public void setRound(int currentRound) {
-		System.out.println("SimulationLog: round is set to " + currentRound);
 		round = currentRound;
 
 		double marom_init_capital;
@@ -149,25 +140,36 @@ public class SimulationLog extends Thread implements Serializable {
 			marom_init_capital = settings.getInitCapital();
 			rakia_init_capital = settings.getInitCapital();
 		} else {
-			marom_init_capital = LogUtils.openLog(courseName, round - 1)
+			marom_init_capital = LogUtils
+					.openLog(settings.getCourseName(), round - 1)
 					.getTeam(SimulationLog.MAROM)
 					.getProfit(settings.getRunTime());
-			rakia_init_capital = LogUtils.openLog(courseName, round - 1)
+			rakia_init_capital = LogUtils
+					.openLog(settings.getCourseName(), round - 1)
 					.getTeam(SimulationLog.RAKIA)
 					.getProfit(settings.getRunTime());
 		}
 		int duration = settings.getTotalRunTime();
 		marom.setInitProfit(marom_init_capital, duration);
 		rakia.setInitProfit(rakia_init_capital, duration);
+
+		System.out.println("SimulationLog: round is set to " + currentRound
+				+ ".");
 	}
 
+	/**
+	 * Empty constructor
+	 */
 	private SimulationLog() {
-		isInitialized = false;
 	};
 
+	/**
+	 * Singleton method
+	 * 
+	 * @return Instance of the {@code SimulationLog}.
+	 */
 	public static SimulationLog getInstance() {
 		if (instance == null) {
-			// System.out.println("Log is created");
 			instance = new SimulationLog();
 		}
 		return instance;
@@ -385,8 +387,6 @@ public class SimulationLog extends Thread implements Serializable {
 				eventList.add(row);
 			}
 		}
-		// System.out.println("SimulationLog getEventsForHomeScreen:\n" +
-		// eventList);
 		return eventList;
 	}
 
@@ -417,10 +417,6 @@ public class SimulationLog extends Thread implements Serializable {
 
 	public static void setClientPaused(boolean isPaused) {
 		clientPaused = isPaused;
-	}
-
-	public boolean isInitiaized() {
-		return isInitialized;
 	}
 
 	public double getMTBF(boolean team) {

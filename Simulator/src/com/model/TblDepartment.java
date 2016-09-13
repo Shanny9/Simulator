@@ -3,7 +3,6 @@ package com.model;
 import java.io.Serializable;
 import java.util.List;
 
-
 /**
  * The persistent class for the tblDepartment database table.
  * 
@@ -12,55 +11,43 @@ import java.util.List;
 public class TblDepartment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private TblDepartmentPK id;
-
 	private String devisionName;
 
 	private String departmentName;
-	
+
 	private boolean isActive;
 
-
 	private TblDivision tblDivision;
-
 
 	private List<TblService_Department> tblServiceDepartments;
 
 	public TblDepartment() {
 	}
 
-	
 	public String getDevisionName() {
 		return devisionName;
 	}
-
-
 
 	public void setDevisionName(String devisionName) {
 		this.devisionName = devisionName;
 	}
 
-
-
 	public String getDepartmentName() {
 		return departmentName;
 	}
-
-
 
 	public void setDepartmentName(String departmentName) {
 		this.departmentName = departmentName;
 	}
 
-
-//
-//	public TblDepartmentPK getId() {
-//		return this.id;
-//	}
-//
-//	public void setId(TblDepartmentPK id) {
-//		this.id = id;
-//	}
+	//
+	// public TblDepartmentPK getId() {
+	// return this.id;
+	// }
+	//
+	// public void setId(TblDepartmentPK id) {
+	// this.id = id;
+	// }
 
 	public boolean getIsActive() {
 		return this.isActive;
@@ -82,18 +69,21 @@ public class TblDepartment implements Serializable {
 		return this.tblServiceDepartments;
 	}
 
-	public void setTblServiceDepartments(List<TblService_Department> tblServiceDepartments) {
+	public void setTblServiceDepartments(
+			List<TblService_Department> tblServiceDepartments) {
 		this.tblServiceDepartments = tblServiceDepartments;
 	}
 
-	public TblService_Department addTblServiceDepartment(TblService_Department tblServiceDepartment) {
+	public TblService_Department addTblServiceDepartment(
+			TblService_Department tblServiceDepartment) {
 		getTblServiceDepartments().add(tblServiceDepartment);
 		tblServiceDepartment.setTblDepartment(this);
 
 		return tblServiceDepartment;
 	}
 
-	public TblService_Department removeTblServiceDepartment(TblService_Department tblServiceDepartment) {
+	public TblService_Department removeTblServiceDepartment(
+			TblService_Department tblServiceDepartment) {
 		getTblServiceDepartments().remove(tblServiceDepartment);
 		tblServiceDepartment.setTblDepartment(null);
 

@@ -34,36 +34,26 @@ public class TimerManager implements ServletContextListener {
 	}
 
 	public static void startSimulator(Settings settings, int round) {
-		// PrintStream out;
-		// try {
-		// out = new PrintStream(new
-		// FileOutputStream("C:\\Users\\Shanny9\\Desktop\\output.txt"));
-		// out = new PrintStream(new
-		// FileOutputStream("C:\\Users\\ROBERT\\Desktop\\output.txt"));
-		// System.setOut(out);
-		// System.out.println("H");
-		//
-		// } catch (FileNotFoundException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
 
-		System.out.println("TimerManager: starting simulator");
+		
 		ci = ClockIncrementor.getInstance();
-		ClockIncrementor.initialize(settings, round);
+		ClockIncrementor.initialize(settings);
 
 		lm = LogManager.getInstance();
-		LogManager.initialize(settings.getCourseName(), round);
-
-		runNTimes(ci, settings.getRoundTime()+1, 0, 1, TimeUnit.SECONDS, scheduler);
-		runNTimes(lm, settings.getRoundTime()+1, 0, 1, TimeUnit.SECONDS, scheduler);
+		LogManager.initialize(settings);
+		LogManager.setRound(round);
+		
+		runNTimes(ci, settings.getRoundTime() + 1, 0, 1, TimeUnit.SECONDS,
+				scheduler);
+		runNTimes(lm, settings.getRoundTime() + 1, 0, 1, TimeUnit.SECONDS,
+				scheduler);
+		System.out.println("TimerManager: simulator started.");
 	}
 
 	public static void forcePause() {
 		if (ci == null || !ClockIncrementor.isRunning()) {
 			return;
 		}
-		System.err.println("TimerManager: pausing clock...");
 		ClockIncrementor.forcePause();
 	}
 
@@ -71,13 +61,32 @@ public class TimerManager implements ServletContextListener {
 		if (ci == null || ClockIncrementor.isRunning()) {
 			return;
 		}
-		System.err.println("TimerManager: resuming clock...");
 		ClockIncrementor.forceResume();
 	}
 
-	public static void runNTimes(Runnable task, int maxRunCount, long initDelay, long period, TimeUnit unit,
+	/**
+	 * Schedules a {@code Runnable} task of an {@code ScheduledExecutorService}
+	 * to run N times at a fixed rate.
+	 * 
+	 * @param task
+	 *            The task to execute
+	 * @param maxRunCount
+	 *            The number of iterations of the scheduled task
+	 * 
+	 * @param initDelay
+	 *            the initial delay of the scheduled task.
+	 * @param period
+	 *            The amount of time of the between iterations of the task.
+	 * @param unit
+	 *            The time unit of period of time between iterations.
+	 * @param executor
+	 *            The scheduled executor service.
+	 */
+	private static void runNTimes(Runnable task, int maxRunCount,
+			long initDelay, long period, TimeUnit unit,
 			ScheduledExecutorService executor) {
-		new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor, initDelay, period, unit);
+		new FixedExecutionRunnable(task, maxRunCount).runNTimes(executor,
+				initDelay, period, unit);
 	}
 
 }

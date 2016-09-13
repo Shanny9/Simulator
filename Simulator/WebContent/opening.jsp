@@ -38,13 +38,13 @@
 		<center>
 			<div class="container-fluid">
 				<div class="headline">Service Management Simulator</div>
-				<div style="overflow: hidden; height: 330px; width: 680px;">
+				<!-- <div style="overflow: hidden; height: 330px; width: 680px;">
 					<div id="youtube_canvas" style="height: 330px; width: 680px;">
 						<iframe width="560" height="315"
 							src="https://www.youtube.com/embed/4UVB_qJGFa0" frameborder="0"
 							allowfullscreen></iframe>
 					</div>
-				</div>
+				</div> -->
 				<div class="push"></div>
 			</div>
 			<!--container-fluid-->

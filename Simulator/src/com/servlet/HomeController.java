@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import log.LogManager;
 import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
@@ -36,7 +37,6 @@ import com.model.TblGeneral_parameter;
 @WebServlet("/HomeController")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String courseName;
 	private int round;
 	private Settings settings;
 	private String selectedCourseName;
@@ -75,8 +75,6 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		
 		String action = request.getParameter("action");
-		// System.out.println("action= " + action);
-		// System.out.println(vis_utils.DataMaker.getTeamMT("17-08-16",1));
 		switch (action) {
 
 		case "authenticate":
@@ -111,7 +109,6 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "getTime":
-			System.out.println("getTimes: " + new Date());
 			HashMap<String, Object> clocks = TimerManager.getClocks();
 			clocks.put("serverTime", new Date());
 			response.getWriter().print(gson.toJson(clocks));
@@ -121,7 +118,11 @@ public class HomeController extends HttpServlet {
 				if (!ClockIncrementor.isRunning()) {
 					TimerManager.startSimulator(settings, round);
 					response.getWriter().print("OK");
+				} else{
+					System.err.println("startSimulator method failed: The Simulation is already running.");
 				}
+			} else{
+				System.err.println("startSimulator method failed: Course settings are missing.");
 			}
 			break;
 		case "getSettings":
@@ -132,8 +133,8 @@ public class HomeController extends HttpServlet {
 					SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
 		case "solutionStream":		
-			SimulationLog simLog = SimulationLog.getInstance();
-			if (!simLog.isInitiaized()) {
+			SimulationLog.getInstance(); //TODO: what is this for?
+			if (!LogManager.isInitialized()) {
 				return;
 			}
 
@@ -154,7 +155,7 @@ public class HomeController extends HttpServlet {
 			}
 
 			SimulationLog simLogg = SimulationLog.getInstance();
-			if (!simLogg.isInitiaized()) {
+			if (!LogManager.isInitialized()) {
 				return;
 			}
 			
@@ -182,8 +183,7 @@ public class HomeController extends HttpServlet {
 			Settings set = new Settings(courseName, rounds, runTime, pauseTime,
 					sessionsPerRound, initCapital);
 			if (courseName != null) {
-				// TODO: why the hell this function is called before the user
-				// sent the form?
+				LogUtils.saveSettings(set);
 				SimulationTester st = SimulationTester.getInstance();
 				SimulationTester.initialize(set);
 				new Thread(st).start();
@@ -200,7 +200,6 @@ public class HomeController extends HttpServlet {
 		case "getRounds":
 			int tot_rounds =  LogUtils.openSettings(request
 					.getParameter("directory")).getRounds();
-//			System.out.println("total rounds "+ tot_rounds);
 			response.getWriter().write(gson.toJson(tot_rounds));
 			break;
 		case "getCourses":

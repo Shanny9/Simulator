@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -139,7 +138,7 @@ public class LogUtils {
 			out.writeObject(simLog);
 			out.close();
 			fileOut.close();
-			System.out.printf("Log is saved");
+			System.out.println("LogUtils: Log is saved");
 
 			if (deleteHistory) {
 				File[] matchingFiles = file.listFiles(new FilenameFilter() {
@@ -179,26 +178,23 @@ public class LogUtils {
 							&& name.endsWith("ser");
 				}
 			});
-			
+
 			if (matchingFiles == null || matchingFiles.length == 0) {
 				// TODO: tell the user log file is missing
 				return null;
 			}
-			
+
 			FileInputStream fileIn = new FileInputStream(matchingFiles[0]);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			SimulationLog log = (SimulationLog) in.readObject();
-			
-			//REMOVE THIS
-			TeamLog marom = log.getTeam(true);
-			
+
 			in.close();
 			fileIn.close();
 			return log;
 		} catch (IOException i) {
 			i.printStackTrace();
 		} catch (ClassNotFoundException c) {
-			System.out.println("Log class not found");
+			System.out.println("LogUtils: Log class not found");
 			c.printStackTrace();
 		}
 		return null;
@@ -236,8 +232,8 @@ public class LogUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("settings for course " + settings.getCourseName()
-				+ " were saved in " + getPath());
+		System.out.println("LogUtils: settings for course "
+				+ settings.getCourseName() + " were saved in " + getPath());
 	}
 
 	/**
@@ -290,53 +286,8 @@ public class LogUtils {
 					while ((line = buffer.readLine()) != null) {
 						input += line;
 					}
-
-					int start_bracket_index = input.indexOf("[");
-					int end_bracket_index = input.indexOf("]");
-					String exp;
-					int expLen;
-					ArrayList<String> expressions = new ArrayList<String>();
-					do {
-						exp = input.substring(start_bracket_index + 1,
-								end_bracket_index);
-						expressions.add(exp);
-						input = input.substring(end_bracket_index + 1);
-
-						start_bracket_index = input.indexOf("[");
-						end_bracket_index = input.indexOf("]");
-						expLen = end_bracket_index - start_bracket_index;
-					} while (expLen > 0);
 					
-					String course = expressions.get(0);
-					int rounds = Integer.parseInt(expressions.get(1));
-					int runTime = Integer.parseInt(expressions.get(2));
-					int pauseTime = Integer.parseInt(expressions.get(3));
-					int sessionsPerRound = Integer.parseInt(expressions.get(4));
-					int initialCapital = Integer.parseInt(expressions.get(5));
-					int lastRoundDone = Integer.parseInt(expressions.get(6));
-					String[] targetScores = expressions.get(7).replace(" ", "")
-							.split(",");
-					ArrayList<Integer> scores = new ArrayList<Integer>();
-					for (int i = 0; i < targetScores.length; i++) {
-						scores.add(Integer.parseInt(targetScores[i]));
-					}
-					HashMap<String, Integer> priority_sla = new HashMap<>();
-					priority_sla.put("Low",
-							Integer.parseInt(expressions.get(8)));
-					priority_sla.put("Medium",
-							Integer.parseInt(expressions.get(9)));
-					priority_sla.put("High",
-							Integer.parseInt(expressions.get(10)));
-					priority_sla.put("Major",
-							Integer.parseInt(expressions.get(11)));
-					priority_sla.put("Critical",
-							Integer.parseInt(expressions.get(12)));
-
-					Settings sett = new Settings(course, rounds, runTime,
-							pauseTime, sessionsPerRound, initialCapital);
-					sett.setLastRoundDone(lastRoundDone);
-					sett.setTargetScores(scores);
-					sett.setPriority_sla(priority_sla);
+					Settings sett = Settings.extractFromText(input);
 					LogUtils.saveSettings(sett);
 
 					return sett;
@@ -469,7 +420,8 @@ public class LogUtils {
 			}
 			return serviceCosts;
 		} catch (SQLException e) {
-			System.out.println("getServiceDownTimeCosts(): " + e.getMessage());
+			System.out.println("LogUtils: getServiceDownTimeCosts(): "
+					+ e.getMessage());
 		}
 		return null;
 	}
@@ -503,7 +455,8 @@ public class LogUtils {
 	}
 
 	/**
-	 * @return The incidents and their events (key= incident, value= set of events)
+	 * @return The incidents and their events (key= incident, value= set of
+	 *         events)
 	 */
 	public static HashMap<Byte, HashSet<String>> getIncidentEvents() {
 		HashMap<Byte, HashSet<String>> incident_events = new HashMap<>();
@@ -520,32 +473,37 @@ public class LogUtils {
 		}
 		return incident_events;
 	}
-	
+
 	/**
-	 * @return The services and their affecting incidents (key= services, value= affecting incidents)
+	 * @return The services and their affecting incidents (key= services, value=
+	 *         affecting incidents)
 	 */
 	public static HashMap<Byte, HashSet<Byte>> getServiceIncidents() {
 		HashMap<Byte, HashSet<Byte>> service_incidents = new HashMap<>();
 		TblServiceDao dao = new TblServiceDaoImpl();
-		HashMap<Byte, HashSet<Byte>> affected_services = LogUtils.getDBAffectedServices();
-		HashMap<Byte, HashSet<Byte>> ci_incidents = LogUtils.getCIsAndTheirIncidents();
-		
+		HashMap<Byte, HashSet<Byte>> affected_services = LogUtils
+				.getDBAffectedServices();
+		HashMap<Byte, HashSet<Byte>> ci_incidents = LogUtils
+				.getCIsAndTheirIncidents();
+
 		for (TblService service : dao.getAllServices()) {
-			HashSet<Byte> incidents = service_incidents.get(service.getServiceId());
+			HashSet<Byte> incidents = service_incidents.get(service
+					.getServiceId());
 			if (incidents == null) {
 				incidents = new HashSet<Byte>();
 			}
-			
-			HashSet<Byte> affecting_cis = affected_services.get(service.getServiceId());
-			if (affecting_cis == null){
+
+			HashSet<Byte> affecting_cis = affected_services.get(service
+					.getServiceId());
+			if (affecting_cis == null) {
 				continue;
 			}
-			
+
 			HashSet<Byte> affecting_incidents = new HashSet<>();
-			for (Byte ci : affecting_cis){
+			for (Byte ci : affecting_cis) {
 				affecting_incidents.addAll(ci_incidents.get(ci));
 			}
-			
+
 			incidents.addAll(affecting_incidents);
 			service_incidents.put(service.getServiceId(), incidents);
 		}
@@ -553,7 +511,8 @@ public class LogUtils {
 	}
 
 	/**
-	 * @return A map of services and their priorities (key= service, value= priority name)
+	 * @return A map of services and their priorities (key= service, value=
+	 *         priority name)
 	 */
 	static HashMap<Byte, String> getServicePriorities() {
 		HashMap<Byte, String> servicePriority = new HashMap<>();

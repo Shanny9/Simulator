@@ -94,6 +94,7 @@ public class DataController extends HttpServlet {
 		doPost(request, response);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -102,9 +103,7 @@ public class DataController extends HttpServlet {
 		response.setContentType("application/json");
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
 		String options = request.getParameter("options");
-		String key = request.getParameter("key");
 
 		if (options != null) {
 			JSONObject jo = new JSONObject();
@@ -277,7 +276,7 @@ public class DataController extends HttpServlet {
 					response.getWriter().print(jsonArray);
 				}
 			} catch (Exception ex) {
-				System.out.println("Data-tblSupplier: " + ex.getMessage());
+				System.out.println("DataController: Data-tblSupplier: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -377,7 +376,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblSolution: " + ex.getMessage());
+				System.out.println("DataController: Data-tblSolution: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -481,7 +480,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblIncident: " + ex.getMessage());
+				System.out.println("DataController: Data-tblIncident: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -576,7 +575,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblPriorityCost: " + ex.getMessage());
+				System.out.println("DataController: Data-tblPriorityCost: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -710,7 +709,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblService: " + ex.getMessage());
+				System.out.println("DataController: Data-tblService: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -829,7 +828,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblServiceDep: " + ex.getMessage());
+				System.out.println("DataController: Data-tblServiceDep: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -936,7 +935,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblServiceDiv: " + ex.getMessage());
+				System.out.println("DataController: Data-tblServiceDiv: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1040,7 +1039,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 //				ex.printStackTrace();
-				System.out.println("Data-tblCi: " + ex.getMessage());
+				System.out.println("DataController: Data-tblCi: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1142,7 +1141,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblCMDB: " + ex.getMessage());
+				System.out.println("DataController: Data-tblCMDB: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1243,7 +1242,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblDepartment: " + ex.getMessage());
+				System.out.println("DataController: Data-tblDepartment: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1333,7 +1332,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblDivision: " + ex.getMessage());
+				System.out.println("DataController: Data-tblDivision: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1432,7 +1431,7 @@ public class DataController extends HttpServlet {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Data-tblEvent: " + ex.getMessage());
+				System.out.println("DataController: Data-tblEvent: " + ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put("Message", 
 						(ex instanceof SQLException)? getErrorMsg(((SQLException)ex).getErrorCode(), ex.getMessage(), action):ex.getMessage());
@@ -1442,6 +1441,7 @@ public class DataController extends HttpServlet {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> JSONArray toOptionArray(List<T> table, String key, String display) {
 		
 		JSONArray optionArray = new JSONArray();

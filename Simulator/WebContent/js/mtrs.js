@@ -104,7 +104,7 @@ function setBarChartPerTeam(serviceId) {
 		datasets : dataArr
 	};
 	console.log(barDataTeams);
-	var ctx = document.getElementById('canvas_team');
+	var ctx = document.getElementById('canvas_team').getContext('2d');
 	new Chart(ctx, {
 		type : 'bar',
 		data : barDataTeams,
@@ -123,7 +123,7 @@ function setBarChartPerTeam(serviceId) {
 
 
 // Pie Chart(ranges) -MTRS
-var mtrsPieData;
+var mtrsPieData = new Array();
 function getMTRSPieData(team, round, service) {
 	// first range must start at 0
 	var labels = [ "0-9", "9-18", "18-27", "27-36" , "36-45" ];
@@ -140,8 +140,8 @@ function getMTRSPieData(team, round, service) {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
-			mtrsPieData = data;
+			
+			mtrsPieData = data.data;
 		},
 		error : function(e) {
 			console.log("Error in getMTRSPieData");
@@ -156,8 +156,11 @@ function setMTRSpie(team, round, service) {
 	/*
 	 * var options = { legend : true, responsive : false };
 	 */
-
-	var mtrsPie = new Chart(document.getElementById("canvas_mtrsPie"), {
+	console.log("labels: "+labels+" data: "+mtrsPieData+ " tempData: " + tempData);
+	var ctx = document.getElementById("canvas_mtrsPie").getContext('2d');
+	ctx.canvas.width = 350;
+	ctx.canvas.height = 350;
+	var mtrsPie = new Chart(ctx, {
 		type : 'pie',
 		tooltipFillColor : "rgba(51, 51, 51, 0.55)",
 		data : {
@@ -314,7 +317,7 @@ $(document).ready(function() {
 	setBarChartPerRound(0); //all services default 
 	setBarChartPerTeam(0);
 	setBarChartPerService(0);
-	setMTRSpie("both", 0, 8);
+	setMTRSpie("both", 0, 0);
 	
 	$("#serviceSelection").select2({
 		allowClear : true,

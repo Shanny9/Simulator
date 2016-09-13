@@ -222,7 +222,19 @@ public class HomeController extends HttpServlet {
 					selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
-
+			
+		case "deleteCourse":
+			try{
+			response.setContentType("text/html");
+			String selectedCourseNameDel = request.getParameter("name");
+			LogUtils.deleteCourse(selectedCourseNameDel);
+			response.getWriter().print("OK");
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				response.getWriter().print("ERR");
+			}
+			break;
 		case "isRoundDone":
 			String filePrefix = request.getParameter("filePrefix");
 			String course = request.getParameter("course");

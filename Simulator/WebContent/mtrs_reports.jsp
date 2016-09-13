@@ -364,7 +364,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-6">
 									<h3>
-										Mean Time to Restore Service <small>...</small>
+										Number of Incidents Per MTRS Time Ranges
 									</h3>
 								</div>
 								<select id="teamSelectMTRS" style="min-width: 120px">

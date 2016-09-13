@@ -51,7 +51,7 @@
                             </div>
                             <div class="form-bottom">
 			                    <form role="form" action="HomeController?action=newCourse" method="post" class="login-form create-form">
-			                    	
+			                    	 <div id="msg"><span class="glyphicon glyphicon-ok" ></span> Successfully created.</div>
 			                        <div class="form-group">
 			                        <span class = "_label">Course name</span>
 			                        	<input type="text" name="form-courseName" class="form-courseName form-control" id="form-courseName">
@@ -80,7 +80,7 @@
 			                        </div>
 			                        <button type="submit" class="btn" id="create">Create</button>
 			                    </form>
-			                    <div id="msg"><span class="glyphicon glyphicon-ok" ></span> Successfully created.</div>
+			                   
 		                    </div>
                         </div>
                     </div>

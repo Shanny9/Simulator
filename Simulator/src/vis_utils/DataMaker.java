@@ -558,7 +558,7 @@ public class DataMaker {
 		void addValue(int val) {
 			for (int i = 0; i < rangeCountAL.size(); i++) {
 				if (rangeCountAL.get(i).getRange().inRange(val)) {
-					rangeCountAL.get(i).addCount(val);
+					rangeCountAL.get(i).addCount(1);
 				}
 			}
 		}
@@ -572,12 +572,12 @@ public class DataMaker {
 		}
 
 		ArrayList<Integer> getValues() {
-			ArrayList<Integer> values = new ArrayList<>();
-			for (RangeCount rc : rangeCountAL) {
-				values.add(rc.getCount());
-			}
-			return values;
-		}
+			   ArrayList<Integer> values = new ArrayList<>();
+			   for (RangeCount rc : rangeCountAL) {
+			    values.add(rc.getCount());
+			   }
+			   return values;
+			  }
 	}
 
 	static class RangeCount {

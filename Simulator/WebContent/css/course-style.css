@@ -184,6 +184,14 @@ img { max-width: 100%; }
 	background: #EC644B;
 	margin-top: 10px;
 }
+
+#delete {
+	
+	color: #000;
+	background: #bcbcbc;
+	margin-top: 30px;
+}
+
 #msg {
 	text-align: center;
 	color: #fff;

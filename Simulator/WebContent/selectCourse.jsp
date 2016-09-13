@@ -51,17 +51,18 @@
 							</div>
 						</div>
 						<div class="form-bottom">
-							<form role="form"  action="HomeController?action=selectCourse"
+							<form role="form" action="HomeController?action=selectCourse"
 								method="post" class="login-form create-form">
 
 								<div class="form-group">
-									<span class="_label">Course name</span> <select
+									<span class="_label">Course name</span> 
+									<select
 										name="form-courseName" class="form-courseName form-control"
 										id="form-courseName">
 										<option value="">Please select a course...</option>
 									</select>
 								</div>
-								
+
 								<div class="form-group">
 									<span class="_label">Round</span> <select name="form-round"
 										class="form-round form-control disabled" id="form-round">
@@ -70,8 +71,12 @@
 
 								<button type="submit" class="btn disabled" id="start">Start
 									Simulator</button>
+								<br>
+								<button type="button" class="btn disabled" id="delete">Delete
+									Course</button>
 							</form>
 							<p id="err" class="message">Settings.ser file does not exist</p>
+							<p id="msg" class="message"><span class="glyphicon glyphicon-ok" ></span> Course was deleted successfully</p>
 						</div>
 					</div>
 				</div>

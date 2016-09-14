@@ -56,6 +56,7 @@
                     <ul class="nav child_menu">
                       <li><a href="mtbf_reports.jsp">Mean Time Between Failure</a></li>
                       <li><a href="mtrs_reports.jsp">Mean Time to Restore Service</a></li>
+                      <li><a href="financial_reports.jsp">Financial Reports</a></li>
                     </ul>
                   </li>
 

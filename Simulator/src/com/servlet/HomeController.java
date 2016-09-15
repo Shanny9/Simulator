@@ -110,7 +110,7 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "getTime":
-			HashMap<String, Object> clocks = TimerManager.getClocks();
+			HashMap<String, Object> clocks = ClockIncrementor.getClocks(round);
 			clocks.put("serverTime", new Date());
 			response.getWriter().print(gson.toJson(clocks));
 			break;
@@ -136,6 +136,10 @@ public class HomeController extends HttpServlet {
 					SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
 		case "solutionStream":
+			if (!ClockIncrementor.isRunning()) {
+				return;
+			}
+
 			SimulationLog.getInstance(); // TODO: what is this for?
 			if (!LogManager.isInitialized()) {
 				return;
@@ -152,6 +156,10 @@ public class HomeController extends HttpServlet {
 		case "profitStream":
 
 			prepareResponseToStream(response);
+			if (!ClockIncrementor.isRunning()) {
+				return;
+			}
+
 			int currentTime = ClockIncrementor.getSimTime().getRunTime();
 			if (currentTime == 0) {
 				return;
@@ -261,8 +269,8 @@ public class HomeController extends HttpServlet {
 			break;
 		}
 	}
-	
-	//TODO: why is this here and not in FilesUtils?
+
+	// TODO: why is this here and not in FilesUtils?
 	private boolean checkFile(String prefix, String course) {
 		final String p = prefix;
 		File file = new File(FilesUtils.getPath() + File.separator + course);

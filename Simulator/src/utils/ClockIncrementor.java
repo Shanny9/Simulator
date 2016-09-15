@@ -19,8 +19,7 @@ public class ClockIncrementor implements Runnable {
 	 */
 	private static int elapsedTime;
 	/**
-	 * The total remaining time until the end of the simulation (including pause
-	 * times).
+	 * The total remaining time until the end of current phase (run/pause time).
 	 */
 	private static int remainingTime;
 	/**
@@ -82,17 +81,24 @@ public class ClockIncrementor implements Runnable {
 	}
 
 	/**
+	 * @param currentRound The current round
 	 * @return A {@code HashMap} of the following: <li>{@code elapsedClock (int)}
 	 *         </li> <li>{@code remainingClock (int)}</li> <li>
 	 *         {@code elapsedRunTime (SimulationTime)}</li> <li>
 	 *         {@code isRunTime (boolean)}</li>
 	 */
-	public static HashMap<String, Object> getClocks() {
+	public static HashMap<String, Object> getClocks(int currentRound) {
+
+		if (currentRound <= 0) {
+			return null;
+		}
 
 		HashMap<String, Object> clocks = new HashMap<>();
-		clocks.put("elapsedClock", elapsedTime);
+		clocks.put("elapsedClock",
+				elapsedTime + (currentRound - 1) * settings.getRoundTime());
 		clocks.put("remainingClock", remainingTime);
-		clocks.put("elapsedRunTime", elapsedRunTime);
+		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime()
+				+ (currentRound - 1) * settings.getRoundRunTime());
 		clocks.put("isRunTime", isRunTime);
 		return clocks;
 	}
@@ -142,8 +148,8 @@ public class ClockIncrementor implements Runnable {
 	 * should be called before each run.
 	 */
 	private static void initVariables() {
-		elapsedTime = settings.getRoundTime();
-		elapsedRunTime = getSimTime();
+		elapsedTime = 0;
+		elapsedRunTime = new SimulationTime(0);
 		remainingTime = settings.getPauseTime();
 		isRunning = true;
 		isRunTime = false;

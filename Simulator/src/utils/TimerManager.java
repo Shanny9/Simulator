@@ -29,10 +29,6 @@ public class TimerManager implements ServletContextListener {
 		scheduler.shutdownNow();
 	}
 
-	public static HashMap<String, Object> getClocks() {
-		return ClockIncrementor.getClocks();
-	}
-
 	public static void startSimulator(Settings settings, int round) {
 
 		SimulationTime.initialize(settings.getRunTime(),

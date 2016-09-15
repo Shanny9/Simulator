@@ -80,7 +80,8 @@ var solutionEventSource;
  */
 var profitEventSource;
 /**
- * Listens to solutions sent from the servlet and updates the color of the event.
+ * Listens to solutions sent from the servlet and updates the color of the
+ * event.
  */
 var solutionListener = function(e) {
 
@@ -272,9 +273,10 @@ function showEventsInTime() {
 /**
  * Presents events that should appear now (in case of refresh etc.).
  */
-function showPastEvents() {
+function showSessionEvents() {
+	var sessionStartTime = (round - 1) * settings["roundTime"] + 1;
 	$.each(eventsData, function(i, item) {
-		if (elapsedTime >= item.time) {
+		if (item.time <= elapsedTime && item.time >= sessionStartTime) {
 			var row = eventsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
@@ -329,7 +331,7 @@ function getSettings() {
 /**
  * Starts the simulation in the home screen (after it already started int the
  * server side). This method starts a chain of methods: {@code getEvents},
- * {@code getTime}, {@code showPastEvents}, {@code setSolutionSource} and
+ * {@code getTime}, {@code showSessionEvents}, {@code setSolutionSource} and
  * {@code setProfitSource}.
  */
 function startSimulator() {
@@ -356,7 +358,7 @@ function startSimulator() {
 
 			getEvents();
 			getTime();
-			showPastEvents();
+			showSessionEvents();
 
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();

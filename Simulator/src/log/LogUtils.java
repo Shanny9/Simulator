@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -163,7 +164,8 @@ public class LogUtils {
 	static HashMap<SimulationTime, Byte> getIncidentTimes() {
 		HashMap<SimulationTime, Byte> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
-		for (TblIncident inc : dao.getAllIncidents()) {
+		Collection<TblIncident> all_incidents = dao.getAllIncidents();
+		for (TblIncident inc : all_incidents) {
 			incidents.put(inc.getIncidentTime(),
 					(byte) inc.getIncidentId());
 		}

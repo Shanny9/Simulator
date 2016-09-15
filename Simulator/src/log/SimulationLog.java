@@ -378,7 +378,7 @@ public class SimulationLog extends Thread implements Serializable {
 			for (String event : events) {
 				JsonObject row = new JsonObject();
 				row.addProperty("time", incident.getKey()
-						.getTimeIncludingBreaks());
+						.getRunTime());
 				row.addProperty("event_id", Integer.valueOf(event));
 				eventList.add(row);
 			}

@@ -42,7 +42,6 @@ public class DBValidator {
 			instance = c.newInstance();
 			Field warnings = c.getDeclaredField("warnings");
 			warnings.set(instance, 0);
-
 			Method[] methods = c.getDeclaredMethods();
 
 			for (Method method : methods) {

@@ -1,6 +1,13 @@
 package utils;
 
-public class SimulationTime {
+import java.io.Serializable;
+
+public class SimulationTime implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private static int run_time;
 
@@ -24,13 +31,13 @@ public class SimulationTime {
 	}
 
 	public SimulationTime(int time) {
-		if (isPositive() && !isTooBig()) {
+		if (notNegative(time) && !isTooBig(time)) {
 			this.time = time;
 		}
 	}
 
-	private boolean isPositive() {
-		if (time < 0) {
+	private boolean notNegative(int timeToCheck) {
+		if (timeToCheck < 0) {
 			try {
 				throw new Exception("SimulationTime: Time cannot be negative.");
 			} catch (Exception e) {
@@ -41,27 +48,27 @@ public class SimulationTime {
 		return true;
 	}
 
-	private boolean isTooBig() {
-		if (time > 3600) {
+	private boolean isTooBig(int timeToCheck) {
+		if (timeToCheck > 3600) {
 			try {
 				throw new Exception(
 						"SimulationTime: Time cannot exceed one day.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				return true;
 			}
 		}
 
-		if (time > totalSimulationRunTime) {
+		if (timeToCheck > totalSimulationRunTime) {
 			try {
 				throw new Exception(
 						"SimulationTime: Time cannot exceed the simulation's duration.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public int getRound() {
@@ -86,8 +93,8 @@ public class SimulationTime {
 	}
 
 	public int increment() {
+		isTooBig(time + 1);
 		time++;
-		isTooBig();
 		return time;
 	}
 
@@ -98,7 +105,7 @@ public class SimulationTime {
 	public boolean after(SimulationTime other) {
 		return this.time > other.getRunTime();
 	}
-	
+
 	public boolean equals(SimulationTime other) {
 		return this.time == other.getRunTime();
 	}
@@ -110,7 +117,7 @@ public class SimulationTime {
 	public boolean after(int other) {
 		return after(new SimulationTime(other));
 	}
-	
+
 	public boolean equals(int other) {
 		return equals(new SimulationTime(other));
 	}

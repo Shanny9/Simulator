@@ -14,7 +14,6 @@ import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
 import com.model.TblIncident;
 
-
 public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	private Connection dbConnection;
@@ -67,7 +66,6 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt.setInt(5, incident.getSolutionId());
 		pStmt.setByte(6, id);
 		pStmt.executeUpdate();
-
 	}
 
 	@Override
@@ -85,8 +83,8 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 				incident.setIncidentId(rs.getByte("incident_id"));
 				incident.setCiId(rs.getByte("ci_id"));
-				incident.setIncidentTime(new SimulationTime(rs
-						.getInt("incidentTime")));
+				int time = rs.getInt("incidentTime");
+				incident.setIncidentTime(new SimulationTime(time));
 				incident.setIsActive(rs.getBoolean("isActive"));
 				incident.setSolutionId(rs.getInt("solution_id"));
 				incidents.add(incident);
@@ -137,7 +135,8 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			inci = new TblIncident();
 
 			inci.setIncidentId(rs.getByte("incident_id"));
-			inci.setIncidentTime(new SimulationTime(rs.getInt("incidentTime")));
+			int time = rs.getInt("incidentTime");
+			inci.setIncidentTime(new SimulationTime(time));
 			inci.setCiId(rs.getByte("ci_id"));
 			inci.setIsActive(rs.getBoolean("isActive"));
 			inci.setSolutionId(rs.getInt("solution_id"));

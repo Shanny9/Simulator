@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
+import utils.SimulationTime;
+
 /**
  * TeamLog records and calculates the team's services, purchases and profits
  * throughout the simulation
@@ -18,6 +20,10 @@ public class TeamLog implements Serializable {
 	 * The team's name
 	 */
 	private String teamName;
+	/**
+	 * The round of the team log
+	 */
+	private int round;
 	/**
 	 * The team's incident logs
 	 */
@@ -65,53 +71,76 @@ public class TeamLog implements Serializable {
 		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
 		this.incident_logs.putAll(incident_logs);
-		
-	}
-	
-	void setInitProfit(double initProfit, int duration){
-		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
-		this.profits.set(0, initProfit);
 	}
 
+	/**
+	 * Sets the round of the team log and the initial profit of the round.
+	 * 
+	 * @param round
+	 *            Round to set.
+	 */
+	void setRound(int round) {
+		this.round = round;
+		Settings sett = SimulationLog.getInstance().getSettings();
+		int duration = sett.getTotalRunTime();
+		double init_capital;
+
+		if (round == 1) {
+			init_capital = sett.getInitCapital();
+		} else {
+			SimulationTime roundTime = new SimulationTime(sett.getRunTime());
+			init_capital = FilesUtils.openLog(sett.getCourseName(), round - 1)
+					.getTeam(SimulationLog.MAROM).getProfit(roundTime);
+		}
+
+		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
+		this.profits.set(0, init_capital);
+	}
+
+	/**
+	 * @return the name of the team.
+	 */
 	String getTeamName() {
 		return teamName;
-	}
-
-	double getDiff() {
-		return diff;
 	}
 
 	/**
 	 * Updates the team's diff, purchases and profits given the incident solved
 	 * 
 	 * @param inc_id
-	 *            The incident that was solved
+	 *            the incident that was solved
 	 * @param time
-	 *            The time when the incident was solved
-	 * @param isBaught
-	 *            True if the incident was solved, otherwise false.
+	 *            the time when the incident was solved
+	 * @param isBought
+	 *            indicates if the incident was bought or not.
 	 */
-	synchronized boolean incidentSolved(byte inc_id, int time, boolean isBaught) {
+	synchronized boolean incidentSolved(byte inc_id, SimulationTime time,
+			boolean isBought) {
 
 		if (isFinished || !isIncidentOpen(inc_id, time)) {
 			return false;
 		}
 
 		IncidentLog incLog = incident_logs.get(inc_id);
-		incLog.setEnd_time(time);
+		incLog.close(time);
 		byte ci_id = incLog.getRoot_ci();
 
-		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+		HashSet<Byte> affectedServices = SimulationLog.getInstance()
+				.getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
 			for (Byte service_id : affectedServices) {
-				diff += service_logs.get(service_id).ciUpdate(ci_id, true, time);
+				diff += service_logs.get(service_id)
+						.ciUpdate(ci_id, true, time);
 			}
 		}
 
-		if (isBaught) {
-			purchases.put(time, ci_id);
-			profits.set(time, getProfit(time) - SimulationLog.getInstance().getCISolutionCost(ci_id));
+		if (isBought) {
+			purchases.put(time.getRunTime(), ci_id);
+			double solutionCost = SimulationLog.getInstance()
+					.getCISolutionCost(ci_id);
+			profits.set(time.getRunTime(), getProfit(time) - solutionCost);
+
 			// System.out.println("Team " + teamName + ": solution baught at " +
 			// time + "seconds for "
 			// +
@@ -120,20 +149,23 @@ public class TeamLog implements Serializable {
 		return true;
 	}
 
-	void ciSolved(byte ci_id, int time) {
-		if (time < 0){
-			try {
-				throw new Exception("ciSolved exception: time (" + time + ") is negative");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+	/**
+	 * Solves all the CI's affected services.
+	 * 
+	 * @param ci_id
+	 *            the ID of the CI that was solved
+	 * @param timethe
+	 *            time of solution
+	 */
+	void ciSolved(byte ci_id, SimulationTime time) {
+
+		HashSet<Byte> affectedServices = SimulationLog.getInstance()
+				.getAffectingCis().get(ci_id);
 
 		if (affectedServices != null) {
 			for (Byte service_id : affectedServices) {
-				diff += service_logs.get(service_id).ciUpdate(ci_id, true, time);
+				diff += service_logs.get(service_id)
+						.ciUpdate(ci_id, true, time);
 			}
 		}
 	}
@@ -146,25 +178,18 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            The time when the incident started
 	 */
-	synchronized void incidentStarted(byte inc_id, int time) {
+	synchronized void incidentStarted(byte inc_id, SimulationTime time) {
 		if (isFinished) {
 			return;
 		}
-		
-		if (time < 0){
-			try {
-				throw new Exception("incidentStarted exception: time (" + time + ") is negative");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 
 		byte ci_id = incident_logs.get(inc_id).getRoot_ci();
-		HashSet<Byte> affectedServices = SimulationLog.getInstance().getAffectingCis().get(ci_id);
+		HashSet<Byte> affectedServices = SimulationLog.getInstance()
+				.getAffectingCis().get(ci_id);
 		if (affectedServices != null) {
 			for (Byte service_id : affectedServices) {
-				diff += service_logs.get(service_id).ciUpdate(ci_id, false, time);
+				diff += service_logs.get(service_id).ciUpdate(ci_id, false,
+						time);
 			}
 		}
 	}
@@ -174,9 +199,9 @@ public class TeamLog implements Serializable {
 	 *            The simulation time
 	 * @return The team's profit at the given time
 	 */
-	synchronized public double getProfit(int time) {
+	synchronized public double getProfit(SimulationTime time) {
 		try {
-			return profits.get(time);
+			return profits.get(time.getRunTime());
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace();
 			return 0;
@@ -195,7 +220,7 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            updates the team's profit according to the diff
 	 */
-	synchronized void updateProfit(int time, int delayInMilis) {
+	synchronized void updateProfit(SimulationTime time, int delayInMilis) {
 		if (delayInMilis > 0) {
 			try {
 				wait(delayInMilis);
@@ -207,14 +232,17 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		profits.set(time, getProfit(time - 1) + diff);
+		profits.set(time.getRunTime(),
+				getProfit(new SimulationTime(time.getRunTime() - 1)) + diff);
 	}
 
 	/**
-	 * @return A team's service_log
+	 * @param service_id
+	 *            TODO
+	 * @return The team's service_logs
 	 */
-	public ServiceLog getService_log(byte service) {
-		return service_logs.get(service);
+	public ServiceLog getService_log(byte service_id) {
+		return service_logs.get(service_id);
 	}
 
 	/**
@@ -230,13 +258,32 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            Current time
 	 */
-	public void stop(int time) {
+	public void stop() {
+		// sets the end time of the round in all the service logs' ArrayList of
+		// times.
+		SimulationTime endTime = SimulationLog.getInstance().getSettings()
+				.getRoundRunTimeEnd(round);
 		for (ServiceLog service : service_logs.values()) {
-			service.stop(time);
+			service.stop(endTime);
 		}
-		for (IncidentLog inc_log : incident_logs.values()){
-			if (inc_log.getEnd_time() == 0 && inc_log.getStart_time() <= time){
-				inc_log.setEnd_time(time);
+
+		// closes all unclosed incidents
+		for (IncidentLog inc_log : incident_logs.values()) {
+			inc_log.close(endTime);
+		}
+
+		// iterates the team's purchase list, retrieves the cost of each CI
+		// purchase, calculates the cost of each of the CI's affected services
+		// and updates the services' purchase costs accordingly.
+		for (Byte ci_id : purchases.values()) {
+			double ci_solution_cost = SimulationLog.getInstance()
+					.getCISolutionCost(ci_id);
+			HashSet<Byte> affected_services = SimulationLog.getInstance()
+					.getAffectingCis().get(ci_id);
+			double service_solution_cost = ci_solution_cost
+					/ affected_services.size();
+			for (Byte service_id : affected_services) {
+				service_logs.get(service_id).purchase(service_solution_cost);
 			}
 		}
 		this.isFinished = true;
@@ -251,8 +298,9 @@ public class TeamLog implements Serializable {
 	 *            The time to check
 	 * @return True if the incident is open. False otherwise.
 	 */
-	boolean isIncidentOpen(byte inc_id, int time) {
-		if (time < 0 || inc_id <= 0) {
+	boolean isIncidentOpen(byte inc_id, SimulationTime simTime) {
+
+		if (inc_id <= 0) {
 			return false;
 		}
 
@@ -264,7 +312,7 @@ public class TeamLog implements Serializable {
 		// System.out.println(
 		// "TeamLog isIncidentOpen: time= " + time + ", isOpen= " +
 		// incident_logs.get(inc_id).isOpen(time));
-		return incident_logs.get(inc_id).isOpen(time);
+		return incident_logs.get(inc_id).isOpen(simTime);
 
 	}
 
@@ -274,12 +322,10 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            Current time
 	 */
-	public void fixAllIncidents(int time) {
+	public void fixAllIncidents(SimulationTime time) {
 		for (byte inc_id : incident_logs.keySet()) {
-			if (incident_logs.get(inc_id).isOpen(time)) {
-				// TODO: change false back to true
-				incidentSolved(inc_id, time, false);
-			}
+			// TODO: change false back to true
+			incidentSolved(inc_id, time, false);
 		}
 	}
 
@@ -289,31 +335,31 @@ public class TeamLog implements Serializable {
 	public ArrayList<Double> getProfits() {
 		return profits;
 	}
-	
+
 	HashMap<Byte, IncidentLog> getIncident_logs() {
 		return incident_logs;
 	}
-	
+
 	public HashMap<Byte, IncidentLog> getClosedIncident_logs() {
-		HashMap<Byte,IncidentLog> result = new HashMap<>();
-		for (IncidentLog incLog : incident_logs.values()){
-			if (!incLog.isOpen()){
-				result.put(incLog.getIncident_id(),incLog);
+		HashMap<Byte, IncidentLog> result = new HashMap<>();
+		for (IncidentLog incLog : incident_logs.values()) {
+			if (!incLog.isOpen()) {
+				result.put(incLog.getIncident_id(), incLog);
 			}
 		}
 		return result;
 	}
 
 	/**
-	 * @return The team's Mean Time to Restore Service (MTRS)
-	 * In case of no failures, returns 0
+	 * @return The team's Mean Time to Restore Service (MTRS) In case of no
+	 *         failures, returns 0
 	 */
 	double getMTRS() {
 		int trs = 0;
 		int failures = 0;
 
 		for (ServiceLog sl : service_logs.values()) {
-			trs += sl.getTRS();
+			trs += sl.getTotalDownTime();
 			failures += sl.getNumOfFailures();
 		}
 
@@ -324,8 +370,8 @@ public class TeamLog implements Serializable {
 	}
 
 	/**
-	 * @return The team's Mean Between Failures (MTBF)
-	 * In case of no failures, returns -1
+	 * @return The team's Mean Between Failures (MTBF) In case of no failures,
+	 *         returns -1
 	 */
 	Double getMTBF() {
 		int tbf = 0;
@@ -340,6 +386,7 @@ public class TeamLog implements Serializable {
 
 		return (double) tbf / failures;
 	}
+
 	/**
 	 * @return the mean time of the team's availability percentage
 	 */
@@ -363,9 +410,9 @@ public class TeamLog implements Serializable {
 		}
 		str += "\nPurchases\n--------\n";
 		for (Entry<Integer, Byte> entry : purchases.entrySet()) {
-			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue() + "\n";
+			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue()
+					+ "\n";
 		}
 		return str;
 	}
-
 }

@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import utils.SimulationTime;
+
 import com.daoImpl.TblServiceDaoImpl;
 import com.google.gson.JsonObject;
 import com.model.TblService;
@@ -23,7 +25,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's incidents and their times (key=start_time,
 	 * value=incident_id)
 	 */
-	private HashMap<Integer, Byte> incident_times = new HashMap<>();
+	private HashMap<SimulationTime, Byte> incident_times = new HashMap<>();
 	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
@@ -74,16 +76,13 @@ public class SimulationLog extends Thread implements Serializable {
 
 	private Settings settings;
 
-	// TODO: fix this - should be calculated somehow
-	private static double mul = 1;
-
 	public void initialize(Settings _settings) {
 
 		settings = _settings;
 		affecting_cis = LogUtils.getDBAffectingCIs();
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
-		incident_times = LogUtils.getIncidentTimes(mul);
+		incident_times = LogUtils.getIncidentTimes();
 		incident_events = LogUtils.getIncidentEvents();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
@@ -109,7 +108,7 @@ public class SimulationLog extends Thread implements Serializable {
 		Collection<IncidentLog> inc_logs_all_rounds = (Collection<IncidentLog>) LogUtils
 				.getIncidentLogs().values();
 		for (IncidentLog inc_log : inc_logs_all_rounds) {
-			int inc_round = inc_log.getStart_time() / settings.getRunTime();
+			int inc_round = inc_log.getStart_time().getRound();
 			if (inc_round == round) {
 				incident_logs_current_round.put(inc_log.getIncident_id(),
 						inc_log);
@@ -131,28 +130,15 @@ public class SimulationLog extends Thread implements Serializable {
 		System.out.println("SimulationLog: SimulationLog is initalized.");
 	}
 
+	/**
+	 * Sets he round of the service log, updates the round of the team logs.
+	 * 
+	 * @param currentRound The current round.
+	 */
 	public void setRound(int currentRound) {
 		round = currentRound;
-
-		double marom_init_capital;
-		double rakia_init_capital;
-		if (round == 1) {
-			marom_init_capital = settings.getInitCapital();
-			rakia_init_capital = settings.getInitCapital();
-		} else {
-			marom_init_capital = LogUtils
-					.openLog(settings.getCourseName(), round - 1)
-					.getTeam(SimulationLog.MAROM)
-					.getProfit(settings.getRunTime());
-			rakia_init_capital = LogUtils
-					.openLog(settings.getCourseName(), round - 1)
-					.getTeam(SimulationLog.RAKIA)
-					.getProfit(settings.getRunTime());
-		}
-		int duration = settings.getTotalRunTime();
-		marom.setInitProfit(marom_init_capital, duration);
-		rakia.setInitProfit(rakia_init_capital, duration);
-
+		marom.setRound(currentRound);
+		rakia.setRound(currentRound);
 		System.out.println("SimulationLog: round is set to " + currentRound
 				+ ".");
 	}
@@ -187,14 +173,14 @@ public class SimulationLog extends Thread implements Serializable {
 		return rakia;
 	}
 
-	public HashMap<String, Double> getTeamProfits(int time) {
+	public HashMap<String, Double> getTeamProfits(SimulationTime time) {
 		HashMap<String, Double> profits = new HashMap<>();
 		profits.put(marom.getTeamName(), marom.getProfit(time));
 		profits.put(rakia.getTeamName(), rakia.getProfit(time));
 		return profits;
 	}
 
-	public HashMap<String, Double> getTeamScores(int time) {
+	public HashMap<String, Double> getTeamScores(SimulationTime time) {
 		HashMap<String, Double> profits = new HashMap<>();
 
 		if (round == 0) {
@@ -249,7 +235,7 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * @return The events of the incident
 	 */
-	HashSet<String> getIncidentEvents(int inc_id) {
+	HashSet<String> getIncidentEvents(byte inc_id) {
 		return incident_events.get(inc_id);
 	}
 
@@ -258,8 +244,20 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The CI id
 	 * @return The CI's solution cost
 	 */
-	double getCISolutionCost(int ci_id) {
+	double getCISolutionCost(byte ci_id) {
 		return ciSolCosts.get(ci_id);
+	}
+
+	/**
+	 * Calculates the derived cost of a service by dividing the CI solution cost
+	 * to the amount of its affected services.
+	 * 
+	 * @param ci_id
+	 *            The CI ID
+	 * @return The service solution cost.
+	 */
+	double getServiceSolutionCost(byte ci_id) {
+		return getCISolutionCost(ci_id) / getAffectingCis().get(ci_id).size();
 	}
 
 	/**
@@ -274,8 +272,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param isBought
 	 *            True weather the incident was bought. False otherwise.
 	 */
-	public boolean incidentSolved(boolean team, byte inc_id, int time,
-			boolean isBought) {
+	public boolean incidentSolved(boolean team, byte inc_id,
+			SimulationTime time, boolean isBought) {
 		return getTeam(team).incidentSolved(inc_id, time, isBought);
 	}
 
@@ -287,7 +285,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param time
 	 *            The time of the incident
 	 */
-	public void incidentStarted(byte inc_id, int time) {
+	public void incidentStarted(byte inc_id, SimulationTime time) {
 		marom.incidentStarted(inc_id, time);
 		rakia.incidentStarted(inc_id, time);
 	}
@@ -298,7 +296,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param time
 	 *            The time of update
 	 */
-	public void updateTeamProfits(int time) {
+	public void updateTeamProfits(SimulationTime time) {
 		marom.updateProfit(time, 500);
 		rakia.updateProfit(time, 500);
 	}
@@ -306,12 +304,10 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * Stops the log. Puts end times to both teams' services.
 	 * 
-	 * @param time
-	 *            The time of the stop
 	 */
-	public void stopLogs(int time) {
-		marom.stop(time);
-		rakia.stop(time);
+	public void stopLogs() {
+		marom.stop();
+		rakia.stop();
 	}
 
 	/**
@@ -325,7 +321,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The time to be checked
 	 * @return True if the incident is open. False otherwise.
 	 */
-	public boolean checkIncident(boolean team, byte inc_id, int time) {
+	public boolean checkIncident(boolean team, byte inc_id, SimulationTime time) {
 		return getTeam(team).isIncidentOpen(inc_id, time);
 	}
 
@@ -333,7 +329,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @return The simulation's incidents and their times (key=start_time,
 	 *         value=incident_id)
 	 */
-	public HashMap<Integer, Byte> getIncidentTimes() {
+	public HashMap<SimulationTime, Byte> getIncidentTimes() {
 		return incident_times;
 	}
 
@@ -350,7 +346,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @param time
 	 *            The current time
 	 */
-	public void fixAllIncidents(int time) {
+	public void fixAllIncidents(SimulationTime time) {
 		marom.fixAllIncidents(time);
 		rakia.fixAllIncidents(time);
 	}
@@ -371,7 +367,8 @@ public class SimulationLog extends Thread implements Serializable {
 	public List<JsonObject> getEventsForHomeScreen() {
 		List<JsonObject> eventList = new ArrayList<JsonObject>();
 
-		for (Map.Entry<Integer, Byte> incident : incident_times.entrySet()) {
+		for (Map.Entry<SimulationTime, Byte> incident : incident_times
+				.entrySet()) {
 			HashSet<String> events = incident_events.get(incident.getValue());
 
 			if (events == null) {
@@ -380,9 +377,8 @@ public class SimulationLog extends Thread implements Serializable {
 
 			for (String event : events) {
 				JsonObject row = new JsonObject();
-				row.addProperty("time", utils.TimeUtils.convertToSimulTime(
-						settings.getRunTime(), settings.getPauseTime(),
-						incident.getKey()));
+				row.addProperty("time", incident.getKey()
+						.getTimeIncludingBreaks());
 				row.addProperty("event_id", Integer.valueOf(event));
 				eventList.add(row);
 			}

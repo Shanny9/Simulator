@@ -11,6 +11,7 @@ import java.util.List;
 public class TblDepartment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+
 	private String divisionName;
 
 	private String departmentName;
@@ -26,12 +27,16 @@ public class TblDepartment implements Serializable {
 	public TblDepartment() {
 	}
 
-	public String getDevisionName() {
+
+	public String getDivisionName() {
 		return divisionName;
+
 	}
 
-	public void setDevisionName(String devisionName) {
+
+	public void setDivisionName(String devisionName) {
 		this.divisionName = devisionName;
+
 	}
 
 	public String getDepartmentName() {

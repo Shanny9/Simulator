@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
+import utils.SimulationTime;
+
 public class Settings implements Serializable {
 	/**
 	 * 
@@ -165,7 +167,7 @@ public class Settings implements Serializable {
 	}
 
 	/**
-	 * @return the lastRoundDone
+	 * @return The last round done of the course.
 	 */
 	public int getLastRoundDone() {
 		return lastRoundDone;
@@ -173,28 +175,52 @@ public class Settings implements Serializable {
 
 	/**
 	 * @param lastRoundDone
-	 *            the lastRoundDone to set
+	 *            The last round done of the course.
 	 */
 	public void setLastRoundDone(int lastRoundDone) {
 		this.lastRoundDone = lastRoundDone;
 	}
 
+	/**
+	 * @return The Service Level Agreement (SLA) priorities.
+	 */
 	public HashMap<String, Integer> getPriority_sla() {
 		return priority_sla;
 	}
 
+	/**
+	 * @return The total <b>run time</b> of the simulation (including pause
+	 *         times).
+	 */
 	public int getTotalRunTime() {
-		return runTime * sessionsPerRound * rounds;
+		return getRoundRunTime() * rounds;
 	}
 
+	/**
+	 * @return The <b>total time</b> of the simulation (including pause times).
+	 */
 	public int getTotalTime() {
-		return sessionTime * sessionsPerRound * rounds;
+		return getRoundTime() * rounds;
 	}
 
+	/**
+	 * 
+	 * @return The <b>total time</b> of the round (including pause times).
+	 */
 	public int getRoundTime() {
 		return roundTime;
 	}
 
+	/**
+	 * @return The round <b>run time</b> (including pause times).
+	 */
+	public int getRoundRunTime() {
+		return runTime * sessionsPerRound;
+	}
+
+	/**
+	 * @return The session time.
+	 */
 	public int getSessionTime() {
 		return sessionTime;
 	}
@@ -214,11 +240,22 @@ public class Settings implements Serializable {
 		this.targetScores = targetScores;
 	}
 
+	/**
+	 * Sets the priority Service Level Agreement (SLA).
+	 * 
+	 * @param priority_sla
+	 *            SLA priorities to set.
+	 */
 	public void setPriority_sla(HashMap<String, Integer> priority_sla) {
 		this.priority_sla = priority_sla;
 	}
 
-	private String printTargetScores() {
+	/**
+	 * Strings the target scores array.
+	 * 
+	 * @return A string of the target scores array.
+	 */
+	private String stringTargetScores() {
 		Object[] scores = targetScores.toArray();
 		return Arrays.toString(scores);
 	}
@@ -234,6 +271,47 @@ public class Settings implements Serializable {
 		return output;
 	}
 
+	/**
+	 * Indicates if the round is valid.
+	 * 
+	 * @param round
+	 *            Round to validate
+	 * @return {@code true} whether the round is valid. Otherwise returns
+	 *         {@code false}.
+	 */
+	private boolean validRound(int round) {
+		return (round > 0 && round <= rounds);
+	}
+
+	/**
+	 * Calculates the <b>run time</b> of the round end.
+	 * 
+	 * @param round
+	 *            Round to check
+	 * @return The run time end of the round.
+	 */
+	public SimulationTime getRoundRunTimeEnd(int round) {
+		if (validRound(round)) {
+			return new SimulationTime(getRoundRunTime() * round);
+		}
+		return null;
+	}
+
+	/**
+	 * Calculates the <b>total time</b> of the round end (including pause
+	 * times).
+	 * 
+	 * @param round
+	 *            Round to check
+	 * @return The end time of the round.
+	 */
+	public int getRoundTotalTimeEnd(int round) {
+		if (validRound(round)) {
+			return getRoundTime() * round;
+		}
+		return 0;
+	}
+
 	@Override
 	public String toString() {
 		return "Settings\n\nCourse name: [" + courseName + "]\nRounds: ["
@@ -242,54 +320,66 @@ public class Settings implements Serializable {
 				+ "] seconds\nSessions per round: [" + sessionsPerRound
 				+ "]\nInitial capital: [" + initCapital
 				+ "] NIS\nLast round done: [" + lastRoundDone
-				+ "]\nTarget scores: " + printTargetScores()
+				+ "]\nTarget scores: " + stringTargetScores()
 				+ "\nPriority_sla: " + printPrioritySLA();
 	}
 
+	/**
+	 * Extracts the settings from a String (based on the {@code toString}
+	 * method.
+	 * 
+	 * @param text
+	 *            The text to extract the settings from.
+	 * @return A new instance of {@code Settings}.
+	 * @see Settings#toString
+	 */
 	public static Settings extractFromText(String text) {
-		try{
-		int start_bracket_index = text.indexOf("[");
-		int end_bracket_index = text.indexOf("]");
-		String exp;
-		int expLen;
-		ArrayList<String> expressions = new ArrayList<String>();
-		do {
-			exp = text.substring(start_bracket_index + 1, end_bracket_index);
-			expressions.add(exp);
-			text = text.substring(end_bracket_index + 1);
+		try {
+			int start_bracket_index = text.indexOf("[");
+			int end_bracket_index = text.indexOf("]");
+			String exp;
+			int expLen;
+			ArrayList<String> expressions = new ArrayList<String>();
+			do {
+				exp = text
+						.substring(start_bracket_index + 1, end_bracket_index);
+				expressions.add(exp);
+				text = text.substring(end_bracket_index + 1);
 
-			start_bracket_index = text.indexOf("[");
-			end_bracket_index = text.indexOf("]");
-			expLen = end_bracket_index - start_bracket_index;
-		} while (expLen > 0);
+				start_bracket_index = text.indexOf("[");
+				end_bracket_index = text.indexOf("]");
+				expLen = end_bracket_index - start_bracket_index;
+			} while (expLen > 0);
 
-		String course = expressions.get(0);
-		int rounds = Integer.parseInt(expressions.get(1));
-		int runTime = Integer.parseInt(expressions.get(2));
-		int pauseTime = Integer.parseInt(expressions.get(3));
-		int sessionsPerRound = Integer.parseInt(expressions.get(4));
-		int initialCapital = Integer.parseInt(expressions.get(5));
-		int lastRoundDone = Integer.parseInt(expressions.get(6));
-		String[] targetScores = expressions.get(7).replace(" ", "").split(",");
-		ArrayList<Integer> scores = new ArrayList<Integer>();
-		for (int i = 0; i < targetScores.length; i++) {
-			scores.add(Integer.parseInt(targetScores[i]));
-		}
-		HashMap<String, Integer> priority_sla = new HashMap<>();
-		priority_sla.put("Low", Integer.parseInt(expressions.get(8)));
-		priority_sla.put("Medium", Integer.parseInt(expressions.get(9)));
-		priority_sla.put("High", Integer.parseInt(expressions.get(10)));
-		priority_sla.put("Major", Integer.parseInt(expressions.get(11)));
-		priority_sla.put("Critical", Integer.parseInt(expressions.get(12)));
+			String course = expressions.get(0);
+			int rounds = Integer.parseInt(expressions.get(1));
+			int runTime = Integer.parseInt(expressions.get(2));
+			int pauseTime = Integer.parseInt(expressions.get(3));
+			int sessionsPerRound = Integer.parseInt(expressions.get(4));
+			int initialCapital = Integer.parseInt(expressions.get(5));
+			int lastRoundDone = Integer.parseInt(expressions.get(6));
+			String[] targetScores = expressions.get(7).replace(" ", "")
+					.split(",");
+			ArrayList<Integer> scores = new ArrayList<Integer>();
+			for (int i = 0; i < targetScores.length; i++) {
+				scores.add(Integer.parseInt(targetScores[i]));
+			}
+			HashMap<String, Integer> priority_sla = new HashMap<>();
+			priority_sla.put("Low", Integer.parseInt(expressions.get(8)));
+			priority_sla.put("Medium", Integer.parseInt(expressions.get(9)));
+			priority_sla.put("High", Integer.parseInt(expressions.get(10)));
+			priority_sla.put("Major", Integer.parseInt(expressions.get(11)));
+			priority_sla.put("Critical", Integer.parseInt(expressions.get(12)));
 
-		Settings sett = new Settings(course, rounds, runTime, pauseTime,
-				sessionsPerRound, initialCapital);
-		sett.setLastRoundDone(lastRoundDone);
-		sett.setTargetScores(scores);
-		sett.setPriority_sla(priority_sla);
-		return sett;
-		} catch (Exception e){
-			System.err.println("Settings: extractFromText method failed. File 'settings.txt' is corrupted.");
+			Settings sett = new Settings(course, rounds, runTime, pauseTime,
+					sessionsPerRound, initialCapital);
+			sett.setLastRoundDone(lastRoundDone);
+			sett.setTargetScores(scores);
+			sett.setPriority_sla(priority_sla);
+			return sett;
+		} catch (Exception e) {
+			System.err
+					.println("Settings: extractFromText method failed. File 'settings.txt' is corrupted.");
 			return null;
 		}
 	}

@@ -19,6 +19,7 @@ import log.SimulationLog;
 import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.Queries;
+import utils.SimulationTime;
 import utils.SolutionElement;
 
 /**
@@ -26,11 +27,24 @@ import utils.SolutionElement;
  */
 @WebServlet("/ClientController")
 public class ClientController extends HttpServlet {
-	// V get this from client in checkSimulator
-	private String courseName; /* = "normalCourse"; */
+	// TODO: get this from client in checkSimulator
+	/**
+	 * The name of the course retrieved from the user interface.
+	 */
+	private String courseName;
+	/**
+	 * The team of the user retrieved from the user interface.
+	 */
 	private String team;
+	/**
+	 * The incident ID retrieved from the user interface.
+	 */
 	private byte inc_id;
-	private int time;
+	/**
+	 * The current simulation <b>server time</b> retrieved from the
+	 * {@code ClockIncrementor}.
+	 */
+	private SimulationTime time;
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -67,8 +81,8 @@ public class ClientController extends HttpServlet {
 				"selectedCourseName");
 		if (courseName == null && selectedCourse != null) {
 			courseName = (String) selectedCourse;
-			System.out.println("ClientController: Course '"
-					+ courseName + "' is selcted.");
+			System.out.println("ClientController: Course '" + courseName
+					+ "' is selcted.");
 		}
 
 		// get the action
@@ -85,7 +99,7 @@ public class ClientController extends HttpServlet {
 		case "checkIncident":
 			team = request.getParameter("team");
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
-			time = ClockIncrementor.getRunTime();
+			time = ClockIncrementor.getSimTime();
 			boolean isGood = SimulationLog.getInstance().checkIncident(
 					SimulationLog.getTeamConst(team), inc_id, time);
 			// System.out.println("ClientController: " + team + " Inc:" + inc_id
@@ -97,7 +111,7 @@ public class ClientController extends HttpServlet {
 		case "sendSolution":
 			team = request.getParameter("team");
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
-			time = ClockIncrementor.getRunTime();
+			time = ClockIncrementor.getSimTime();
 
 			SimulationLog.getInstance().incidentSolved(
 					SimulationLog.getTeamConst(team), inc_id, time, isBaught);
@@ -141,6 +155,12 @@ public class ClientController extends HttpServlet {
 		}
 	}
 
+	/**
+	 * 
+	 * @return A {@code HashMap} (key= {@code incident_id}, value=
+	 *         {@code SolutionElement}) of all solutions including relevant data
+	 *         for the client screen.
+	 */
 	private HashMap<Integer, SolutionElement> getSolutions() {
 		HashMap<Integer, SolutionElement> solutions = new HashMap<>();
 		try {

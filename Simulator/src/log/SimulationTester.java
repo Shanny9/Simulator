@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import utils.SimulationTime;
+
 public class SimulationTester implements Runnable {
 	/**
 	 * The simulation log - for accessing a team
@@ -15,7 +17,7 @@ public class SimulationTester implements Runnable {
 	/**
 	 * The simulation's elapsed time
 	 */
-	private static int elapsed_time;
+	private static SimulationTime elapsed_time;
 	/**
 	 * A team for the simulation test
 	 */
@@ -45,12 +47,14 @@ public class SimulationTester implements Runnable {
 	public static void initialize(Settings courseSettings) {
 
 		if (isInitialized) {
-			System.err.println("SimulationTester initialize method failed: SimulationTester is already running");
+			System.err
+					.println("SimulationTester initialize method failed: SimulationTester is already running");
 			return;
 		}
-		
-		if (settings.getTargetScores().isEmpty()){
-			System.err.println("SimulationTester initialize method failed: target scores are already calculated.");
+
+		if (settings.getTargetScores().isEmpty()) {
+			System.err
+					.println("SimulationTester initialize method failed: target scores are already calculated.");
 			return;
 		}
 
@@ -89,10 +93,10 @@ public class SimulationTester implements Runnable {
 
 	@Override
 	public void run() {
-		while (++elapsed_time <= settings.getTotalRunTime()) {
+		while (elapsed_time.increment() <= settings.getTotalRunTime()) {
 
 			// 1. calculate the round and its end time
-			if (elapsed_time % roundRunTime == 0) {
+			if (elapsed_time.getRunTime() % roundRunTime == 0) {
 				nextRoundEnd += nextRoundEnd;
 			}
 
@@ -107,11 +111,11 @@ public class SimulationTester implements Runnable {
 				marom.incidentStarted(inc_id, elapsed_time);
 
 				if (simLog.getAffectingCis().get(ci_id) != null) {
-//					System.out
-//							.println("SimulationTester: " + elapsed_time
-//									+ " services "
-//									+ simLog.getAffectingCis().get(ci_id)
-//									+ " are down");
+					// System.out
+					// .println("SimulationTester: " + elapsed_time
+					// + " services "
+					// + simLog.getAffectingCis().get(ci_id)
+					// + " are down");
 				}
 			}
 
@@ -119,14 +123,14 @@ public class SimulationTester implements Runnable {
 			if (affected_services != null && !affected_services.isEmpty()) {
 				for (Byte aff_service : affected_services) {
 
-					int time_to_solve = Math.min(
-							elapsed_time + services_sla.get(aff_service),
-							nextRoundEnd);
+					int time_to_solve = Math.min(elapsed_time.getRunTime()
+							+ services_sla.get(aff_service), nextRoundEnd);
 					if (solutions_schedule.putIfAbsent(aff_service,
 							time_to_solve) == null) {
-//						System.out.println("SimulationTester: " + elapsed_time
-//								+ " service " + aff_service
-//								+ " fix is scheduled to " + time_to_solve);
+						// System.out.println("SimulationTester: " +
+						// elapsed_time
+						// + " service " + aff_service
+						// + " fix is scheduled to " + time_to_solve);
 					}
 				}
 			}
@@ -156,13 +160,13 @@ public class SimulationTester implements Runnable {
 					for (Byte ci : cis_to_solve) {
 						marom.ciSolved(ci, elapsed_time);
 					}
-//					System.out.println("SimulationTester: " + elapsed_time
-//							+ " services " + services_to_solve + " are solved");
+					// System.out.println("SimulationTester: " + elapsed_time
+					// + " services " + services_to_solve + " are solved");
 
 					// 5. un-schedule services that are up
 					for (Byte ci : cis_to_solve) {
-						HashSet<Byte> fixed_services = simLog
-								.getAffectingCis().get(ci);
+						HashSet<Byte> fixed_services = simLog.getAffectingCis()
+								.get(ci);
 						// fixed_services.removeIf(s ->
 						// !marom.getService_logs().get(s).isUp());
 						@SuppressWarnings("unchecked")
@@ -205,7 +209,7 @@ public class SimulationTester implements Runnable {
 				(int) (targetScores.get(0) - settings.getInitCapital()));
 
 		settings.setTargetScores(targetScores);
-		LogUtils.saveSettings(settings);
+		FilesUtils.saveSettings(settings);
 		simLog.updateSettings(settings);
 		System.out.println("SimulationTester: test is finished.");
 	}

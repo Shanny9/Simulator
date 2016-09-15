@@ -6,44 +6,74 @@ import log.LogManager;
 import log.Settings;
 
 public class ClockIncrementor implements Runnable {
+	/**
+	 * Indicates whether the {@code ClockIncrementor} is running.
+	 */
 	private static volatile boolean isRunning = false;
+	/**
+	 * The course's settings.
+	 */
 	private static Settings settings;
+	/**
+	 * The total elapsed time of the simulation (including pause times).
+	 */
 	private static int elapsedTime;
+	/**
+	 * The total remaining time until the end of the simulation (including pause
+	 * times).
+	 */
 	private static int remainingTime;
-	private static int PAUSE_TIME;
-	private static int ROUND_TIME;
-	private static int SESSION_TIME;
-	private static int RUN_TIME;
-	private static int elapsedRunTime;
+	/**
+	 * The elapsed run time of the simulation.
+	 */
+	private static SimulationTime elapsedRunTime;
+	/**
+	 * Indicates whether the simulation is currently in run time or pause time.
+	 */
 	private static boolean isRunTime;
+	/**
+	 * The instance of the {@code ClockIncrementor} class.
+	 */
 	private static ClockIncrementor instance;
+	/**
+	 * Indicates whether the {@code ClockIncrementor} is initialized or not.
+	 */
 	private static boolean isInitialized;
 
+	/**
+	 * Initializes the {@code ClockIncrementor}
+	 * 
+	 * @param _settings
+	 *            The course's settings
+	 */
 	public static void initialize(Settings _settings) {
 
-		if (isInitialized){
-			System.err.println("ClockIncrementor initialize method failed: ClockIncrementor is already running");
+		if (isInitialized) {
+			System.err
+					.println("ClockIncrementor initialize method failed: ClockIncrementor is already initialized.");
 			return;
 		}
-		
-		settings = _settings;
 
-		// initializes constants
-		PAUSE_TIME = settings.getPauseTime();
-		SESSION_TIME = settings.getSessionTime();
-		RUN_TIME = settings.getRunTime();
-		ROUND_TIME = settings.getRoundTime();
-		
+		settings = _settings;
 		initVariables();
-		
+
 		isInitialized = true;
-		System.out.println("ClockIncrementor: ClockIncrementor is initialized.");
+		System.out
+				.println("ClockIncrementor: ClockIncrementor is initialized.");
 	}
 
+	/**
+	 * Local constructor.
+	 */
 	private ClockIncrementor() {
 		isInitialized = false;
 	};
 
+	/**
+	 * Singleton method.
+	 * 
+	 * @return An instance of {@code ClockIncrementor}.
+	 */
 	public static ClockIncrementor getInstance() {
 		if (instance == null) {
 			instance = new ClockIncrementor();
@@ -51,6 +81,12 @@ public class ClockIncrementor implements Runnable {
 		return instance;
 	}
 
+	/**
+	 * @return A {@code HashMap} of the following: <li>{@code elapsedClock (int)}
+	 *         </li> <li>{@code remainingClock (int)}</li> <li>
+	 *         {@code elapsedRunTime (SimulationTime)}</li> <li>
+	 *         {@code isRunTime (boolean)}</li>
+	 */
 	public static HashMap<String, Object> getClocks() {
 
 		HashMap<String, Object> clocks = new HashMap<>();
@@ -67,62 +103,87 @@ public class ClockIncrementor implements Runnable {
 			remainingTime -= 1;
 
 			if (isRunTime) {
-				elapsedRunTime++;
+				elapsedRunTime.increment();
 			}
 
-			if ((elapsedTime + RUN_TIME) % SESSION_TIME == 0) {
+			if ((elapsedTime + settings.getRunTime())
+					% settings.getSessionTime() == 0) {
 				// finished pause time
-				remainingTime = RUN_TIME;
+				remainingTime = settings.getRunTime();
 				isRunTime = true;
 				LogManager.resumeLog();
 
-			} else if (elapsedTime % SESSION_TIME == 0) {
+			} else if (elapsedTime % settings.getSessionTime() == 0) {
 				// finished run time
-				
-				if (elapsedTime % ROUND_TIME == 0){
+
+				if (elapsedTime % settings.getRoundTime() == 0) {
 					// finished round
 					isRunning = false;
-					LogManager.stop(elapsedRunTime);
+					LogManager.stop();
 					initVariables();
-					System.out.println("ClockIncrementor: Round " + settings.getLastRoundDone()  + " is finished.");
+					System.out.println("ClockIncrementor: Round "
+							+ settings.getLastRoundDone() + " is finished.");
 					return;
-					
-				} else{
+
+				} else {
 					// starts pause time
-					remainingTime = PAUSE_TIME;
+					remainingTime = settings.getPauseTime();
 					isRunTime = false;
 					LogManager.pauseLog(elapsedRunTime, false);
 				}
 			}
-		} else{
+		} else {
 			return;
 		}
 	}
-	
-	private static void initVariables(){
+
+	/**
+	 * Initializes the variables of the {@code ClockIncrementor}. This method
+	 * should be called before each run.
+	 */
+	private static void initVariables() {
 		elapsedTime = settings.getRoundTime();
-		elapsedRunTime = settings.getRunTime();
+		elapsedRunTime = getSimTime();
 		remainingTime = settings.getPauseTime();
 		isRunning = true;
 		isRunTime = false;
 	}
 
-	public static int getRunTime() {
-		return elapsedRunTime;
+	/**
+	 * Returns the simulation's run time.
+	 * 
+	 * @return The simulation run time.
+	 */
+	public static SimulationTime getSimTime() {
+		int runTime = elapsedRunTime.getRunTime();
+		return new SimulationTime(runTime);
 	}
 
+	/**
+	 * Forces the {@code ClockIncrementor} to stop.
+	 */
 	public static void forcePause() {
 		isRunning = false;
 		LogManager.pauseLog(elapsedRunTime, true);
-		System.out.println("ClockIncrementor: Paused (elapsed time is " + elapsedTime + " sec.)");
+		System.out.println("ClockIncrementor: Paused (elapsed time is "
+				+ elapsedTime + " sec.)");
 	}
 
+	/**
+	 * Forces the {@code ClockIncrementor} to resume.
+	 */
 	public static void forceResume() {
 		isRunning = true;
 		LogManager.resumeLog();
 		System.out.println("ClockIncrementor: Resumed.");
 	}
 
+	/**
+	 * Indicates if the {@code ClockIncrementor} is running.
+	 * 
+	 * @return {@code true} if the {@code ClockIncrementor} is running.
+	 *         Otherwise returns {@code false}.
+	 */
 	public static boolean isRunning() {
 		return isRunning;
 	}

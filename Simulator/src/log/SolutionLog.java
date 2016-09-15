@@ -11,7 +11,7 @@ public class SolutionLog implements Serializable{
 	private String team;
 	private HashSet<String> events;
 	
-	public SolutionLog(String courseName, String team, int inc_id){
+	public SolutionLog(String courseName, String team, byte inc_id){
 		this.team = team;
 		this.events = SimulationLog.getInstance().getIncidentEvents(inc_id);
 	}

@@ -2,6 +2,8 @@ package com.model;
 
 import java.io.Serializable;
 
+import utils.SimulationTime;
+
 /**
  * The persistent class for the tblIncident database table.
  * 
@@ -14,7 +16,7 @@ public class TblIncident implements Serializable {
 
 	private byte ciId;
 
-	private int incidentTime;
+	private SimulationTime incidentTime;
 
 	private boolean isActive;
 
@@ -59,11 +61,11 @@ public class TblIncident implements Serializable {
 		this.ciId = ciId;
 	}
 
-	public int getIncidentTime() {
+	public SimulationTime getIncidentTime() {
 		return this.incidentTime;
 	}
 
-	public void setIncidentTime(int incidentTime) {
+	public void setIncidentTime(SimulationTime incidentTime) {
 		this.incidentTime = incidentTime;
 	}
 
@@ -74,57 +76,4 @@ public class TblIncident implements Serializable {
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
-//	public List<TblChange> getTblChanges() {
-//		return this.tblChanges;
-//	}
-//
-//	public void setTblChanges(List<TblChange> tblChanges) {
-//		this.tblChanges = tblChanges;
-//	}
-//
-//	public TblChange addTblChange(TblChange tblChange) {
-//		getTblChanges().add(tblChange);
-//		tblChange.setTblIncident(this);
-//
-//		return tblChange;
-//	}
-//
-//	public TblChange removeTblChange(TblChange tblChange) {
-//		getTblChanges().remove(tblChange);
-//		tblChange.setTblIncident(null);
-//
-//		return tblChange;
-//	}
-//
-//	public List<TblEvent> getTblEvents() {
-//		return this.tblEvents;
-//	}
-//
-//	public void setTblEvents(List<TblEvent> tblEvents) {
-//		this.tblEvents = tblEvents;
-//	}
-//
-//	public TblEvent addTblEvent(TblEvent tblEvent) {
-//		getTblEvents().add(tblEvent);
-//		tblEvent.setTblIncident(this);
-//
-//		return tblEvent;
-//	}
-//
-//	public TblEvent removeTblEvent(TblEvent tblEvent) {
-//		getTblEvents().remove(tblEvent);
-//		tblEvent.setTblIncident(null);
-//
-//		return tblEvent;
-//	}
-//
-//	public TblSolution getTblSolution() {
-//		return this.tblSolution;
-//	}
-//
-//	public void setTblSolution(TblSolution tblSolution) {
-//		this.tblSolution = tblSolution;
-//	}
-
 }

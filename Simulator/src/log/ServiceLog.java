@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import utils.SimulationTime;
+
 public class ServiceLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -32,6 +34,10 @@ public class ServiceLog implements Serializable {
 	 */
 	private double down_cost;
 	/**
+	 * The accumulated profit lost for purchasing solutions
+	 */
+	private double purchase_cost;
+	/**
 	 * The status of the log
 	 */
 	private boolean isFinished;
@@ -47,10 +53,11 @@ public class ServiceLog implements Serializable {
 		this.fixed_cost = fixed_cost;
 		this.fixed_income = fixed_income;
 		this.down_cost = down_cost;
+		this.purchase_cost = 0;
 		this.diff = fixed_income - fixed_cost;
 		this.isFinished = false;
 		this.times = new ArrayList<>();
-		addTime(0);
+		this.times.add(0);
 	}
 
 	/**
@@ -59,42 +66,27 @@ public class ServiceLog implements Serializable {
 	 * @param time
 	 *            The time of update
 	 */
-	synchronized void updateStatus(int time) {
-		if (isFinished) {
-			return;
-		}
-		
-		try {
-			if (time < 0) {
-				throw new Exception("updateStatus exception: time is negative");
-			}			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	synchronized void updateStatus(SimulationTime time) {
 		addTime(time);
 		diff = ((isUp()) ? (fixed_income - fixed_cost)
 				: (-fixed_cost - down_cost));
 	}
-	
-	private void addTime(int time){
-		
+
+	private void addTime(SimulationTime time) {
+
 		try {
-			if (time < 0){
-				throw new Exception("addTime exception: time ( " + time + " ) is negative");
+			if (times.size() > 0 && time.before(getRoundDuration())) {
+				throw new Exception("addTime exception: time ( " + time
+						+ " ) is smaller than last time ( "
+						+ getRoundDuration() + " )");
 			}
-			
-			if (times.size() > 0 && time < times.get(times.size()-1)){
-				throw new Exception("addTime exception: time ( " + time + " ) is smaller than last time ( " + times.get(times.size()-1) + " )");
-			}
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		times.add(time);
+
+		times.add(time.getRunTime());
 	}
 
 	/**
@@ -110,16 +102,7 @@ public class ServiceLog implements Serializable {
 	 * @param time
 	 *            The time of stop
 	 */
-	synchronized void stop(int time) {
-		try {
-			if (time <= 0) {
-				throw new Exception("stop exception: time ( " + time + " ) is incorrect");
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	synchronized void stop(SimulationTime time) {
 		if (!isFinished) {
 			addTime(time);
 			isFinished = true;
@@ -162,11 +145,12 @@ public class ServiceLog implements Serializable {
 	}
 
 	public int getTotalUpTime() {
-		int upTime = times.get(times.size() - 1) - getTRS();
+		int upTime = getRoundDuration() - getTotalDownTime();
 
 		try {
 			if (upTime < 0) {
-				throw new Exception("getTotalUpTime exception: upTime ( " + upTime + " ) is incorrect");
+				throw new Exception("getTotalUpTime exception: upTime ( "
+						+ upTime + " ) is incorrect");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -196,20 +180,21 @@ public class ServiceLog implements Serializable {
 			return 0d;
 		}
 
-		return (double) getTRS() / failures;
+		return (double) getTotalDownTime() / failures;
 	}
 
 	/**
-	 * @return The total duration that the services was down
+	 * @return The total duration that the services was down (also called TRS -
+	 *         Time to Restore Service)
 	 */
-	int getTRS() {
-		
-		if (times.size() == 2){
+	int getTotalDownTime() {
+
+		if (times.size() == 2) {
 			// no failures
 			return 0;
 		}
-		
-		int totalDownTime = 0;		
+
+		int totalDownTime = 0;
 		for (int index = 2; index < times.size(); index += 2) {
 			totalDownTime += times.get(index) - times.get(index - 1);
 		}
@@ -227,7 +212,8 @@ public class ServiceLog implements Serializable {
 		try {
 			if (numOfFailures < 0) {
 				throw new Exception(
-						"getNumOfFailures exception: numOfFailures (" + numOfFailures + ") is negative");
+						"getNumOfFailures exception: numOfFailures ("
+								+ numOfFailures + ") is negative");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -242,7 +228,7 @@ public class ServiceLog implements Serializable {
 	 * service's status. The function returns the change in the service's profit
 	 * gain speed.
 	 */
-	synchronized double ciUpdate(byte ci_id, boolean isUp, int time) {
+	synchronized double ciUpdate(byte ci_id, boolean isUp, SimulationTime time) {
 		double oldDiff = diff;
 		if (isUp) {
 			// if all CIs ARE DOWN, updates service status
@@ -262,12 +248,23 @@ public class ServiceLog implements Serializable {
 	/**
 	 * @return The service's ID
 	 */
-	synchronized byte getId() {
+	public byte getId() {
 		return service_id;
 	}
 
 	/**
-	 * @return True if the service is up. False otherwise.
+	 * Adds the amount to the service's purchase cost.
+	 * 
+	 * @param amount
+	 *            The purchase price
+	 */
+	void purchase(double amount) {
+		this.purchase_cost += amount;
+	}
+
+	/**
+	 * @return {@code true} when the service is up. Otherwise return
+	 *         {@code false}.
 	 */
 	synchronized public boolean isUp() {
 		if (!isFinished) {
@@ -275,6 +272,24 @@ public class ServiceLog implements Serializable {
 		} else {
 			return times.size() % 2 == 0;
 		}
+	}
+
+	/**
+	 * @return The round duration
+	 */
+	private int getRoundDuration() {
+		return times.get(times.size() - 1);
+	}
+
+	/**
+	 * @return The total gain (or loss) of the service.
+	 */
+	public double getGain() {
+		double gain = getTotalUpTime() * getFixed_income();
+		double fixed_loss = getRoundDuration() * getFixed_cost();
+		double varinet_loss = getTotalDownTime() * getDown_cost();
+
+		return gain - fixed_loss - varinet_loss - purchase_cost;
 	}
 
 	synchronized public String toString() {

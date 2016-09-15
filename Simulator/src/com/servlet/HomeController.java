@@ -15,14 +15,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import log.FilesUtils;
 import log.LogManager;
-import log.LogUtils;
 import log.Settings;
 import log.SimulationLog;
 import log.SimulationTester;
 import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.PasswordAuthentication;
+import utils.SimulationTime;
 import utils.TimerManager;
 
 import com.dao.TblGeneralParametersDao;
@@ -65,7 +66,7 @@ public class HomeController extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-		LogUtils.setPath(getServletContext().getRealPath(
+		FilesUtils.setPath(getServletContext().getRealPath(
 				File.separator + "logs"));
 
 		// General settings
@@ -73,7 +74,7 @@ public class HomeController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		
+
 		String action = request.getParameter("action");
 		switch (action) {
 
@@ -118,11 +119,13 @@ public class HomeController extends HttpServlet {
 				if (!ClockIncrementor.isRunning()) {
 					TimerManager.startSimulator(settings, round);
 					response.getWriter().print("OK");
-				} else{
-					System.err.println("startSimulator method failed: The Simulation is already running.");
+				} else {
+					System.err
+							.println("startSimulator method failed: The Simulation is already running.");
 				}
-			} else{
-				System.err.println("startSimulator method failed: Course settings are missing.");
+			} else {
+				System.err
+						.println("startSimulator method failed: Course settings are missing.");
 			}
 			break;
 		case "getSettings":
@@ -132,8 +135,8 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(
 					SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
-		case "solutionStream":		
-			SimulationLog.getInstance(); //TODO: what is this for?
+		case "solutionStream":
+			SimulationLog.getInstance(); // TODO: what is this for?
 			if (!LogManager.isInitialized()) {
 				return;
 			}
@@ -149,8 +152,8 @@ public class HomeController extends HttpServlet {
 		case "profitStream":
 
 			prepareResponseToStream(response);
-			int currentTime = ClockIncrementor.getRunTime();
-			if (currentTime == 0){
+			int currentTime = ClockIncrementor.getSimTime().getRunTime();
+			if (currentTime == 0) {
 				return;
 			}
 
@@ -158,8 +161,9 @@ public class HomeController extends HttpServlet {
 			if (!LogManager.isInitialized()) {
 				return;
 			}
-			
-			HashMap<String, Double> profits = simLogg.getTeamScores(currentTime);
+
+			HashMap<String, Double> profits = simLogg
+					.getTeamScores(new SimulationTime(currentTime));
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
 			streamMessage += "{\"team\": \"rakia\", \"profit\": \""
@@ -183,7 +187,7 @@ public class HomeController extends HttpServlet {
 			Settings set = new Settings(courseName, rounds, runTime, pauseTime,
 					sessionsPerRound, initCapital);
 			if (courseName != null) {
-				LogUtils.saveSettings(set);
+				FilesUtils.saveSettings(set);
 				SimulationTester st = SimulationTester.getInstance();
 				SimulationTester.initialize(set);
 				new Thread(st).start();
@@ -192,25 +196,25 @@ public class HomeController extends HttpServlet {
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkLog":
-			boolean courseExists = (LogUtils.openSettings(request
-					.getParameter("directory")) != null)? true : false;
-			
+			boolean courseExists = (FilesUtils.openSettings(request
+					.getParameter("directory")) != null) ? true : false;
+
 			response.getOutputStream().print(courseExists);
 			break;
 		case "getRounds":
-			int tot_rounds =  LogUtils.openSettings(request
-					.getParameter("directory")).getRounds();
+			int tot_rounds = FilesUtils.openSettings(
+					request.getParameter("directory")).getRounds();
 			response.getWriter().write(gson.toJson(tot_rounds));
 			break;
 		case "getCourses":
-			response.getWriter().write(gson.toJson(LogUtils.getCourses()));
+			response.getWriter().write(gson.toJson(FilesUtils.getCourses()));
 			break;
 
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
 			round = Integer.valueOf(request.getParameter("form-round"));
 
-			settings = LogUtils.openSettings(selectedCourseName);
+			settings = FilesUtils.openSettings(selectedCourseName);
 			request.getSession().setAttribute("selectedCourseName",
 					selectedCourseName);
 			request.getSession().setAttribute("selectedRound", round);
@@ -221,15 +225,14 @@ public class HomeController extends HttpServlet {
 					selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
-			
+
 		case "deleteCourse":
-			try{
-			response.setContentType("text/html");
-			String selectedCourseNameDel = request.getParameter("name");
-			LogUtils.deleteCourse(selectedCourseNameDel);
-			response.getWriter().print("OK");
-			}
-			catch(Exception e){
+			try {
+				response.setContentType("text/html");
+				String selectedCourseNameDel = request.getParameter("name");
+				FilesUtils.deleteCourse(selectedCourseNameDel);
+				response.getWriter().print("OK");
+			} catch (Exception e) {
 				e.printStackTrace();
 				response.getWriter().print("ERR");
 			}
@@ -247,20 +250,22 @@ public class HomeController extends HttpServlet {
 			TimerManager.forceResume();
 			log.SimulationLog.setServerPaused(false);
 			break;
-		case "getDoneCourses": //courses with at least 1 round done
-			ArrayList<String> courses = new ArrayList<String>(Arrays.asList(LogUtils.getCourses()));
-			for(int i=0; i<courses.size(); i++){
-				if(!checkFile("round", courses.get(i)))
+		case "getDoneCourses": // courses with at least 1 round done
+			ArrayList<String> courses = new ArrayList<String>(
+					Arrays.asList(FilesUtils.getCourses()));
+			for (int i = 0; i < courses.size(); i++) {
+				if (!checkFile("round", courses.get(i)))
 					courses.remove(i);
 			}
 			response.getWriter().write(gson.toJson(courses));
- 			break;
+			break;
 		}
 	}
-
+	
+	//TODO: why is this here and not in FilesUtils?
 	private boolean checkFile(String prefix, String course) {
 		final String p = prefix;
-		File file = new File(LogUtils.getPath() + File.separator + course);
+		File file = new File(FilesUtils.getPath() + File.separator + course);
 		if (file.exists() && file.isDirectory()) {
 
 			File[] settingsFiles = file.listFiles(new FilenameFilter() {
@@ -277,6 +282,12 @@ public class HomeController extends HttpServlet {
 			return false;
 	}
 
+	/**
+	 * Prepares the response to be sent as a stream to the client.
+	 * 
+	 * @param response
+	 *            The session's response.
+	 */
 	private void prepareResponseToStream(HttpServletResponse response) {
 		// content type must be set to text/event-stream
 		response.setContentType("text/event-stream");
@@ -339,11 +350,23 @@ public class HomeController extends HttpServlet {
 
 	}
 
+	/**
+	 * Empties an {@code Array} of characters for security reasons.
+	 * 
+	 * @param arr
+	 *            An {@code Array} to empty.
+	 */
 	private void emptyChar(char[] arr) {
 		for (int i = 0; i < arr.length; i++)
 			arr[i] = 0;
 	}
 
+	/**
+	 * @param obj
+	 *            Object to stream.
+	 * @return A {@code String} of text representing the object in stream
+	 *         format.
+	 */
 	private String toStream(Object obj) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(obj);

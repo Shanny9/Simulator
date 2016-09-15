@@ -25,10 +25,10 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	public void addDivision(TblDivision division) throws SQLException {
 		String insertQuery = "INSERT INTO tblDivision(division_name, isActive) VALUES (?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setString(1, division.getDivisionName());
-			pStmt.setBoolean(2, division.getIsActive());
-			pStmt.executeUpdate();
+		pStmt = dbConnection.prepareStatement(insertQuery);
+		pStmt.setString(1, division.getDivisionName());
+		pStmt.setBoolean(2, division.getIsActive());
+		pStmt.executeUpdate();
 
 	}
 
@@ -36,30 +36,32 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	public void deleteDivision(String name) throws SQLException {
 		String deleteQuery = "DELETE FROM tblDivision WHERE division_name = ?";
 
-			pStmt = dbConnection.prepareStatement(deleteQuery);
-			pStmt.setString(1, name);
-			pStmt.executeUpdate();
-
+		pStmt = dbConnection.prepareStatement(deleteQuery);
+		pStmt.setString(1, name);
+		pStmt.executeUpdate();
 
 	}
 
 	@Override
-	public void updateDivision(TblDivision division, String divisionName) throws SQLException {
+	public void updateDivision(TblDivision division, String divisionName)
+			throws SQLException {
 		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ? WHERE division_name = ?";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setString(1, division.getDivisionName());
-			pStmt.setBoolean(2, division.getIsActive());
-			pStmt.setString(3, divisionName);
-			pStmt.executeUpdate();
+		pStmt = dbConnection.prepareStatement(updateQuery);
+		pStmt.setString(1, division.getDivisionName());
+		pStmt.setBoolean(2, division.getIsActive());
+		pStmt.setString(3, divisionName);
+		pStmt.executeUpdate();
 
 	}
 
 	@Override
-	public List<TblDivision> getAllDivisions(int startPageIndex, int recordsPerPage) {
+	public List<TblDivision> getAllDivisions(int startPageIndex,
+			int recordsPerPage) {
 		List<TblDivision> divisions = new ArrayList<TblDivision>();
 
-		String query = "SELECT * FROM tblDivision limit " + startPageIndex + "," + recordsPerPage;
+		String query = "SELECT * FROM tblDivision limit " + startPageIndex
+				+ "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -96,7 +98,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		}
 		return divisions;
 	}
-	
+
 	@Override
 	public TblDivision getDivisionById(String divisionName) {
 		TblDivision division = null;
@@ -122,7 +124,8 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		int count = 0;
 		try {
 			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblDivision;");
+			ResultSet rs = stmt
+					.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblDivision;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");
 			}
@@ -131,5 +134,4 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		}
 		return count;
 	}
-
 }

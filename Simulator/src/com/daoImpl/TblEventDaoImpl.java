@@ -13,11 +13,11 @@ import com.jdbc.DBUtility;
 import com.model.TblEvent;
 
 
-public class TblEevntDaoImpl implements TblEventDao {
+public class TblEventDaoImpl implements TblEventDao {
 	private Connection dbConnection;
 	private PreparedStatement pStmt;
 
-	public TblEevntDaoImpl() {
+	public TblEventDaoImpl() {
 		dbConnection = DBUtility.getConnection();
 	}
 

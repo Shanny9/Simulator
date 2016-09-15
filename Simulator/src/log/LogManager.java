@@ -1,19 +1,34 @@
 package log;
 
+import utils.SimulationTime;
+
 public class LogManager implements Runnable {
+	/**
+	 * Indicates whether the simulation is running.
+	 */
 	private static boolean isRunning;
-	private static int elapsed_time;
+	/**
+	 * The <b>run time</b> elapsed.
+	 */
+	private static SimulationTime elapsed_time;
+	/**
+	 * The instance of the {@code LogManager}.
+	 */
 	private static LogManager instance;
+	/**
+	 * Indicates whether the {@code LogManager} is initialized.
+	 */
 	private static boolean isInitialized;
 
 	/**
-	 * Initializes the simulation log (can be activated only once)
+	 * Initializes the simulation log (can be activated only once).
 	 * 
 	 * @param setings
 	 */
 	public static void initialize(Settings setings) {
 		if (isInitialized) {
-			System.err.println("LogManager initialize method failed: LogManager is already running");
+			System.err
+					.println("LogManager initialize method failed: LogManager is already running");
 			return;
 		}
 
@@ -49,12 +64,13 @@ public class LogManager implements Runnable {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Indicates if the {@code SimulationLog} has started.
+	 * 
 	 * @return true of the {@code SimulationLog} has started or false otherwise.
 	 */
-	public static boolean isInitialized(){
+	public static boolean isInitialized() {
 		return isInitialized;
 	}
 
@@ -68,7 +84,7 @@ public class LogManager implements Runnable {
 	 *            True if was caused by the user. False if occurred after run
 	 *            time.
 	 */
-	public static void pauseLog(int time, boolean isForced) {
+	public static void pauseLog(SimulationTime time, boolean isForced) {
 		isRunning = false;
 		if (!isForced) {
 			SimulationLog.getInstance().fixAllIncidents(time);
@@ -88,15 +104,15 @@ public class LogManager implements Runnable {
 	 * @param time
 	 *            The time of the stop
 	 */
-	public static void stop(int time) {
+	public static void stop() {
 		if (!isRunning) {
 			return;
 		}
 
 		isRunning = false;
-		SimulationLog.getInstance().stopLogs(time);
+		SimulationLog.getInstance().stopLogs();
 		System.out.println("LogManager: Log stopped");
-		log.LogUtils.saveLog(SimulationLog.getInstance().getSettings()
+		FilesUtils.saveLog(SimulationLog.getInstance().getSettings()
 				.getCourseName(), SimulationLog.getInstance().getRound());
 	}
 
@@ -109,14 +125,16 @@ public class LogManager implements Runnable {
 	public void run() {
 		if (isRunning) {
 			// occurs every second
-			elapsed_time++;
+			elapsed_time.increment();
 
-			if (SimulationLog.getInstance().getIncidentTimes().containsKey(elapsed_time)) {
-				byte inc_id = SimulationLog.getInstance().getIncidentTimes().get(elapsed_time);
-				SimulationLog.getInstance().incidentStarted(inc_id, elapsed_time);
+			if (SimulationLog.getInstance().getIncidentTimes()
+					.containsKey(elapsed_time)) {
+				byte inc_id = SimulationLog.getInstance().getIncidentTimes()
+						.get(elapsed_time);
+				SimulationLog.getInstance().incidentStarted(inc_id,
+						elapsed_time);
 			}
 			SimulationLog.getInstance().updateTeamProfits(elapsed_time);
 		}
-
 	}
 }

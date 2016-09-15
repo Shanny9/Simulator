@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import log.LogUtils;
+import log.FilesUtils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -62,12 +62,6 @@ public class DashboardController extends HttpServlet {
 		case "getPieData":
 			response.getWriter().print(DataMaker.getTeamMT(course, 1));
 			break;
-		// case "getMTBFforLineChart":
-		// Integer selectedService =
-		// Integer.parseInt(request.getParameter("service"));
-		// response.getWriter().print(DataMaker.getMTBFforLineChart("17-08-16",
-		// selectedService));
-		// break;
 		case "getMTBFPerRound":
 			Byte selectedServiceMTBF1 = Byte.parseByte(request
 					.getParameter("service"));
@@ -115,7 +109,7 @@ public class DashboardController extends HttpServlet {
 			response.getWriter().print(result);
 			break;
 		case "getRoundList":
-			int lastRoundDone = LogUtils.openSettings(course)
+			int lastRoundDone = FilesUtils.openSettings(course)
 					.getLastRoundDone();
 			JSONArray roundsList = new JSONArray();
 			for (int r = 0; r < lastRoundDone; r++) {

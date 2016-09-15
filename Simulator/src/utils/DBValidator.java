@@ -1,5 +1,6 @@
 package utils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -31,12 +32,17 @@ import com.model.TblSupplier;
 
 public class DBValidator {
 
+	static int warnings = 0;
+
 	public static void main(String[] args) {
 
 		Object instance;
 		try {
 			Class<?> c = DBValidator.class;
 			instance = c.newInstance();
+			Field warnings = c.getDeclaredField("warnings");
+			warnings.set(instance, 0);
+
 			Method[] methods = c.getDeclaredMethods();
 
 			for (Method method : methods) {
@@ -50,8 +56,10 @@ public class DBValidator {
 				}
 				method.invoke(instance);
 			}
+			System.out.println("Total DB warnings: " + warnings.getInt(instance) + ".");
 		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
 	}
@@ -76,13 +84,15 @@ public class DBValidator {
 			byte ci_id = ci.getCiId();
 
 			if (!all_cmdb_ci_ids.contains(ci_id)) {
-				System.err.println("DBValidator: CI " + ci_id
-						+ " is not used in tblCMDB.");
+				System.err.println("CI '" + ci_id
+						+ "' is not used in table 'tblCMDB'.");
+				warnings++;
 			}
 
 			if (!all_incidents_ci_ids.contains(ci_id)) {
-				System.err.println("DBValidator: CI " + ci_id
-						+ " is not used in tblIncident.");
+				System.err.println("CI '" + ci_id
+						+ "' is not used in table 'tblIncident'.");
+				warnings++;
 			}
 		}
 	}
@@ -102,8 +112,9 @@ public class DBValidator {
 			String dep_name = dep.getDepartmentName();
 
 			if (!all_service_departments.contains(dep_name)) {
-				System.err.println("DBValidator: Department " + dep_name
-						+ " is not used in tblService_Department.");
+				System.err.println("Department '" + dep_name
+						+ "' is not used in table 'tblService_Department'.");
+				warnings++;
 			}
 		}
 	}
@@ -130,13 +141,15 @@ public class DBValidator {
 			String div_name = div.getDivisionName();
 
 			if (!all_service_division_names.contains(div_name)) {
-				System.err.println("DBValidator: Division " + div_name
-						+ " is not used in tblService_Division.");
+				System.err.println("Division '" + div_name
+						+ "' is not used in table 'tblService_Division'.");
+				warnings++;
 			}
 
 			if (!all_departments_divisions.contains(div_name)) {
-				System.err.println("DBValidator: Division " + div_name
-						+ " is not used in tblDepartment.");
+				System.err.println("Division '" + div_name
+						+ "' is not used in table 'tblDepartment'.");
+				warnings++;
 			}
 		}
 	}
@@ -151,24 +164,13 @@ public class DBValidator {
 			all_event_incident_ids.add(event.getIncidentId());
 		}
 
-		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
-				.getAllDepartments();
-		HashSet<String> all_departments_divisions = new HashSet<>();
-		for (TblDepartment dep : all_departments) {
-			all_departments_divisions.add(dep.getDivisionName());
-		}
-
 		for (TblIncident div : all_incidents) {
 			byte inc_id = div.getIncidentId();
 
 			if (!all_event_incident_ids.contains(inc_id)) {
-				System.err.println("DBValidator: Division " + inc_id
-						+ " is not used in tblService_Division.");
-			}
-
-			if (!all_departments_divisions.contains(inc_id)) {
-				System.err.println("DBValidator: Division " + inc_id
-						+ " is not used in tblDepartment.");
+				System.err.println("Incident '" + inc_id
+						+ "' is not used in table 'tblEvent'.");
+				warnings++;
 			}
 		}
 	}
@@ -201,14 +203,17 @@ public class DBValidator {
 
 			if (!all_service_bizUnit_ids.contains(ser_id)) {
 				System.err
-						.println("DBValidator: Service "
+						.println("Service '"
 								+ ser_id
-								+ " is not used in tblService_Division and tblService_Department.");
+								+ "' is not used in tables"
+								+ " 'tblService_Division' and 'tblService_Department'.");
+				warnings++;
 			}
 
 			if (!all_event_service_ids.contains(ser_id)) {
-				System.err.println("DBValidator: Service " + ser_id
-						+ " is not used in tblEvent.");
+				System.err.println("Service '" + ser_id
+						+ "' is not used in table 'tblEvent'.");
+				warnings++;
 			}
 		}
 	}
@@ -234,8 +239,9 @@ public class DBValidator {
 			int sol_id = sol.getSolutionId();
 
 			if (!all_incidents_solutions.contains(sol_id)) {
-				System.err.println("DBValidator: Solution " + sol_id
-						+ " is not used in tblIncident.");
+				System.err.println("Solution '" + sol_id
+						+ "' is not used in table 'tblIncident'.");
+				warnings++;
 			}
 		}
 	}
@@ -255,8 +261,9 @@ public class DBValidator {
 			String supp_name = supp.getSupplierName();
 
 			if (!all_ci_suppliers.contains(supp_name)) {
-				System.err.println("DBValidator: Supplier " + supp_name
-						+ " is not used in tblCI.");
+				System.err.println("Supplier '" + supp_name
+						+ "' is not used in table 'tblCI'.");
+				warnings++;
 			}
 		}
 	}

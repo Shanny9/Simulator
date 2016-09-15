@@ -24,18 +24,19 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 
 	@Override
 	public void addDepartment(TblDepartment department) throws SQLException {
-		String insertQuery = "INSERT INTO tblDepartment(department_name, devision_name, isActive) VALUES (?,?,?)";
+		String insertQuery = "INSERT INTO tblDepartment(department_name, division_name, isActive, shortName) VALUES (?,?,?,?)";
 
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, department.getDepartmentName());
 			pStmt.setString(2, department.getDevisionName());
 			pStmt.setBoolean(3, department.getIsActive());
+			pStmt.setString(4, department.getShortName());
 			pStmt.executeUpdate();
 	}
 
 	@Override
 	public void deleteDepartment(TblDepartmentPK pk) throws SQLException {
-		String deleteQuery = "DELETE FROM tblDepartment WHERE devision_name = ? and department_name = ?";
+		String deleteQuery = "DELETE FROM tblDepartment WHERE division_name = ? and department_name = ?";
 
 			pStmt = dbConnection.prepareStatement(deleteQuery);
 			pStmt.setString(1, pk.getDevisionName());
@@ -46,15 +47,16 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 
 	@Override
 	public void updateDepartment(TblDepartment department, TblDepartmentPK pk) throws SQLException {
-		String updateQuery = "UPDATE tblDepartment SET department_name = ?, devision_name=?, isActive = ? WHERE devision_name = ? and department_name = ?";
+		String updateQuery = "UPDATE tblDepartment SET department_name = ?, division_name=?, isActive = ?, shortName = ? WHERE division_name = ? and department_name = ?";
 
 			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt.setString(1, department.getDepartmentName());
 			pStmt.setString(2, department.getDevisionName());
 			pStmt.setBoolean(3, department.getIsActive());
-			pStmt.setString(1, department.getDepartmentName());
+			pStmt.setString(4, department.getShortName());
 			
-			pStmt.setString(4, pk.getDevisionName());
-			pStmt.setString(5, pk.getDepartmentName());
+			pStmt.setString(5, pk.getDevisionName());
+			pStmt.setString(6, pk.getDepartmentName());
 			pStmt.executeUpdate();
 
 	}
@@ -70,9 +72,10 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblDepartment department = new TblDepartment();
-				department.setDevisionName(rs.getString("devision_name"));
+				department.setDevisionName(rs.getString("division_name"));
 				department.setDepartmentName(rs.getString("department_name"));
 				department.setIsActive(rs.getBoolean("isActive"));
+				department.setShortName(rs.getString("shortName"));
 				departments.add(department);
 			}
 		} catch (SQLException e) {
@@ -92,9 +95,10 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblDepartment department = new TblDepartment();
-				department.setDevisionName(rs.getString("devision_name"));
+				department.setDevisionName(rs.getString("division_name"));
 				department.setDepartmentName(rs.getString("department_name"));
 				department.setIsActive(rs.getBoolean("isActive"));
+				department.setShortName(rs.getString("shortName"));
 				departments.add(department);
 			}
 		} catch (SQLException e) {
@@ -106,7 +110,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 	@Override
 	public TblDepartment getDepartmentById(String divisionName, String departmentName) {
 		TblDepartment department = null;
-		String query = "SELECT * FROM tblDepartment WHERE devision_name = ? and department_name = ?";
+		String query = "SELECT * FROM tblDepartment WHERE division_name = ? and department_name = ?";
 
 		try {
 			pStmt = dbConnection.prepareStatement(query);
@@ -115,9 +119,10 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			ResultSet rs = pStmt.executeQuery();
 			rs.next();
 			department = new TblDepartment();
-			department.setDevisionName(rs.getString("devision_name"));
+			department.setDevisionName(rs.getString("division_name"));
 			department.setDepartmentName(rs.getString("department_name"));
 			department.setIsActive(rs.getBoolean("isActive"));
+			department.setShortName(rs.getString("shortName"));
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

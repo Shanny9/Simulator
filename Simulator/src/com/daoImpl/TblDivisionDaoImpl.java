@@ -23,11 +23,12 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 
 	@Override
 	public void addDivision(TblDivision division) throws SQLException {
-		String insertQuery = "INSERT INTO tblDivision(division_name, isActive) VALUES (?,?)";
+		String insertQuery = "INSERT INTO tblDivision(division_name, isActive, shortName) VALUES (?,?,?)";
 
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
+			pStmt.setString(3, division.getShortName());
 			pStmt.executeUpdate();
 
 	}
@@ -45,12 +46,14 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 
 	@Override
 	public void updateDivision(TblDivision division, String divisionName) throws SQLException {
-		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ? WHERE division_name = ?";
+		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ?, shortName = ? WHERE division_name = ?";
 
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
-			pStmt.setString(3, divisionName);
+			pStmt.setString(3, division.getShortName());
+			
+			pStmt.setString(4, divisionName);
 			pStmt.executeUpdate();
 
 	}
@@ -68,6 +71,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 				TblDivision division = new TblDivision();
 				division.setDivisionName(rs.getString("division_name"));
 				division.setIsActive(rs.getBoolean("isActive"));
+				division.setShortName(rs.getString("shortName"));
 				divisions.add(division);
 			}
 		} catch (SQLException e) {
@@ -89,6 +93,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 				TblDivision division = new TblDivision();
 				division.setDivisionName(rs.getString("division_name"));
 				division.setIsActive(rs.getBoolean("isActive"));
+				division.setShortName(rs.getString("shortName"));
 				divisions.add(division);
 			}
 		} catch (SQLException e) {
@@ -110,6 +115,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 			division = new TblDivision();
 			division.setDivisionName(rs.getString("division_name"));
 			division.setIsActive(rs.getBoolean("isActive"));
+			division.setShortName(rs.getString("shortName"));
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

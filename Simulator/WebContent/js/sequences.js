@@ -18,6 +18,25 @@ function ColorLuminance(hex, lum) {
 	return rgb;
 }
 
+var catagory1 = new Object();
+var catagory2 = new Object();
+var catagory3 = new Object();
+function divideLegend(catagories){
+	var length = Math.floor((Object.keys(catagories).length)/3);
+	
+	Object.keys(catagories).forEach(function(key,index) {
+	    // key: the name of the object key
+	    // index: the ordinal position of the key within the object 
+		if(index >= 0 && index < length)
+			catagory1[key] = catagories[key];
+		if(index >= length && index<length*2)
+			catagory2[key] = catagories[key];
+		if(index >= length*2 && index<( (length*3) + (length%3) ))
+			catagory3[key] = catagories[key];
+	});
+	
+}
+
 function getCatagories(){
 	var colorsTry = ["#1f78b4", "#33a02c", "#fb9a99",
 	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#ffff99"
@@ -55,7 +74,8 @@ function getCatagories(){
 								"departments":[
 								"dep114",
 								"dep115",
-								"dep116"] }
+								"dep116",
+								"dep117"] }
 		];
 	var catagory = new Object();
 	$.each(dJson, function(key, item){
@@ -65,7 +85,7 @@ function getCatagories(){
 		catagory[div] = divColor;
 		
 		$.each(item.departments, function(key, item){
-				catagory[item] = ColorLuminance(divColor, 0.3);
+				catagory[item] = ColorLuminance(divColor, 0.32);
 				
 		});
 		
@@ -95,6 +115,9 @@ var b = {
   "end": "#bbbbbb"
 };*/
 var colors = getCatagories();
+/* Legend Divided */
+divideLegend(colors);
+
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0; 
 
@@ -128,7 +151,9 @@ function createVisualization(json) {
 
   // Basic setup of page elements.
   initializeBreadcrumbTrail();
-  drawLegend();
+  drawLegend("#legend1", catagory1);
+  drawLegend("#legend2", catagory2);
+  drawLegend("#legend3", catagory3);
   d3.select("#togglelegend").on("click", toggleLegend);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
@@ -297,19 +322,19 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
 }
 
-function drawLegend() {
+function drawLegend(selector, catagory) {
 
   // Dimensions of legend item: width, height, spacing, radius of rounded rect.
   var li = {
     w: 75, h: 30, s: 3, r: 3
   };
 
-  var legend = d3.select("#legend").append("svg:svg")
+  var legend = d3.select(selector).append("svg:svg")
       .attr("width", li.w)
-      .attr("height", d3.keys(colors).length * (li.h + li.s));
+      .attr("height", d3.keys(catagory).length * (li.h + li.s));
 
   var g = legend.selectAll("g")
-      .data(d3.entries(colors))
+      .data(d3.entries(catagory))
       .enter().append("svg:g")
       .attr("transform", function(d, i) {
               return "translate(0," + i * (li.h + li.s) + ")";

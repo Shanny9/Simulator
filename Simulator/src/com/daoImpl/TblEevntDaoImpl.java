@@ -23,13 +23,15 @@ public class TblEevntDaoImpl implements TblEventDao {
 
 	@Override
 	public void addEvent(TblEvent event) throws SQLException {
-		String insertQuery = "INSERT INTO tblEvent(event_id, incident_id, service_id, isActive) VALUES (?,?,?,?)";
+		String insertQuery = "INSERT INTO tblEvent(event_id, incident_id, service_id, isActive, round, session) VALUES (?,?,?,?,?,?)";
 
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setInt(1, event.getEventId());
 			pStmt.setByte(2, event.getIncidentId());
 			pStmt.setByte(3, event.getServiceId());
 			pStmt.setBoolean(4, event.getIsActive());
+			pStmt.setByte(5, event.getRound());
+			pStmt.setByte(6, event.getSession());
 			pStmt.executeUpdate();
 
 	}
@@ -46,14 +48,16 @@ public class TblEevntDaoImpl implements TblEventDao {
 
 	@Override
 	public void updateEvent(TblEvent event, int eventId) throws SQLException {
-		String updateQuery = "UPDATE tblEvent SET event_id = ?, incident_id = ?, service_id = ?, isActive = ? WHERE event_id = ?";
+		String updateQuery = "UPDATE tblEvent SET event_id = ?, incident_id = ?, service_id = ?, isActive = ?, round = ?, session = ? WHERE event_id = ?";
 
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setInt(1, event.getEventId());
 			pStmt.setByte(2, event.getIncidentId());
 			pStmt.setByte(3, event.getServiceId());
 			pStmt.setBoolean(4, event.getIsActive());
-			pStmt.setInt(5, eventId);
+			pStmt.setByte(5, event.getRound());
+			pStmt.setByte(6, event.getSession());
+			pStmt.setInt(7, eventId);
 			pStmt.executeUpdate();
 
 	}
@@ -73,6 +77,8 @@ public class TblEevntDaoImpl implements TblEventDao {
 				event.setEventId(rs.getInt("event_id"));
 				event.setIncidentId(rs.getByte("incident_id"));
 				event.setServiceId(rs.getByte("service_id"));
+				event.setRound(rs.getByte("round"));
+				event.setSession(rs.getByte("session"));
 				event.setIsActive(rs.getBoolean("isActive"));
 				events.add(event);
 			}
@@ -97,6 +103,8 @@ public class TblEevntDaoImpl implements TblEventDao {
 				event.setEventId(rs.getInt("event_id"));
 				event.setIncidentId(rs.getByte("incident_id"));
 				event.setServiceId(rs.getByte("service_id"));
+				event.setRound(rs.getByte("round"));
+				event.setSession(rs.getByte("session"));
 				event.setIsActive(rs.getBoolean("isActive"));
 				events.add(event);
 			}
@@ -119,6 +127,8 @@ public class TblEevntDaoImpl implements TblEventDao {
 			event.setEventId(rs.getInt("event_id"));
 			event.setIncidentId(rs.getByte("incident_id"));
 			event.setServiceId(rs.getByte("service_id"));
+			event.setRound(rs.getByte("round"));
+			event.setSession(rs.getByte("session"));
 			event.setIsActive(rs.getBoolean("isActive"));
 
 		} catch (SQLException e) {

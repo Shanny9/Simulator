@@ -273,7 +273,7 @@ function incidentTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
+				inputClass: 'validate[required,custom[integer],min[1],max[127],maxSize[3]]'
 			},
 			incidentTime : {
 				title : 'Incident Time',
@@ -663,7 +663,7 @@ function serviceTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,custom[integer],min[1],max[255]]'
+				inputClass: 'validate[required,custom[integer],min[1],max[127]]'
 			},
 			serviceCode : {
 				title : 'Code',
@@ -1089,7 +1089,7 @@ function ciTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,custom[integer],min[1],max[255],maxSize[3]]'
+				inputClass: 'validate[required,custom[integer],min[1],max[127],maxSize[3]]'
 			},
 			CI_name : {
 				title : 'Name',
@@ -1338,9 +1338,9 @@ function departmentTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,maxSize[25]]'
+				inputClass: 'validate[required,maxSize[50]]'
 			},
-			devisionName : {
+			divisionName : {
 				title : 'Division Name',
 				key : true,
 //				width : '25%',
@@ -1348,6 +1348,14 @@ function departmentTable(){
 				edit : true,
 				create : true,
 				options:  'DataController?options=division'
+			},
+			shortName : {
+				title : 'Shortened Name',
+//				width : '25%',
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,maxSize[25]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1361,7 +1369,8 @@ function departmentTable(){
         //Initialize validation logic when a form is created
         formCreated: function (event, data) {
             data.form.validationEngine();
-            data.form.find('[name=departmentName]').attr('maxlength','25');
+            data.form.find('[name=departmentName]').attr('maxlength','50');
+            data.form.find('[name=shortName]').attr('maxlength','25');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -1458,6 +1467,14 @@ function divisionTable(){
 				list : true,
 				edit : true,
 				create : true,
+				inputClass: 'validate[required,maxSize[50]]'
+			},
+			shortName : {
+				title : 'Shortened Name',
+//				width : '25%',
+				list : true,
+				edit : true,
+				create : true,
 				inputClass: 'validate[required,maxSize[25]]'
 			},
 			isActive : {
@@ -1472,7 +1489,8 @@ function divisionTable(){
         //Initialize validation logic when a form is created
         formCreated: function (event, data) {
             data.form.validationEngine();
-            data.form.find('[name=devisionName]').attr('maxlength','25');
+            data.form.find('[name=divisionName]').attr('maxlength','50');
+            data.form.find('[name=shortName]').attr('maxlength','25');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -1588,6 +1606,22 @@ function eventTable(){
 				create : true,
 				options:  'DataController?options=service'
 			},
+			round : {
+				title : 'Round',
+//				width : '25%',
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1],max[127]]'
+			},
+			session : {
+				title : 'Session',
+//				width : '25%',
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,custom[integer],min[1],max[127]]'
+			},
 			isActive : {
 				title : 'Active?',
 //				width : '20%',
@@ -1601,6 +1635,8 @@ function eventTable(){
         formCreated: function (event, data) {
             data.form.validationEngine();
             data.form.find('[name=eventId]').attr('maxlength','10');
+            data.form.find('[name=round]').attr('maxlength','3');
+            data.form.find('[name=session]').attr('maxlength','3');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {

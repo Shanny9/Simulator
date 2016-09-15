@@ -238,17 +238,17 @@ li {
 									<div class="clearfix"></div>
 								</div>
 
-								<div class="col-md-3 col-sm-3 col-xs-6">
- 									<div id="legend" ></div>
+								<div class="col-md-4 col-sm-4 col-xs-6">
+ 									<div id="legend1" class="legend" ></div>
 								</div>
 							
-<!-- 	sm-4!							<div class="col-md-4 col-sm-4 col-xs-6">
- 									<div id="legend2" ><h2>.</h2></div>
+							<div class="col-md-4 col-sm-4 col-xs-6">
+ 									<div id="legend2" class="legend" ></div>
 								</div>
 								
 								<div class="col-md-4 col-sm-4 col-xs-6">
- 									<div id="legend3" ><h2>.</h2></div>
-								</div> -->
+ 									<div id="legend3" class="legend" ></div>
+								</div> 
 
 							</div>
 

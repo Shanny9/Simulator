@@ -15,6 +15,10 @@ public class TblEvent implements Serializable {
 	private byte incidentId;
 	
 	private byte serviceId;
+	
+	private byte session;
+	
+	private byte round;
 
 	private boolean isActive;
 
@@ -22,6 +26,36 @@ public class TblEvent implements Serializable {
 	}
 
 	
+	
+	
+	public byte getSession() {
+		return session;
+	}
+
+
+
+
+	public void setSession(byte session) {
+		this.session = session;
+	}
+
+
+
+
+	public byte getRound() {
+		return round;
+	}
+
+
+
+
+	public void setRound(byte round) {
+		this.round = round;
+	}
+
+
+
+
 	public byte getIncidentId() {
 		return incidentId;
 	}

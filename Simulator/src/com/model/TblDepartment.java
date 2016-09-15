@@ -11,9 +11,11 @@ import java.util.List;
 public class TblDepartment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String devisionName;
+	private String divisionName;
 
 	private String departmentName;
+	
+	private String shortName;
 
 	private boolean isActive;
 
@@ -25,11 +27,11 @@ public class TblDepartment implements Serializable {
 	}
 
 	public String getDevisionName() {
-		return devisionName;
+		return divisionName;
 	}
 
 	public void setDevisionName(String devisionName) {
-		this.devisionName = devisionName;
+		this.divisionName = devisionName;
 	}
 
 	public String getDepartmentName() {
@@ -40,6 +42,7 @@ public class TblDepartment implements Serializable {
 		this.departmentName = departmentName;
 	}
 
+	
 	//
 	// public TblDepartmentPK getId() {
 	// return this.id;
@@ -48,6 +51,14 @@ public class TblDepartment implements Serializable {
 	// public void setId(TblDepartmentPK id) {
 	// this.id = id;
 	// }
+
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
 
 	public boolean getIsActive() {
 		return this.isActive;

@@ -1183,9 +1183,14 @@ public class DataController extends HttpServlet {
 						department.setDepartmentName(departmentName);
 					}
 					
-					if (request.getParameter("devisionName") != null) {
-						String divisionName = request.getParameter("devisionName");
+					if (request.getParameter("divisionName") != null) {
+						String divisionName = request.getParameter("divisionName");
 						department.setDevisionName(divisionName);
+					}
+					
+					if (request.getParameter("shortName") != null) {
+						String shortName = request.getParameter("shortName");
+						department.setShortName(shortName);
 					}
 
 					if (request.getParameter("isActive") != null) {
@@ -1200,7 +1205,7 @@ public class DataController extends HttpServlet {
 					} else if (action.equals("update")) {
 						// Update existing record
 						String dep = request.getParameter("jtRecordKey_departmentName");
-						String div = request.getParameter("jtRecordKey_devisionName");
+						String div = request.getParameter("jtRecordKey_divisionName");
 						pk.setDepartmentName(dep);
 						pk.setDevisionName(div);
 						daoDepartment.updateDepartment(department, pk);
@@ -1216,9 +1221,9 @@ public class DataController extends HttpServlet {
 				} else if (action.equals("delete")) {
 					// Delete record
 					if (request.getParameter("departmentName") != null
-							&& request.getParameter("devisionName") != null) {
+							&& request.getParameter("divisionName") != null) {
 						String departmentName = request.getParameter("departmentName");
-						String divisionName = request.getParameter("devisionName");
+						String divisionName = request.getParameter("divisionName");
 						pk.setDepartmentName(departmentName);
 						pk.setDevisionName(divisionName);
 						daoDepartment.deleteDepartment(pk);
@@ -1282,6 +1287,11 @@ public class DataController extends HttpServlet {
 						String divisionName = request.getParameter("divisionName");
 						division.setDivisionName(divisionName);
 
+					}
+					
+					if (request.getParameter("shortName") != null) {
+						String shortName = request.getParameter("shortName");
+						division.setShortName(shortName);
 					}
 
 					if (request.getParameter("isActive") != null) {
@@ -1382,6 +1392,16 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("serviceId") != null) {
 						Byte serviceId = Byte.parseByte(request.getParameter("serviceId"));
 						event.setServiceId(serviceId);
+					}
+					
+					if (request.getParameter("round") != null) {
+						Byte round = Byte.parseByte(request.getParameter("round"));
+						event.setRound(round);
+					}
+					
+					if (request.getParameter("session") != null) {
+						Byte session = Byte.parseByte(request.getParameter("session"));
+						event.setSession(session);
 					}
 
 					if (request.getParameter("isActive") != null) {

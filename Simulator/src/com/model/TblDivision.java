@@ -15,6 +15,8 @@ public class TblDivision implements Serializable {
 
 	private String divisionName;
 
+	private String shortName;
+	
 	private boolean isActive;
 
 	private List<TblDepartment> tblDepartments;
@@ -30,6 +32,16 @@ public class TblDivision implements Serializable {
 
 	public void setDivisionName(String divisionName) {
 		this.divisionName = divisionName;
+	}
+
+	
+	
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
 	public boolean getIsActive() {

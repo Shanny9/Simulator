@@ -1355,7 +1355,7 @@ function departmentTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,maxSize[25]]'
+				inputClass: 'validate[required,maxSize[50]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1370,7 +1370,7 @@ function departmentTable(){
         formCreated: function (event, data) {
             data.form.validationEngine();
             data.form.find('[name=departmentName]').attr('maxlength','50');
-            data.form.find('[name=shortName]').attr('maxlength','25');
+            data.form.find('[name=shortName]').attr('maxlength','50');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -1475,7 +1475,7 @@ function divisionTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[required,maxSize[25]]'
+				inputClass: 'validate[required,maxSize[50]]'
 			},
 			isActive : {
 				title : 'Active?',
@@ -1490,7 +1490,7 @@ function divisionTable(){
         formCreated: function (event, data) {
             data.form.validationEngine();
             data.form.find('[name=divisionName]').attr('maxlength','50');
-            data.form.find('[name=shortName]').attr('maxlength','25');
+            data.form.find('[name=shortName]').attr('maxlength','50');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {

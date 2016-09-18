@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="css/header.css">
 <link rel="stylesheet" href="css/footer.css">
 
+<link rel="stylesheet" href="css/msc-style.css">
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -29,9 +30,9 @@
 
 <body>
 	<%@ include file="header.html"%>
+
 	<!-- Top content -->
 	<div class="top-content">
-
 		<div class="inner-bg">
 			<div class="container">
 				<div class="row">
@@ -55,8 +56,7 @@
 								method="post" class="login-form create-form">
 
 								<div class="form-group">
-									<span class="_label">Course name</span> 
-									<select
+									<span class="_label">Course name</span> <select
 										name="form-courseName" class="form-courseName form-control"
 										id="form-courseName">
 										<option value="">Please select a course...</option>
@@ -76,7 +76,10 @@
 									Course</button>
 							</form>
 							<p id="err" class="message">Settings.ser file does not exist</p>
-							<p id="msg" class="message"><span class="glyphicon glyphicon-ok" ></span> Course was deleted successfully</p>
+							<p id="msg" class="message">
+								<span class="glyphicon glyphicon-ok"></span> Course was deleted
+								successfully
+							</p>
 						</div>
 					</div>
 				</div>
@@ -107,6 +110,7 @@
 	<script src="js/jquery-1.11.3.min.js"></script>
 	<script src="js/bootstrap-3.3.5.min.js"></script>
 	<script src="js/jquery.backstretch.min.js"></script>
+	<script src="js/msc-script.js"></script>
 	<script src="js/selectCourse.js"></script>
 
 

@@ -17,23 +17,34 @@ function ColorLuminance(hex, lum) {
 
 	return rgb;
 }
+//TODO: get titles function here
+titles = new Array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);
 
 var catagory1 = new Object();
 var catagory2 = new Object();
 var catagory3 = new Object();
-function divideLegend(catagories){
-	var length = Math.floor((Object.keys(catagories).length)/3);
+var titles1 = new Array();
+var titles2 = new Array();
+function divideLegend(catagories, titles){
+	var length = Math.floor((Object.keys(catagories).length)/2);
 	
 	Object.keys(catagories).forEach(function(key,index) {
 	    // key: the name of the object key
 	    // index: the ordinal position of the key within the object 
 		if(index >= 0 && index < length)
 			catagory1[key] = catagories[key];
-		if(index >= length && index<length*2)
+		if(index >= length && index<( (length*2) + (length%2) ))
 			catagory2[key] = catagories[key];
-		if(index >= length*2 && index<( (length*3) + (length%3) ))
-			catagory3[key] = catagories[key];
+/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
+			catagory3[key] = catagories[key];*/
 	});
+	
+	for(var i=0;i<titles.length;i++){
+		if(i >= 0 && i< length)
+			titles1.push(titles[i]);
+		if(i >= length && i<( (length*2) + (length%2) ))
+			titles2.push(titles[i]);
+	}
 	
 }
 
@@ -42,7 +53,7 @@ function getCatagories(){
 	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#ffff99"
 	                 ,"#b15928","#8d8d8d", "#bc3ab1", "#b40845","#04703c"];
 	var dJson =[ {
-			"division":"div",
+			"division":"Cust Service & Sales",
 			"departments":[
 			"dep1",
 			"dep2",
@@ -116,7 +127,7 @@ var b = {
 };*/
 var colors = getCatagories();
 /* Legend Divided */
-divideLegend(colors);
+divideLegend(colors, titles);
 
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0; 
@@ -151,9 +162,9 @@ function createVisualization(json) {
 
   // Basic setup of page elements.
   initializeBreadcrumbTrail();
-  drawLegend("#legend1", catagory1);
-  drawLegend("#legend2", catagory2);
-  drawLegend("#legend3", catagory3);
+  drawLegend("#legend1", catagory1, titles1);
+  drawLegend("#legend2", catagory2, titles2);
+  /*drawLegend("#legend3", catagory3);*/
   d3.select("#togglelegend").on("click", toggleLegend);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
@@ -322,11 +333,11 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
 }
 
-function drawLegend(selector, catagory) {
+function drawLegend(selector, catagory, titleArr) {
 
   // Dimensions of legend item: width, height, spacing, radius of rounded rect.
   var li = {
-    w: 75, h: 30, s: 3, r: 3
+    w: /*75*/125, h: 30, s: 3, r: 3
   };
 
   var legend = d3.select(selector).append("svg:svg")
@@ -345,7 +356,9 @@ function drawLegend(selector, catagory) {
       .attr("ry", li.r)
       .attr("width", li.w)
       .attr("height", li.h)
-      .style("fill", function(d) { return d.value; });
+      .style("fill", function(d) { return d.value; })
+      /*was added for tooltip*/
+      .append("svg:title").text(function(d, i) { return titleArr[i]; });
 
   g.append("svg:text")
       .attr("x", li.w / 2)

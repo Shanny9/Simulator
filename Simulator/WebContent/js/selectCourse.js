@@ -13,7 +13,8 @@ $(document).ready(function() {
 	disable($("#form-round"), true);
 
 	$('#delete').click(function(){
-		deleteCourse($('#form-courseName option:selected').val());
+		//deleteCourse($('#form-courseName option:selected').val());
+		defineConfirmDialog();
 	});
 //	checkSubmit();
 	$('#form-courseName').change(function() {
@@ -24,7 +25,7 @@ $(document).ready(function() {
 		isRoundDone($(this).val() , $('#form-courseName').val());
 
 	});
-	
+
 });
 
 function isRoundDone(round, course){
@@ -157,6 +158,24 @@ function setElements(dis) {
 		$("#delete").removeClass("disabled");
 	}
 	
+}
+
+function defineConfirmDialog(){
+	mscConfirm({
+		  title: 'Are you sure that you want to delete this course?',
+
+/*		  subtitle: 'Are you sure?',  // default: ''*/
+
+		  okText: 'Delete',    // default: OK
+
+		  cancelText: 'Cancel', // default: Cancel,
+
+		  dismissOverlay: true, // default: false, closes dialog box when clicked on overlay.
+
+		  onOk: function() {
+			  deleteCourse($('#form-courseName option:selected').val());
+		  }
+		});
 }
 
 function checkSubmit(){

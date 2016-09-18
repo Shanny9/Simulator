@@ -63,11 +63,11 @@
 			                        	<input type="number" name="form-numOfRounds" class="form-numOfRounds form-control" id="form-numOfRounds">
 			                      	</div>
 			                        <div class="form-group">
-			                        <span class = "_label">Run time</span>
+			                        <span class = "_label">Run time (Seconds)</span>
 			                        	<input type="number" name="form-runTime" class="form-runTime form-control" id="form-runTime">
 			                        </div>
 			                        <div class="form-group">
-			                        <span class = "_label">Pause time</span>
+			                        <span class = "_label">Pause time (Seconds)</span>
 			                        	<input type="number" name="form-pauseTime" class="form-pauseTime form-control" id="form-pauseTime">
 			                        </div>
 			                        <div class="form-group">

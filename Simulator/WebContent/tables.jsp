@@ -47,7 +47,7 @@
     <script src="js/jquery-1.8.2.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery-ui-1.10.3.custom.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.jtable.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/jquery.jtable.editinline.js" type="text/javascript" charset="utf-8"></script>
+<!-- 	<script src="js/jquery.jtable.editinline.js" type="text/javascript" charset="utf-8"></script> -->
 	<script src="js/jquery.jtable.toolbarsearch.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/exportToExcel.js" type="text/javascript" charset="utf-8"></script>
 

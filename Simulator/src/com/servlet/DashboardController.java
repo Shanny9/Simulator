@@ -96,6 +96,19 @@ public class DashboardController extends HttpServlet {
 			response.getWriter().print(
 					DataMaker.getMTRSPerService(course, roundMTRS));
 			break;
+		case "getBizUnitsHierachical":
+			response.getWriter().print(
+					DataMaker.getBizUnits(true, true));
+			break;
+		case "getBizUnitsTitles":
+			response.getWriter().print(
+					DataMaker.getBizUnits(false, false));
+			break;
+		case "generateITBudgetBreakdown":
+			Integer roundBudget = Integer.parseInt(request.getParameter("round"));
+			DataMaker.generateITBudgetBreakdown(course, 1, "Marom", (byte)0);
+		
+			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();
 			List<TblService> services = serviceDao.getAllServices();

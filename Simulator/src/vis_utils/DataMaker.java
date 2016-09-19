@@ -8,10 +8,13 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import log.FilesUtils;
 import log.IncidentLog;
@@ -26,8 +29,12 @@ import org.json.simple.JSONObject;
 import utils.BizUnitService;
 import utils.Queries;
 
+import com.daoImpl.TblDepartmentDaoImpl;
+import com.daoImpl.TblDivisionDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.jdbc.DBUtility;
+import com.model.TblDepartment;
+import com.model.TblDivision;
 import com.model.TblService;
 
 public class DataMaker {
@@ -35,6 +42,82 @@ public class DataMaker {
 	// Delimiter used in CSV file
 	private static final String COMMA_DELIMITER = ",";
 	private static final String NEW_LINE_SEPARATOR = "\n";
+
+	@SuppressWarnings("unchecked")
+	public static JSONArray getBizUnits(boolean isAbbreviated,
+			boolean isHierachical) {
+
+		// stores all divisions' abbreviated names
+		HashMap<String, String> abbv_divisions = null;
+		if (isAbbreviated) {
+			abbv_divisions = new HashMap<>();
+			Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
+					.getAllDivisions();
+			for (TblDivision div : all_divisions) {
+				abbv_divisions.put(div.getDivisionName(), div.getShortName());
+			}
+		}
+
+		// puts all business units in a HashMap
+		HashMap<String, Set<String>> bizUnits = new HashMap<>();
+		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
+				.getAllDepartments();
+		for (TblDepartment dep : all_departments) {
+			Set<String> div_departments = bizUnits.get(dep.getDivisionName());
+			if (div_departments == null) {
+				div_departments = new HashSet<>();
+			}
+			if (isAbbreviated) {
+				div_departments.add(dep.getShortName());
+				bizUnits.put(abbv_divisions.get(dep.getDivisionName()),
+						div_departments);
+			} else {
+				div_departments.add(dep.getDepartmentName());
+				bizUnits.put(dep.getDivisionName(), div_departments);
+			}
+		}
+
+		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
+				.getAllDivisions();
+		for (TblDivision div : all_divisions) {
+			if (isAbbreviated) {
+				bizUnits.put(abbv_divisions.get(div.getShortName()), null);
+			} else {
+				bizUnits.put(div.getDivisionName(), null);
+			}
+		}
+
+		// converts the HashMap to a JSONArray
+		JSONArray all_bizUnits = new JSONArray();
+		Set<String> deps;
+		if (isHierachical) {
+			JSONObject division;
+			JSONArray departments;
+			for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
+				departments = new JSONArray();
+				deps = entry.getValue();
+				if (deps != null) {
+					departments.addAll(entry.getValue());
+				}
+				division = new JSONObject();
+				division.put("division", entry.getKey());
+				division.put("departments", departments);
+				all_bizUnits.add(division);
+			}
+		} else {
+			// flat
+			for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
+				all_bizUnits.add(entry.getKey());
+				deps = entry.getValue();
+				if (deps != null) {
+					for (String department : deps) {
+						all_bizUnits.add(department);
+					}
+				}
+			}
+		}
+		return all_bizUnits;
+	}
 
 	/**
 	 * Generates a file named <b>ITBudgetBreakdown.csv</b> in the format
@@ -48,7 +131,7 @@ public class DataMaker {
 	 *            The team name
 	 */
 	public static void generateITBudgetBreakdown(String courseName, int round,
-			String team) {
+			String team, byte service_id) {
 
 		List<BizUnitService> bizUnitServiceArr;
 
@@ -541,6 +624,17 @@ public class DataMaker {
 		HashMap<Byte, HashSet<Byte>> service_incidents = LogUtils
 				.getServiceIncidents();
 
+		// Adds all the selected ranges to the RangeCountArray (variable
+		// 'rca')
+		for (String range : ranges) {
+			rca.addRange(range);
+		}
+
+		// Checks the validity of the array
+		if (!rca.isValid()) {
+			return null;
+		}
+
 		for (int r : rounds) {
 
 			// The course's simulation log
@@ -569,34 +663,27 @@ public class DataMaker {
 						.getClosedIncident_logs().values());
 			}
 
-			if (service_id != 0) {
-				// Specific service - takes only relevant logs and adds them
-				// to variable relevant_inc_logs
-				for (IncidentLog inc_log : team_inc_logs) {
-					if (service_incidents.get(service_id).contains(
-							inc_log.getIncident_id())) {
-						relevant_inc_logs.add(inc_log);
+			if (team_inc_logs != null) {
+				if (service_id != 0) {
+					// Specific service - takes only relevant logs and adds them
+					// to variable relevant_inc_logs
+					for (IncidentLog inc_log : team_inc_logs) {
+						if (service_incidents.get(service_id).contains(
+								inc_log.getIncident_id())) {
+							relevant_inc_logs.add(inc_log);
+						}
 					}
+				} else {
+					// All services - all the team's incident logs are relevant
+					relevant_inc_logs.addAll(team_inc_logs);
 				}
-			} else {
-				// All services - all the team's incident logs are relevant
-				relevant_inc_logs.addAll(team_inc_logs);
-			}
-
-			// Adds all the selected ranges to the RangeCountArray (variable
-			// 'rca')
-			for (String range : ranges) {
-				rca.addRange(range);
-			}
-
-			// Checks the validity of the array
-			if (!rca.isValid()) {
-				return null;
 			}
 
 			// Adds all the relevant_inc_logs TRS values to the variable 'rca'
-			for (IncidentLog inc_log : relevant_inc_logs) {
-				rca.addValue(inc_log.getDuration());
+			if (relevant_inc_logs != null) {
+				for (IncidentLog inc_log : relevant_inc_logs) {
+					rca.addValue(inc_log.getDuration());
+				}
 			}
 		}
 
@@ -808,6 +895,7 @@ public class DataMaker {
 
 					bizUnitService = new BizUnitService();
 					bizUnitService.setBizUnitName(division_name);
+					bizUnitService.setIsDivision(true);
 					bizUnitService.setserviceId(ser.getServiceId());
 					bizUnitService.setPercentage(divisionPercentage);
 					result.add(bizUnitService);
@@ -845,6 +933,7 @@ public class DataMaker {
 						bizUnitService = new BizUnitService();
 						bizUnitService.setBizUnitName(division_name + "-"
 								+ department_name);
+						bizUnitService.setIsDivision(false);
 						bizUnitService.setserviceId(ser.getServiceId());
 						bizUnitService.setPercentage(departmentPercentage);
 						result.add(bizUnitService);

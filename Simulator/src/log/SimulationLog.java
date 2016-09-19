@@ -103,6 +103,27 @@ public class SimulationLog extends Thread implements Serializable {
 			initDiff += service_logs.get(service_id).getDiff();
 		}
 
+		@SuppressWarnings("unchecked")
+		HashMap<Byte, ServiceLog> service_logs_copy = (HashMap<Byte, ServiceLog>) LogUtils
+				.copy(service_logs);
+
+		marom = new TeamLog("Marom", service_logs, initDiff);
+		rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
+
+		System.out.println("SimulationLog: SimulationLog is initalized.");
+	}
+
+	/**
+	 * Sets he round of the service log, updates the round of the team logs.
+	 * 
+	 * @param currentRound
+	 *            The current round.
+	 */
+	public void setRound(int currentRound) {
+		round = currentRound;
+		marom.setRound(currentRound);
+		rakia.setRound(currentRound);
+
 		// initializes incident logs
 		HashMap<Byte, IncidentLog> incident_logs_current_round = new HashMap<>();
 		Collection<IncidentLog> inc_logs_all_rounds = (Collection<IncidentLog>) LogUtils
@@ -116,29 +137,12 @@ public class SimulationLog extends Thread implements Serializable {
 		}
 
 		@SuppressWarnings("unchecked")
-		HashMap<Byte, ServiceLog> service_logs_copy = (HashMap<Byte, ServiceLog>) LogUtils
-				.copy(service_logs);
-		@SuppressWarnings("unchecked")
 		HashMap<Byte, IncidentLog> incident_logs_current_round_copy = (HashMap<Byte, IncidentLog>) LogUtils
 				.copy(incident_logs_current_round);
 
-		marom = new TeamLog("Marom", service_logs, initDiff,
-				incident_logs_current_round);
-		rakia = new TeamLog("Rakia", service_logs_copy, initDiff,
-				incident_logs_current_round_copy);
+		marom.setIncidentLogs(incident_logs_current_round);
+		rakia.setIncidentLogs(incident_logs_current_round_copy);
 
-		System.out.println("SimulationLog: SimulationLog is initalized.");
-	}
-
-	/**
-	 * Sets he round of the service log, updates the round of the team logs.
-	 * 
-	 * @param currentRound The current round.
-	 */
-	public void setRound(int currentRound) {
-		round = currentRound;
-		marom.setRound(currentRound);
-		rakia.setRound(currentRound);
 		System.out.println("SimulationLog: round is set to " + currentRound
 				+ ".");
 	}
@@ -377,8 +381,7 @@ public class SimulationLog extends Thread implements Serializable {
 
 			for (String event : events) {
 				JsonObject row = new JsonObject();
-				row.addProperty("time", incident.getKey()
-						.getRunTime());
+				row.addProperty("time", incident.getKey().getRunTime());
 				row.addProperty("event_id", Integer.valueOf(event));
 				eventList.add(row);
 			}

@@ -13,7 +13,8 @@ function getServices() {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			console.log("getServices data:");
+			console.log(data);
 			servicesForSelection = data;
 
 		},
@@ -33,7 +34,8 @@ function getRounds() {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			console.log("getRounds data:");
+			console.log(data);
 			roundsForSelection = data;
 
 		},
@@ -76,7 +78,8 @@ function getMTRSPerTeam(serviceId) { //has to be before select2 script
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			console.log("getMTRSPerTeam data:");
+			console.log(data);
 			for(var i=0; i<Object.keys(data).length-1;i++){
 				var name = "round#"+ (i+1);
 				rounds.push(data[name]);
@@ -140,7 +143,8 @@ function getMTRSPieData(team, round, service) {
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			
+			console.log("getMTRSPieData data:");
+			console.log(data);
 			mtrsPieData = data.data;
 		},
 		error : function(e) {
@@ -193,7 +197,8 @@ function getMTRFPerRound(serviceId) { //has to be before select2 script
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			console.log("getMTRFPerRound data:");
+			console.log(data);
 			marom = data.maromData;
 			rakia = data.rakiaData;
 			labels = data.labels;
@@ -250,7 +255,8 @@ function getMTRSPerService(roundId) { //has to be called before select2 script
 		dataType : "json",
 		async : false,
 		success : function(data) {
-
+			console.log("getMTRSPerService data:");
+			console.log(data);
 			marom = data.maromData;
 			rakia = data.rakiaData;
 			labels = data.labels;

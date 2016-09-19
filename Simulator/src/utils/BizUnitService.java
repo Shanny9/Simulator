@@ -6,6 +6,10 @@ public class BizUnitService {
 	 */
 	private String bizUnitName;
 	/**
+	 * Indicates if the business unit is a division or a department 
+	 */
+	private boolean isDivision;
+	/**
 	 * The id of the service
 	 */
 	private byte serviceId;
@@ -31,6 +35,14 @@ public class BizUnitService {
 
 	public void setBizUnitName(String bizUnitName) {
 		this.bizUnitName = bizUnitName;
+	}
+	
+	public boolean getIsDivision(){
+		return isDivision;
+	}
+	
+	public void setIsDivision(boolean isDivision){
+		this.isDivision = isDivision;
 	}
 
 	public byte getServiceId() {

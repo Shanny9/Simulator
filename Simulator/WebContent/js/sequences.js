@@ -17,8 +17,28 @@ function ColorLuminance(hex, lum) {
 
 	return rgb;
 }
-//TODO: get titles function here
-titles = new Array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);
+
+var titles = new Array();
+function getTitles(){
+	$.ajax({
+		url : "DashboardController",
+		data : {
+			action : "getBizUnitsTitles",
+			courseName : courseName
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			console.log("getTitles data:");
+			console.log(data);
+			titles = data;
+
+		},
+		error : function(e) {
+			console.log("Error in getTitles");
+		}
+	});
+}
 
 var catagory1 = new Object();
 var catagory2 = new Object();
@@ -31,12 +51,16 @@ function divideLegend(catagories, titles){
 	Object.keys(catagories).forEach(function(key,index) {
 	    // key: the name of the object key
 	    // index: the ordinal position of the key within the object 
-		if(index >= 0 && index < length)
-			catagory1[key] = catagories[key];
-		if(index >= length && index<( (length*2) + (length%2) ))
-			catagory2[key] = catagories[key];
-/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
-			catagory3[key] = catagories[key];*/
+		if(catagories[key]!=null) { //for division without departments
+			
+			if(index >= 0 && index < length)
+				catagory1[key] = catagories[key];
+			if(index >= length && index<( (length*2) + (length%2) ))
+				catagory2[key] = catagories[key];
+	/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
+				catagory3[key] = catagories[key];*/
+		}
+
 	});
 	
 	for(var i=0;i<titles.length;i++){
@@ -52,7 +76,26 @@ function getCatagories(){
 	var colorsTry = ["#1f78b4", "#33a02c", "#fb9a99",
 	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#ffff99"
 	                 ,"#b15928","#8d8d8d", "#bc3ab1", "#b40845","#04703c"];
-	var dJson =[ {
+	var dJson;
+	/* get catagories from server */
+	$.ajax({
+		url : "DashboardController",
+		data : {
+			action : "getBizUnitsHierachical"
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			console.log("getCatagories data:");
+			console.log(data);
+			dJson = data;
+
+		},
+		error : function(e) {
+			console.log("Error in getCatagories");
+		}
+	});
+/*	var dJson =[ {
 			"division":"Cust Service & Sales",
 			"departments":[
 			"dep1",
@@ -87,7 +130,7 @@ function getCatagories(){
 								"dep115",
 								"dep116",
 								"dep117"] }
-		];
+		];*/
 	var catagory = new Object();
 	$.each(dJson, function(key, item){
 		var div = item.division;
@@ -127,6 +170,8 @@ var b = {
 };*/
 var colors = getCatagories();
 /* Legend Divided */
+/* Hover Titles */
+getTitles();
 divideLegend(colors, titles);
 
 // Total size of all segments; we set this later, after loading the data.

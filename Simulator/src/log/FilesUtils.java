@@ -16,6 +16,8 @@ import java.util.Date;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
+import utils.SimulationTime;
+
 public class FilesUtils {
 	private static String path = "";
 	private static final String date_time_foramt = "dd.MM.yy HH.mm";
@@ -194,6 +196,7 @@ public class FilesUtils {
 	 * @return The course's settings.
 	 */
 	public static Settings openSettings(String courseName) {
+		Settings settings = null;
 		try {
 			// checks if course directory exists
 			File file = new File(getPath() + File.separator + courseName);
@@ -218,14 +221,13 @@ public class FilesUtils {
 			String fileName = settingsFiles[0].getName();
 			String fullPath = getPath() + File.separator + courseName
 					+ File.separator + fileName;
-
+			
 			if (fileName.endsWith(".ser")) {
 				FileInputStream fileIn = new FileInputStream(fullPath);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
-				Settings settings = (Settings) in.readObject();
+				settings = (Settings) in.readObject();
 				in.close();
 				fileIn.close();
-				return settings;
 
 			} else if (fileName.endsWith(".txt")) {
 				fullPath = fullPath.replace("settings.ser", "settings.txt");
@@ -237,11 +239,8 @@ public class FilesUtils {
 						input += line;
 					}
 
-					Settings sett = Settings.extractFromText(input);
-					saveSettings(sett);
-
-					return sett;
-
+					settings = Settings.extractFromText(input);
+					saveSettings(settings);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -250,10 +249,13 @@ public class FilesUtils {
 			// TODO: tell the user reading the file has failed. May occur if the
 			// Settings class has changed.
 			i.printStackTrace();
-			return null;
 		}
-		return null;
-
+		if (settings != null){
+			SimulationTime.initialize(settings.getRunTime(),
+					settings.getPauseTime(), settings.getSessionsPerRound(),
+					settings.getRounds());
+		}
+		return settings;
 	}
 
 	/**

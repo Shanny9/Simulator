@@ -31,8 +31,9 @@ public class LogManager implements Runnable {
 					.println("LogManager initialize method failed: LogManager is already running");
 			return;
 		}
-
+		
 		SimulationLog.getInstance().initialize(setings);
+		elapsed_time = new SimulationTime(0);
 		isRunning = false;
 		isInitialized = true;
 	}
@@ -123,6 +124,7 @@ public class LogManager implements Runnable {
 	 */
 	@Override
 	public void run() {
+		System.out.println("LogManager: elapsed_time= " + elapsed_time);
 		if (isRunning) {
 			// occurs every second
 			elapsed_time.increment();

@@ -18,6 +18,8 @@ public class SimulationTime implements Serializable {
 	private static int rounds;
 
 	private static int totalSimulationRunTime;
+	
+	private static boolean isInitialized = false;
 
 	private int time;
 
@@ -28,9 +30,17 @@ public class SimulationTime implements Serializable {
 		sessions_in_round = _sessions_in_round;
 		rounds = _rounds;
 		totalSimulationRunTime = rounds * sessions_in_round * run_time;
+		isInitialized = true;
 	}
-
+	
 	public SimulationTime(int time) {
+		if (!isInitialized){
+			try {
+				throw new Exception("SimulationTime: SimulationTime is not initialized.");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		if (notNegative(time) && !isTooBig(time)) {
 			this.time = time;
 		}
@@ -39,7 +49,7 @@ public class SimulationTime implements Serializable {
 	private boolean notNegative(int timeToCheck) {
 		if (timeToCheck < 0) {
 			try {
-				throw new Exception("SimulationTime: Time cannot be negative.");
+				throw new Exception("SimulationTime: Time cannot be negative (" + timeToCheck + " < 0).");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -52,7 +62,7 @@ public class SimulationTime implements Serializable {
 		if (timeToCheck > 3600) {
 			try {
 				throw new Exception(
-						"SimulationTime: Time cannot exceed one day.");
+						"SimulationTime: Time cannot exceed one day (" + timeToCheck + " > 3600).");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return true;
@@ -62,7 +72,7 @@ public class SimulationTime implements Serializable {
 		if (timeToCheck > totalSimulationRunTime) {
 			try {
 				throw new Exception(
-						"SimulationTime: Time cannot exceed the simulation's duration.");
+						"SimulationTime: Time cannot exceed the simulation's duration (" + timeToCheck + " > " + totalSimulationRunTime + ").");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return true;
@@ -72,7 +82,8 @@ public class SimulationTime implements Serializable {
 	}
 
 	public int getRound() {
-		return time / rounds;
+		int roundRunTime = run_time * sessions_in_round;
+		return (time / roundRunTime) + ((time % roundRunTime == 0) ? 0 : 1);
 	}
 
 	public int getSession() {
@@ -120,6 +131,36 @@ public class SimulationTime implements Serializable {
 
 	public boolean equals(int other) {
 		return equals(new SimulationTime(other));
+	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + time;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SimulationTime other = (SimulationTime) obj;
+		if (time != other.time)
+			return false;
+		return true;
 	}
 
 	public String toString() {

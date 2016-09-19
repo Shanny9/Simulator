@@ -60,7 +60,7 @@ public class TeamLog implements Serializable {
 	 *            the team's initial incident logs
 	 */
 	TeamLog(String teamName, HashMap<Byte, ServiceLog> service_logs,
-			double initDiff, HashMap<Byte, IncidentLog> incident_logs) {
+			double initDiff) {
 
 		super();
 		this.teamName = teamName;
@@ -70,7 +70,6 @@ public class TeamLog implements Serializable {
 		this.isFinished = false;
 		this.service_logs.putAll(service_logs);
 		this.diff = initDiff;
-		this.incident_logs.putAll(incident_logs);
 	}
 
 	/**
@@ -95,6 +94,10 @@ public class TeamLog implements Serializable {
 
 		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
 		this.profits.set(0, init_capital);
+	}
+	
+	void setIncidentLogs(HashMap<Byte,IncidentLog> inc_logs){
+		this.incident_logs.putAll(inc_logs);
 	}
 
 	/**

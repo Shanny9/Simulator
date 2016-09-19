@@ -41,9 +41,14 @@ public class LogUtils {
 	 */
 	static HashMap<Byte, HashSet<Byte>> getDBAffectingCIs() {
 		HashMap<Byte, HashSet<Byte>> dbAffectingCis = new HashMap<>();
-		TblCMDBDao dao = new TblCMDBDaoImpl();
-
-		for (TblCMDB cmdb : dao.getAllCMDBs()) {
+		TblCMDBDao dao = new TblCMDBDaoImpl();		
+		Collection<TblCMDB> all_cmdbs = dao.getAllCMDBs();
+		
+		if (all_cmdbs == null){
+			return null;
+		}
+		
+		for (TblCMDB cmdb : all_cmdbs) {
 			byte ci = cmdb.getCiId();
 			HashSet<Byte> services = dbAffectingCis.get(ci);
 			if (services == null) {
@@ -61,8 +66,13 @@ public class LogUtils {
 	static HashMap<Byte, HashSet<Byte>> getCIsAndTheirIncidents() {
 		HashMap<Byte, HashSet<Byte>> ci_incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
-
-		for (TblIncident incident : dao.getAllIncidents()) {
+		Collection<TblIncident> all_incidents = dao.getAllIncidents();
+		
+		if (all_incidents == null){
+			return null;
+		}
+		
+		for (TblIncident incident : all_incidents) {
 			byte ci = incident.getCiId();
 			HashSet<Byte> incidents = ci_incidents.get(ci);
 			if (incidents == null) {
@@ -80,8 +90,13 @@ public class LogUtils {
 	static HashMap<Byte, HashSet<Byte>> getDBAffectedServices() {
 		HashMap<Byte, HashSet<Byte>> dbAffectedServices = new HashMap<>();
 		TblCMDBDao dao = new TblCMDBDaoImpl();
-
-		for (TblCMDB cmdb : dao.getAllCMDBs()) {
+		Collection<TblCMDB> all_cmdbs = dao.getAllCMDBs();
+		
+		if (all_cmdbs == null){
+			return null;
+		}
+		
+		for (TblCMDB cmdb : all_cmdbs) {
 			byte service = cmdb.getServiceId();
 			HashSet<Byte> cis = dbAffectedServices.get(service);
 			if (cis == null) {
@@ -99,7 +114,13 @@ public class LogUtils {
 	static HashMap<Byte, Double> getCISolCosts() {
 		HashMap<Byte, Double> ciSolCosts = new HashMap<>();
 		TblCIDao dao = new TblCIDaoImpl();
-		for (TblCI ci : dao.getAllCIs()) {
+		Collection<TblCI> all_cis = dao.getAllCIs();
+		
+		if (all_cis == null){
+			return null;
+		}
+		
+		for (TblCI ci : all_cis) {
 			byte ci_id = ci.getCiId();
 			String supName = ci.getSupplierName1();
 			TblSupplier sup = new TblSupplierDaoImpl().getSupplierById(supName);
@@ -149,7 +170,13 @@ public class LogUtils {
 	static HashMap<Byte, IncidentLog> getIncidentLogs() {
 		HashMap<Byte, IncidentLog> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
-		for (TblIncident inc : dao.getAllIncidents()) {
+		Collection<TblIncident> all_incidents = dao.getAllIncidents();
+		
+		if (all_incidents == null){
+			return null;
+		}
+		
+		for (TblIncident inc : all_incidents) {
 			byte inc_id = (byte) inc.getIncidentId();
 			byte ci_id = (byte) inc.getCiId();
 			SimulationTime start_time = inc.getIncidentTime();
@@ -165,9 +192,13 @@ public class LogUtils {
 		HashMap<SimulationTime, Byte> incidents = new HashMap<>();
 		TblIncidentDao dao = new TblIncidentDaoImpl();
 		Collection<TblIncident> all_incidents = dao.getAllIncidents();
+		
+		if (all_incidents == null){
+			return null;
+		}
+		
 		for (TblIncident inc : all_incidents) {
-			incidents.put(inc.getIncidentTime(),
-					(byte) inc.getIncidentId());
+			incidents.put(inc.getIncidentTime(), (byte) inc.getIncidentId());
 		}
 		return incidents;
 	}
@@ -179,8 +210,13 @@ public class LogUtils {
 	public static HashMap<Byte, HashSet<String>> getIncidentEvents() {
 		HashMap<Byte, HashSet<String>> incident_events = new HashMap<>();
 		TblEventDao dao = new TblEventDaoImpl();
-
-		for (TblEvent event : dao.getAllEvents()) {
+		Collection<TblEvent> all_events = dao.getAllEvents();
+		
+		if (all_events == null){
+			return null;
+		}
+		
+		for (TblEvent event : all_events) {
 			byte incident = event.getIncidentId();
 			HashSet<String> events = incident_events.get(incident);
 			if (events == null) {
@@ -203,8 +239,13 @@ public class LogUtils {
 				.getDBAffectedServices();
 		HashMap<Byte, HashSet<Byte>> ci_incidents = LogUtils
 				.getCIsAndTheirIncidents();
-
-		for (TblService service : dao.getAllServices()) {
+		Collection<TblService> all_services = dao.getAllServices();
+		
+		if (all_services == null){
+			return null;
+		}
+		
+		for (TblService service : all_services) {
 			HashSet<Byte> incidents = service_incidents.get(service
 					.getServiceId());
 			if (incidents == null) {
@@ -213,13 +254,19 @@ public class LogUtils {
 
 			HashSet<Byte> affecting_cis = affected_services.get(service
 					.getServiceId());
+			
 			if (affecting_cis == null) {
 				continue;
 			}
 
 			HashSet<Byte> affecting_incidents = new HashSet<>();
+			HashSet<Byte> inc_of_ci = new HashSet<>();
+			
 			for (Byte ci : affecting_cis) {
-				affecting_incidents.addAll(ci_incidents.get(ci));
+				inc_of_ci = ci_incidents.get(ci);
+				if (inc_of_ci != null) {
+					affecting_incidents.addAll(inc_of_ci);
+				}
 			}
 
 			incidents.addAll(affecting_incidents);

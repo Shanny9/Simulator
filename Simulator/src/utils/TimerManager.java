@@ -31,9 +31,6 @@ public class TimerManager implements ServletContextListener {
 
 	public static void startSimulator(Settings settings, int round) {
 
-		SimulationTime.initialize(settings.getRunTime(),
-				settings.getPauseTime(), settings.getSessionsPerRound(),
-				settings.getRounds());
 		ci = ClockIncrementor.getInstance();
 		ClockIncrementor.initialize(settings);
 

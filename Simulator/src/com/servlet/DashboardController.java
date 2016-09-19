@@ -105,9 +105,10 @@ public class DashboardController extends HttpServlet {
 					DataMaker.getBizUnits(false, false));
 			break;
 		case "generateITBudgetBreakdown":
-			Integer roundBudget = Integer.parseInt(request.getParameter("round"));
+//			Integer roundBudget = Integer.parseInt(request.getParameter("round"));
 			DataMaker.generateITBudgetBreakdown(course, 1, "marom", (byte)0);
-		
+			response.setContentType("text/html");
+			response.getWriter().print("OK");
 			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();

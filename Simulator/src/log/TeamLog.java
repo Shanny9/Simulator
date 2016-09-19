@@ -95,8 +95,8 @@ public class TeamLog implements Serializable {
 		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
 		this.profits.set(0, init_capital);
 	}
-	
-	void setIncidentLogs(HashMap<Byte,IncidentLog> inc_logs){
+
+	void setIncidentLogs(HashMap<Byte, IncidentLog> inc_logs) {
 		this.incident_logs.putAll(inc_logs);
 	}
 
@@ -266,27 +266,34 @@ public class TeamLog implements Serializable {
 		// times.
 		SimulationTime endTime = SimulationLog.getInstance().getSettings()
 				.getRoundRunTimeEnd(round);
-		for (ServiceLog service : service_logs.values()) {
-			service.stop(endTime);
+		if (service_logs != null) {
+			for (ServiceLog service : service_logs.values()) {
+				service.stop(endTime);
+			}
 		}
 
 		// closes all unclosed incidents
-		for (IncidentLog inc_log : incident_logs.values()) {
-			inc_log.close(endTime);
+		if (incident_logs != null) {
+			for (IncidentLog inc_log : incident_logs.values()) {
+				inc_log.close(endTime);
+			}
 		}
 
 		// iterates the team's purchase list, retrieves the cost of each CI
 		// purchase, calculates the cost of each of the CI's affected services
 		// and updates the services' purchase costs accordingly.
-		for (Byte ci_id : purchases.values()) {
-			double ci_solution_cost = SimulationLog.getInstance()
-					.getCISolutionCost(ci_id);
-			HashSet<Byte> affected_services = SimulationLog.getInstance()
-					.getAffectingCis().get(ci_id);
-			double service_solution_cost = ci_solution_cost
-					/ affected_services.size();
-			for (Byte service_id : affected_services) {
-				service_logs.get(service_id).purchase(service_solution_cost);
+		if (purchases != null) {
+			for (Byte ci_id : purchases.values()) {
+				double ci_solution_cost = SimulationLog.getInstance()
+						.getCISolutionCost(ci_id);
+				HashSet<Byte> affected_services = SimulationLog.getInstance()
+						.getAffectingCis().get(ci_id);
+				double service_solution_cost = ci_solution_cost
+						/ affected_services.size();
+				for (Byte service_id : affected_services) {
+					service_logs.get(service_id)
+							.purchase(service_solution_cost);
+				}
 			}
 		}
 		this.isFinished = true;
@@ -326,9 +333,11 @@ public class TeamLog implements Serializable {
 	 *            Current time
 	 */
 	public void fixAllIncidents(SimulationTime time) {
-		for (byte inc_id : incident_logs.keySet()) {
-			// TODO: change false back to true
-			incidentSolved(inc_id, time, false);
+		if (incident_logs != null) {
+			for (byte inc_id : incident_logs.keySet()) {
+				// TODO: change false back to true
+				incidentSolved(inc_id, time, false);
+			}
 		}
 	}
 
@@ -345,9 +354,11 @@ public class TeamLog implements Serializable {
 
 	public HashMap<Byte, IncidentLog> getClosedIncident_logs() {
 		HashMap<Byte, IncidentLog> result = new HashMap<>();
-		for (IncidentLog incLog : incident_logs.values()) {
-			if (!incLog.isOpen()) {
-				result.put(incLog.getIncident_id(), incLog);
+		if (incident_logs != null) {
+			for (IncidentLog incLog : incident_logs.values()) {
+				if (!incLog.isOpen()) {
+					result.put(incLog.getIncident_id(), incLog);
+				}
 			}
 		}
 		return result;
@@ -361,9 +372,11 @@ public class TeamLog implements Serializable {
 		int trs = 0;
 		int failures = 0;
 
-		for (ServiceLog sl : service_logs.values()) {
-			trs += sl.getTotalDownTime();
-			failures += sl.getNumOfFailures();
+		if (service_logs != null) {
+			for (ServiceLog sl : service_logs.values()) {
+				trs += sl.getTotalDownTime();
+				failures += sl.getNumOfFailures();
+			}
 		}
 
 		if (failures == 0) {
@@ -379,9 +392,11 @@ public class TeamLog implements Serializable {
 	Double getMTBF() {
 		int tbf = 0;
 		int failures = 0;
-		for (ServiceLog sl : service_logs.values()) {
-			tbf += sl.getTotalUpTime();
-			failures += sl.getNumOfFailures();
+		if (service_logs != null) {
+			for (ServiceLog sl : service_logs.values()) {
+				tbf += sl.getTotalUpTime();
+				failures += sl.getNumOfFailures();
+			}
 		}
 		if (failures == 0) {
 			return null;
@@ -396,25 +411,33 @@ public class TeamLog implements Serializable {
 	public double getUpTimePercentage() {
 		int sum = 0;
 
-		for (ServiceLog sl : service_logs.values()) {
-			sum += sl.getUpTimePercentage();
+		if (service_logs != null) {
+			for (ServiceLog sl : service_logs.values()) {
+				sum += sl.getUpTimePercentage();
+			}
 		}
 		return (double) sum / service_logs.size();
 	}
 
 	public String toString() {
 		String str = "Team " + teamName + "\n========\n\nIncidents\n--------\n";
-		for (IncidentLog il : incident_logs.values()) {
-			str += il.toString() + "\n";
+		if (incident_logs != null) {
+			for (IncidentLog il : incident_logs.values()) {
+				str += il.toString() + "\n";
+			}
 		}
 		str += "\nServices\n--------\n";
-		for (ServiceLog sl : service_logs.values()) {
-			str += sl.toString() + "\n";
+		if (service_logs != null) {
+			for (ServiceLog sl : service_logs.values()) {
+				str += sl.toString() + "\n";
+			}
 		}
 		str += "\nPurchases\n--------\n";
-		for (Entry<Integer, Byte> entry : purchases.entrySet()) {
-			str += "Time= " + entry.getKey() + ", CI ID= " + entry.getValue()
-					+ "\n";
+		if (purchases != null) {
+			for (Entry<Integer, Byte> entry : purchases.entrySet()) {
+				str += "Time= " + entry.getKey() + ", CI ID= "
+						+ entry.getValue() + "\n";
+			}
 		}
 		return str;
 	}

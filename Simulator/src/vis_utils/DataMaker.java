@@ -1,5 +1,6 @@
 package vis_utils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -62,28 +63,32 @@ public class DataMaker {
 		HashMap<String, Set<String>> bizUnits = new HashMap<>();
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
+		String div_name;
+		String dep_name;
 		for (TblDepartment dep : all_departments) {
 			Set<String> div_departments = bizUnits.get(dep.getDivisionName());
 			if (div_departments == null) {
 				div_departments = new HashSet<>();
 			}
-			if (isAbbreviated) {
-				div_departments.add(dep.getShortName());
-				bizUnits.put(abbv_divisions.get(dep.getDivisionName()),
-						div_departments);
-			} else {
-				div_departments.add(dep.getDepartmentName());
-				bizUnits.put(dep.getDivisionName(), div_departments);
-			}
+			div_name = (isAbbreviated) ? abbv_divisions.get(dep
+					.getDivisionName()) : dep.getDivisionName();
+			dep_name = (isAbbreviated) ? dep.getShortName() : dep
+					.getDepartmentName();
+
+			div_departments.add(dep_name);
+			bizUnits.put(div_name, div_departments);
+
 		}
 
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllDivisions();
+
 		for (TblDivision div : all_divisions) {
-			if (isAbbreviated) {
-				bizUnits.put(abbv_divisions.get(div.getShortName()), null);
-			} else {
-				bizUnits.put(div.getDivisionName(), null);
+			div_name = (isAbbreviated) ? div.getShortName() : div
+					.getDivisionName();
+
+			if (!bizUnits.containsKey(div_name)) {
+				bizUnits.put(div_name, null);
 			}
 		}
 
@@ -204,6 +209,7 @@ public class DataMaker {
 				fileWriter.append(NEW_LINE_SEPARATOR);
 
 				// Writes a new BizUnitService object list to the CSV file
+				
 				for (BizUnitService bus : bizUnitServiceArr) {
 					fileWriter.append(bus.getBizUnitName());
 					fileWriter.append(COMMA_DELIMITER);
@@ -883,15 +889,14 @@ public class DataMaker {
 					PreparedStatement pstmt2 = DBUtility.getConnection()
 							.prepareStatement(
 									Queries.countDivisionsUsingSameService);
-					pstmt2.setString(1, division_name);
-					pstmt2.setByte(2, ser.getServiceId());
+					pstmt2.setByte(1, ser.getServiceId());
 					ResultSet rs2 = pstmt2.executeQuery();
 					if (rs2.next()) {
 						numOfDivisionsUsingThisService = rs2.getInt("count");
 					}
 
 					double divisionPercentage = (numOfDivisionsUsingThisService == 0) ? 1
-							: 1 / numOfDivisionsUsingThisService;
+							: 1.d / numOfDivisionsUsingThisService;
 
 					bizUnitService = new BizUnitService();
 					bizUnitService.setBizUnitName(division_name);
@@ -909,7 +914,7 @@ public class DataMaker {
 					ResultSet rs3 = pstmt3.executeQuery();
 
 					while (rs3.next()) {
-						String department_name = rs1
+						String department_name = rs3
 								.getString("department_name");
 						int numOfDepartmentsInDivisionUsingSameService = 0;
 						PreparedStatement pstmt4 = DBUtility
@@ -925,7 +930,7 @@ public class DataMaker {
 						}
 
 						double departmentPercentageInDivision = (numOfDepartmentsInDivisionUsingSameService == 0) ? 1
-								: 1 / numOfDepartmentsInDivisionUsingSameService;
+								: 1.d / numOfDepartmentsInDivisionUsingSameService;
 
 						double departmentPercentage = divisionPercentage
 								* departmentPercentageInDivision;

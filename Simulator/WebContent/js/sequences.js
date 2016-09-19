@@ -21,17 +21,19 @@ function generateFile(){
 	$.ajax({
 		url : "DashboardController",
 		data : {
-			action : "generateITBudgetBreakdown"
+			action : "generateITBudgetBreakdown",
+			courseName: courseName
 		},
-		dataType : "json",
+		dataType : "text",
 		async : false,
-		success : function() {
+		success : function(msg) {
 			console.log("generateITBudgetBreakdown:OK");
 
 		},
-		error : function(e) {
-			console.log("Error in generateITBudgetBreakdown");
-		}
+		error: function(xhr, status, error) {
+			  var err = eval("(" + xhr.responseText + ")");
+			  console.log(err.Message);
+			}
 	});
 }
 

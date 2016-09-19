@@ -93,14 +93,16 @@ public class SimulationLog extends Thread implements Serializable {
 		double initDiff = 0;
 
 		// initializes service logs
-		for (TblService service : services) {
-			byte service_id = service.getServiceId();
-			service_logs.put(
-					service_id,
-					new ServiceLog(service_id, service.getFixedCost(), service
-							.getFixedIncome(), serviceDownTimeCosts
-							.get(service_id)));
-			initDiff += service_logs.get(service_id).getDiff();
+		if (services != null) {
+			for (TblService service : services) {
+				byte service_id = service.getServiceId();
+				service_logs.put(
+						service_id,
+						new ServiceLog(service_id, service.getFixedCost(),
+								service.getFixedIncome(), serviceDownTimeCosts
+										.get(service_id)));
+				initDiff += service_logs.get(service_id).getDiff();
+			}
 		}
 
 		@SuppressWarnings("unchecked")
@@ -128,11 +130,13 @@ public class SimulationLog extends Thread implements Serializable {
 		HashMap<Byte, IncidentLog> incident_logs_current_round = new HashMap<>();
 		Collection<IncidentLog> inc_logs_all_rounds = (Collection<IncidentLog>) LogUtils
 				.getIncidentLogs().values();
-		for (IncidentLog inc_log : inc_logs_all_rounds) {
-			int inc_round = inc_log.getStart_time().getRound();
-			if (inc_round == round) {
-				incident_logs_current_round.put(inc_log.getIncident_id(),
-						inc_log);
+		if (inc_logs_all_rounds != null) {
+			for (IncidentLog inc_log : inc_logs_all_rounds) {
+				int inc_round = inc_log.getStart_time().getRound();
+				if (inc_round == round) {
+					incident_logs_current_round.put(inc_log.getIncident_id(),
+							inc_log);
+				}
 			}
 		}
 
@@ -371,19 +375,22 @@ public class SimulationLog extends Thread implements Serializable {
 	public List<JsonObject> getEventsForHomeScreen() {
 		List<JsonObject> eventList = new ArrayList<JsonObject>();
 
-		for (Map.Entry<SimulationTime, Byte> incident : incident_times
-				.entrySet()) {
-			HashSet<String> events = incident_events.get(incident.getValue());
+		if (incident_times != null) {
+			for (Map.Entry<SimulationTime, Byte> incident : incident_times
+					.entrySet()) {
+				HashSet<String> events = incident_events.get(incident
+						.getValue());
 
-			if (events == null) {
-				continue;
-			}
+				if (events == null) {
+					continue;
+				}
 
-			for (String event : events) {
-				JsonObject row = new JsonObject();
-				row.addProperty("time", incident.getKey().getRunTime());
-				row.addProperty("event_id", Integer.valueOf(event));
-				eventList.add(row);
+				for (String event : events) {
+					JsonObject row = new JsonObject();
+					row.addProperty("time", incident.getKey().getRunTime());
+					row.addProperty("event_id", Integer.valueOf(event));
+					eventList.add(row);
+				}
 			}
 		}
 		return eventList;

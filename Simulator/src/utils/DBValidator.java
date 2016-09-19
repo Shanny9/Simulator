@@ -44,6 +44,10 @@ public class DBValidator {
 			warnings.set(instance, 0);
 			Method[] methods = c.getDeclaredMethods();
 
+			if (methods == null) {
+				return;
+			}
+
 			for (Method method : methods) {
 				String method_name = method.getName();
 				if (!method_name.startsWith("validate")) {
@@ -55,7 +59,8 @@ public class DBValidator {
 				}
 				method.invoke(instance);
 			}
-			System.out.println("Total DB warnings: " + warnings.getInt(instance) + ".");
+			System.out.println("Total DB warnings: "
+					+ warnings.getInt(instance) + ".");
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchFieldException | SecurityException e) {
@@ -75,23 +80,28 @@ public class DBValidator {
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllIncidents();
 		HashSet<Byte> all_incidents_ci_ids = new HashSet<>();
-		for (TblIncident inc : all_incidents) {
-			all_incidents_ci_ids.add(inc.getCiId());
+
+		if (all_incidents != null) {
+			for (TblIncident inc : all_incidents) {
+				all_incidents_ci_ids.add(inc.getCiId());
+			}
 		}
 
-		for (TblCI ci : all_cis) {
-			byte ci_id = ci.getCiId();
+		if (all_cis != null) {
+			for (TblCI ci : all_cis) {
+				byte ci_id = ci.getCiId();
 
-			if (!all_cmdb_ci_ids.contains(ci_id)) {
-				System.err.println("CI '" + ci_id
-						+ "' is not used in table 'tblCMDB'.");
-				warnings++;
-			}
+				if (!all_cmdb_ci_ids.contains(ci_id)) {
+					System.err.println("CI '" + ci_id
+							+ "' is not used in table 'tblCMDB'.");
+					warnings++;
+				}
 
-			if (!all_incidents_ci_ids.contains(ci_id)) {
-				System.err.println("CI '" + ci_id
-						+ "' is not used in table 'tblIncident'.");
-				warnings++;
+				if (!all_incidents_ci_ids.contains(ci_id)) {
+					System.err.println("CI '" + ci_id
+							+ "' is not used in table 'tblIncident'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -103,17 +113,23 @@ public class DBValidator {
 		Collection<TblService_Department> all_service_departments = new TblServiceDepartmentDaoImpl()
 				.getAllServiceDepartments();
 		HashSet<String> all_service_department_names = new HashSet<>();
-		for (TblService_Department ser_dep : all_service_departments) {
-			all_service_department_names.add(ser_dep.getDepartmentName());
+		if (all_service_departments != null) {
+			for (TblService_Department ser_dep : all_service_departments) {
+				all_service_department_names.add(ser_dep.getDepartmentName());
+			}
 		}
 
-		for (TblDepartment dep : all_departments) {
-			String dep_name = dep.getDepartmentName();
+		if (all_departments != null) {
+			for (TblDepartment dep : all_departments) {
+				String dep_name = dep.getDepartmentName();
 
-			if (!all_service_departments.contains(dep_name)) {
-				System.err.println("Department '" + dep_name
-						+ "' is not used in table 'tblService_Department'.");
-				warnings++;
+				if (!all_service_departments.contains(dep_name)) {
+					System.err
+							.println("Department '"
+									+ dep_name
+									+ "' is not used in table 'tblService_Department'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -125,30 +141,36 @@ public class DBValidator {
 		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
 				.getAllServiceDivisions();
 		HashSet<String> all_service_division_names = new HashSet<>();
-		for (TblService_Division ser_div : all_service_divisions) {
-			all_service_division_names.add(ser_div.getDivisionName());
+		if (all_service_divisions != null) {
+			for (TblService_Division ser_div : all_service_divisions) {
+				all_service_division_names.add(ser_div.getDivisionName());
+			}
 		}
 
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
 		HashSet<String> all_departments_divisions = new HashSet<>();
-		for (TblDepartment dep : all_departments) {
-			all_departments_divisions.add(dep.getDivisionName());
+		if (all_departments != null) {
+			for (TblDepartment dep : all_departments) {
+				all_departments_divisions.add(dep.getDivisionName());
+			}
 		}
 
-		for (TblDivision div : all_divisions) {
-			String div_name = div.getDivisionName();
+		if (all_divisions != null) {
+			for (TblDivision div : all_divisions) {
+				String div_name = div.getDivisionName();
 
-			if (!all_service_division_names.contains(div_name)) {
-				System.err.println("Division '" + div_name
-						+ "' is not used in table 'tblService_Division'.");
-				warnings++;
-			}
+				if (!all_service_division_names.contains(div_name)) {
+					System.err.println("Division '" + div_name
+							+ "' is not used in table 'tblService_Division'.");
+					warnings++;
+				}
 
-			if (!all_departments_divisions.contains(div_name)) {
-				System.err.println("Division '" + div_name
-						+ "' is not used in table 'tblDepartment'.");
-				warnings++;
+				if (!all_departments_divisions.contains(div_name)) {
+					System.err.println("Division '" + div_name
+							+ "' is not used in table 'tblDepartment'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -159,17 +181,21 @@ public class DBValidator {
 
 		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
 		HashSet<Byte> all_event_incident_ids = new HashSet<>();
-		for (TblEvent event : all_events) {
-			all_event_incident_ids.add(event.getIncidentId());
+		if (all_events != null) {
+			for (TblEvent event : all_events) {
+				all_event_incident_ids.add(event.getIncidentId());
+			}
 		}
 
-		for (TblIncident div : all_incidents) {
-			byte inc_id = div.getIncidentId();
+		if (all_incidents != null) {
+			for (TblIncident div : all_incidents) {
+				byte inc_id = div.getIncidentId();
 
-			if (!all_event_incident_ids.contains(inc_id)) {
-				System.err.println("Incident '" + inc_id
-						+ "' is not used in table 'tblEvent'.");
-				warnings++;
+				if (!all_event_incident_ids.contains(inc_id)) {
+					System.err.println("Incident '" + inc_id
+							+ "' is not used in table 'tblEvent'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -181,38 +207,46 @@ public class DBValidator {
 		Collection<TblService_Department> all_service_departments = new TblServiceDepartmentDaoImpl()
 				.getAllServiceDepartments();
 		HashSet<Byte> all_service_bizUnit_ids = new HashSet<>();
-		for (TblService_Department ser_dep : all_service_departments) {
-			all_service_bizUnit_ids.add(ser_dep.getService_ID());
+		if (all_service_departments != null) {
+			for (TblService_Department ser_dep : all_service_departments) {
+				all_service_bizUnit_ids.add(ser_dep.getService_ID());
+			}
 		}
 
 		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
 				.getAllServiceDivisions();
-		for (TblService_Division ser_div : all_service_divisions) {
-			all_service_bizUnit_ids.add(ser_div.getService_ID());
+		if (all_service_divisions != null) {
+			for (TblService_Division ser_div : all_service_divisions) {
+				all_service_bizUnit_ids.add(ser_div.getService_ID());
+			}
 		}
 
 		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
 		HashSet<Byte> all_event_service_ids = new HashSet<>();
-		for (TblEvent event : all_events) {
-			all_event_service_ids.add(event.getServiceId());
+		if (all_events != null) {
+			for (TblEvent event : all_events) {
+				all_event_service_ids.add(event.getServiceId());
+			}
 		}
 
-		for (TblService ser : all_services) {
-			byte ser_id = ser.getServiceId();
+		if (all_services != null) {
+			for (TblService ser : all_services) {
+				byte ser_id = ser.getServiceId();
 
-			if (!all_service_bizUnit_ids.contains(ser_id)) {
-				System.err
-						.println("Service '"
-								+ ser_id
-								+ "' is not used in tables"
-								+ " 'tblService_Division' and 'tblService_Department'.");
-				warnings++;
-			}
+				if (!all_service_bizUnit_ids.contains(ser_id)) {
+					System.err
+							.println("Service '"
+									+ ser_id
+									+ "' is not used in tables"
+									+ " 'tblService_Division' and 'tblService_Department'.");
+					warnings++;
+				}
 
-			if (!all_event_service_ids.contains(ser_id)) {
-				System.err.println("Service '" + ser_id
-						+ "' is not used in table 'tblEvent'.");
-				warnings++;
+				if (!all_event_service_ids.contains(ser_id)) {
+					System.err.println("Service '" + ser_id
+							+ "' is not used in table 'tblEvent'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -223,24 +257,30 @@ public class DBValidator {
 
 		Collection<TblCMDB> all_cmdbs = new TblCMDBDaoImpl().getAllCMDBs();
 		HashSet<Byte> all_cmdb_ci_ids = new HashSet<>();
-		for (TblCMDB cmdb : all_cmdbs) {
-			all_cmdb_ci_ids.add(cmdb.getCiId());
+		if (all_cmdbs != null) {
+			for (TblCMDB cmdb : all_cmdbs) {
+				all_cmdb_ci_ids.add(cmdb.getCiId());
+			}
 		}
 
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllIncidents();
 		HashSet<Integer> all_incidents_solutions = new HashSet<>();
-		for (TblIncident inc : all_incidents) {
-			all_incidents_solutions.add(inc.getSolutionId());
+		if (all_incidents != null) {
+			for (TblIncident inc : all_incidents) {
+				all_incidents_solutions.add(inc.getSolutionId());
+			}
 		}
 
-		for (TblSolution sol : all_solutions) {
-			int sol_id = sol.getSolutionId();
+		if (all_solutions != null) {
+			for (TblSolution sol : all_solutions) {
+				int sol_id = sol.getSolutionId();
 
-			if (!all_incidents_solutions.contains(sol_id)) {
-				System.err.println("Solution '" + sol_id
-						+ "' is not used in table 'tblIncident'.");
-				warnings++;
+				if (!all_incidents_solutions.contains(sol_id)) {
+					System.err.println("Solution '" + sol_id
+							+ "' is not used in table 'tblIncident'.");
+					warnings++;
+				}
 			}
 		}
 	}
@@ -251,18 +291,22 @@ public class DBValidator {
 
 		Collection<TblCI> all_cmdbs = new TblCIDaoImpl().getAllCIs();
 		HashSet<String> all_ci_suppliers = new HashSet<>();
-		for (TblCI ci : all_cmdbs) {
-			all_ci_suppliers.add(ci.getSupplierName1());
-			all_ci_suppliers.add(ci.getSupplierName2());
+		if (all_cmdbs != null) {
+			for (TblCI ci : all_cmdbs) {
+				all_ci_suppliers.add(ci.getSupplierName1());
+				all_ci_suppliers.add(ci.getSupplierName2());
+			}
 		}
 
-		for (TblSupplier supp : all_suppliers) {
-			String supp_name = supp.getSupplierName();
+		if (all_suppliers != null) {
+			for (TblSupplier supp : all_suppliers) {
+				String supp_name = supp.getSupplierName();
 
-			if (!all_ci_suppliers.contains(supp_name)) {
-				System.err.println("Supplier '" + supp_name
-						+ "' is not used in table 'tblCI'.");
-				warnings++;
+				if (!all_ci_suppliers.contains(supp_name)) {
+					System.err.println("Supplier '" + supp_name
+							+ "' is not used in table 'tblCI'.");
+					warnings++;
+				}
 			}
 		}
 	}

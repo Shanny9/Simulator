@@ -74,8 +74,10 @@ public class SimulationTester implements Runnable {
 		solutions_schedule = new HashMap<>();
 		services_sla = new HashMap<>();
 
-		for (Map.Entry<Byte, String> sp : servicePriorities.entrySet()) {
-			services_sla.put(sp.getKey(), priority_sla.get(sp.getValue()));
+		if (servicePriorities != null) {
+			for (Map.Entry<Byte, String> sp : servicePriorities.entrySet()) {
+				services_sla.put(sp.getKey(), priority_sla.get(sp.getValue()));
+			}
 		}
 		isInitialized = true;
 	}
@@ -142,9 +144,11 @@ public class SimulationTester implements Runnable {
 			// .collect(Collectors.toMap(p -> p.getKey(), p ->
 			// p.getValue())).keySet();
 			HashSet<Byte> services_to_solve = new HashSet<>();
-			for (Entry<Byte, Integer> e : solutions_schedule.entrySet()) {
-				if (e.getValue().equals(elapsed_time))
-					services_to_solve.add(e.getKey());
+			if (solutions_schedule != null) {
+				for (Entry<Byte, Integer> e : solutions_schedule.entrySet()) {
+					if (e.getValue().equals(elapsed_time))
+						services_to_solve.add(e.getKey());
+				}
 			}
 			if (services_to_solve != null && !services_to_solve.isEmpty()) {
 				Set<Byte> cis_to_solve = new HashSet<>();
@@ -172,9 +176,11 @@ public class SimulationTester implements Runnable {
 						@SuppressWarnings("unchecked")
 						HashSet<Byte> cloned_fixed_services = (HashSet<Byte>) fixed_services
 								.clone();
-						for (Byte fs : cloned_fixed_services) {
-							if (marom.getService_log(fs).isUp()) {
-								fixed_services.remove(fs);
+						if (fixed_services != null) {
+							for (Byte fs : cloned_fixed_services) {
+								if (marom.getService_log(fs).isUp()) {
+									fixed_services.remove(fs);
+								}
 							}
 						}
 

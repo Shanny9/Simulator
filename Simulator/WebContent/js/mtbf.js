@@ -43,7 +43,7 @@
 			console.log(barData);
 			var ctx = document.getElementById('canvas_service').getContext('2d');
 			ctx.canvas.width = 500;
-			ctx.canvas.height = 400;
+			ctx.canvas.height = 500;
 			new Chart(ctx, {
 				type : 'horizontalBar',
 				data : barData,

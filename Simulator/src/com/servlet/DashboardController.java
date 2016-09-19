@@ -106,7 +106,7 @@ public class DashboardController extends HttpServlet {
 			break;
 		case "generateITBudgetBreakdown":
 			Integer roundBudget = Integer.parseInt(request.getParameter("round"));
-			DataMaker.generateITBudgetBreakdown(course, 1, "Marom", (byte)0);
+			DataMaker.generateITBudgetBreakdown(course, 1, "marom", (byte)0);
 		
 			break;
 		case "getServiceList":

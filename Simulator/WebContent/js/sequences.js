@@ -17,14 +17,30 @@ function ColorLuminance(hex, lum) {
 
 	return rgb;
 }
+function generateFile(){
+	$.ajax({
+		url : "DashboardController",
+		data : {
+			action : "generateITBudgetBreakdown"
+		},
+		dataType : "json",
+		async : false,
+		success : function() {
+			console.log("generateITBudgetBreakdown:OK");
+
+		},
+		error : function(e) {
+			console.log("Error in generateITBudgetBreakdown");
+		}
+	});
+}
 
 var titles = new Array();
 function getTitles(){
 	$.ajax({
 		url : "DashboardController",
 		data : {
-			action : "getBizUnitsTitles",
-			courseName : courseName
+			action : "getBizUnitsTitles"
 		},
 		dataType : "json",
 		async : false,
@@ -190,10 +206,11 @@ var arc = d3.svg.arc()
     .endAngle(function(d) { return d.x + d.dx; })
     .innerRadius(function(d) { return Math.sqrt(d.y); })
     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
+/*Generate CSV file */
+generateFile();
 // Use d3.text and d3.csv.parseRows so that we do not need to have a header
 // row, and can receive the csv as an array of arrays.
-d3.text("visit-sequences.csv", function(text) {
+d3.text("ITBudgetBreakdown.csv", function(text) {
   var csv = d3.csv.parseRows(text);
   var json = buildHierarchy(csv);
   createVisualization(json);

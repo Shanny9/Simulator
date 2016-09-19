@@ -1682,7 +1682,7 @@ public class DataController extends HttpServlet {
 				tbl = match.group(1);
 			}
 			return "Cannot " + action
-					+ "row because it is connected to table '" + tbl
+					+ " row because it is connected to table '" + tbl
 					+ "'. (Foreign-Key Constraint)";
 		}
 		return "Error not specified.";

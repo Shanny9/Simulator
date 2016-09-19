@@ -1,23 +1,19 @@
 bizUnitName,gain
 Cargo,102.6
-Commerce and Industry Affairs,90
 Commerce and Industry Affairs-Administration,15
 Commerce and Industry Affairs-Commercial Planning and Distribution Systems,15
 Commerce and Industry Affairs-Intl Affairs,15
 Commerce and Industry Affairs-Pax Marketing,15
 Commerce and Industry Affairs-Revenue Management,15
 Commerce and Industry Affairs-Schedule Planning,15
-Customers and Service,39.6
 Customers and Service-Customer Relations,9.9
 Customers and Service-Ground Operations,9.9
-Customers and Service-In-Flight Services,9.9
+Customers and Service-In Flight Services,9.9
 Customers and Service-Israel Station,9.9
-Finance,75.6
 Finance-Accounts,18.9
 Finance-Budget and Control,18.9
 Finance-Company Treasurer,18.9
 Finance-Procurement and Supply,18.9
-Global Sales,33
 Global Sales-Asia and Oceania,4.125
 Global Sales-Central Europe and Africa,4.125
 Global Sales-Customer Service and Sales,4.125
@@ -26,22 +22,18 @@ Global Sales-Israel Branch,4.125
 Global Sales-North and Central America,4.125
 Global Sales-North Europe,4.125
 Global Sales-West Europe,4.125
-Human Resources and Administration,99
 Human Resources and Administration-Administration,24.75
 Human Resources and Administration-Human Resources,24.75
 Human Resources and Administration-Security Officer,24.75
 Human Resources and Administration-Training and Organizational Development,24.75
-Information Technology,64.8
 Information Technology-Information Systems,32.4
 Information Technology-IT Infrastructure and Communication,32.4
-Maintainance and Engineering,43.2
 Maintainance and Engineering-Aircraft Maintainance,7.2
 Maintainance and Engineering-Aircraft Overhaul,7.2
 Maintainance and Engineering-Engineering,7.2
 Maintainance and Engineering-Program Management,7.2
 Maintainance and Engineering-Review and Quality Assurance,7.2
 Maintainance and Engineering-Workshops and Logistics,7.2
-Operations,84.6
 Operations-Crew Asignment,28.2
 Operations-Flight Operations,28.2
 Operations-Operations Control,28.2

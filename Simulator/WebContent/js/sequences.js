@@ -89,7 +89,7 @@ function divideLegend(catagories, titles){
 
 function getCatagories(){
 	var colorsTry = ["#1f78b4", "#33a02c", "#fb9a99",
-	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#ffff99"
+	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#8a1321"
 	                 ,"#b15928","#8d8d8d", "#bc3ab1", "#b40845","#04703c"];
 	var dJson;
 	/* get catagories from server */
@@ -171,7 +171,7 @@ var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
-  w: 75, h: 30, s: 3, t: 10
+  w: /*75*/125, h: 30, s: 3, t: 10
 };
 
 // Mapping of step names to colors.
@@ -445,8 +445,8 @@ function toggleLegend() {
 function buildHierarchy(csv) {
   var root = {"name": "root", "children": []};
   for (var i = 0; i < csv.length; i++) {
-    var sequence = csv[i][0];
-    var size = +csv[i][1];
+    var sequence = csv[i][0]; //first word in the row (unit name hierarchy)
+    var size = +csv[i][1]; //second word in the row (percentage)
     if (isNaN(size)) { // e.g. if this is a header row
       continue;
     }

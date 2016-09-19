@@ -217,6 +217,11 @@ li {
 									</h3>
 								</div>
 
+								<div class="col-md-6">
+									<select id="serviceSelection" style="min-width: 300px">
+										<option value=0>All Services</option>
+									</select>
+								</div>
 							</div>
 
 							<div class="col-md-9 col-sm-9 col-xs-12">
@@ -314,10 +319,12 @@ li {
 	<script src="js/custom.js"></script>
 
 	<!-- D3 -->
-	<script src="//d3js.org/d3.v3.min.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 
 	<!-- Sequence Graph -->
 	<script src="js/sequences.js"></script>
+	<!-- Financial js -->
+	<script src="js/financial.js"></script>
 
 </body>
 </html>

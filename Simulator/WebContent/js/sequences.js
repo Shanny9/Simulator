@@ -50,16 +50,13 @@ function divideLegend(catagories, titles){
 	
 	Object.keys(catagories).forEach(function(key,index) {
 	    // key: the name of the object key
-	    // index: the ordinal position of the key within the object 
-		if(catagories[key]!=null) { //for division without departments
-			
+	    // index: the ordinal position of the key within the object 		
 			if(index >= 0 && index < length)
 				catagory1[key] = catagories[key];
 			if(index >= length && index<( (length*2) + (length%2) ))
 				catagory2[key] = catagories[key];
 	/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
 				catagory3[key] = catagories[key];*/
-		}
 
 	});
 	

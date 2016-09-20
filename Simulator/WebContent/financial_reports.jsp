@@ -254,6 +254,7 @@ li {
  									<div id="legend1" class="legend" ></div>
 								</div>
 							
+							
 							<div class="col-md-6 col-sm-6 col-xs-6">
  									<div id="legend2" class="legend" ></div>
 								</div>

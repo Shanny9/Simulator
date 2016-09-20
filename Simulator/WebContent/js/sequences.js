@@ -1,5 +1,4 @@
 function ColorLuminance(hex, lum) {
-
 	// validate hex string
 	hex = String(hex).replace(/[^0-9a-f]/gi, '');
 	if (hex.length < 6) {

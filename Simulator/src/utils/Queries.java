@@ -53,12 +53,14 @@ public class Queries {
 	 * @return Table containing the columns: <li>{@code count} (int)</li> 
 	 * 	<li>{@code division_name} (String)</li> <li>{@code division_shortName} (String)</li>
 	 * <li>{@code department_name} (String)</li> <li>{@code department_shortName} (String)</li>
+	 * <li>{@code service_code} (String)</li> <li>{@code service_name} (String)</li>
 	 */
-	public static final String getDepartmentsByService = "select count(*) 'count', Di.division_name, Di.shortName 'division_shortName', De.department_name, De.shortName 'department_shortName'\r\n" + 
+	public static final String getDepartmentsByService = "select count(*) 'count', Di.division_name, Di.shortName 'division_shortName', De.department_name, De.shortName 'department_shortName', S.service_code, S.service_name\r\n" + 
 			"from tblService_Department SD\r\n" + 
 			"	join tblDepartment De on SD.devision_name = De.division_name\r\n" + 
 			"		and SD.department_name = De.department_name \r\n" + 
-			"	join tblDivision Di on SD.devision_name = Di.division_name where SD.service_ID = 13";
+			"    join tblService S on SD.service_ID = S.service_id\r\n" +
+			"	join tblDivision Di on SD.devision_name = Di.division_name where SD.service_ID = ?";
 	/**
 	 * @param service_ID
 	 *            (byte)

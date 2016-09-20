@@ -553,3 +553,29 @@ Number.prototype.toHHMMSS = function() {
 	var time = hours + ':' + minutes + ':' + seconds;
 	return time;
 };
+
+var connection = true;
+window.setInterval(function() {
+	$.ajax({
+		cache : false,
+		dataType : 'text',
+		url : "HomeController",
+		data : {
+			action : "isAlive"
+		},
+		timeout : 1000,
+		success : function(data) {
+			if (!connection) {
+				clockInterval = setInterval(incrementClock, 1000);
+				connection = true;
+			}
+		},
+		error : function(xhr, ajaxOptions, thrownError) {
+			if (connection) {
+				alert("Lost connection to the server");
+				clearInterval(clockInterval);
+			}
+			connection = false;
+		}
+	});
+}, 2000);

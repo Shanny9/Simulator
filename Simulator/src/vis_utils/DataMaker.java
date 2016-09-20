@@ -1,6 +1,5 @@
 package vis_utils;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -43,19 +42,32 @@ public class DataMaker {
 	// Delimiter used in CSV file
 	private static final String COMMA_DELIMITER = ",";
 	private static final String NEW_LINE_SEPARATOR = "\n";
+	private static Settings settings;
+
+	private static Settings getSettings(String courseName) {
+		if (DataMaker.settings == null) {
+			DataMaker.settings = FilesUtils.openSettings(courseName);
+		}
+		return DataMaker.settings;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static JSONArray getBizUnits(boolean isAbbreviated,
 			boolean isHierachical) {
 
+		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
+				.getAllDivisions();
+
 		// stores all divisions' abbreviated names
 		HashMap<String, String> abbv_divisions = null;
 		if (isAbbreviated) {
 			abbv_divisions = new HashMap<>();
-			Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
-					.getAllDivisions();
-			for (TblDivision div : all_divisions) {
-				abbv_divisions.put(div.getDivisionName(), div.getShortName());
+
+			if (all_divisions != null) {
+				for (TblDivision div : all_divisions) {
+					abbv_divisions.put(div.getDivisionName(),
+							div.getShortName());
+				}
 			}
 		}
 
@@ -65,58 +77,65 @@ public class DataMaker {
 				.getAllDepartments();
 		String div_name;
 		String dep_name;
-		for (TblDepartment dep : all_departments) {
-			Set<String> div_departments = bizUnits.get(dep.getDivisionName());
-			if (div_departments == null) {
-				div_departments = new HashSet<>();
+
+		if (all_departments != null) {
+			for (TblDepartment dep : all_departments) {
+				Set<String> div_departments = bizUnits.get(dep
+						.getDivisionName());
+				if (div_departments == null) {
+					div_departments = new HashSet<>();
+				}
+				div_name = (isAbbreviated) ? abbv_divisions.get(dep
+						.getDivisionName()) : dep.getDivisionName();
+				dep_name = (isAbbreviated) ? dep.getShortName() : dep
+						.getDepartmentName();
+
+				div_departments.add(dep_name);
+				bizUnits.put(div_name, div_departments);
+
 			}
-			div_name = (isAbbreviated) ? abbv_divisions.get(dep
-					.getDivisionName()) : dep.getDivisionName();
-			dep_name = (isAbbreviated) ? dep.getShortName() : dep
-					.getDepartmentName();
-
-			div_departments.add(dep_name);
-			bizUnits.put(div_name, div_departments);
-
 		}
 
-		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
-				.getAllDivisions();
+		if (all_divisions != null) {
+			for (TblDivision div : all_divisions) {
+				div_name = (isAbbreviated) ? div.getShortName() : div
+						.getDivisionName();
 
-		for (TblDivision div : all_divisions) {
-			div_name = (isAbbreviated) ? div.getShortName() : div
-					.getDivisionName();
-
-			if (!bizUnits.containsKey(div_name)) {
-				bizUnits.put(div_name, null);
+				if (!bizUnits.containsKey(div_name)) {
+					bizUnits.put(div_name, null);
+				}
 			}
 		}
 
 		// converts the HashMap to a JSONArray
 		JSONArray all_bizUnits = new JSONArray();
 		Set<String> deps;
-		if (isHierachical) {
-			JSONObject division;
-			JSONArray departments;
-			for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
-				departments = new JSONArray();
-				deps = entry.getValue();
-				if (deps != null) {
-					departments.addAll(entry.getValue());
+		if (bizUnits != null) {
+			if (isHierachical) {
+				JSONObject division;
+				JSONArray departments;
+
+				for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
+					departments = new JSONArray();
+					deps = entry.getValue();
+					if (deps != null) {
+						departments.addAll(entry.getValue());
+					}
+					division = new JSONObject();
+					division.put("division", entry.getKey());
+					division.put("departments", departments);
+					all_bizUnits.add(division);
 				}
-				division = new JSONObject();
-				division.put("division", entry.getKey());
-				division.put("departments", departments);
-				all_bizUnits.add(division);
-			}
-		} else {
-			// flat
-			for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
-				all_bizUnits.add(entry.getKey());
-				deps = entry.getValue();
-				if (deps != null) {
-					for (String department : deps) {
-						all_bizUnits.add(department);
+
+			} else {
+				// flat
+				for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
+					all_bizUnits.add(entry.getKey());
+					deps = entry.getValue();
+					if (deps != null) {
+						for (String department : deps) {
+							all_bizUnits.add(department);
+						}
 					}
 				}
 			}
@@ -138,61 +157,59 @@ public class DataMaker {
 	public static void generateITBudgetBreakdown(String courseName, int round,
 			String team, byte service_id) {
 
-		List<BizUnitService> bizUnitServiceArr;
-
-		Settings sett = FilesUtils.openSettings(courseName);
+		List<BizUnitService> bizUnitServiceArr = null;
 		// Initializes an array of rounds
-		ArrayList<Integer> rounds = getRoundArray(round,
-				sett.getLastRoundDone());
+		Set<Integer> rounds = getRounds(round,
+				getSettings(courseName).getRoundsDone());
 
 		SimulationLog simLog;
 		TeamLog marom = null;
 		TeamLog rakia = null;
 
 		// Iterates the rounds
-		for (Integer r : rounds) {
-
-			simLog = FilesUtils.openLog(courseName, r);
-
-			switch (team) {
-			case "marom":
-				marom = simLog.getTeam(log.SimulationLog.MAROM);
-				break;
-			case "rakia":
-				rakia = simLog.getTeam(log.SimulationLog.RAKIA);
-				break;
-			default:
-				// both teams;
-				marom = simLog.getTeam(log.SimulationLog.MAROM);
-				rakia = simLog.getTeam(log.SimulationLog.RAKIA);
-				break;
-			}
-
-			bizUnitServiceArr = getServicesAndTheirRelatedOrgUnits();
-			// Adds the gain of the team in the rounds to the variable
-			// 'BizUnitService'
-			for (BizUnitService bus : bizUnitServiceArr) {
-				double maromGain;
-				double rakiaGain;
-
+		if (rounds != null) {
+			for (Integer r : rounds) {
+				simLog = FilesUtils.openLog(courseName, r);
 				switch (team) {
 				case "marom":
-					maromGain = marom.getService_log(bus.getServiceId())
-							.getGain();
-					bus.addServiceGain(maromGain);
+					marom = simLog.getTeam(log.SimulationLog.MAROM);
 					break;
 				case "rakia":
-					rakiaGain = rakia.getService_log(bus.getServiceId())
-							.getGain();
-					bus.addServiceGain(rakiaGain);
+					rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 					break;
 				default:
-					maromGain = marom.getService_log(bus.getServiceId())
-							.getGain();
-					rakiaGain = rakia.getService_log(bus.getServiceId())
-							.getGain();
-					bus.addServiceGain((maromGain + rakiaGain) / 2);
+					// both teams;
+					marom = simLog.getTeam(log.SimulationLog.MAROM);
+					rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 					break;
+				}
+
+				bizUnitServiceArr = getServicesAndTheirRelatedOrgUnits();
+				// Adds the gain of the team in the rounds to the variable
+				// 'BizUnitService'
+				for (BizUnitService bus : bizUnitServiceArr) {
+					double maromGain;
+					double rakiaGain;
+
+					switch (team) {
+					case "marom":
+						maromGain = marom.getService_log(bus.getServiceId())
+								.getGain();
+						bus.addServiceGain(maromGain);
+						break;
+					case "rakia":
+						rakiaGain = rakia.getService_log(bus.getServiceId())
+								.getGain();
+						bus.addServiceGain(rakiaGain);
+						break;
+					default:
+						maromGain = marom.getService_log(bus.getServiceId())
+								.getGain();
+						rakiaGain = rakia.getService_log(bus.getServiceId())
+								.getGain();
+						bus.addServiceGain((maromGain + rakiaGain) / 2);
+						break;
+					}
 				}
 			}
 
@@ -209,12 +226,13 @@ public class DataMaker {
 				fileWriter.append(NEW_LINE_SEPARATOR);
 
 				// Writes a new BizUnitService object list to the CSV file
-				
-				for (BizUnitService bus : bizUnitServiceArr) {
-					fileWriter.append(bus.getBizUnitName());
-					fileWriter.append(COMMA_DELIMITER);
-					fileWriter.append(fmt(bus.getGain()));
-					fileWriter.append(NEW_LINE_SEPARATOR);
+				if (bizUnitServiceArr != null) {
+					for (BizUnitService bus : bizUnitServiceArr) {
+						fileWriter.append(bus.getBizUnitName());
+						fileWriter.append(COMMA_DELIMITER);
+						fileWriter.append(fmt(bus.getGain()));
+						fileWriter.append(NEW_LINE_SEPARATOR);
+					}
 				}
 				System.out.println("DataMaker: CSV file was created.");
 			} catch (Exception e) {
@@ -288,30 +306,31 @@ public class DataMaker {
 		arrMarom = new JSONArray();
 		arrRakia = new JSONArray();
 
-		int lastRoundDone = FilesUtils.openSettings(courseName)
-				.getLastRoundDone();
+		Set<Integer> rounds = getRounds(0, getSettings(courseName)
+				.getRoundsDone());
 
-		for (int r = 1; r <= lastRoundDone; r++) {
+		if (rounds != null) {
+			for (int r : rounds) {
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+				double mtbfMarom;
+				double mtbfRakia;
+				if (service == null || service == 0) {
+					// all services
+					mtbfMarom = simLog.getMTBF(log.SimulationLog.MAROM);
+					mtbfRakia = simLog.getMTBF(log.SimulationLog.RAKIA);
+				} else {
+					// selected service
+					mtbfMarom = marom.getService_log(service).getMTBF();
+					mtbfRakia = rakia.getService_log(service).getMTBF();
+				}
 
-			double mtbfMarom;
-			double mtbfRakia;
-			if (service == null || service == 0) {
-				// all services
-				mtbfMarom = simLog.getMTBF(log.SimulationLog.MAROM);
-				mtbfRakia = simLog.getMTBF(log.SimulationLog.RAKIA);
-			} else {
-				// selected service
-				mtbfMarom = marom.getService_log(service).getMTBF();
-				mtbfRakia = rakia.getService_log(service).getMTBF();
+				arrMarom.add(mtbfMarom);
+				arrRakia.add(mtbfRakia);
+				labels.add("Round " + r);
 			}
-
-			arrMarom.add(mtbfMarom);
-			arrRakia.add(mtbfRakia);
-			labels.add("Round " + r);
 		}
 		obj.put("maromData", arrMarom);
 		obj.put("rakiaData", arrRakia);
@@ -327,32 +346,34 @@ public class DataMaker {
 		labels.add("Marom");
 		labels.add("Rakia");
 
-		int lastRoundDone = FilesUtils.openSettings(courseName)
-				.getLastRoundDone();
+		Set<Integer> rounds = getRounds(0, getSettings(courseName)
+				.getRoundsDone());
 
-		for (int r = 1; r <= lastRoundDone; r++) {
-			JSONArray roundArr = new JSONArray();
+		if (rounds != null) {
+			for (int r : rounds) {
+				JSONArray roundArr = new JSONArray();
 
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 
-			double mtbfMarom;
-			double mtbfRakia;
-			if (service == null || service == 0) {
-				// all services
-				mtbfMarom = simLog.getMTBF(log.SimulationLog.MAROM);
-				mtbfRakia = simLog.getMTBF(log.SimulationLog.RAKIA);
-			} else {
-				// selected service
-				mtbfMarom = marom.getService_log(service).getMTBF();
-				mtbfRakia = rakia.getService_log(service).getMTBF();
+				double mtbfMarom;
+				double mtbfRakia;
+				if (service == null || service == 0) {
+					// all services
+					mtbfMarom = simLog.getMTBF(log.SimulationLog.MAROM);
+					mtbfRakia = simLog.getMTBF(log.SimulationLog.RAKIA);
+				} else {
+					// selected service
+					mtbfMarom = marom.getService_log(service).getMTBF();
+					mtbfRakia = rakia.getService_log(service).getMTBF();
+				}
+
+				roundArr.add(mtbfMarom);
+				roundArr.add(mtbfRakia);
+				obj.put("round#" + r, roundArr);
+				obj.put("labels", labels);
 			}
-
-			roundArr.add(mtbfMarom);
-			roundArr.add(mtbfRakia);
-			obj.put("round#" + r, roundArr);
-			obj.put("labels", labels);
 		}
 		return obj;
 	}
@@ -364,12 +385,8 @@ public class DataMaker {
 		JSONArray labels = new JSONArray();
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 
-		int lastRoundDone = FilesUtils.openSettings(courseName)
-				.getLastRoundDone();
-
-		if (round > lastRoundDone) {
-			return null;
-		}
+		Set<Integer> rounds = getRounds(0, getSettings(courseName)
+				.getRoundsDone());
 
 		ArrayList<ArrayList<Double>> mtbfAllRoundsMarom = new ArrayList<>();
 		ArrayList<ArrayList<Double>> mtbfAllRoundsRakia = new ArrayList<>();
@@ -378,37 +395,39 @@ public class DataMaker {
 		JSONArray mtbfAvgRakia = new JSONArray();
 
 		boolean firstIteration = true;
-		for (int r = 1; r <= lastRoundDone; r++) {
+		if (rounds != null && services != null) {
+			for (int r : rounds) {
 
-			// quits calculation of unselected rounds
-			if (round != 0 && round != r) {
-				continue;
-			}
-
-			ArrayList<Double> roundMTBFMarom = new ArrayList<>();
-			ArrayList<Double> roundMTBFRakia = new ArrayList<>();
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-
-			for (TblService service : services) {
-
-				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
-
-				double mtbfMarom = marom.getService_log(service.getServiceId())
-						.getMTBF();
-				double mtbfRakia = rakia.getService_log(service.getServiceId())
-						.getMTBF();
-
-				roundMTBFMarom.add(mtbfMarom);
-				roundMTBFRakia.add(mtbfRakia);
-
-				if (firstIteration) {
-					labels.add(service.getServiceName());
+				// quits calculation of unselected rounds
+				if (round != 0 && round != r) {
+					continue;
 				}
+
+				ArrayList<Double> roundMTBFMarom = new ArrayList<>();
+				ArrayList<Double> roundMTBFRakia = new ArrayList<>();
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+
+				for (TblService service : services) {
+
+					TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+					TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+
+					double mtbfMarom = marom.getService_log(
+							service.getServiceId()).getMTBF();
+					double mtbfRakia = rakia.getService_log(
+							service.getServiceId()).getMTBF();
+
+					roundMTBFMarom.add(mtbfMarom);
+					roundMTBFRakia.add(mtbfRakia);
+
+					if (firstIteration) {
+						labels.add(service.getServiceName());
+					}
+				}
+				mtbfAllRoundsMarom.add(roundMTBFMarom);
+				mtbfAllRoundsRakia.add(roundMTBFRakia);
+				firstIteration = false;
 			}
-			mtbfAllRoundsMarom.add(roundMTBFMarom);
-			mtbfAllRoundsRakia.add(roundMTBFRakia);
-			firstIteration = false;
 		}
 		mtbfAvgMarom = calcAVG(mtbfAllRoundsMarom);
 		mtbfAvgRakia = calcAVG(mtbfAllRoundsRakia);
@@ -431,30 +450,32 @@ public class DataMaker {
 		arrMarom = new JSONArray();
 		arrRakia = new JSONArray();
 
-		int lastRoundDone = FilesUtils.openSettings(courseName)
-				.getLastRoundDone();
+		Set<Integer> rounds = getRounds(0, getSettings(courseName)
+				.getRoundsDone());
 
-		for (int r = 1; r <= lastRoundDone; r++) {
+		if (rounds != null) {
+			for (int r : rounds) {
 
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 
-			double mtrsMarom;
-			double mtrsRakia;
-			if (service == null || service == 0) {
-				// all services
-				mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
-				mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
-			} else {
-				// selected service
-				mtrsMarom = marom.getService_log(service).getMTRS();
-				mtrsRakia = rakia.getService_log(service).getMTRS();
+				double mtrsMarom;
+				double mtrsRakia;
+				if (service == null || service == 0) {
+					// all services
+					mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
+					mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
+				} else {
+					// selected service
+					mtrsMarom = marom.getService_log(service).getMTRS();
+					mtrsRakia = rakia.getService_log(service).getMTRS();
+				}
+
+				arrMarom.add(mtrsMarom);
+				arrRakia.add(mtrsRakia);
+				labels.add("Round " + r);
 			}
-
-			arrMarom.add(mtrsMarom);
-			arrRakia.add(mtrsRakia);
-			labels.add("Round " + r);
 		}
 		obj.put("maromData", arrMarom);
 		obj.put("rakiaData", arrRakia);
@@ -470,32 +491,34 @@ public class DataMaker {
 		labels.add("Marom");
 		labels.add("Rakia");
 
-		int lastRoundDone = FilesUtils.openSettings(courseName)
-				.getLastRoundDone();
+		Set<Integer> rounds = getRounds(0, getSettings(courseName)
+				.getRoundsDone());
 
-		for (int r = 1; r <= lastRoundDone; r++) {
-			JSONArray roundArr = new JSONArray();
+		if (rounds != null) {
+			for (int r : rounds) {
+				JSONArray roundArr = new JSONArray();
 
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-			TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-			TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
 
-			double mtrsMarom;
-			double mtrsRakia;
-			if (service == null || service == 0) {
-				// all services
-				mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
-				mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
-			} else {
-				// selected service
-				mtrsMarom = marom.getService_log(service).getMTRS();
-				mtrsRakia = rakia.getService_log(service).getMTRS();
+				double mtrsMarom;
+				double mtrsRakia;
+				if (service == null || service == 0) {
+					// all services
+					mtrsMarom = simLog.getMTRS(log.SimulationLog.MAROM);
+					mtrsRakia = simLog.getMTRS(log.SimulationLog.RAKIA);
+				} else {
+					// selected service
+					mtrsMarom = marom.getService_log(service).getMTRS();
+					mtrsRakia = rakia.getService_log(service).getMTRS();
+				}
+
+				roundArr.add(mtrsMarom);
+				roundArr.add(mtrsRakia);
+				obj.put("round#" + r, roundArr);
+				obj.put("labels", labels);
 			}
-
-			roundArr.add(mtrsMarom);
-			roundArr.add(mtrsRakia);
-			obj.put("round#" + r, roundArr);
-			obj.put("labels", labels);
 		}
 		return obj;
 	}
@@ -507,9 +530,9 @@ public class DataMaker {
 		JSONArray labels = new JSONArray();
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 
-		// array of all requested rounds
-		ArrayList<Integer> rounds = getRoundArray(round, FilesUtils
-				.openSettings(courseName).getLastRoundDone());
+		// set of all requested rounds
+		Set<Integer> rounds = getRounds(round,
+				getSettings(courseName).getRoundsDone());
 
 		ArrayList<ArrayList<Double>> mtrsAllRoundsMarom = new ArrayList<>();
 		ArrayList<ArrayList<Double>> mtrsAllRoundsRakia = new ArrayList<>();
@@ -518,37 +541,39 @@ public class DataMaker {
 		JSONArray mtrsAvgRakia = new JSONArray();
 
 		boolean firstIteration = true;
-		for (Integer r : rounds) {
+		if (rounds != null) {
+			for (Integer r : rounds) {
 
-			// quits calculation of unselected rounds
-			if (round != 0 && round != r) {
-				continue;
-			}
-
-			ArrayList<Double> roundMTRSMarom = new ArrayList<>();
-			ArrayList<Double> roundMTRSRakia = new ArrayList<>();
-			SimulationLog simLog = FilesUtils.openLog(courseName, r);
-
-			for (TblService service : services) {
-
-				TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
-				TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
-
-				double mtrsMarom = marom.getService_log(service.getServiceId())
-						.getMTRS();
-				double mtrsRakia = rakia.getService_log(service.getServiceId())
-						.getMTRS();
-
-				roundMTRSMarom.add(mtrsMarom);
-				roundMTRSRakia.add(mtrsRakia);
-
-				if (firstIteration) {
-					labels.add(service.getServiceName());
+				// quits calculation of unselected rounds
+				if (round != 0 && round != r) {
+					continue;
 				}
+
+				ArrayList<Double> roundMTRSMarom = new ArrayList<>();
+				ArrayList<Double> roundMTRSRakia = new ArrayList<>();
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
+
+				for (TblService service : services) {
+
+					TeamLog marom = simLog.getTeam(log.SimulationLog.MAROM);
+					TeamLog rakia = simLog.getTeam(log.SimulationLog.RAKIA);
+
+					double mtrsMarom = marom.getService_log(
+							service.getServiceId()).getMTRS();
+					double mtrsRakia = rakia.getService_log(
+							service.getServiceId()).getMTRS();
+
+					roundMTRSMarom.add(mtrsMarom);
+					roundMTRSRakia.add(mtrsRakia);
+
+					if (firstIteration) {
+						labels.add(service.getServiceName());
+					}
+				}
+				mtrsAllRoundsMarom.add(roundMTRSMarom);
+				mtrsAllRoundsRakia.add(roundMTRSRakia);
+				firstIteration = false;
 			}
-			mtrsAllRoundsMarom.add(roundMTRSMarom);
-			mtrsAllRoundsRakia.add(roundMTRSRakia);
-			firstIteration = false;
 		}
 		mtrsAvgMarom = calcAVG(mtrsAllRoundsMarom);
 		mtrsAvgRakia = calcAVG(mtrsAllRoundsRakia);
@@ -590,7 +615,7 @@ public class DataMaker {
 		}
 
 		// calculates the MTBF averages
-		for (Double sum_mtbf : sum_mtbf_all_rounds) {
+		for (double sum_mtbf : sum_mtbf_all_rounds) {
 			avg_mtbf_rounds.add(sum_mtbf / rounds);
 		}
 		return avg_mtbf_rounds;
@@ -601,13 +626,19 @@ public class DataMaker {
 		ArrayList<Double> data = new ArrayList<Double>();
 
 		String[] courses = FilesUtils.getCourses();
-		for (String course : courses) {
-			int rounds = FilesUtils.openSettings(course).getLastRoundDone();
 
-			for (int r = 1; r <= rounds; r++) {
-				SimulationLog simLog = FilesUtils.openLog(course, r);
-				data.add(simLog.getMTRS(SimulationLog.MAROM));
-				data.add(simLog.getMTRS(SimulationLog.RAKIA));
+		if (courses != null) {
+			for (String course : courses) {
+				Set<Integer> rounds = getRounds(0, FilesUtils
+						.openSettings(course).getRoundsDone());
+
+				if (rounds != null) {
+					for (int r : rounds) {
+						SimulationLog simLog = FilesUtils.openLog(course, r);
+						data.add(simLog.getMTRS(SimulationLog.MAROM));
+						data.add(simLog.getMTRS(SimulationLog.RAKIA));
+					}
+				}
 			}
 		}
 
@@ -616,12 +647,12 @@ public class DataMaker {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMTRSPieData(String course, String team,
+	public static JSONObject getMTRSPieData(String courseName, String team,
 			int round, byte service_id, ArrayList<String> ranges) {
 
-		// array of all requested rounds
-		ArrayList<Integer> rounds = getRoundArray(round, FilesUtils
-				.openSettings(course).getLastRoundDone());
+		// set of all requested rounds
+		Set<Integer> rounds = getRounds(round,
+				getSettings(courseName).getRoundsDone());
 
 		// Array of all ranges and their counts
 		RangeCountArray rca = new RangeCountArray();
@@ -632,8 +663,10 @@ public class DataMaker {
 
 		// Adds all the selected ranges to the RangeCountArray (variable
 		// 'rca')
-		for (String range : ranges) {
-			rca.addRange(range);
+		if (ranges != null) {
+			for (String range : ranges) {
+				rca.addRange(range);
+			}
 		}
 
 		// Checks the validity of the array
@@ -641,54 +674,60 @@ public class DataMaker {
 			return null;
 		}
 
-		for (int r : rounds) {
+		if (rounds != null) {
+			for (int r : rounds) {
 
-			// The course's simulation log
-			SimulationLog simLog = FilesUtils.openLog(course, r);
+				// The course's simulation log
+				SimulationLog simLog = FilesUtils.openLog(courseName, r);
 
-			// The constant of the team name (NULL means both teams)
-			Boolean teamConst = SimulationLog.getTeamConst(team);
+				// The constant of the team name (NULL means both teams)
+				Boolean teamConst = SimulationLog.getTeamConst(team);
 
-			// HashMap of all relevant incident logs
-			HashSet<IncidentLog> relevant_inc_logs = new HashSet<>();
+				// HashMap of all relevant incident logs
+				HashSet<IncidentLog> relevant_inc_logs = new HashSet<>();
 
-			// HashMap of all the incident logs (some may be irrelevant)
-			HashSet<IncidentLog> team_inc_logs = new HashSet<>();
+				// HashMap of all the incident logs (some may be irrelevant)
+				HashSet<IncidentLog> team_inc_logs = new HashSet<>();
 
-			if (teamConst != null) {
-				// specific team - adds the team's incident logs to
-				// variable team_inc_log
-				team_inc_logs = (HashSet<IncidentLog>) simLog
-						.getTeam(teamConst).getClosedIncident_logs().values();
-			} else {
-				// both teams - adds both teams' incident logs to variable
-				// team_inc_log
-				team_inc_logs.addAll(simLog.getTeam(SimulationLog.MAROM)
-						.getClosedIncident_logs().values());
-				team_inc_logs.addAll(simLog.getTeam(SimulationLog.RAKIA)
-						.getClosedIncident_logs().values());
-			}
-
-			if (team_inc_logs != null) {
-				if (service_id != 0) {
-					// Specific service - takes only relevant logs and adds them
-					// to variable relevant_inc_logs
-					for (IncidentLog inc_log : team_inc_logs) {
-						if (service_incidents.get(service_id).contains(
-								inc_log.getIncident_id())) {
-							relevant_inc_logs.add(inc_log);
-						}
-					}
+				if (teamConst != null) {
+					// specific team - adds the team's incident logs to
+					// variable team_inc_log
+					team_inc_logs = (HashSet<IncidentLog>) simLog
+							.getTeam(teamConst).getClosedIncident_logs()
+							.values();
 				} else {
-					// All services - all the team's incident logs are relevant
-					relevant_inc_logs.addAll(team_inc_logs);
+					// both teams - adds both teams' incident logs to variable
+					// team_inc_log
+					team_inc_logs.addAll(simLog.getTeam(SimulationLog.MAROM)
+							.getClosedIncident_logs().values());
+					team_inc_logs.addAll(simLog.getTeam(SimulationLog.RAKIA)
+							.getClosedIncident_logs().values());
 				}
-			}
 
-			// Adds all the relevant_inc_logs TRS values to the variable 'rca'
-			if (relevant_inc_logs != null) {
-				for (IncidentLog inc_log : relevant_inc_logs) {
-					rca.addValue(inc_log.getDuration());
+				if (team_inc_logs != null) {
+					if (service_id != 0) {
+						// Specific service - takes only relevant logs and adds
+						// them
+						// to variable relevant_inc_logs
+						for (IncidentLog inc_log : team_inc_logs) {
+							if (service_incidents.get(service_id).contains(
+									inc_log.getIncident_id())) {
+								relevant_inc_logs.add(inc_log);
+							}
+						}
+					} else {
+						// All services - all the team's incident logs are
+						// relevant
+						relevant_inc_logs.addAll(team_inc_logs);
+					}
+				}
+
+				// Adds all the relevant_inc_logs TRS values to the variable
+				// 'rca'
+				if (relevant_inc_logs != null) {
+					for (IncidentLog inc_log : relevant_inc_logs) {
+						rca.addValue(inc_log.getDuration());
+					}
 				}
 			}
 		}
@@ -708,6 +747,9 @@ public class DataMaker {
 		}
 
 		void addRange(int min, int max) {
+			if (rangeCountAL == null) {
+				return;
+			}
 			rangeCountAL.add(new RangeCount(new Range(min, max), 0));
 		}
 
@@ -721,6 +763,10 @@ public class DataMaker {
 		}
 
 		boolean isValid() {
+			if (rangeCountAL == null || rangeCountAL.isEmpty()) {
+				return false;
+			}
+
 			if (rangeCountAL.get(0).getRange().getLower() != 0) {
 				return false;
 			}
@@ -741,18 +787,28 @@ public class DataMaker {
 		}
 
 		void addValue(int val) {
+			if (rangeCountAL != null) {
+				return;
+			}
+
 			for (int i = 0; i < rangeCountAL.size(); i++) {
 				if (rangeCountAL.get(i).getRange().inRange(val)) {
 					rangeCountAL.get(i).addCount(1);
 				}
 			}
+
 		}
 
 		ArrayList<String> getRanges() {
+			if (rangeCountAL == null) {
+				return null;
+			}
+
 			ArrayList<String> ranges = new ArrayList<>();
 			for (RangeCount rc : rangeCountAL) {
 				ranges.add(rc.getRange().toString());
 			}
+
 			return ranges;
 		}
 
@@ -832,10 +888,17 @@ public class DataMaker {
 		}
 	}
 
-	private static ArrayList<Integer> getRoundArray(int round, int lastRoundDone) {
+	private static HashSet<Integer> getRounds(int round,
+			HashSet<Integer> roundsDone) {
+
+		if (round == 0) {
+			return roundsDone;
+		}
 
 		try {
-			if (round > lastRoundDone) {
+			if (roundsDone.contains(round)) {
+				return new HashSet<>(Arrays.asList(new Integer[] { round }));
+			} else {
 				throw new Exception("DataMaker: Requested round (" + round
 						+ ") was not simulated.");
 			}
@@ -843,23 +906,6 @@ public class DataMaker {
 			e.printStackTrace();
 			return null;
 		}
-
-		ArrayList<Integer> rounds = new ArrayList<>();
-		if (round == 0) {
-			// all rounds
-			for (int r = 1; r <= lastRoundDone; r++) {
-				rounds.add(r);
-			}
-		} else {
-			// one round
-			if (lastRoundDone < round) {
-				// the requested round was not simulated
-				return null;
-			} else {
-				rounds.add(round);
-			}
-		}
-		return rounds;
 	}
 
 	/**

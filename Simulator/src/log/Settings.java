@@ -3,8 +3,11 @@ package log;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import utils.SimulationTime;
 
@@ -20,7 +23,7 @@ public class Settings implements Serializable {
 	private int pauseTime;
 	private int sessionsPerRound;
 	private int initCapital;
-	private int lastRoundDone;
+	private HashSet<Integer> roundsDone;
 	private int roundTime;
 	private int sessionTime;
 	private ArrayList<Integer> targetScores;
@@ -47,7 +50,7 @@ public class Settings implements Serializable {
 		this.pauseTime = pauseTime;
 		this.sessionsPerRound = sessionsPerRound;
 		this.initCapital = initCapital;
-		this.lastRoundDone = 0;
+		this.roundsDone = new HashSet<>();
 		this.roundTime = (runTime + pauseTime) * sessionsPerRound;
 		this.sessionTime = runTime + pauseTime;
 		this.targetScores = new ArrayList<>();
@@ -167,18 +170,26 @@ public class Settings implements Serializable {
 	}
 
 	/**
-	 * @return The last round done of the course.
+	 * @return The rounds done of the course.
 	 */
-	public int getLastRoundDone() {
-		return lastRoundDone;
+	public HashSet<Integer> getRoundsDone() {
+		return roundsDone;
 	}
 
 	/**
-	 * @param lastRoundDone
-	 *            The last round done of the course.
+	 * @param round
+	 *            the round to add.
 	 */
-	public void setLastRoundDone(int lastRoundDone) {
-		this.lastRoundDone = lastRoundDone;
+	public void addRoundDone(int round) {
+		this.roundsDone.add(round);
+	}
+	
+	/**
+	 * @param roundsDone
+	 *            The rounds done of the course.
+	 */
+	public void setRoundsDone(Set<Integer> roundsDone) {
+		this.roundsDone = new HashSet<>(roundsDone);
 	}
 
 	/**
@@ -251,12 +262,13 @@ public class Settings implements Serializable {
 	}
 
 	/**
-	 * Strings the target scores array.
+	 * Strings a collection
+	 * @param Collection<E> collection to string
 	 * 
-	 * @return A string of the target scores array.
+	 * @return A string of the collection.
 	 */
-	private String stringTargetScores() {
-		Object[] scores = targetScores.toArray();
+	private <E> String stringCollection(Collection<E> col) {
+		Object[] scores = col.toArray();
 		return Arrays.toString(scores);
 	}
 
@@ -319,9 +331,9 @@ public class Settings implements Serializable {
 				+ "] seconds\nPause time: [" + pauseTime
 				+ "] seconds\nSessions per round: [" + sessionsPerRound
 				+ "]\nInitial capital: [" + initCapital
-				+ "] NIS\nLast round done: [" + lastRoundDone
-				+ "]\nTarget scores: " + stringTargetScores()
-				+ "\nPriority_sla: " + printPrioritySLA();
+				+ "] NIS\nTarget scores: " + stringCollection(targetScores)
+				+ "\nPriority_sla: " + printPrioritySLA()
+				+"\nRounds done: " + stringCollection(roundsDone);
 	}
 
 	/**
@@ -357,23 +369,30 @@ public class Settings implements Serializable {
 			int pauseTime = Integer.parseInt(expressions.get(3));
 			int sessionsPerRound = Integer.parseInt(expressions.get(4));
 			int initialCapital = Integer.parseInt(expressions.get(5));
-			int lastRoundDone = Integer.parseInt(expressions.get(6));
-			String[] targetScores = expressions.get(7).replace(" ", "")
+			
+			String[] targetScores = expressions.get(6).replace(" ", "")
 					.split(",");
 			ArrayList<Integer> scores = new ArrayList<Integer>();
 			for (int i = 0; i < targetScores.length; i++) {
 				scores.add(Integer.parseInt(targetScores[i]));
 			}
 			HashMap<String, Integer> priority_sla = new HashMap<>();
-			priority_sla.put("Low", Integer.parseInt(expressions.get(8)));
-			priority_sla.put("Medium", Integer.parseInt(expressions.get(9)));
-			priority_sla.put("High", Integer.parseInt(expressions.get(10)));
-			priority_sla.put("Major", Integer.parseInt(expressions.get(11)));
-			priority_sla.put("Critical", Integer.parseInt(expressions.get(12)));
-
+			priority_sla.put("Low", Integer.parseInt(expressions.get(7)));
+			priority_sla.put("Medium", Integer.parseInt(expressions.get(8)));
+			priority_sla.put("High", Integer.parseInt(expressions.get(9)));
+			priority_sla.put("Major", Integer.parseInt(expressions.get(10)));
+			priority_sla.put("Critical", Integer.parseInt(expressions.get(11)));
+			
+			Set<Integer> roundsDone = new HashSet<>();
+			String[] roundsDoneArr = expressions.get(12).split(",");
+			
+			for (int r = 0 ;r < roundsDoneArr.length ; r++){
+				roundsDone.add(Integer.parseInt(roundsDoneArr[r]));
+			}
+			
 			Settings sett = new Settings(course, rounds, runTime, pauseTime,
 					sessionsPerRound, initialCapital);
-			sett.setLastRoundDone(lastRoundDone);
+			sett.setRoundsDone(roundsDone);
 			sett.setTargetScores(scores);
 			sett.setPriority_sla(priority_sla);
 			return sett;

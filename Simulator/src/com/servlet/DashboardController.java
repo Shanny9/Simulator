@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -123,13 +124,13 @@ public class DashboardController extends HttpServlet {
 			response.getWriter().print(result);
 			break;
 		case "getRoundList":
-			int lastRoundDone = FilesUtils.openSettings(course)
-					.getLastRoundDone();
+			Set<Integer> roundsDone = FilesUtils.openSettings(course)
+					.getRoundsDone();
 			JSONArray roundsList = new JSONArray();
-			for (int r = 0; r < lastRoundDone; r++) {
+			for (int r : roundsDone) {
 				JSONObject jsonRound = new JSONObject();
-				jsonRound.put("id", (r+1));
-				jsonRound.put("text","Round " + (r+1));
+				jsonRound.put("id", r);
+				jsonRound.put("text","Round " + r);
 				roundsList.add(jsonRound);
 			}
 			response.getWriter().print(roundsList);

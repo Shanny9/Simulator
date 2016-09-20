@@ -108,7 +108,9 @@ public class HomeController extends HttpServlet {
 			}
 
 			break;
-
+		case "isAlive":
+			response.getWriter().print("yes");
+			break;
 		case "getTime":
 			HashMap<String, Object> clocks = ClockIncrementor.getClocks(round);
 			clocks.put("serverTime", new Date());
@@ -378,7 +380,7 @@ public class HomeController extends HttpServlet {
 	private String toStream(Object obj) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(obj);
-		String[] rows = json.split("\n");
+ 		String[] rows = json.split("\n");
 		for (int i = 0; i < rows.length; i++) {
 			rows[i] = "data: " + rows[i];
 		}

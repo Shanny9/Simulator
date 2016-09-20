@@ -82,14 +82,19 @@ public class TeamLog implements Serializable {
 		this.round = round;
 		Settings sett = SimulationLog.getInstance().getSettings();
 		int duration = sett.getTotalRunTime();
-		double init_capital;
+		double init_capital = 0;
 
 		if (round == 1) {
 			init_capital = sett.getInitCapital();
 		} else {
 			SimulationTime roundTime = new SimulationTime(sett.getRunTime());
-			init_capital = FilesUtils.openLog(sett.getCourseName(), round - 1)
-					.getTeam(SimulationLog.MAROM).getProfit(roundTime);
+			SimulationLog simLog = FilesUtils.openLog(sett.getCourseName(),
+					round - 1);
+			if (simLog != null) {
+				init_capital = simLog.getTeam(
+						SimulationLog.getTeamConst(teamName)).getProfit(
+						roundTime);
+			}
 		}
 
 		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));

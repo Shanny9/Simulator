@@ -52,7 +52,7 @@ public class SimulationTester implements Runnable {
 			return;
 		}
 
-		if (courseSettings.getTargetScores().isEmpty()) {
+		if (!courseSettings.getTargetScores().isEmpty()) {
 			System.err
 					.println("SimulationTester initialize method failed: target scores are already calculated.");
 			return;

@@ -127,8 +127,7 @@ public class ClockIncrementor implements Runnable {
 					isRunning = false;
 					LogManager.stop();
 					initVariables();
-					System.out.println("ClockIncrementor: Round "
-							+ settings.getLastRoundDone() + " is finished.");
+					System.out.println("ClockIncrementor: Round is finished.");
 					return;
 
 				} else {

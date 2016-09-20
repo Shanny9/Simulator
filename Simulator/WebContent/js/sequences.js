@@ -17,12 +17,15 @@ function ColorLuminance(hex, lum) {
 
 	return rgb;
 }
-function generateFile(){
+function generateFile(round, service, team){
 	$.ajax({
 		url : "DashboardController",
 		data : {
 			action : "generateITBudgetBreakdown",
-			courseName: courseName
+			courseName: courseName,
+			round: round,
+			service: service,
+			team: team
 		},
 		dataType : "text",
 		async : false,
@@ -47,8 +50,8 @@ function getTitles(){
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			console.log("getTitles data:");
-			console.log(data);
+/*			console.log("getTitles data:");
+			console.log(data);*/
 			titles = data;
 
 		},
@@ -89,7 +92,7 @@ function divideLegend(catagories, titles){
 
 function getCatagories(){
 	var colorsTry = ["#1f78b4", "#33a02c", "#fb9a99",
-	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#ffff99"
+	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#8a1321"
 	                 ,"#b15928","#8d8d8d", "#bc3ab1", "#b40845","#04703c"];
 	var dJson;
 	/* get catagories from server */
@@ -101,8 +104,8 @@ function getCatagories(){
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			console.log("getCatagories data:");
-			console.log(data);
+/*			console.log("getCatagories data:");
+			console.log(data);*/
 			dJson = data;
 
 		},
@@ -154,7 +157,7 @@ function getCatagories(){
 		catagory[div] = divColor;
 		
 		$.each(item.departments, function(key, item){
-				catagory[item] = ColorLuminance(divColor, 0.32);
+				catagory[item] = ColorLuminance(divColor, 0.33);
 				
 		});
 		
@@ -164,70 +167,75 @@ function getCatagories(){
 }
 
 
-// Dimensions of sunburst.
-var width = 750;
-var height = 600;
-var radius = Math.min(width, height) / 2;
+/*******  Creates the visualization   *******/
+function setVisualization(round, service, team, isDrawLegend){
+	// Dimensions of sunburst.
+	/*var*/ width = 750;
+	/*var*/ height = 600;
+	/*var*/ radius = Math.min(width, height) / 2;
 
-// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-var b = {
-  w: 75, h: 30, s: 3, t: 10
-};
+	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+	/*var*/ b = {
+	  w: /*75*/125, h: 30, s: 3, t: 10
+	};
 
-// Mapping of step names to colors.
-/*var colors = {
-  "home": "#5687d1",
-  "product": "#7b615c",
-  "search": "#de783b",
-  "account": "#6ab975",
-  "other": "#a173d1",
-  "end": "#bbbbbb"
-};*/
-var colors = getCatagories();
-/* Legend Divided */
-/* Hover Titles */
-getTitles();
-divideLegend(colors, titles);
+	// Mapping of step names to colors.
+	/*var colors = {
+	  "home": "#5687d1",
+	  "product": "#7b615c",
+	  "search": "#de783b",
+	  "account": "#6ab975",
+	  "other": "#a173d1",
+	  "end": "#bbbbbb"
+	};*/
+	/*var*/ colors = getCatagories();
+	/* Legend Divided */
+	/* Hover Titles */
+	if(isDrawLegend){
+		getTitles();
+		divideLegend(colors, titles);
+	}
 
-// Total size of all segments; we set this later, after loading the data.
-var totalSize = 0; 
+	// Total size of all segments; we set this later, after loading the data.
+	/*var*/ totalSize = 0; 
 
-var vis = d3.select("#chart").append("svg:svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("svg:g")
-    .attr("id", "container")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+	/*var*/ vis = d3.select("#chart").append("svg:svg")
+	    .attr("width", width)
+	    .attr("height", height)
+	    .append("svg:g")
+	    .attr("id", "container")
+	    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-var partition = d3.layout.partition()
-    .size([2 * Math.PI, radius * radius])
-    .value(function(d) { return d.size; });
+	/*var*/ partition = d3.layout.partition()
+	    .size([2 * Math.PI, radius * radius])
+	    .value(function(d) { return d.size; });
 
-var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
-    .endAngle(function(d) { return d.x + d.dx; })
-    .innerRadius(function(d) { return Math.sqrt(d.y); })
-    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-/*Generate CSV file */
-generateFile();
-// Use d3.text and d3.csv.parseRows so that we do not need to have a header
-// row, and can receive the csv as an array of arrays.
-d3.text("ITBudgetBreakdown.csv", function(text) {
-  var csv = d3.csv.parseRows(text);
-  var json = buildHierarchy(csv);
-  createVisualization(json);
-});
-
+	/*var*/ arc = d3.svg.arc()
+	    .startAngle(function(d) { return d.x; })
+	    .endAngle(function(d) { return d.x + d.dx; })
+	    .innerRadius(function(d) { return Math.sqrt(d.y); })
+	    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+	/*Generate CSV file */
+	generateFile(round, service, team);
+	// Use d3.text and d3.csv.parseRows so that we do not need to have a header
+	// row, and can receive the csv as an array of arrays.
+	d3.text("ITBudgetBreakdown.csv", function(text) {
+	  var csv = d3.csv.parseRows(text);
+	  var json = buildHierarchy(csv);
+	  createVisualization(json, isDrawLegend);
+	});
+}
 // Main function to draw and set up the visualization, once we have the data.
-function createVisualization(json) {
+function createVisualization(json, isDrawLegend) {
 
-  // Basic setup of page elements.
-  initializeBreadcrumbTrail();
-  drawLegend("#legend1", catagory1, titles1);
-  drawLegend("#legend2", catagory2, titles2);
-  /*drawLegend("#legend3", catagory3);*/
-  d3.select("#togglelegend").on("click", toggleLegend);
-
+  if(isDrawLegend){
+	  // Basic setup of page elements.
+	  initializeBreadcrumbTrail();
+	  drawLegend("#legend1", catagory1, titles1);
+	  drawLegend("#legend2", catagory2, titles2);
+	  /*drawLegend("#legend3", catagory3);*/
+	  d3.select("#togglelegend").on("click", toggleLegend);
+  }
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
   vis.append("svg:circle")
@@ -445,8 +453,8 @@ function toggleLegend() {
 function buildHierarchy(csv) {
   var root = {"name": "root", "children": []};
   for (var i = 0; i < csv.length; i++) {
-    var sequence = csv[i][0];
-    var size = +csv[i][1];
+    var sequence = csv[i][0]; //first word in the row (unit name hierarchy)
+    var size = +csv[i][1]; //second word in the row (percentage)
     if (isNaN(size)) { // e.g. if this is a header row
       continue;
     }

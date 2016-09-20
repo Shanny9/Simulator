@@ -83,8 +83,7 @@ public class FilesUtils {
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			SimulationLog simLog = SimulationLog.getInstance();
 			Settings sett = simLog.getSettings();
-			int lastRoundDone = Math.max(sett.getLastRoundDone(), round);
-			simLog.getSettings().setLastRoundDone(lastRoundDone);
+			simLog.getSettings().addRoundDone(round);
 			saveSettings(sett);
 			out.writeObject(simLog);
 			out.close();

@@ -28,9 +28,9 @@ $(document).ready(function() {
 	case "tblService":
 		serviceTable();
 		break;
-	case "tblServiceDep":
+/*	case "tblServiceDep":
 		serviceDepTable();
-		break;
+		break;*/
 	case "tblServiceDiv":
 		serviceDivTable();
 		break;
@@ -842,15 +842,6 @@ function serviceTable(){
 					options: 'DataController?options=service'
 					
 				},
-				departmentName : {
-					title : 'Department Name',
-					width : '30%',
-					key : true,
-					list : true,
-					edit : true,
-					create : true,
-					options: 'DataController?options=department'
-				},
 				divisionName : {
 					title : 'Division Name',
 					width : '30%',
@@ -860,6 +851,16 @@ function serviceTable(){
 					create : true,
 					options: 'DataController?options=division'
 				},
+				departmentName : {
+					title : 'Department Name',
+					width : '30%',
+					key : true,
+					list : true,
+					edit : true,
+					create : true,
+					options: 'DataController?options=department'
+				},
+
 				isActive : {
 					title : 'Active?',
 					width : '25%',

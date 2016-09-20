@@ -319,11 +319,15 @@ $(document).ready(function() {
 	getServices();
 	getRounds();
 	
+	//get selections for mtrs pie
+	var roundSelectMTRS = $("#roundSelectMTRS").val();
+	var serSelectMTRS = $("#serviceSelectMTRS").val();
+	var teamSelectMTRS = $("#teamSelectMTRS").val();
 	//set charts
 	setBarChartPerRound(0); //all services default 
 	setBarChartPerTeam(0);
 	setBarChartPerService(0);
-	setMTRSpie("both", 0, 0);
+	setMTRSpie(teamSelectMTRS, roundSelectMTRS, serSelectMTRS);
 	
 	$("#serviceSelection").select2({
 		allowClear : true,
@@ -358,29 +362,29 @@ $(document).ready(function() {
 		allowClear : true,
 		data : roundsForSelection
 	}).on("change", function(e) {
-		var roundSelectMTRS = $("#roundSelectMTRS").val();
+		roundSelectMTRS = $("#roundSelectMTRS").val();
 		// clear old data
 		resetCanvas($("#canvas_mtrsPie"));
-		setMTRSpie("both", roundSelectMTRS, 0);
+		setMTRSpie(teamSelectMTRS, roundSelectMTRS, serSelectMTRS);
 	});
 
 	$("#serviceSelectMTRS").select2({
 		allowClear : true,
 		data : servicesForSelection
 	}).on("change", function(e) {
-		var serSelectMTRS = $("#serviceSelectMTRS").val();
+		serSelectMTRS = $("#serviceSelectMTRS").val();
 		// clear old data
 		resetCanvas($("#canvas_mtrsPie"));
-		setMTRSpie("both", 0, serSelectMTRS);
+		setMTRSpie(teamSelectMTRS, roundSelectMTRS, serSelectMTRS);
 	});
 
 	$("#teamSelectMTRS").select2({
 		allowClear : true
 	}).on("change", function(e) {
-		var teamSelectMTRS = $("#teamSelectMTRS").val();
+		teamSelectMTRS = $("#teamSelectMTRS").val();
 		// clear old data
 		resetCanvas($("#canvas_mtrsPie"));
-		setMTRSpie(teamSelectMTRS, 0, 0);
+		setMTRSpie(teamSelectMTRS, roundSelectMTRS, serSelectMTRS);
 	});
 // ***** END Select for Pie Chart MTRS ******
 	

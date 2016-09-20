@@ -386,6 +386,7 @@ $(document).ready(function() {
 		resetCanvas($("#canvas_mtrsPie"));
 		setMTRSpie(teamSelectMTRS, roundSelectMTRS, serSelectMTRS);
 	});
+	
 // ***** END Select for Pie Chart MTRS ******
 	
 });

@@ -282,14 +282,26 @@ public class ServiceLog implements Serializable {
 	}
 
 	/**
-	 * @return The total gain (or loss) of the service.
+	 * @return The total profit of the service.
 	 */
-	public double getGain() {
-		double gain = getTotalUpTime() * getFixed_income();
-		double fixed_loss = getRoundDuration() * getFixed_cost();
-		double varinet_loss = getTotalDownTime() * getDown_cost();
-
-		return gain - fixed_loss - varinet_loss - purchase_cost;
+	public double getProfit() {
+		return getRevenue() - getExpense();
+	}
+	
+	/**
+	 * @return The total profit of the service.
+	 */
+	public double getExpense(){
+		double fixed_expense = getRoundDuration() * getFixed_cost();
+		double varinet_expense = getTotalDownTime() * getDown_cost();
+		return fixed_expense + varinet_expense + purchase_cost;
+	}
+	
+	/**
+	 * @return The total revenue of the service.
+	 */
+	public double getRevenue(){
+		return getTotalUpTime() * getFixed_income();
 	}
 
 	synchronized public String toString() {

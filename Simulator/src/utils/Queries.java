@@ -25,8 +25,9 @@ public class Queries {
 
 	/**
 	 * @return A table containing the columns: <li>{@code incident_id} (byte)</li>
-	 *         <li>{@code solution_marom} (int)</li> <li>{@code solution_rakia} (int)</li>
-	 *         <li>{@code solution_cost} (int)</li> <li>{@code currency} (String)</li>
+	 *         <li>{@code solution_marom} (int)</li> <li>{@code solution_rakia}
+	 *         (int)</li> <li>{@code solution_cost} (int)</li> <li>
+	 *         {@code currency} (String)</li>
 	 */
 	public static final String solutionsForClient = "select I.incident_id, \r\n"
 			+ "Sol.solution_marom,\r\n"
@@ -37,21 +38,35 @@ public class Queries {
 			+ "join SIMULATOR.tblSolution Sol on I.solution_id = Sol.solution_id\r\n"
 			+ "join SIMULATOR.tblCI CI on I.ci_id = CI.CI_ID\r\n"
 			+ "join SIMULATOR.tblSupplier Sup on CI.supplier_level2  = Sup.supplier_name";
-	
+
 	/**
 	 * @return A table containing the columns: <li>{@code service_id} (byte)</li>
 	 *         <li>{@code priorityName} (String)</li>
 	 */
-	public static final String servicePriorities = "select service_id, priorityName from SIMULATOR.tblService S join tblPriority P"
+	public static final String servicePriorities = "select service_id, priorityName from "
+			+ "SIMULATOR.tblService S join tblPriority P"
 			+ " on S.urgency = P.urgency and S.impact  = P.impact";
 
 	/**
 	 * @param service_ID
 	 *            (byte)
-	 * @return Table containing the columns: <li>{@code division_name} (String)</li>
+	 * @return Table containing the columns: <li>{@code count} (int)</li> 
+	 * 	<li>{@code division_name} (String)</li> <li>{@code division_shortName} (String)</li>
+	 * <li>{@code department_name} (String)</li> <li>{@code department_shortName} (String)</li>
 	 */
-	public static final String getAllDivisionsUsingSameService = "select SD.division_name from tblService_Division SD \r\n"
-			+ "where SD.service_ID = ?";
+	public static final String getDepartmentsByService = "select count(*) 'count', Di.division_name, Di.shortName 'division_shortName', De.department_name, De.shortName 'department_shortName'\r\n" + 
+			"from tblService_Department SD\r\n" + 
+			"	join tblDepartment De on SD.devision_name = De.division_name\r\n" + 
+			"		and SD.department_name = De.department_name \r\n" + 
+			"	join tblDivision Di on SD.devision_name = Di.division_name where SD.service_ID = 13";
+	/**
+	 * @param service_ID
+	 *            (byte)
+	 * @return Table containing the columns: <li>{@code division_name} (String)</li>
+	 *         <li>{@code shortName} (String)</li>
+	 */
+	public static final String getAllDivisionsUsingSameService = "select SD.division_name, D.shortName from tblService_Division SD\r\n"
+			+ "join tblDivision D on SD.division_name = D.division_name where SD.service_ID = ?";
 
 	/**
 	 * @param service_ID
@@ -66,9 +81,10 @@ public class Queries {
 	 *            (String)
 	 * @param service_ID
 	 *            (byte)
-	 * @return Table containing the columns: <li>{@code department_name} (String)</li>
+	 * @return Table containing the columns: <li>{@code department_name}
+	 *         (String)</li> <li>{@code shortName} (String)</li>
 	 */
-	public static final String getDepartmentsOfDivisionUsingSameService = "select D.department_name from tblDepartment D \r\n"
+	public static final String getDepartmentsOfDivisionUsingSameService = "select D.department_name, D.shortName from tblDepartment D \r\n"
 			+ "join tblService_Division SD on D.division_name = SD.division_name\r\n"
 			+ "where D.division_name = ? and SD.service_ID = ?";
 

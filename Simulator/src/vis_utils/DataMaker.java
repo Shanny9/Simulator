@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import log.FilesUtils;
 import log.IncidentLog;
@@ -26,7 +27,7 @@ import log.TeamLog;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import utils.BizUnitService;
+import utils.DepartmentService;
 import utils.Queries;
 
 import com.daoImpl.TblDepartmentDaoImpl;
@@ -59,9 +60,9 @@ public class DataMaker {
 				.getAllDivisions();
 
 		// stores all divisions' abbreviated names
-		HashMap<String, String> abbv_divisions = null;
+		TreeMap<String, String> abbv_divisions = null;
 		if (isAbbreviated) {
-			abbv_divisions = new HashMap<>();
+			abbv_divisions = new TreeMap<>();
 
 			if (all_divisions != null) {
 				for (TblDivision div : all_divisions) {
@@ -72,7 +73,7 @@ public class DataMaker {
 		}
 
 		// puts all business units in a HashMap
-		HashMap<String, Set<String>> bizUnits = new HashMap<>();
+		TreeMap<String, Set<String>> bizUnits = new TreeMap<>();
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
 		String div_name;
@@ -80,15 +81,16 @@ public class DataMaker {
 
 		if (all_departments != null) {
 			for (TblDepartment dep : all_departments) {
-				Set<String> div_departments = bizUnits.get(dep
-						.getDivisionName());
+				div_name = (isAbbreviated) ? abbv_divisions.get(dep
+						.getDivisionName()) : dep.getDivisionName();
+
+				dep_name = (isAbbreviated) ? dep.getShortName() : dep
+						.getDepartmentName();
+
+				Set<String> div_departments = bizUnits.get(div_name);
 				if (div_departments == null) {
 					div_departments = new HashSet<>();
 				}
-				div_name = (isAbbreviated) ? abbv_divisions.get(dep
-						.getDivisionName()) : dep.getDivisionName();
-				dep_name = (isAbbreviated) ? dep.getShortName() : dep
-						.getDepartmentName();
 
 				div_departments.add(dep_name);
 				bizUnits.put(div_name, div_departments);
@@ -155,13 +157,12 @@ public class DataMaker {
 	 *            The team name
 	 */
 	public static void generateITBudgetBreakdown(String courseName, int round,
-			String team, byte service_id) {
+			String team, byte service_id, boolean isAbbreviated) {
 
-		List<BizUnitService> bizUnitServiceArr = null;
 		// Initializes an array of rounds
-		Set<Integer> rounds = getRounds(round,
-				getSettings(courseName).getRoundsDone());
-
+		Set<Integer> rounds = getRounds(round, getSettings(courseName)
+				.getRoundsDone());
+		List<DepartmentService> departmentServiceArr = null;
 		SimulationLog simLog;
 		TeamLog marom = null;
 		TeamLog rakia = null;
@@ -184,31 +185,34 @@ public class DataMaker {
 					break;
 				}
 
-				bizUnitServiceArr = getServicesAndTheirRelatedOrgUnits();
-				// Adds the gain of the team in the rounds to the variable
+				// Adds the expense of the team in the rounds to the variable
 				// 'BizUnitService'
-				for (BizUnitService bus : bizUnitServiceArr) {
-					double maromGain;
-					double rakiaGain;
+				departmentServiceArr = getServicesAndTheirRelatedOrgUnits(
+						isAbbreviated, service_id);
+				if (departmentServiceArr != null) {
+					for (DepartmentService bus : departmentServiceArr) {
+						double maromExpense;
+						double rakiaExpense;
 
-					switch (team) {
-					case "marom":
-						maromGain = marom.getService_log(bus.getServiceId())
-								.getGain();
-						bus.addServiceGain(maromGain);
-						break;
-					case "rakia":
-						rakiaGain = rakia.getService_log(bus.getServiceId())
-								.getGain();
-						bus.addServiceGain(rakiaGain);
-						break;
-					default:
-						maromGain = marom.getService_log(bus.getServiceId())
-								.getGain();
-						rakiaGain = rakia.getService_log(bus.getServiceId())
-								.getGain();
-						bus.addServiceGain((maromGain + rakiaGain) / 2);
-						break;
+						switch (team) {
+						case "marom":
+							maromExpense = marom.getService_log(
+									bus.getServiceId()).getExpense();
+							bus.addServiceExpense(maromExpense);
+							break;
+						case "rakia":
+							rakiaExpense = rakia.getService_log(
+									bus.getServiceId()).getExpense();
+							bus.addServiceExpense(rakiaExpense);
+							break;
+						default:
+							maromExpense = marom.getService_log(
+									bus.getServiceId()).getExpense();
+							rakiaExpense = rakia.getService_log(
+									bus.getServiceId()).getExpense();
+							bus.addServiceExpense((maromExpense + rakiaExpense) / 2);
+							break;
+						}
 					}
 				}
 			}
@@ -226,11 +230,11 @@ public class DataMaker {
 				fileWriter.append(NEW_LINE_SEPARATOR);
 
 				// Writes a new BizUnitService object list to the CSV file
-				if (bizUnitServiceArr != null) {
-					for (BizUnitService bus : bizUnitServiceArr) {
-						fileWriter.append(bus.getBizUnitName());
+				if (departmentServiceArr != null) {
+					for (DepartmentService bus : departmentServiceArr) {
+						fileWriter.append(bus.getDepartmentName());
 						fileWriter.append(COMMA_DELIMITER);
-						fileWriter.append(fmt(bus.getGain()));
+						fileWriter.append(fmt(bus.getExpense()));
 						fileWriter.append(NEW_LINE_SEPARATOR);
 					}
 				}
@@ -531,8 +535,8 @@ public class DataMaker {
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
 
 		// set of all requested rounds
-		Set<Integer> rounds = getRounds(round,
-				getSettings(courseName).getRoundsDone());
+		Set<Integer> rounds = getRounds(round, getSettings(courseName)
+				.getRoundsDone());
 
 		ArrayList<ArrayList<Double>> mtrsAllRoundsMarom = new ArrayList<>();
 		ArrayList<ArrayList<Double>> mtrsAllRoundsRakia = new ArrayList<>();
@@ -629,8 +633,8 @@ public class DataMaker {
 
 		if (courses != null) {
 			for (String course : courses) {
-				Set<Integer> rounds = getRounds(0, FilesUtils
-						.openSettings(course).getRoundsDone());
+				Set<Integer> rounds = getRounds(0,
+						FilesUtils.openSettings(course).getRoundsDone());
 
 				if (rounds != null) {
 					for (int r : rounds) {
@@ -651,8 +655,8 @@ public class DataMaker {
 			int round, byte service_id, ArrayList<String> ranges) {
 
 		// set of all requested rounds
-		Set<Integer> rounds = getRounds(round,
-				getSettings(courseName).getRoundsDone());
+		Set<Integer> rounds = getRounds(round, getSettings(courseName)
+				.getRoundsDone());
 
 		// Array of all ranges and their counts
 		RangeCountArray rca = new RangeCountArray();
@@ -911,86 +915,48 @@ public class DataMaker {
 	/**
 	 * @return A {@code List} of {@code BizUnitService} objects.
 	 */
-	public static List<BizUnitService> getServicesAndTheirRelatedOrgUnits() {
+	public static List<DepartmentService> getServicesAndTheirRelatedOrgUnits(
+			boolean isAbbreviated, byte service_id) {
 
-		ArrayList<BizUnitService> result = new ArrayList<>();
+		ArrayList<DepartmentService> result = new ArrayList<>();
 		try {
-			BizUnitService bizUnitService;
-			List<TblService> all_services = new TblServiceDaoImpl()
-					.getAllServices();
+			DepartmentService departmentService;
+			List<TblService> all_services = (service_id == 0) ? new TblServiceDaoImpl()
+					.getAllServices() : new ArrayList<>(
+					Arrays.asList(new TblService[] { new TblServiceDaoImpl()
+							.getServiceById(service_id) }));
+
+			if (all_services == null) {
+				return null;
+			}
 
 			for (TblService ser : all_services) {
 
 				PreparedStatement pstmt1 = DBUtility.getConnection()
-						.prepareStatement(
-								Queries.getAllDivisionsUsingSameService);
+						.prepareStatement(Queries.getDepartmentsByService);
 
 				pstmt1.setByte(1, ser.getServiceId());
-				ResultSet rs1 = pstmt1.executeQuery();
+				ResultSet rs = pstmt1.executeQuery();
 
-				while (rs1.next()) {
+				while (rs.next()) {
+					int numOfDepartmentsUsingService = rs.getInt("count");
+					String division_name = (isAbbreviated) ? rs
+							.getString("division_shortName") : rs
+							.getString("division_name");
+					String department_name = (isAbbreviated) ? rs
+							.getString("department_shortName") : rs
+							.getString("division_name");
 
-					String division_name = rs1.getString("division_name");
-					int numOfDivisionsUsingThisService = 0;
-					PreparedStatement pstmt2 = DBUtility.getConnection()
-							.prepareStatement(
-									Queries.countDivisionsUsingSameService);
-					pstmt2.setByte(1, ser.getServiceId());
-					ResultSet rs2 = pstmt2.executeQuery();
-					if (rs2.next()) {
-						numOfDivisionsUsingThisService = rs2.getInt("count");
-					}
+					double departmentPercentage = (numOfDepartmentsUsingService == 0) ? 1
+							: 1.d / numOfDepartmentsUsingService;
 
-					double divisionPercentage = (numOfDivisionsUsingThisService == 0) ? 1
-							: 1.d / numOfDivisionsUsingThisService;
-
-					bizUnitService = new BizUnitService();
-					bizUnitService.setBizUnitName(division_name);
-					bizUnitService.setIsDivision(true);
-					bizUnitService.setserviceId(ser.getServiceId());
-					bizUnitService.setPercentage(divisionPercentage);
-					result.add(bizUnitService);
-
-					PreparedStatement pstmt3 = DBUtility
-							.getConnection()
-							.prepareStatement(
-									Queries.getDepartmentsOfDivisionUsingSameService);
-					pstmt3.setString(1, division_name);
-					pstmt3.setByte(2, ser.getServiceId());
-					ResultSet rs3 = pstmt3.executeQuery();
-
-					while (rs3.next()) {
-						String department_name = rs3
-								.getString("department_name");
-						int numOfDepartmentsInDivisionUsingSameService = 0;
-						PreparedStatement pstmt4 = DBUtility
-								.getConnection()
-								.prepareStatement(
-										Queries.countDepartmentsOfDivisionUsingSameService);
-						pstmt4.setString(1, division_name);
-						pstmt4.setByte(2, ser.getServiceId());
-						ResultSet rs4 = pstmt4.executeQuery();
-						if (rs4.next()) {
-							numOfDepartmentsInDivisionUsingSameService = rs4
-									.getInt("count");
-						}
-
-						double departmentPercentageInDivision = (numOfDepartmentsInDivisionUsingSameService == 0) ? 1
-								: 1.d / numOfDepartmentsInDivisionUsingSameService;
-
-						double departmentPercentage = divisionPercentage
-								* departmentPercentageInDivision;
-
-						bizUnitService = new BizUnitService();
-						bizUnitService.setBizUnitName(division_name + "-"
-								+ department_name);
-						bizUnitService.setIsDivision(false);
-						bizUnitService.setserviceId(ser.getServiceId());
-						bizUnitService.setPercentage(departmentPercentage);
-						result.add(bizUnitService);
-					}
+					departmentService = new DepartmentService();
+					departmentService.setDepartmentName(division_name + "-"
+							+ department_name);
+					departmentService.setserviceId(ser.getServiceId());
+					departmentService.setPercentage(departmentPercentage);
+					result.add(departmentService);
 				}
-
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

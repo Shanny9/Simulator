@@ -21,7 +21,7 @@ public class TblDivision implements Serializable {
 
 	private List<TblDepartment> tblDepartments;
 
-	private List<TblService_Division> tblServiceDivisions;
+//	private List<TblService_Division> tblServiceDivisions;
 
 	public TblDivision() {
 	}
@@ -74,26 +74,26 @@ public class TblDivision implements Serializable {
 		return tblDepartment;
 	}
 
-	public List<TblService_Division> getTblServiceDivisions() {
-		return this.tblServiceDivisions;
-	}
-
-	public void setTblServiceDivisions(List<TblService_Division> tblServiceDivisions) {
-		this.tblServiceDivisions = tblServiceDivisions;
-	}
-
-	public TblService_Division addTblServiceDivision(TblService_Division tblServiceDivision) {
-		getTblServiceDivisions().add(tblServiceDivision);
-		tblServiceDivision.setTblDivision(this);
-
-		return tblServiceDivision;
-	}
-
-	public TblService_Division removeTblServiceDivision(TblService_Division tblServiceDivision) {
-		getTblServiceDivisions().remove(tblServiceDivision);
-		tblServiceDivision.setTblDivision(null);
-
-		return tblServiceDivision;
-	}
+//	public List<TblService_Division> getTblServiceDivisions() {
+//		return this.tblServiceDivisions;
+//	}
+//
+//	public void setTblServiceDivisions(List<TblService_Division> tblServiceDivisions) {
+//		this.tblServiceDivisions = tblServiceDivisions;
+//	}
+//
+//	public TblService_Division addTblServiceDivision(TblService_Division tblServiceDivision) {
+//		getTblServiceDivisions().add(tblServiceDivision);
+//		tblServiceDivision.setTblDivision(this);
+//
+//		return tblServiceDivision;
+//	}
+//
+//	public TblService_Division removeTblServiceDivision(TblService_Division tblServiceDivision) {
+//		getTblServiceDivisions().remove(tblServiceDivision);
+//		tblServiceDivision.setTblDivision(null);
+//
+//		return tblServiceDivision;
+//	}
 
 }

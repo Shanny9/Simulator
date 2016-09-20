@@ -98,16 +98,20 @@ public class DashboardController extends HttpServlet {
 					DataMaker.getMTRSPerService(course, roundMTRS));
 			break;
 		case "getBizUnitsHierachical":
-			response.getWriter().print(
-					DataMaker.getBizUnits(true, true));
+			response.getWriter().print(DataMaker.getBizUnits(true, true));
 			break;
 		case "getBizUnitsTitles":
-			response.getWriter().print(
-					DataMaker.getBizUnits(false, false));
+			response.getWriter().print(DataMaker.getBizUnits(false, false));
 			break;
 		case "generateITBudgetBreakdown":
-//			Integer roundBudget = Integer.parseInt(request.getParameter("round"));
-			DataMaker.generateITBudgetBreakdown(course, 1, "marom", (byte)0);
+			Integer roundBudget = Integer.parseInt(request
+					.getParameter("round"));
+			String teamBudget = request.getParameter("team");
+			Byte serviceBudget = Byte
+					.parseByte(request.getParameter("service"));
+
+			DataMaker.generateITBudgetBreakdown(course, roundBudget,
+					teamBudget, serviceBudget, true);
 			response.setContentType("text/html");
 			response.getWriter().print("OK");
 			break;
@@ -130,22 +134,21 @@ public class DashboardController extends HttpServlet {
 			for (int r : roundsDone) {
 				JSONObject jsonRound = new JSONObject();
 				jsonRound.put("id", r);
-				jsonRound.put("text","Round " + r);
+				jsonRound.put("text", "Round " + r);
 				roundsList.add(jsonRound);
 			}
 			response.getWriter().print(roundsList);
 			break;
 		case "getMTRSPieData":
-			Byte mtrsServices = Byte.parseByte(request
-					.getParameter("service"));
+			Byte mtrsServices = Byte.parseByte(request.getParameter("service"));
 			Integer selectedRound = Integer.parseInt(request
 					.getParameter("round"));
-			String selectedTeam = request
-					.getParameter("team");
+			String selectedTeam = request.getParameter("team");
 			String[] strRanges = request.getParameterValues("ranges[]");
-			ArrayList<String> ranges  = new ArrayList<>(Arrays.asList(strRanges));
+			ArrayList<String> ranges = new ArrayList<>(Arrays.asList(strRanges));
 			response.getWriter().print(
-					DataMaker.getMTRSPieData(course, selectedTeam, selectedRound, mtrsServices, ranges));
+					DataMaker.getMTRSPieData(course, selectedTeam,
+							selectedRound, mtrsServices, ranges));
 		}
 
 	}

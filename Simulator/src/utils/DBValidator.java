@@ -15,7 +15,6 @@ import com.daoImpl.TblEventDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblServiceDepartmentDaoImpl;
-import com.daoImpl.TblServiceDivisionDaoImpl;
 import com.daoImpl.TblSolutionDaoImpl;
 import com.daoImpl.TblSupplierDaoImpl;
 import com.model.TblCI;
@@ -26,7 +25,6 @@ import com.model.TblEvent;
 import com.model.TblIncident;
 import com.model.TblService;
 import com.model.TblService_Department;
-import com.model.TblService_Division;
 import com.model.TblSolution;
 import com.model.TblSupplier;
 
@@ -138,14 +136,14 @@ public class DBValidator {
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllDivisions();
 
-		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
-				.getAllServiceDivisions();
-		HashSet<String> all_service_division_names = new HashSet<>();
-		if (all_service_divisions != null) {
-			for (TblService_Division ser_div : all_service_divisions) {
-				all_service_division_names.add(ser_div.getDivisionName());
-			}
-		}
+//		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
+//				.getAllServiceDivisions();
+//		HashSet<String> all_service_division_names = new HashSet<>();
+//		if (all_service_divisions != null) {
+//			for (TblService_Division ser_div : all_service_divisions) {
+//				all_service_division_names.add(ser_div.getDivisionName());
+//			}
+//		}
 
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
@@ -160,11 +158,11 @@ public class DBValidator {
 			for (TblDivision div : all_divisions) {
 				String div_name = div.getDivisionName();
 
-				if (!all_service_division_names.contains(div_name)) {
-					System.err.println("Division '" + div_name
-							+ "' is not used in table 'tblService_Division'.");
-					warnings++;
-				}
+//				if (!all_service_division_names.contains(div_name)) {
+//					System.err.println("Division '" + div_name
+//							+ "' is not used in table 'tblService_Division'.");
+//					warnings++;
+//				}
 
 				if (!all_departments_divisions.contains(div_name)) {
 					System.err.println("Division '" + div_name
@@ -213,13 +211,13 @@ public class DBValidator {
 			}
 		}
 
-		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
-				.getAllServiceDivisions();
-		if (all_service_divisions != null) {
-			for (TblService_Division ser_div : all_service_divisions) {
-				all_service_bizUnit_ids.add(ser_div.getService_ID());
-			}
-		}
+//		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
+//				.getAllServiceDivisions();
+//		if (all_service_divisions != null) {
+//			for (TblService_Division ser_div : all_service_divisions) {
+//				all_service_bizUnit_ids.add(ser_div.getService_ID());
+//			}
+//		}
 
 		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
 		HashSet<Byte> all_event_service_ids = new HashSet<>();

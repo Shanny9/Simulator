@@ -211,17 +211,24 @@ li {
 						<div class="dashboard_graph">
 
 							<div class="row x_title">
-								<div class="col-md-6">
+								<div class="col-md-5">
 									<h3>
 										Network Activities <small>Graph title sub-title</small>
 									</h3>
 								</div>
 
-								<div class="col-md-6">
-									<select id="serviceSelection" style="min-width: 300px">
+<!-- 								<div class="col-md-6"> -->
+								<select id="teamSelection" style="min-width: 120px">
+									<option value="both">Both Teams</option>
+									<option value=1>Marom</option>
+									<option value=2>Rakia</option>
+								</select> <select id="serviceSelection" style="min-width: 290px">
 										<option value=0>All Services</option>
+									</select> 
+									<select id="roundSelection" style="min-width: 120px">
+										<option value=0>All Rounds</option>
 									</select>
-								</div>
+<!-- 								</div> -->
 							</div>
 
 							<div class="col-md-9 col-sm-9 col-xs-12">

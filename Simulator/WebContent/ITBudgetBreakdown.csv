@@ -1,17 +1,49 @@
 bizUnitName,gain
-Cargo,102.6
-Finance-Accounts,18.9
-Finance-Budget & Ctrl,18.9
-Finance-Comp Treas,18.9
-Finance-Proc & Supply,18.9
-Global Sales-Asia & Oceania,4.125
-Global Sales-Central EU & Africa,4.125
-Global Sales-CS & Sales,4.125
-Global Sales-E EU,4.125
-Global Sales-ISR Branch,4.125
-Global Sales-N & Central America,4.125
-Global Sales-N EU,4.125
-Global Sales-W EU,4.125
-Plan & Org,12
-Safe & Qlty,48.599999999999994
-Secur,63
+Cargo-Cargo-AHM,1.725
+Cargo-Cargo-Amadeus,2.25
+Plan & Org-Plan & Org-Board_Connect,5.7
+Plan & Org-Plan & Org-Cargo_Mobile,2.7
+Safe & Qlty-Safe & Qlty-Carmel,2.25
+Comm & Ind Affs-Admin-Delicious,2.25
+Comm & Ind Affs-Admin-Dynamics,3.6
+Comm & Ind Affs-Admin-EFOS,2.4
+Cust & Service-CR-Global_Pay,1.95
+Cust & Service-CR-iFly,1.5
+Cust & Service-GO-iGet,1.95
+Finance-Accounts-iGroup,2.25
+Comm & Ind Affs-Admin-iKnow,1.35
+Comm & Ind Affs-CP & DS-iLearn,1.5
+Comm & Ind Affs-Int Affs-iMashab,3.6
+Comm & Ind Affs-Pax Marketing-iReset,1.05
+Comm & Ind Affs-Revenue Mgmt-LIDO,1.2
+Comm & Ind Affs-SP-LY_Mobile,3.75
+Cust & Service-CR-LY_Print,0.9
+Cust & Service-GO-LY_Web,0.9
+Cust & Service-In Flight Services-Otzma,5.85
+Cust & Service-ISR Station-PMA,0.75
+Finance-Accounts-PMS,3.6
+Finance-Budget & Ctrl-Pricing,3.15
+Finance-Comp Treas-Romach,3.6
+Finance-Proc & Supply-SAP_BO,0.9
+Global Sales-Asia & Oceania-SAP_FI,2.1
+Global Sales-Central EU & Africa-SAP_HCM,3.15
+Global Sales-CS & Sales-SAP_MM,2.7
+Global Sales-E EU-SharePoint,3.3
+Global Sales-ISR Branch-Spotfire,3.9
+Global Sales-N & Central America-Tip_Top,3
+Global Sales-N EU-TOMER,4.35
+Global Sales-W EU-Tool_Box,1.65
+HR & Admin-Admin-Up_Web,1.8
+HR & Admin-HR-AD,1.2
+HR & Admin-Security OFC-Avaya,0.15
+HR & Admin-Train & Org Dev-CA_Audit,1.35
+IT-IS-CA_IDM,1.35
+IT-IT Inf & Comm-CA_MFC,1.35
+Maint & Eng-A/C Maint-CA_NM,1.35
+Maint & Eng-A/C Overhaul-CA_SDM,1.35
+Maint & Eng-Eng-CA_TS,1.35
+Maint & Eng-Prog Mgmt-DB,1.2
+Maint & Eng-Review & QA-Neebula,0.3
+Maint & Eng-Wksp & Log-Office_365,1.8
+Opps-Crew Asign-SteelEye,1.5
+Opps-Flight Ops-Storage,0.75

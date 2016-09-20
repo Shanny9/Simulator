@@ -232,7 +232,7 @@ public class DataMaker {
 				// Writes a new BizUnitService object list to the CSV file
 				if (departmentServiceArr != null) {
 					for (DepartmentService bus : departmentServiceArr) {
-						fileWriter.append(bus.getDepartmentName());
+						fileWriter.append(bus.toString());
 						fileWriter.append(COMMA_DELIMITER);
 						fileWriter.append(fmt(bus.getExpense()));
 						fileWriter.append(NEW_LINE_SEPARATOR);
@@ -946,7 +946,9 @@ public class DataMaker {
 					String department_name = (isAbbreviated) ? rs
 							.getString("department_shortName") : rs
 							.getString("division_name");
-
+					String service_name = (isAbbreviated) ? rs
+							.getString("service_code") : rs
+							.getString("service_name");
 					double departmentPercentage = (numOfDepartmentsUsingService == 0) ? 1
 							: 1.d / numOfDepartmentsUsingService;
 
@@ -954,6 +956,7 @@ public class DataMaker {
 					departmentService.setDepartmentName(division_name + "-"
 							+ department_name);
 					departmentService.setserviceId(ser.getServiceId());
+					departmentService.setserviceName(service_name);
 					departmentService.setPercentage(departmentPercentage);
 					result.add(departmentService);
 				}

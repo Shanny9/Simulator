@@ -10,6 +10,10 @@ public class DepartmentService {
 	 */
 	private byte serviceId;
 	/**
+	 * The name of the service
+	 */
+	private String serviceName;
+	/**
 	 * The percentage of the business unit in the service
 	 */
 	private double percentage;
@@ -41,6 +45,14 @@ public class DepartmentService {
 		this.serviceId = serviceId;
 	}
 
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setserviceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
 	public double getPercentage() {
 		return percentage;
 	}
@@ -56,8 +68,12 @@ public class DepartmentService {
 	public void addServiceExpense(double serviceGain) {
 		this.serviceExpense += serviceGain;
 	}
-	
-	public double getExpense(){
+
+	public double getExpense() {
 		return percentage * serviceExpense;
+	}
+
+	public String toString() {
+		return departmentName + "-" + serviceName;
 	}
 }

@@ -143,10 +143,14 @@ function getCatagories(){
 							{
 								"division":"div6",
 								"departments":[
-								"dep114",
-								"dep115",
-								"dep116",
-								"dep117"] }
+								{"depName":"dep114",
+									"services":["s1","s2"]},
+								{"depName":"dep115",
+									"services":["s3","s4"]},
+								{"depName":"dep116",
+									"services":["s5","s6"]},
+								{"depName":"dep117",
+									"services":["s7","s8"]}] }
 		];*/
 	var catagory = new Object();
 	$.each(dJson, function(key, item){
@@ -156,7 +160,11 @@ function getCatagories(){
 		catagory[div] = divColor;
 		
 		$.each(item.departments, function(key, item){
-				catagory[item] = ColorLuminance(divColor, 0.33);
+				catagory[item.department] = ColorLuminance(divColor, 0.33);
+				var depColor = ColorLuminance(divColor, 0.33);
+				$.each(item.services, function(key, val){
+					catagory[val] = ColorLuminance(depColor, 0.2);
+				});
 				
 		});
 		

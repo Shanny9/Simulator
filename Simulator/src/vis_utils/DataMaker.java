@@ -1,5 +1,6 @@
 package vis_utils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -8,14 +9,12 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import log.FilesUtils;
 import log.IncidentLog;
@@ -30,12 +29,8 @@ import org.json.simple.JSONObject;
 import utils.DepartmentService;
 import utils.Queries;
 
-import com.daoImpl.TblDepartmentDaoImpl;
-import com.daoImpl.TblDivisionDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.jdbc.DBUtility;
-import com.model.TblDepartment;
-import com.model.TblDivision;
 import com.model.TblService;
 
 public class DataMaker {
@@ -54,95 +49,57 @@ public class DataMaker {
 
 	@SuppressWarnings("unchecked")
 	public static JSONArray getBizUnits(boolean isAbbreviated,
-			boolean isHierachical) {
+			boolean isHierachical, byte service_id) {
 
-		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
-				.getAllDivisions();
-
-		// stores all divisions' abbreviated names
-		TreeMap<String, String> abbv_divisions = null;
-		if (isAbbreviated) {
-			abbv_divisions = new TreeMap<>();
-
-			if (all_divisions != null) {
-				for (TblDivision div : all_divisions) {
-					abbv_divisions.put(div.getDivisionName(),
-							div.getShortName());
-				}
-			}
-		}
-
-		// puts all business units in a HashMap
-		TreeMap<String, Set<String>> bizUnits = new TreeMap<>();
-		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
-				.getAllDepartments();
-		String div_name;
-		String dep_name;
-
-		if (all_departments != null) {
-			for (TblDepartment dep : all_departments) {
-				div_name = (isAbbreviated) ? abbv_divisions.get(dep
-						.getDivisionName()) : dep.getDivisionName();
-
-				dep_name = (isAbbreviated) ? dep.getShortName() : dep
-						.getDepartmentName();
-
-				Set<String> div_departments = bizUnits.get(div_name);
-				if (div_departments == null) {
-					div_departments = new HashSet<>();
-				}
-
-				div_departments.add(dep_name);
-				bizUnits.put(div_name, div_departments);
-
-			}
-		}
-
-		if (all_divisions != null) {
-			for (TblDivision div : all_divisions) {
-				div_name = (isAbbreviated) ? div.getShortName() : div
-						.getDivisionName();
-
-				if (!bizUnits.containsKey(div_name)) {
-					bizUnits.put(div_name, null);
-				}
-			}
-		}
+		List<DepartmentService> all_departments = getServicesAndTheirRelatedOrgUnits(
+				isAbbreviated, service_id, true);
 
 		// converts the HashMap to a JSONArray
-		JSONArray all_bizUnits = new JSONArray();
-		Set<String> deps;
-		if (bizUnits != null) {
+		JSONArray divisions = new JSONArray();
+		if (all_departments != null) {
 			if (isHierachical) {
-				JSONObject division;
-				JSONArray departments;
-
-				for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
-					departments = new JSONArray();
-					deps = entry.getValue();
-					if (deps != null) {
-						departments.addAll(entry.getValue());
+				String previous_division_name = "";
+				String previous_department_name = "";
+				JSONObject previous_division = null;
+				JSONObject previous_department = null;
+				JSONObject division = null;
+				JSONObject department = null;
+				
+				for (DepartmentService dep_ser : all_departments) {
+					String division_name = dep_ser.getDepartmentName().split("-")[0];
+					if (!division_name.equals(previous_division_name)){
+						// new division
+						if (previous_division!= null){divisions.add(previous_division);}
+						previous_division_name = division_name;
+						division = new JSONObject();
+						division.put("division", division_name);
+						division.put("departments", new JSONArray());
+						previous_division = division;
 					}
-					division = new JSONObject();
-					division.put("division", entry.getKey());
-					division.put("departments", departments);
-					all_bizUnits.add(division);
+					
+					String department_name = dep_ser.getDepartmentName().split("-")[1];
+					if (!department_name.equals(previous_department_name)){
+						// new department
+						if (previous_department != null){((JSONArray)division.get("departments")).add(previous_department);}
+						previous_department_name = department_name;
+						department = new JSONObject();
+						department.put("department", department_name);
+						department.put("services", new JSONArray());
+						previous_department = department;
+					}
+					
+					String service_name = dep_ser.getServiceName(); 
+					((JSONArray)department.get("services")).add(service_name);
 				}
 
 			} else {
 				// flat
-				for (Map.Entry<String, Set<String>> entry : bizUnits.entrySet()) {
-					all_bizUnits.add(entry.getKey());
-					deps = entry.getValue();
-					if (deps != null) {
-						for (String department : deps) {
-							all_bizUnits.add(department);
-						}
-					}
+				for (DepartmentService dep_ser : all_departments) {
+					divisions.add(dep_ser.toString());
 				}
 			}
 		}
-		return all_bizUnits;
+		return divisions;
 	}
 
 	/**
@@ -188,7 +145,7 @@ public class DataMaker {
 				// Adds the expense of the team in the rounds to the variable
 				// 'BizUnitService'
 				departmentServiceArr = getServicesAndTheirRelatedOrgUnits(
-						isAbbreviated, service_id);
+						isAbbreviated, service_id, false);
 				if (departmentServiceArr != null) {
 					for (DepartmentService bus : departmentServiceArr) {
 						double maromExpense;
@@ -223,7 +180,8 @@ public class DataMaker {
 			FileWriter fileWriter = null;
 
 			try {
-				fileWriter = new FileWriter(FILE_NAME);
+				fileWriter = new FileWriter("C:" + File.separator + "SIMULATOR"
+						+ File.separator + FILE_NAME);
 				// Writes the CSV file header
 				fileWriter.append(FILE_HEADER.toString());
 				// Adds a new line separator after the header
@@ -232,7 +190,9 @@ public class DataMaker {
 				// Writes a new BizUnitService object list to the CSV file
 				if (departmentServiceArr != null) {
 					for (DepartmentService bus : departmentServiceArr) {
-						fileWriter.append(bus.toString());
+						fileWriter.append(bus.getDepartmentName()
+								+ ((service_id == 0) ? "-"
+										+ bus.getServiceName() : ""));
 						fileWriter.append(COMMA_DELIMITER);
 						fileWriter.append(fmt(bus.getExpense()));
 						fileWriter.append(NEW_LINE_SEPARATOR);
@@ -916,7 +876,7 @@ public class DataMaker {
 	 * @return A {@code List} of {@code BizUnitService} objects.
 	 */
 	public static List<DepartmentService> getServicesAndTheirRelatedOrgUnits(
-			boolean isAbbreviated, byte service_id) {
+			boolean isAbbreviated, byte service_id, boolean isSorted) {
 
 		ArrayList<DepartmentService> result = new ArrayList<>();
 		try {
@@ -964,6 +924,15 @@ public class DataMaker {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		if (isSorted) {
+			Collections.sort(result, new Comparator<DepartmentService>() {
+				@Override
+				public int compare(DepartmentService arg0,
+						DepartmentService arg1) {
+					return arg0.toString().compareTo(arg1.toString());
+				}
+			});
 		}
 		return result;
 	}

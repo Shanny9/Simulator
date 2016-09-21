@@ -1,5 +1,6 @@
 package com.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +60,11 @@ public class DashboardController extends HttpServlet {
 		response.setContentType("application/json");
 		String action = request.getParameter("action");
 		String course = request.getParameter("courseName");
+		
+		if (action == null){
+			return;
+		}
+		
 		switch (action) {
 		case "getPieData":
 			response.getWriter().print(DataMaker.getTeamMT(course, 1));
@@ -98,10 +104,10 @@ public class DashboardController extends HttpServlet {
 					DataMaker.getMTRSPerService(course, roundMTRS));
 			break;
 		case "getBizUnitsHierachical":
-			response.getWriter().print(DataMaker.getBizUnits(true, true));
+			response.getWriter().print(DataMaker.getBizUnits(true, true,(byte)0));
 			break;
 		case "getBizUnitsTitles":
-			response.getWriter().print(DataMaker.getBizUnits(false, false));
+			response.getWriter().print(DataMaker.getBizUnits(false, false,(byte)0));
 			break;
 		case "generateITBudgetBreakdown":
 			Integer roundBudget = Integer.parseInt(request
@@ -112,8 +118,11 @@ public class DashboardController extends HttpServlet {
 
 			DataMaker.generateITBudgetBreakdown(course, roundBudget,
 					teamBudget, serviceBudget, true);
-			response.setContentType("text/html");
-			response.getWriter().print("OK");
+			File file = new File("C:" + File.separator + "SIMULATOR"
+						+ File.separator + "ITBudgetBreakdown.csv");
+			response.setContentType("application/csv");
+			response.setHeader("content-disposition","filename="+"ITBudgetBreakdown.csv");
+			response.getWriter().print(file);
 			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();

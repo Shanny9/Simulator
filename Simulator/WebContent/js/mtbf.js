@@ -86,11 +86,14 @@
 			dataType : "json",
 			async : false,
 			success : function(data) {
+				$.each(Object.keys(data), function(key, item){
+					if(item!="labels"){
+						var r = new Object();
+						r[item] = data[item];
+						rounds.push(r);
+					}
+				});
 
-				for(var i=0; i<Object.keys(data).length-1;i++){
-					var name = "round#"+ (i+1);
-					rounds.push(data[name]);
-				}
 				teams = data["labels"];
 			},
 			error : function(e) {
@@ -100,14 +103,23 @@
 	}
 	function setBarChartPerTeam(serviceId) {
 		getMTBFPerTeam(serviceId);
-		var dataArr = new Array();
-		for(var i=0;i<rounds.length;i++){
+	var dataArr = new Array();
+	for (var i = 0; i < rounds.length; i++) {
+		$.each(Object.keys(rounds[i]), function(key, val) {
+			var item = new Object();
+			item.label = val;
+			item.backgroundColor = colors[key];
+			item.data = rounds[key];
+			dataArr.push(item);
+		});
+	}
+/*		for(var i=0;i<rounds.length;i++){
 			var item = new Object();
 			item.label = "Round "+(i+1);
 			item.backgroundColor =colors[i];
 			item.data = rounds[i];
 			dataArr.push(item);
-		}
+		}*/
 		
 		var barDataTeams = {
 			labels : teams,

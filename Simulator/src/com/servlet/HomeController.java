@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import log.FilesUtils;
-import log.LogManager;
 import log.Settings;
 import log.SimulationLog;
 import log.SimulationTester;
@@ -142,11 +141,6 @@ public class HomeController extends HttpServlet {
 				return;
 			}
 
-			SimulationLog.getInstance(); // TODO: what is this for?
-			if (!LogManager.isInitialized()) {
-				return;
-			}
-
 			prepareResponseToStream(response);
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog
 					.getInstance().getSolutionQueue();
@@ -168,9 +162,6 @@ public class HomeController extends HttpServlet {
 			}
 
 			SimulationLog simLogg = SimulationLog.getInstance();
-			if (!LogManager.isInitialized()) {
-				return;
-			}
 
 			HashMap<String, Double> profits = simLogg
 					.getTeamScores(new SimulationTime(currentTime));

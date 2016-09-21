@@ -19,6 +19,7 @@ function ColorLuminance(hex, lum) {
 function generateFile(round, service, team){
 	$.ajax({
 		url : "DashboardController",
+		contentType: 'application/json',
 		data : {
 			action : "generateITBudgetBreakdown",
 			courseName: courseName,
@@ -26,7 +27,8 @@ function generateFile(round, service, team){
 			service: service,
 			team: team
 		},
-		dataType : "text",
+//		dataType : "text",
+		Accept: "text/csv",
 		async : false,
 		success : function(msg) {
 			console.log("generateITBudgetBreakdown:OK");

@@ -578,4 +578,4 @@ window.setInterval(function() {
 			connection = false;
 		}
 	});
-}, 2000);
+}, 3000);

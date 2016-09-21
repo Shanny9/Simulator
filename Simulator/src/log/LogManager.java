@@ -15,27 +15,16 @@ public class LogManager implements Runnable {
 	 * The instance of the {@code LogManager}.
 	 */
 	private static LogManager instance;
-	/**
-	 * Indicates whether the {@code LogManager} is initialized.
-	 */
-	private static boolean isInitialized;
 
 	/**
 	 * Initializes the simulation log (can be activated only once).
 	 * 
 	 * @param setings
 	 */
-	public static void initialize(Settings setings) {
-		if (isInitialized) {
-			System.err
-					.println("LogManager initialize method failed: LogManager is already running");
-			return;
-		}
-		
+	public static void initialize(Settings setings) {	
 		SimulationLog.getInstance().initialize(setings);
 		elapsed_time = new SimulationTime(0);
 		isRunning = false;
-		isInitialized = true;
 	}
 
 	/**
@@ -51,7 +40,6 @@ public class LogManager implements Runnable {
 	 * Constructor
 	 */
 	private LogManager() {
-		isInitialized = false;
 	}
 
 	/**
@@ -64,15 +52,6 @@ public class LogManager implements Runnable {
 			instance = new LogManager();
 		}
 		return instance;
-	}
-
-	/**
-	 * Indicates if the {@code SimulationLog} has started.
-	 * 
-	 * @return true of the {@code SimulationLog} has started or false otherwise.
-	 */
-	public static boolean isInitialized() {
-		return isInitialized;
 	}
 
 	/**
@@ -124,7 +103,6 @@ public class LogManager implements Runnable {
 	 */
 	@Override
 	public void run() {
-		System.out.println("LogManager: elapsed_time= " + elapsed_time);
 		if (isRunning) {
 			// occurs every second
 			elapsed_time.increment();

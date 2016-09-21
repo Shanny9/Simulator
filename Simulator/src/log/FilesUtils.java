@@ -158,7 +158,11 @@ public class FilesUtils {
 	 *            The course's settings
 	 */
 	public static void saveSettings(Settings settings) {
-
+		
+		if (settings == null){
+			return;
+		}
+		
 		File file = new File(getPath() + File.separator
 				+ settings.getCourseName());
 		file.mkdirs();

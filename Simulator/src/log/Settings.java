@@ -183,7 +183,7 @@ public class Settings implements Serializable {
 	public void addRoundDone(int round) {
 		this.roundsDone.add(round);
 	}
-	
+
 	/**
 	 * @param roundsDone
 	 *            The rounds done of the course.
@@ -263,7 +263,9 @@ public class Settings implements Serializable {
 
 	/**
 	 * Strings a collection
-	 * @param Collection<E> collection to string
+	 * 
+	 * @param Collection
+	 *            <E> collection to string
 	 * 
 	 * @return A string of the collection.
 	 */
@@ -332,8 +334,8 @@ public class Settings implements Serializable {
 				+ "] seconds\nSessions per round: [" + sessionsPerRound
 				+ "]\nInitial capital: [" + initCapital
 				+ "] NIS\nTarget scores: " + stringCollection(targetScores)
-				+ "\nPriority_sla: " + printPrioritySLA()
-				+"\nRounds done: " + stringCollection(roundsDone);
+				+ "\nPriority_sla: " + printPrioritySLA() + "\nRounds done: "
+				+ stringCollection(roundsDone);
 	}
 
 	/**
@@ -369,7 +371,7 @@ public class Settings implements Serializable {
 			int pauseTime = Integer.parseInt(expressions.get(3));
 			int sessionsPerRound = Integer.parseInt(expressions.get(4));
 			int initialCapital = Integer.parseInt(expressions.get(5));
-			
+
 			String[] targetScores = expressions.get(6).replace(" ", "")
 					.split(",");
 			ArrayList<Integer> scores = new ArrayList<Integer>();
@@ -382,12 +384,14 @@ public class Settings implements Serializable {
 			priority_sla.put("High", Integer.parseInt(expressions.get(9)));
 			priority_sla.put("Major", Integer.parseInt(expressions.get(10)));
 			priority_sla.put("Critical", Integer.parseInt(expressions.get(11)));
-			
+
 			Set<Integer> roundsDone = new HashSet<>();
 			String[] roundsDoneArr = expressions.get(12).split(",");
-			
-			for (int r = 0 ;r < roundsDoneArr.length ; r++){
-				roundsDone.add(Integer.parseInt(roundsDoneArr[r]));
+
+			if (roundsDoneArr != null && roundsDoneArr.length > 0 && !roundsDoneArr[0].equals("")) {
+				for (int r = 0; r < roundsDoneArr.length; r++) {
+					roundsDone.add(Integer.parseInt(roundsDoneArr[r]));
+				}
 			}
 			
 			Settings sett = new Settings(course, rounds, runTime, pauseTime,

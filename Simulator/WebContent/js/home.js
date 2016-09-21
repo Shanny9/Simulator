@@ -257,7 +257,7 @@ function getEvents() {
  */
 function showEventsInTime() {
 	$.each(eventsData, function(i, item) {
-		if (elapsedTime == item.time) {
+		if (elapsedRunTime == item.time) {
 			var row = eventsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
@@ -477,7 +477,7 @@ function incrementClock() {
 
 	showEventsInTime();
 	elapsedTime++;
-	console.log("incrementClock: elapsed time=" + elapsedTime);
+	console.log("incrementClock: elapsed time=" + elapsedRunTime);
 
 	if (isRunTime) {
 		runPercentage = (settings["runTime"] - showTime)

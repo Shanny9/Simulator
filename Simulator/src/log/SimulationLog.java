@@ -198,30 +198,38 @@ public class SimulationLog extends Thread implements Serializable {
 			profits.put("Rakia", (double) 0);
 			return profits;
 		}
+		try {
+			int targetScore = settings.getTargetScores().get(round - 1);
+			int initCapital = (int) settings.getInitCapital();
+			// TODO: prevent targetWithoughtInit from being negative/zero
 
-		int targetScore = settings.getTargetScores().get(round - 1);
-		int initCapital = (int) settings.getInitCapital();
-		// TODO: prevent targetWithoughtInit from being negative/zero
+			double maromWithoutInit = marom.getProfit(time) - initCapital;
+			double rakiaWithoutInit = rakia.getProfit(time) - initCapital;
 
-		double maromWithoutInit = marom.getProfit(time) - initCapital;
-		double rakiaWithoutInit = rakia.getProfit(time) - initCapital;
+			if (maromWithoutInit < 0) {
+				maromWithoutInit = 0;
+			}
 
-		if (maromWithoutInit < 0) {
-			maromWithoutInit = 0;
+			if (rakiaWithoutInit < 0) {
+				rakiaWithoutInit = 0;
+			}
+
+			profits.put(marom.getTeamName(), maromWithoutInit / targetScore
+					* 100);
+			profits.put(rakia.getTeamName(), rakiaWithoutInit / targetScore
+					* 100);
+			// System.out.println("Marom: " + marom.getProfit(time) +
+			// ". Rakia: " +
+			// rakia.getProfit(time));
+			// System.out.println("Marom: " + maromWithoutInit / targetScore *
+			// 100 +
+			// ". Rakia: " + rakiaWithoutInit / targetScore * 100);
+			// System.out.println();
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println("SimulationLog: getTeamProfits problem line 202");
 		}
-
-		if (rakiaWithoutInit < 0) {
-			rakiaWithoutInit = 0;
-		}
-
-		profits.put(marom.getTeamName(), maromWithoutInit / targetScore * 100);
-		profits.put(rakia.getTeamName(), rakiaWithoutInit / targetScore * 100);
-		// System.out.println("Marom: " + marom.getProfit(time) + ". Rakia: " +
-		// rakia.getProfit(time));
-		// System.out.println("Marom: " + maromWithoutInit / targetScore * 100 +
-		// ". Rakia: " + rakiaWithoutInit / targetScore * 100);
-		// System.out.println();
 		return profits;
+
 	}
 
 	/**

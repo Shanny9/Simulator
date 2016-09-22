@@ -57,11 +57,11 @@ public class Settings implements Serializable {
 
 		// TODO: should be input from user
 		priority_sla = new HashMap<>();
-		priority_sla.put("Low", 70);
-		priority_sla.put("Medium", 60);
-		priority_sla.put("High", 50);
-		priority_sla.put("Major", 40);
-		priority_sla.put("Critical", 30);
+		priority_sla.put("Low", 25);
+		priority_sla.put("Medium", 20);
+		priority_sla.put("High", 15);
+		priority_sla.put("Major", 10);
+		priority_sla.put("Critical", 5);
 	}
 
 	/**

@@ -64,32 +64,40 @@ public class DataMaker {
 				JSONObject previous_department = null;
 				JSONObject division = null;
 				JSONObject department = null;
+				boolean newDivision = false;
+				boolean newDepartment = false;
 				
 				for (DepartmentService dep_ser : all_departments) {
 					String division_name = dep_ser.getDepartmentName().split("-")[0];
-					if (!division_name.equals(previous_division_name)){
-						// new division
-						if (previous_division!= null){divisions.add(previous_division);}
-						previous_division_name = division_name;
+					newDivision = !division_name.equals(previous_division_name);
+					if (newDivision){
 						division = new JSONObject();
 						division.put("division", division_name);
 						division.put("departments", new JSONArray());
-						previous_division = division;
+						
 					}
-					
 					String department_name = dep_ser.getDepartmentName().split("-")[1];
-					if (!department_name.equals(previous_department_name)){
-						// new department
-						if (previous_department != null){((JSONArray)division.get("departments")).add(previous_department);}
-						previous_department_name = department_name;
+					newDepartment = (newDivision)?true:!department_name.equals(previous_department_name); 
+					if (newDepartment){
+						if (!newDivision && previous_department != null){((JSONArray)division.get("departments")).add(previous_department);}
 						department = new JSONObject();
 						department.put("department", department_name);
 						department.put("services", new JSONArray());
-						previous_department = department;
+						
 					}
 					
+					if (newDivision && previous_division != null){
+						if (previous_department != null){((JSONArray)previous_division.get("departments")).add(previous_department);}
+						divisions.add(previous_division);
+					}
+
 					String service_name = dep_ser.getServiceName(); 
 					((JSONArray)department.get("services")).add(service_name);
+					
+					previous_division_name = division_name;
+					previous_division = division;
+					previous_department_name = department_name;
+					previous_department = department;
 				}
 
 			} else {

@@ -37,33 +37,34 @@ public class SimulationTester implements Runnable {
 	private static HashMap<Byte, Integer> solutions_schedule;
 
 	private static int roundRunTime;
+	
+	private static int current_round;
 
 	private static int nextRoundEnd;
+	
+	private static ArrayList<Integer> targetScores;
 
 	private static SimulationTester instance;
 
-	private static boolean isInitialized;
-
 	public static void initialize(Settings courseSettings) {
-
-		if (isInitialized) {
-			System.err
-					.println("SimulationTester initialize method failed: SimulationTester is already running");
-			return;
-		}
 
 		if (!courseSettings.getTargetScores().isEmpty()) {
 			System.err
 					.println("SimulationTester initialize method failed: target scores are already calculated.");
 			return;
 		}
-
+		current_round = 1;
 		settings = courseSettings;
+		SimulationTime.initialize(settings.getRunTime(),
+				settings.getPauseTime(), settings.getSessionsPerRound(),
+				settings.getRounds());
+		elapsed_time = new SimulationTime(current_round);
 		roundRunTime = settings.getRunTime() * settings.getSessionsPerRound();
 		nextRoundEnd = roundRunTime;
 
 		simLog = SimulationLog.getInstance();
 		simLog.initialize(settings);
+		simLog.setRound(1);
 
 		marom = simLog.getTeam(SimulationLog.MAROM);
 
@@ -79,11 +80,11 @@ public class SimulationTester implements Runnable {
 				services_sla.put(sp.getKey(), priority_sla.get(sp.getValue()));
 			}
 		}
-		isInitialized = true;
+		
+		targetScores = new ArrayList<>(settings.getRounds());
 	}
 
 	private SimulationTester() {
-		isInitialized = false;
 	}
 
 	public static SimulationTester getInstance() {
@@ -95,10 +96,18 @@ public class SimulationTester implements Runnable {
 
 	@Override
 	public void run() {
-		while (elapsed_time.increment() <= settings.getTotalRunTime()) {
+		while (elapsed_time.getRunTime() <= settings.getTotalRunTime()) {
 
 			// 1. calculate the round and its end time
 			if (elapsed_time.getRunTime() % roundRunTime == 0) {
+				// new round
+				int targetScore = marom.getProfits().get(roundRunTime-1).intValue();
+				targetScores.add(targetScore);
+				if (elapsed_time.getRunTime() == settings.getTotalRunTime()){
+					break;
+				}
+				simLog.setRound(++current_round);
+				marom = simLog.getTeam(SimulationLog.MAROM);
 				nextRoundEnd += nextRoundEnd;
 			}
 
@@ -193,26 +202,18 @@ public class SimulationTester implements Runnable {
 				}
 			}
 			marom.updateProfit(elapsed_time, 0);
+			elapsed_time.increment();
 		}
 
 		// 5. calculate the target scores and save settings
-		int roundRunTime = settings.getRunTime()
-				* settings.getSessionsPerRound();
-
-		ArrayList<Integer> targetScores = new ArrayList<>(settings.getRounds());
-		for (int r = 1; r <= settings.getRounds(); r++) {
-			int targetScore = marom.getProfits().get(roundRunTime * r)
-					.intValue();
-			targetScores.add(targetScore);
-		}
-
-		for (int r = settings.getRounds(); r > 1; r--) {
-			targetScores.set(r - 1,
-					targetScores.get(r - 1) - targetScores.get(r - 2));
-		}
-
+		
 		targetScores.set(0,
-				(int) (targetScores.get(0) - settings.getInitCapital()));
+				(int) (targetScores.get(0) + settings.getInitCapital()));
+		
+		for (int r = 1 ; r <settings.getRounds(); r++) {
+			targetScores.set(r,
+					targetScores.get(r) + targetScores.get(r-1));
+		}
 
 		settings.setTargetScores(targetScores);
 		FilesUtils.saveSettings(settings);

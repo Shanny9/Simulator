@@ -115,8 +115,7 @@ public class ClientController extends HttpServlet {
 
 			SimulationLog.getInstance().incidentSolved(
 					SimulationLog.getTeamConst(team), inc_id, time, isBaught);
-			log.SimulationLog.getInstance().getSolutionQueue()
-					.offer(new SolutionLog(courseName, team, inc_id));
+			log.SimulationLog.getInstance().addSolution(new SolutionLog(courseName, team, inc_id));
 			response.getWriter().print(true);
 			break;
 		case "checkSimulator":

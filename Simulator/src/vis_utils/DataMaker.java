@@ -99,6 +99,8 @@ public class DataMaker {
 					previous_department_name = department_name;
 					previous_department = department;
 				}
+				((JSONArray)previous_division.get("departments")).add(previous_department);
+				divisions.add(previous_division);
 
 			} else {
 				// flat

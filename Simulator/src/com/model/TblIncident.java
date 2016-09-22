@@ -16,7 +16,7 @@ public class TblIncident implements Serializable {
 
 	private byte ciId;
 
-	private SimulationTime incidentTime;
+	private int incidentTime;
 
 	private boolean isActive;
 
@@ -61,12 +61,16 @@ public class TblIncident implements Serializable {
 		this.ciId = ciId;
 	}
 
-	public SimulationTime getIncidentTime() {
+	public int getIncidentTime() {
 		return this.incidentTime;
 	}
+	
+	public SimulationTime getSimulationTime() {
+		return new SimulationTime(incidentTime);
+	}
 
-	public void setIncidentTime(SimulationTime incidentTime) {
-		this.incidentTime = incidentTime;
+	public void setIncidentTime(int time) {
+		this.incidentTime = time;
 	}
 
 	public boolean getIsActive() {

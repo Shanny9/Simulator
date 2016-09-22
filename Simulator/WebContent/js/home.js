@@ -190,7 +190,6 @@ function setFinish() {
 	$("#funcBtn").css("cursor", "default");
 }
 
-
 /**
  * sets the start button to RUNNING mode.
  */

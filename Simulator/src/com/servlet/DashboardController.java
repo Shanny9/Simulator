@@ -116,13 +116,13 @@ public class DashboardController extends HttpServlet {
 			Byte serviceBudget = Byte
 					.parseByte(request.getParameter("service"));
 
-			DataMaker.generateITBudgetBreakdown(course, roundBudget,
-					teamBudget, serviceBudget, true);
-			File file = new File("C:" + File.separator + "SIMULATOR"
+			response.getWriter().print(DataMaker.generateITBudgetBreakdown(course, roundBudget,
+					teamBudget, serviceBudget, true));
+/*			File file = new File("C:" + File.separator + "SIMULATOR"
 						+ File.separator + "ITBudgetBreakdown.csv");
 			response.setContentType("application/csv");
 			response.setHeader("content-disposition","filename="+"ITBudgetBreakdown.csv");
-			response.getWriter().print(file);
+			response.getWriter().print(file);*/
 			break;
 		case "getServiceList":
 			TblServiceDao serviceDao = new TblServiceDaoImpl();

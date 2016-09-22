@@ -104,12 +104,13 @@
 	function setBarChartPerTeam(serviceId) {
 		getMTBFPerTeam(serviceId);
 	var dataArr = new Array();
-	for (var i = 0; i < rounds.length; i++) {
-		$.each(Object.keys(rounds[i]), function(key, val) {
+	for (var i = 0; i < rounds.length; i++) { // rounds is array of objects: {round#:data}
+		$.each(Object.keys(rounds[i]), function(key, val) { // val = round#... the only field of the object.
 			var item = new Object();
-			item.label = val;
-			item.backgroundColor = colors[key];
-			item.data = rounds[key];
+			var rNum = val.replace( /^\D+/g, '');
+			item.label = "Round "+ rNum;
+			item.backgroundColor = colors[i];
+			item.data = rounds[i][val]; // ex. rounds[0][round#1] --> array of data for round 1.
 			dataArr.push(item);
 		});
 	}

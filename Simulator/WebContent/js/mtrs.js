@@ -78,12 +78,13 @@ function getMTRSPerTeam(serviceId) { //has to be before select2 script
 		dataType : "json",
 		async : false,
 		success : function(data) {
-			console.log("getMTRSPerTeam data:");
-			console.log(data);
-			for(var i=0; i<Object.keys(data).length-1;i++){
-				var name = "round#"+ (i+1);
-				rounds.push(data[name]);
-			}
+			$.each(Object.keys(data), function(key, item){
+				if(item!="labels"){
+					var r = new Object();
+					r[item] = data[item];
+					rounds.push(r);
+				}
+			});
 			teams = data["labels"];
 		},
 		error : function(e) {
@@ -94,12 +95,15 @@ function getMTRSPerTeam(serviceId) { //has to be before select2 script
 function setBarChartPerTeam(serviceId) {
 	getMTRSPerTeam(serviceId);
 	var dataArr = new Array();
-	for(var i=0;i<rounds.length;i++){
-		var item = new Object();
-		item.label = "Round "+(i+1);
-		item.backgroundColor =colors[i];
-		item.data = rounds[i];
-		dataArr.push(item);
+	for (var i = 0; i < rounds.length; i++) { // rounds is array of objects: {round#:data}
+		$.each(Object.keys(rounds[i]), function(key, val) { // val = round#... the only field of the object.
+			var item = new Object();
+			var rNum = val.replace( /^\D+/g, '');
+			item.label = "Round "+ rNum;
+			item.backgroundColor = colors[i];
+			item.data = rounds[i][val]; // ex. rounds[0][round#1] --> array of data for round 1.
+			dataArr.push(item);
+		});
 	}
 	
 	var barDataTeams = {

@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import log.FilesUtils;
 import log.Settings;
@@ -83,14 +84,21 @@ public class HomeController extends HttpServlet {
 
 			switch (authenticate(request)) {
 			case 1:
-				/*
-				 * if(getServletContext().getAttribute("isLogged")!=null)
-				 * response.sendRedirect("login.jsp"); else{
-				 */
-				request.getSession().setAttribute("isLogged", "1");
-				// getServletContext().setAttribute("isLogged", "1");
-				response.sendRedirect("opening.jsp");
-				// }
+				Object session = getServletContext().getAttribute("isLogged");
+				if (session != null) {
+					((HttpSession) session).invalidate();
+					getServletContext().setAttribute("isLogged",
+							request.getSession());
+					request.getSession().setAttribute("isLogged", "1");
+					response.sendRedirect("opening.jsp");
+				}
+				// response.sendRedirect("login.jsp");
+				else {
+					request.getSession().setAttribute("isLogged", "1");
+					getServletContext().setAttribute("isLogged",
+							request.getSession());
+					response.sendRedirect("opening.jsp");
+				}
 				break;
 			case 2:
 				request.getSession().setAttribute("team", "Marom");

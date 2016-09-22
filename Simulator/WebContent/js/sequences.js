@@ -69,13 +69,13 @@ var titles1 = new Array();
 var titles2 = new Array();
 function divideLegend(catagories, titles){
 	var length = Math.floor((Object.keys(catagories).length)/2);
-	
+	var remain = (Object.keys(catagories).length)%2;
 	Object.keys(catagories).forEach(function(key,index) {
 	    // key: the name of the object key
 	    // index: the ordinal position of the key within the object 		
 			if(index >= 0 && index < length)
 				catagory1[key] = catagories[key];
-			if(index >= length && index<( (length*2) + (length%2) ))
+			if(index >= length && index<( (length*2) + (remain) ))
 				catagory2[key] = catagories[key];
 	/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
 				catagory3[key] = catagories[key];*/
@@ -85,7 +85,7 @@ function divideLegend(catagories, titles){
 	for(var i=0;i<titles.length;i++){
 		if(i >= 0 && i< length)
 			titles1.push(titles[i]);
-		if(i >= length && i<( (length*2) + (length%2) ))
+		if(i >= length && i<( (length*2) + (remain) ))
 			titles2.push(titles[i]);
 	}
 	
@@ -105,8 +105,8 @@ function getCatagories(){
 		dataType : "json",
 		async : false,
 		success : function(data) {
-/*			console.log("getCatagories data:");
-			console.log(data);*/
+			console.log("getCatagories data:");
+			console.log(data);
 			dJson = data;
 
 		},
@@ -145,13 +145,13 @@ function getCatagories(){
 							{
 								"division":"div6",
 								"departments":[
-								{"depName":"dep114",
+								{"department":"dep114",
 									"services":["s1","s2"]},
-								{"depName":"dep115",
+								{"department":"dep115",
 									"services":["s3","s4"]},
-								{"depName":"dep116",
+								{"department":"dep116",
 									"services":["s5","s6"]},
-								{"depName":"dep117",
+								{"department":"dep117",
 									"services":["s7","s8"]}] }
 		];*/
 	var catagory = new Object();

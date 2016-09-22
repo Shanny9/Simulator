@@ -1,49 +1,49 @@
 bizUnitName,gain
-Cargo-Cargo-AHM,1.725
-Cargo-Cargo-Amadeus,2.25
-Plan & Org-Plan & Org-Board_Connect,5.7
-Plan & Org-Plan & Org-Cargo_Mobile,2.7
-Safe & Qlty-Safe & Qlty-Carmel,2.25
-Comm & Ind Affs-Admin-Delicious,2.25
-Comm & Ind Affs-Admin-Dynamics,3.6
-Comm & Ind Affs-Admin-EFOS,2.4
-Cust & Service-CR-Global_Pay,1.95
-Cust & Service-CR-iFly,1.5
-Cust & Service-GO-iGet,1.95
-Finance-Accounts-iGroup,2.25
-Comm & Ind Affs-Admin.-iKnow,1.35
-Comm & Ind Affs-CP & DS-iLearn,1.5
-Comm & Ind Affs-Int Affs-iMashab,3.6
-Comm & Ind Affs-Pax Marketing-iReset,1.05
-Comm & Ind Affs-Revenue Mgmt-LIDO,1.2
-Comm & Ind Affs-SP-LY_Mobile,3.75
-Cust & Service-CR-LY_Print,0.9
-Cust & Service-GO-LY_Web,0.9
-Cust & Service-In Flight Services-Otzma,5.85
-Cust & Service-ISR Station-PMA,0.75
-Finance-Accounts-PMS,3.6
-Finance-Budget & Ctrl-Pricing,3.15
-Finance-Comp Treas-Romach,3.6
-Finance-Proc & Supply-SAP_BO,0.9
-Global Sales-Asia & Oceania-SAP_FI,2.1
-Global Sales-Central EU & Africa-SAP_HCM,3.15
-Global Sales-CS & Sales-SAP_MM,2.7
-Global Sales-E EU-SharePoint,3.3
-Global Sales-ISR Branch-Spotfire,3.9
-Global Sales-N & Central America-Tip_Top,3
-Global Sales-N EU-TOMER,4.35
-Global Sales-W EU-Tool_Box,1.65
-HR & Admin-Admin-Up_Web,1.8
-HR & Admin-HR-AD,1.2
-HR & Admin-Security OFC-Avaya,0.15
-HR & Admin-Train & Org Dev-CA_Audit,1.35
-IT-IS-CA_IDM,1.35
-IT-IT Inf & Comm-CA_MFC,1.35
-Maint & Eng-A/C Maint-CA_NM,1.35
-Maint & Eng-A/C Overhaul-CA_SDM,1.35
-Maint & Eng-Eng-CA_TS,1.35
-Maint & Eng-Prog Mgmt-DB,1.2
-Maint & Eng-Review & QA-Neebula,0.3
-Maint & Eng-Wksp & Log-Office_365,1.8
-Opps-Crew Asign-SteelEye,1.5
-Opps-Flight Ops-Storage,0.75
+Cargo-Cargo-AHM,103.5
+Cargo-Cargo-Amadeus,135
+Plan & Org-Plan & Org-Board_Connect,342
+Plan & Org-Plan & Org-Cargo_Mobile,162
+Safe & Qlty-Safe & Qlty-Carmel,135
+Comm & Ind Affs-Admin.-Delicious,135
+Comm & Ind Affs-Admin.-Dynamics,216
+Comm & Ind Affs-Admin.-EFOS,144
+Cust & Service-CR-Global_Pay,117
+Cust & Service-CR-iFly,90
+Cust & Service-GO-iGet,117
+Finance-Accounts-iGroup,135
+Comm & Ind Affs-Admin.-iKnow,81
+Comm & Ind Affs-CP & DS-iLearn,90
+Comm & Ind Affs-Int Affs-iMashab,216
+Comm & Ind Affs-Pax Marketing-iReset,63.00000000000001
+Comm & Ind Affs-Revenue Mgmt-LIDO,72
+Comm & Ind Affs-SP-LY_Mobile,225
+Cust & Service-CR-LY_Print,54
+Cust & Service-GO-LY_Web,54
+Cust & Service-In Flight Services-Otzma,351
+Cust & Service-ISR Station-PMA,45
+Finance-Accounts-PMS,216
+Finance-Budget & Ctrl-Pricing,189
+Finance-Comp Treas-Romach,216
+Finance-Proc & Supply-SAP_BO,54
+Global Sales-Asia & Oceania-SAP_FI,126.00000000000001
+Global Sales-Central EU & Africa-SAP_HCM,189
+Global Sales-CS & Sales-SAP_MM,162
+Global Sales-E EU-SharePoint,198
+Global Sales-ISR Branch-Spotfire,234
+Global Sales-N & Central America-Tip_Top,180
+Global Sales-N EU-TOMER,261
+Global Sales-W EU-Tool_Box,99
+HR & Admin-Admin-Up_Web,108
+HR & Admin-HR-AD,72
+HR & Admin-Security OFC-Avaya,9
+HR & Admin-Train & Org Dev-CA_Audit,81
+IT-IS-CA_IDM,81
+IT-IT Inf & Comm-CA_MFC,81
+Maint & Eng-A/C Maint-CA_NM,81
+Maint & Eng-A/C Overhaul-CA_SDM,81
+Maint & Eng-Eng-CA_TS,81
+Maint & Eng-Prog Mgmt-DB,72
+Maint & Eng-Review & QA-Neebula,18
+Maint & Eng-Wksp & Log-Office_365,108
+Opps-Crew Asign-SteelEye,90
+Opps-Flight Ops-Storage,45

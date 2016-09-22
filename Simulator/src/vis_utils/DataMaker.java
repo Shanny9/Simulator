@@ -899,17 +899,18 @@ public class DataMaker {
 			if (all_services == null) {
 				return null;
 			}
-
+			List<DepartmentService> temp;
+			PreparedStatement pstmt1;
+			ResultSet rs;
 			for (TblService ser : all_services) {
 
-				PreparedStatement pstmt1 = DBUtility.getConnection()
+				pstmt1 = DBUtility.getConnection()
 						.prepareStatement(Queries.getDepartmentsByService);
 
 				pstmt1.setByte(1, ser.getServiceId());
-				ResultSet rs = pstmt1.executeQuery();
-
+				rs = pstmt1.executeQuery();
+				temp = new ArrayList<>();
 				while (rs.next()) {
-					int numOfDepartmentsUsingService = rs.getInt("count");
 					String division_name = (isAbbreviated) ? rs
 							.getString("division_shortName") : rs
 							.getString("division_name");
@@ -919,16 +920,19 @@ public class DataMaker {
 					String service_name = (isAbbreviated) ? rs
 							.getString("service_code") : rs
 							.getString("service_name");
-					double departmentPercentage = (numOfDepartmentsUsingService == 0) ? 1
-							: 1.d / numOfDepartmentsUsingService;
-
+				
 					departmentService = new DepartmentService();
 					departmentService.setDepartmentName(division_name + "-"
 							+ department_name);
 					departmentService.setserviceId(ser.getServiceId());
 					departmentService.setserviceName(service_name);
-					departmentService.setPercentage(departmentPercentage);
-					result.add(departmentService);
+					temp.add(departmentService);
+				}
+				
+				double departmentPercentage = (temp.size() == 0) ? 1 : 1.d / temp.size();
+				for (DepartmentService ds : temp){
+					ds.setPercentage(departmentPercentage);
+					result.add(ds);
 				}
 			}
 		} catch (SQLException e) {

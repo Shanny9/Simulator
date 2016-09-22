@@ -16,10 +16,10 @@ function ColorLuminance(hex, lum) {
 
 	return rgb;
 }
+var csv;
 function generateFile(round, service, team){
 	$.ajax({
 		url : "DashboardController",
-		contentType: 'application/json',
 		data : {
 			action : "generateITBudgetBreakdown",
 			courseName: courseName,
@@ -27,18 +27,18 @@ function generateFile(round, service, team){
 			service: service,
 			team: team
 		},
-//		dataType : "text",
-		Accept: "text/csv",
+		dataType : "json",
 		async : false,
-		success : function(msg) {
+		success : function(data) {
 			console.log("generateITBudgetBreakdown:OK");
+			csv = data;
 
 		},
 		error: function(xhr, status, error) {
-			  var err = eval("(" + xhr.responseText + ")");
-			  console.log(err.Message);
+			  console.log(xhr.responseText);
 			}
 	});
+
 }
 
 var titles = new Array();
@@ -225,14 +225,14 @@ function setVisualization(round, service, team, isDrawLegend){
 	    .innerRadius(function(d) { return Math.sqrt(d.y); })
 	    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 	/*Generate CSV file */
-	generateFile(round, service, team);
+	generateFile(round, service, team); //sets var csv!
 	// Use d3.text and d3.csv.parseRows so that we do not need to have a header
 	// row, and can receive the csv as an array of arrays.
-	d3.text("ITBudgetBreakdown.csv", function(text) {
-	  var csv = d3.csv.parseRows(text);
+//	d3.text("ITBudgetBreakdown.csv", function(text) {
+//	  var csv = d3.csv.parseRows(text);
 	  var json = buildHierarchy(csv);
 	  createVisualization(json, isDrawLegend);
-	});
+//	});
 }
 // Main function to draw and set up the visualization, once we have the data.
 function createVisualization(json, isDrawLegend) {

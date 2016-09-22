@@ -112,8 +112,9 @@ public class DataMaker {
 	 *            The Round
 	 * @param team
 	 *            The team name
+	 * @return 
 	 */
-	public static void generateITBudgetBreakdown(String courseName, int round,
+	public static JSONArray generateITBudgetBreakdown(String courseName, int round,
 			String team, byte service_id, boolean isAbbreviated) {
 
 		// Initializes an array of rounds
@@ -174,7 +175,19 @@ public class DataMaker {
 				}
 			}
 
-			final String FILE_HEADER = "bizUnitName,gain";
+			JSONArray data = new JSONArray();
+			// Writes a new BizUnitService object list to array
+			if (departmentServiceArr != null) {
+				for (DepartmentService bus : departmentServiceArr) {
+					JSONArray item = new JSONArray();
+					item.add(bus.getDepartmentName()
+							+ ((service_id == 0) ? "-"
+									+ bus.getServiceName() : ""));
+					item.add(fmt(bus.getExpense()));
+					data.add(item);
+				}
+			}
+/*			final String FILE_HEADER = "bizUnitName,gain";
 			final String FILE_NAME = "ITBudgetBreakdown.csv";
 
 			FileWriter fileWriter = null;
@@ -211,9 +224,11 @@ public class DataMaker {
 							.println("DataMaker: Error while flushing/closing fileWriter");
 					e.printStackTrace();
 				}
-			}
+			}*/
+			return data;
 		}
-		return;
+		else
+			return null;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -144,6 +144,11 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(
 					SimulationLog.getInstance().getEventsForHomeScreen());
 			break;
+		case "getSolutionHistory":
+			response.getWriter().write(
+					gson.toJson(SimulationLog.getInstance()
+							.getSolutionHistory()));
+			break;
 		case "solutionStream":
 			if (!ClockIncrementor.isRunning()) {
 				return;
@@ -156,7 +161,6 @@ public class HomeController extends HttpServlet {
 				response.getWriter().write(toStream(solutionQueue.poll()));
 			}
 			break;
-
 		case "profitStream":
 
 			prepareResponseToStream(response);
@@ -379,7 +383,7 @@ public class HomeController extends HttpServlet {
 	private String toStream(Object obj) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(obj);
- 		String[] rows = json.split("\n");
+		String[] rows = json.split("\n");
 		for (int i = 0; i < rows.length; i++) {
 			rows[i] = "data: " + rows[i];
 		}

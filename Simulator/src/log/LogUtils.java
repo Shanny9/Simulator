@@ -179,7 +179,7 @@ public class LogUtils {
 		for (TblIncident inc : all_incidents) {
 			byte inc_id = (byte) inc.getIncidentId();
 			byte ci_id = (byte) inc.getCiId();
-			SimulationTime start_time = inc.getIncidentTime();
+			SimulationTime start_time = inc.getSimulationTime();
 			incidents.put(inc_id, new IncidentLog(inc_id, ci_id, start_time));
 		}
 		return incidents;
@@ -198,7 +198,7 @@ public class LogUtils {
 		}
 		
 		for (TblIncident inc : all_incidents) {
-			incidents.put(inc.getIncidentTime(), (byte) inc.getIncidentId());
+			incidents.put(inc.getSimulationTime(), (byte) inc.getIncidentId());
 		}
 		return incidents;
 	}

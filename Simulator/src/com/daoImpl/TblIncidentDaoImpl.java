@@ -32,7 +32,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 		pStmt = dbConnection.prepareStatement(insertQuery);
 		pStmt.setByte(1, incident.getIncidentId());
-		pStmt.setInt(2, incident.getIncidentTime().getRunTime());
+		pStmt.setInt(2, incident.getIncidentTime());
 		pStmt.setByte(3, incident.getCiId());
 		pStmt.setBoolean(4, incident.getIsActive());
 		pStmt.setInt(5, incident.getSolutionId());
@@ -60,7 +60,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 		pStmt = dbConnection.prepareStatement(updateQuery);
 		pStmt.setByte(1, incident.getIncidentId());
-		pStmt.setInt(2, incident.getIncidentTime().getRunTime());
+		pStmt.setInt(2, incident.getIncidentTime());
 		pStmt.setByte(3, incident.getCiId());
 		pStmt.setBoolean(4, incident.getIsActive());
 		pStmt.setInt(5, incident.getSolutionId());
@@ -84,7 +84,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				incident.setIncidentId(rs.getByte("incident_id"));
 				incident.setCiId(rs.getByte("ci_id"));
 				int time = rs.getInt("incidentTime");
-				incident.setIncidentTime(new SimulationTime(time));
+				incident.setIncidentTime(time);
 				incident.setIsActive(rs.getBoolean("isActive"));
 				incident.setSolutionId(rs.getInt("solution_id"));
 				incidents.add(incident);
@@ -109,8 +109,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 				incident.setIncidentId(rs.getByte("incident_id"));
 				incident.setCiId(rs.getByte("ci_id"));
-				incident.setIncidentTime(new SimulationTime(rs
-						.getInt("incidentTime")));
+				incident.setIncidentTime(rs.getInt("incidentTime"));
 				incident.setIsActive(rs.getBoolean("isActive"));
 				incident.setSolutionId(rs.getInt("solution_id"));
 				incidents.add(incident);
@@ -135,8 +134,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 			inci = new TblIncident();
 
 			inci.setIncidentId(rs.getByte("incident_id"));
-			int time = rs.getInt("incidentTime");
-			inci.setIncidentTime(new SimulationTime(time));
+			inci.setIncidentTime(rs.getInt("incidentTime"));
 			inci.setCiId(rs.getByte("ci_id"));
 			inci.setIsActive(rs.getBoolean("isActive"));
 			inci.setSolutionId(rs.getInt("solution_id"));

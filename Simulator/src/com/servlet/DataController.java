@@ -460,7 +460,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("incidentTime") != null) {
 						int inciTime = Integer.parseInt(request
 								.getParameter("incidentTime"));
-						inci.setIncidentTime(new SimulationTime(inciTime));
+						inci.setIncidentTime(inciTime);
 					}
 
 					if (request.getParameter("isActive") != null) {

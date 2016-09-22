@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import utils.SimulationTime;
 
@@ -48,7 +49,11 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * The simulation's live queue of current solutions
 	 */
-	private LinkedList<SolutionLog> solutionQueue = new LinkedList<>();;
+	private LinkedList<SolutionLog> solutionQueue = new LinkedList<>();
+	/**
+	 * The simulation's history solutions
+	 */
+	private Set<SolutionLog> solutionHistory = new HashSet<>();
 	/**
 	 * The current status of the simulation at the server
 	 */
@@ -348,6 +353,16 @@ public class SimulationLog extends Thread implements Serializable {
 	public HashMap<SimulationTime, Byte> getIncidentTimes() {
 		return incident_times;
 	}
+
+	public void addSolution(SolutionLog sol) {
+		solutionQueue.offer(sol);
+		solutionHistory.add(sol);
+	}
+	
+	public Set<SolutionLog> getSolutionHistory(){
+		return solutionHistory;
+	}
+
 
 	/**
 	 * @return The simulation's live queue of current solutions

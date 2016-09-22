@@ -147,7 +147,7 @@ $(document).ready(function() {
 		var theClass = $("#funcBtn span").attr('class');
 		if (theClass === "start") {
 			startSimulator();
-			setPauseBtn();
+			setRunning();
 		}
 		if (theClass === "pause" && !isFinishedRound) {
 			pauseSimulator();
@@ -186,6 +186,17 @@ function setFinish() {
 	$(".start").removeClass("start").addClass("finish").html("FINISHED");
 	$(".resume").removeClass("resume").addClass("finish").html("FINISHED");
 	$(".pause").removeClass("pause").addClass("finish").html("FINISHED");
+	$(".running").removeClass("running").addClass("finish").html("FINISHED");
+	$("#funcBtn").css("cursor", "default");
+}
+
+/**
+ * sets the start button to RUNNING mode.
+ */
+function setRunning() {
+	$(".start").removeClass("start").addClass("running").html("Running");
+	$(".resume").removeClass("resume").addClass("running").html("Running");
+	$(".pause").removeClass("pause").addClass("running").html("Running");
 	$("#funcBtn").css("cursor", "default");
 }
 
@@ -203,6 +214,7 @@ function checkSimulator() {
 		dataType : "json",
 		timeout : 0,
 		success : function(msg) {
+			setRunning();
 			startSimulator();
 		},
 		error : function(e) {
@@ -271,12 +283,30 @@ function showEventsInTime() {
 }
 
 /**
+ * comparator for events ( showSessionEvents() )
+ */
+function compare(a,b) {
+	  if (a.time < b.time)
+	    return -1;
+	  if (a.time > b.time)
+	    return 1;
+	  return 0;
+	}
+
+/**
  * Presents events that should appear now (in case of refresh etc.).
  */
 function showSessionEvents() {
 	var roundRunTime = settings["runTime"] * settings["sessionsPerRound"];
 	var sessionStartTime = (round - 1) * roundRunTime + 1;
-	$.each(eventsData, function(i, item) {
+	/* copy the object: eventsData to an array and sort it */
+	var sortedEventsData = new Array();
+	$.each(eventsData, function(k, v){
+		sortedEventsData.push(v);
+	});
+	sortedEventsData.sort(compare);
+	
+	$.each(sortedEventsData, function(i, item) {
 		if (item.time <= elapsedRunTime && item.time >= sessionStartTime) {
 			var row = eventsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");

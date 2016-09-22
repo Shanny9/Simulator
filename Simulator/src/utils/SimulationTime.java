@@ -59,10 +59,10 @@ public class SimulationTime implements Serializable {
 	}
 
 	private boolean isTooBig(int timeToCheck) {
-		if (timeToCheck > 3600) {
+		if (timeToCheck > 3600*24) {
 			try {
 				throw new Exception(
-						"SimulationTime: Time cannot exceed one day (" + timeToCheck + " > 3600).");
+						"SimulationTime: Time cannot exceed one day (" + timeToCheck + " > " + 3600*24 + ").");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return true;
@@ -80,20 +80,29 @@ public class SimulationTime implements Serializable {
 		}
 		return false;
 	}
+	
+	private int getRoundRunTime(){
+		return  run_time * sessions_in_round;
+	}
 
 	public int getRound() {
-		int roundRunTime = run_time * sessions_in_round;
-		return (time / roundRunTime) + ((time % roundRunTime == 0) ? 0 : 1);
+		if (time == 0){
+			return 1;
+		}
+		int roundRunTime = getRoundRunTime();
+		return time / roundRunTime + ((time % roundRunTime == 0) ? 0 : 1);
 	}
 
 	public int getSession() {
-		int roundRunTime = run_time * sessions_in_round;
-		int timeInRound = time - (rounds * roundRunTime);
-		return timeInRound / run_time;
+		return getRunTimeInRound() / run_time;
 	}
 
 	public int getRunTime() {
 		return time;
+	}
+	
+	public int getRunTimeInRound(){
+		return time - ((getRound()-1) * getRoundRunTime());
 	}
 
 	public int getTimeIncludingBreaks() {
@@ -133,8 +142,6 @@ public class SimulationTime implements Serializable {
 		return equals(new SimulationTime(other));
 	}
 	
-	
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

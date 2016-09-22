@@ -81,7 +81,7 @@ public class TeamLog implements Serializable {
 	void setRound(int round) {
 		this.round = round;
 		Settings sett = SimulationLog.getInstance().getSettings();
-		int duration = sett.getTotalRunTime();
+		int duration = sett.getRoundRunTime();
 		double init_capital = 0;
 
 		if (round == 1) {
@@ -97,8 +97,8 @@ public class TeamLog implements Serializable {
 			}
 		}
 
-		this.profits = new ArrayList<>(Collections.nCopies(duration + 1, 0d));
-		this.profits.set(0, init_capital);
+		this.profits = new ArrayList<>(Collections.nCopies(duration+1, 0d));
+		setProfit(new SimulationTime(0), init_capital);
 	}
 
 	void setIncidentLogs(HashMap<Byte, IncidentLog> inc_logs) {
@@ -147,8 +147,8 @@ public class TeamLog implements Serializable {
 			purchases.put(time.getRunTime(), ci_id);
 			double solutionCost = SimulationLog.getInstance()
 					.getCISolutionCost(ci_id);
-			profits.set(time.getRunTime(), getProfit(time) - solutionCost);
-
+			double profitToSet = getProfit(time) - solutionCost;
+			setProfit(time, profitToSet);
 			// System.out.println("Team " + teamName + ": solution baught at " +
 			// time + "seconds for "
 			// +
@@ -207,13 +207,16 @@ public class TeamLog implements Serializable {
 	 *            The simulation time
 	 * @return The team's profit at the given time
 	 */
-	synchronized public double getProfit(SimulationTime time) {
-		try {
-			return profits.get(time.getRunTime());
-		} catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
+	public synchronized double getProfit(SimulationTime time) {
+		if (profits != null){
+			return profits.get(time.getRunTimeInRound());
+		} else{
 			return 0;
 		}
+	}
+	
+	private synchronized void setProfit(SimulationTime time, double profitToSet){
+		profits.set(time.getRunTimeInRound(), profitToSet);
 	}
 
 	/**
@@ -240,8 +243,8 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		profits.set(time.getRunTime(),
-				getProfit(new SimulationTime(time.getRunTime() - 1)) + diff);
+		double profitToSet = getProfit(new SimulationTime(time.getRunTimeInRound() - 1)) + diff;
+		setProfit(time, profitToSet);
 	}
 
 	/**

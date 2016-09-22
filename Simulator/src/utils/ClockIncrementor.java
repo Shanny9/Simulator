@@ -96,7 +96,7 @@ public class ClockIncrementor implements Runnable {
 		isRunning = true;
 		elapsedTime += 1;
 		remainingTime -= 1;
-		System.out.println("ClockIncrementor: elapsed_time= " + elapsedTime);
+//		System.out.println("ClockIncrementor: elapsed_time= " + elapsedTime);
 		if (isRunTime) {
 			elapsedRunTime.increment();
 		}

@@ -274,9 +274,10 @@ function showEventsInTime() {
  * Presents events that should appear now (in case of refresh etc.).
  */
 function showSessionEvents() {
-	var sessionStartTime = (round - 1) * settings["roundTime"] + 1;
+	var roundRunTime = settings["runTime"] * settings["sessionsPerRound"];
+	var sessionStartTime = (round - 1) * roundRunTime + 1;
 	$.each(eventsData, function(i, item) {
-		if (item.time <= elapsedTime && item.time >= sessionStartTime) {
+		if (item.time <= elapsedRunTime && item.time >= sessionStartTime) {
 			var row = eventsOnScreen + 1;
 			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")

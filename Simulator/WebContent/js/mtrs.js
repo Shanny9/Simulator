@@ -317,8 +317,83 @@ function setBarChartPerService(roundId) {
 
 }
 
+// *** little pie chart ***//
+var pieData;
+function getPieData() {
+	$.ajax({
+		url : "DashboardController",
+		data : {
+			action : "getPieData",
+			courseName : courseName
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+
+			pieData = data;
+			/* 					for (var i = 0; i < pieData.marom.labels.length; i++) {
+			
+			 pieData.marom.labels[i] = pieData.marom.labels[i] +" " +
+			 pieData.marom.percentages[i]*100 + "%";
+			 } */
+		},
+		error : function(e) {
+			console.log("Error in getPieData");
+		}
+	});
+}
+
+function makeLabels(percentages) {
+	var i = 0;
+	$('#my-doughnut-legend').find('li').each(function() {
+		var current = $(this);
+		current.append("&nbsp;" + percentages[i] * 100 + "%");
+		i++;
+	});
+}
+
+function setAvailabiltyPie(){
+	getPieData();
+
+	var options = {
+		legend : true,
+		responsive : false
+	};
+
+	var dougnut = new Chart(document
+			.getElementById("canvas1"), {
+		type : 'pie',
+		tooltipFillColor : "rgba(51, 51, 51, 0.55)",
+		data : {
+			labels : pieData.marom.labels,
+			datasets : [ {
+				data : pieData.marom.percentages,
+				backgroundColor : [
+				//            "#BDC3C7",
+				//            "#9B59B6",
+				"#26B99A", "#E74C3C"
+				//          "#3498DB"
+				],
+				hoverBackgroundColor : [
+				//            "#CFD4D8",
+				//            "#B370CF",
+				"#36CAAB", "#E95E4F"
+				//              "#49A9EA"
+				]
+			} ]
+		},
+		options : options
+	});
+	document.getElementById('my-doughnut-legend').innerHTML = dougnut
+			.generateLegend();
+	makeLabels(pieData.marom.percentages);
+}
+
 // ******** Doc Ready - Set Select2 + Graphs with combos ********
 $(document).ready(function() {
+	//set little pie chart
+	setAvailabiltyPie();
+	
 	//get data for combo boxes
 	getServices();
 	getRounds();

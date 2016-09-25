@@ -63,7 +63,7 @@
               <div class="menu_section">
                 <ul class="nav side-menu">
                   <li><a href="login.jsp?action=logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-                  <li><a href="javascript:void(0)"><i class="fa fa-arrow-left"></i> Go Back<!--  <span class="label label-success pull-right">Main Page</span> --></a></li>
+                  <li><a href="openning.jsp"><i class="fa fa-arrow-left"></i> Go Back<!--  <span class="label label-success pull-right">Main Page</span> --></a></li>
                 </ul>
               </div>
 

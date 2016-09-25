@@ -119,7 +119,7 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print("yes");
 			break;
 		case "getTime":
-			HashMap<String, Object> clocks = ClockIncrementor.getClocks(round);
+			HashMap<String, Object> clocks = ClockIncrementor.getClocks();
 			clocks.put("serverTime", new Date());
 			response.getWriter().print(gson.toJson(clocks));
 			break;
@@ -164,19 +164,15 @@ public class HomeController extends HttpServlet {
 		case "profitStream":
 
 			prepareResponseToStream(response);
-			if (!ClockIncrementor.isRunning()) {
-				return;
-			}
-
-			int currentTime = ClockIncrementor.getSimTime().getRunTime();
-			if (currentTime == 0) {
+			if (!ClockIncrementor.isRunning() || ClockIncrementor.isPauseTime()) {
 				return;
 			}
 
 			SimulationLog simLogg = SimulationLog.getInstance();
 
 			HashMap<String, Double> profits = simLogg
-					.getTeamScores(new SimulationTime(currentTime));
+					.getTeamScores(new SimulationTime(ClockIncrementor
+							.getSimRunTime().getRunTime()));
 			String streamMessage = "retry: 1000\ndata: [{\"team\": \"marom\", \"profit\": \""
 					+ profits.get("Marom").intValue() + "\"}, ";
 			streamMessage += "{\"team\": \"rakia\", \"profit\": \""

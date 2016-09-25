@@ -28,6 +28,10 @@ var settings = new Object();
  */
 var eventsData = new Object();
 /**
+ * The solutions of players sent from the servlet.
+ */
+var solutionHistory = new Object();
+/**
  * The timer of the clock (ticks every second).
  */
 var clockInterval;
@@ -265,6 +269,28 @@ function getEvents() {
 }
 
 /**
+ * Fetches events from the servlet and puts them in {@code solutionHistory} variable.
+ */
+function getSolutionHistory() {
+	$.ajax({
+		url : "HomeController",
+		data : {
+			action : "getSolutionHistory",
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+			$.each(data, function(key, value) {
+				solutionHistory[key] = value;
+			});
+		},
+		error : function(e) {
+			console.log("js:getIncidents: Error in getting events.");
+		}
+	});
+}
+
+/**
  * Presents the events that start NOW.
  */
 function showEventsInTime() {
@@ -388,6 +414,7 @@ function startSimulator() {
 			$("#round").html(round);
 
 			getEvents();
+			getSolutionHistory();
 			getTime();
 			showSessionEvents();
 

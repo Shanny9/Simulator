@@ -35,15 +35,17 @@ public class ClockIncrementor implements Runnable {
 	 */
 	private static ClockIncrementor instance;
 
+	private static int current_round;
+
 	/**
 	 * Initializes the {@code ClockIncrementor}
 	 * 
-	 * @param _settings
+	 * @param settings
 	 *            The course's settings
 	 */
-	public static void initialize(Settings _settings) {
-
-		settings = _settings;
+	public static void initialize(Settings settings, int current_round) {
+		ClockIncrementor.current_round = current_round;
+		ClockIncrementor.settings = settings;
 		initVariables();
 
 		System.out
@@ -76,18 +78,14 @@ public class ClockIncrementor implements Runnable {
 	 *         {@code elapsedRunTime (SimulationTime)}</li> <li>
 	 *         {@code isRunTime (boolean)}</li>
 	 */
-	public static HashMap<String, Object> getClocks(int currentRound) {
-
-		if (currentRound <= 0) {
-			return null;
-		}
+	public static HashMap<String, Object> getClocks() {
 
 		HashMap<String, Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock",
-				elapsedTime + (currentRound - 1) * settings.getRoundTime());
+				elapsedTime + (current_round - 1) * settings.getRoundTime());
 		clocks.put("remainingClock", remainingTime);
 		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime()
-				+ (currentRound - 1) * settings.getRoundRunTime());
+				+ (current_round - 1) * settings.getRoundRunTime());
 		clocks.put("isRunTime", isRunTime);
 		return clocks;
 	}
@@ -96,7 +94,7 @@ public class ClockIncrementor implements Runnable {
 		isRunning = true;
 		elapsedTime += 1;
 		remainingTime -= 1;
-//		System.out.println("ClockIncrementor: elapsed_time= " + elapsedTime);
+		// System.out.println("ClockIncrementor: elapsed_time= " + elapsedTime);
 		if (isRunTime) {
 			elapsedRunTime.increment();
 		}
@@ -143,8 +141,9 @@ public class ClockIncrementor implements Runnable {
 	 * 
 	 * @return The simulation run time.
 	 */
-	public static SimulationTime getSimTime() {
-		int runTime = elapsedRunTime.getRunTime();
+	public static SimulationTime getSimRunTime() {
+		int runTime = elapsedRunTime.getRunTime() + (current_round - 1)
+				* settings.getRoundRunTime();
 		return new SimulationTime(runTime);
 	}
 
@@ -175,5 +174,13 @@ public class ClockIncrementor implements Runnable {
 	 */
 	public static boolean isRunning() {
 		return isRunning;
+	}
+	
+	public static boolean isPauseTime(){
+		return !isRunTime;
+	}
+	
+	public static boolean isRunTime(){
+		return isRunTime;
 	}
 }

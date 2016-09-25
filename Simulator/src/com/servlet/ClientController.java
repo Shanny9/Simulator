@@ -99,7 +99,7 @@ public class ClientController extends HttpServlet {
 		case "checkIncident":
 			team = request.getParameter("team");
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
-			time = ClockIncrementor.getSimTime();
+			time = ClockIncrementor.getSimRunTime();
 			boolean isGood = SimulationLog.getInstance().checkIncident(
 					SimulationLog.getTeamConst(team), inc_id, time);
 			// System.out.println("ClientController: " + team + " Inc:" + inc_id
@@ -111,7 +111,7 @@ public class ClientController extends HttpServlet {
 		case "sendSolution":
 			team = request.getParameter("team");
 			inc_id = Byte.valueOf(request.getParameter("inc_id"));
-			time = ClockIncrementor.getSimTime();
+			time = ClockIncrementor.getSimRunTime();
 
 			SimulationLog.getInstance().incidentSolved(
 					SimulationLog.getTeamConst(team), inc_id, time, isBaught);

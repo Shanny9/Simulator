@@ -1,6 +1,5 @@
 package utils;
 
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,7 @@ public class TimerManager implements ServletContextListener {
 	public static void startSimulator(Settings settings, int round) {
 
 		ci = ClockIncrementor.getInstance();
-		ClockIncrementor.initialize(settings);
+		ClockIncrementor.initialize(settings,round);
 
 		lm = LogManager.getInstance();
 		LogManager.initialize(settings);

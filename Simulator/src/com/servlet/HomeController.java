@@ -86,11 +86,16 @@ public class HomeController extends HttpServlet {
 			case 1:
 				Object session = getServletContext().getAttribute("isLogged");
 				if (session != null) {
-					((HttpSession) session).invalidate();
+					try {
+						((HttpSession) session).invalidate();
+					} catch (IllegalStateException ise) {
+						System.out.println("Session "+((HttpSession) session).getId()+" is invalid now.");
+					}
 					getServletContext().setAttribute("isLogged",
 							request.getSession());
 					request.getSession().setAttribute("isLogged", "1");
 					response.sendRedirect("opening.jsp");
+					System.out.println("New Session "+request.getSession().getId()+" was stored.");
 				}
 				// response.sendRedirect("login.jsp");
 				else {

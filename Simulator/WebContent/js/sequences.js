@@ -94,7 +94,7 @@ function divideLegend(catagories, titles){
 function getCatagories(){
 	var colorsTry = ["#1f78b4", "#33a02c", "#fb9a99",
 	                 "#e31a1c", "#ff7f00", "#6a3d9a", "#8a1321"
-	                 ,"#b15928","#8d8d8d", "#bc3ab1", "#b40845","#04703c"];
+	                 ,"#b15928","#04703c", "#bc3ab1", "#b40845","#8d8d8d"];
 	var dJson;
 	/* get catagories from server */
 	$.ajax({
@@ -165,7 +165,8 @@ function getCatagories(){
 				catagory[item.department] = ColorLuminance(divColor, 0.33);
 				var depColor = ColorLuminance(divColor, 0.33);
 				$.each(item.services, function(key, val){
-					catagory[val] = ColorLuminance(depColor, 0.2);
+				//	catagory[val] = ColorLuminance(depColor, 0.2);
+					catagory[val] = '#8d8d8d';
 				});
 				
 		});

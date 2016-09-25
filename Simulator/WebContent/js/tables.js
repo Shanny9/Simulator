@@ -28,12 +28,12 @@ $(document).ready(function() {
 	case "tblService":
 		serviceTable();
 		break;
-/*	case "tblServiceDep":
+	case "tblServiceDep":
 		serviceDepTable();
-		break;*/
-	case "tblServiceDiv":
-		serviceDivTable();
 		break;
+/*	case "tblServiceDiv":
+		serviceDivTable();
+		break;*/
 	case "tblSolution":
 		solutionTable();
 		break;

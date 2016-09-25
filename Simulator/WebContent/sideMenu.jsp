@@ -44,8 +44,8 @@
                       <li><a href="tables.jsp?tbl=tblIncident" id="tblIncident">Incident</a></li>
                       <li><a href="tables.jsp?tbl=tblPriorityCost" id="tblPriorityCost">Priority Cost</a></li>
                       <li><a href="tables.jsp?tbl=tblService" id="tblService">Service</a></li>
-                      <!-- <li><a href="tables.jsp?tbl=tblServiceDep" id="tblServiceDep">Service Department</a></li> --> 
-                      <li><a href="tables.jsp?tbl=tblServiceDiv" id="tblServiceDiv">Service Division</a></li>
+                      <li><a href="tables.jsp?tbl=tblServiceDep" id="tblServiceDep">Service Department</a></li>
+                     <!--  <li><a href="tables.jsp?tbl=tblServiceDiv" id="tblServiceDiv">Service Division</a></li> -->
                       <li><a href="tables.jsp?tbl=tblSolution" id="tblSolution">Solution</a></li>
                       <li><a href="tables.jsp?tbl=tblSupplier" id="tblSupplier">Supplier</a></li>
                     </ul>

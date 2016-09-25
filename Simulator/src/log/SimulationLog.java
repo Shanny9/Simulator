@@ -28,6 +28,11 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<SimulationTime, Byte> incident_times = new HashMap<>();
 	/**
+	 * The simulation's incidents and their times (key=incident_id,
+	 * value=start_time)
+	 */
+	private HashMap<Byte,SimulationTime> times_incidents;
+	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
 	 */
@@ -42,6 +47,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * of events)
 	 */
 	private HashMap<Byte, HashSet<String>> incident_events;
+
 	/**
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
 	 */
@@ -88,6 +94,7 @@ public class SimulationLog extends Thread implements Serializable {
 		affected_services = LogUtils.getDBAffectedServices();
 		ciSolCosts = LogUtils.getCISolCosts();
 		incident_times = LogUtils.getIncidentTimes();
+		times_incidents = LogUtils.getTimeIncidents();
 		incident_events = LogUtils.getIncidentEvents();
 
 		List<TblService> services = new TblServiceDaoImpl().getAllServices();
@@ -389,6 +396,10 @@ public class SimulationLog extends Thread implements Serializable {
 	public int getRound() {
 		return round;
 	}
+	
+	public SimulationTime getTimeOfIncident(byte inc_id){
+		return times_incidents.get(inc_id);
+	}
 
 	/**
 	 * @param settings
@@ -399,6 +410,7 @@ public class SimulationLog extends Thread implements Serializable {
 		List<JsonObject> eventList = new ArrayList<JsonObject>();
 
 		if (incident_times != null) {
+			
 			for (Map.Entry<SimulationTime, Byte> incident : incident_times
 					.entrySet()) {
 				HashSet<String> events = incident_events.get(incident
@@ -411,6 +423,8 @@ public class SimulationLog extends Thread implements Serializable {
 				for (String event : events) {
 					JsonObject row = new JsonObject();
 					row.addProperty("time", incident.getKey().getRunTime());
+					row.addProperty("round", incident.getKey().getRound());
+					row.addProperty("session", incident.getKey().getSessionInRound());
 					row.addProperty("event_id", Integer.valueOf(event));
 					eventList.add(row);
 				}

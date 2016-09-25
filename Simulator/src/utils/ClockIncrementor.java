@@ -37,6 +37,8 @@ public class ClockIncrementor implements Runnable {
 
 	private static int current_round;
 
+	private static int current_session;
+
 	/**
 	 * Initializes the {@code ClockIncrementor}
 	 * 
@@ -45,6 +47,7 @@ public class ClockIncrementor implements Runnable {
 	 */
 	public static void initialize(Settings settings, int current_round) {
 		ClockIncrementor.current_round = current_round;
+		ClockIncrementor.current_session = 1;
 		ClockIncrementor.settings = settings;
 		initVariables();
 
@@ -76,7 +79,9 @@ public class ClockIncrementor implements Runnable {
 	 * @return A {@code HashMap} of the following: <li>{@code elapsedClock (int)}
 	 *         </li> <li>{@code remainingClock (int)}</li> <li>
 	 *         {@code elapsedRunTime (SimulationTime)}</li> <li>
-	 *         {@code isRunTime (boolean)}</li>
+	 *         {@code isRunTime (boolean)}</li> <li>
+	 *         {@code round (int)}</li> <li>
+	 *         {@code session (boolean)}</li>
 	 */
 	public static HashMap<String, Object> getClocks() {
 
@@ -87,6 +92,8 @@ public class ClockIncrementor implements Runnable {
 		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime()
 				+ (current_round - 1) * settings.getRoundRunTime());
 		clocks.put("isRunTime", isRunTime);
+		clocks.put("round", current_round);
+		clocks.put("session", current_session);
 		return clocks;
 	}
 
@@ -107,7 +114,7 @@ public class ClockIncrementor implements Runnable {
 
 		} else if (elapsedTime % settings.getSessionTime() == 0) {
 			// finished run time
-
+			current_session++;
 			if (elapsedTime % settings.getRoundTime() == 0) {
 				// finished round
 				isRunning = false;
@@ -175,12 +182,12 @@ public class ClockIncrementor implements Runnable {
 	public static boolean isRunning() {
 		return isRunning;
 	}
-	
-	public static boolean isPauseTime(){
+
+	public static boolean isPauseTime() {
 		return !isRunTime;
 	}
-	
-	public static boolean isRunTime(){
+
+	public static boolean isRunTime() {
 		return isRunTime;
 	}
 }

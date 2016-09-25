@@ -18,7 +18,7 @@ public class SimulationTime implements Serializable {
 	private static int rounds;
 
 	private static int totalSimulationRunTime;
-	
+
 	private static boolean isInitialized = false;
 
 	private int time;
@@ -32,11 +32,12 @@ public class SimulationTime implements Serializable {
 		totalSimulationRunTime = rounds * sessions_in_round * run_time;
 		isInitialized = true;
 	}
-	
+
 	public SimulationTime(int time) {
-		if (!isInitialized){
+		if (!isInitialized) {
 			try {
-				throw new Exception("SimulationTime: SimulationTime is not initialized.");
+				throw new Exception(
+						"SimulationTime: SimulationTime is not initialized.");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -49,7 +50,8 @@ public class SimulationTime implements Serializable {
 	private boolean notNegative(int timeToCheck) {
 		if (timeToCheck < 0) {
 			try {
-				throw new Exception("SimulationTime: Time cannot be negative (" + timeToCheck + " < 0).");
+				throw new Exception("SimulationTime: Time cannot be negative ("
+						+ timeToCheck + " < 0).");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -59,10 +61,11 @@ public class SimulationTime implements Serializable {
 	}
 
 	private boolean isTooBig(int timeToCheck) {
-		if (timeToCheck > 3600*24) {
+		if (timeToCheck > 3600 * 24) {
 			try {
 				throw new Exception(
-						"SimulationTime: Time cannot exceed one day (" + timeToCheck + " > " + 3600*24 + ").");
+						"SimulationTime: Time cannot exceed one day ("
+								+ timeToCheck + " > " + 3600 * 24 + ").");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return true;
@@ -72,7 +75,9 @@ public class SimulationTime implements Serializable {
 		if (timeToCheck > totalSimulationRunTime) {
 			try {
 				throw new Exception(
-						"SimulationTime: Time cannot exceed the simulation's duration (" + timeToCheck + " > " + totalSimulationRunTime + ").");
+						"SimulationTime: Time cannot exceed the simulation's duration ("
+								+ timeToCheck + " > " + totalSimulationRunTime
+								+ ").");
 			} catch (Exception e) {
 				e.printStackTrace();
 				return true;
@@ -80,29 +85,29 @@ public class SimulationTime implements Serializable {
 		}
 		return false;
 	}
-	
-	private int getRoundRunTime(){
-		return  run_time * sessions_in_round;
+
+	private int getRoundRunTime() {
+		return run_time * sessions_in_round;
 	}
 
 	public int getRound() {
-		if (time == 0){
+		if (time == 0) {
 			return 1;
 		}
 		int roundRunTime = getRoundRunTime();
 		return time / roundRunTime + ((time % roundRunTime == 0) ? 0 : 1);
 	}
 
-	public int getSession() {
-		return getRunTimeInRound() / run_time;
+	public int getSessionInRound() {
+		return (getRunTimeInRound() / run_time) + 1;
 	}
 
 	public int getRunTime() {
 		return time;
 	}
-	
-	public int getRunTimeInRound(){
-		return time - ((getRound()-1) * getRoundRunTime());
+
+	public int getRunTimeInRound() {
+		return time - ((getRound() - 1) * getRoundRunTime());
 	}
 
 	public int getTimeIncludingBreaks() {
@@ -141,8 +146,10 @@ public class SimulationTime implements Serializable {
 	public boolean equals(int other) {
 		return equals(new SimulationTime(other));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -153,7 +160,9 @@ public class SimulationTime implements Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

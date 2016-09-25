@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 
+import log.Settings;
+
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblDepartmentDaoImpl;
@@ -29,6 +31,10 @@ import com.model.TblSolution;
 import com.model.TblSupplier;
 
 public class DBValidator {
+
+	static final int MIN_INCIDENTS = 1;
+
+	static final int MAX_INCIDENTS = 12;
 
 	static int warnings = 0;
 
@@ -136,14 +142,15 @@ public class DBValidator {
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllDivisions();
 
-//		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
-//				.getAllServiceDivisions();
-//		HashSet<String> all_service_division_names = new HashSet<>();
-//		if (all_service_divisions != null) {
-//			for (TblService_Division ser_div : all_service_divisions) {
-//				all_service_division_names.add(ser_div.getDivisionName());
-//			}
-//		}
+		// Collection<TblService_Division> all_service_divisions = new
+		// TblServiceDivisionDaoImpl()
+		// .getAllServiceDivisions();
+		// HashSet<String> all_service_division_names = new HashSet<>();
+		// if (all_service_divisions != null) {
+		// for (TblService_Division ser_div : all_service_divisions) {
+		// all_service_division_names.add(ser_div.getDivisionName());
+		// }
+		// }
 
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
@@ -158,11 +165,11 @@ public class DBValidator {
 			for (TblDivision div : all_divisions) {
 				String div_name = div.getDivisionName();
 
-//				if (!all_service_division_names.contains(div_name)) {
-//					System.err.println("Division '" + div_name
-//							+ "' is not used in table 'tblService_Division'.");
-//					warnings++;
-//				}
+				// if (!all_service_division_names.contains(div_name)) {
+				// System.err.println("Division '" + div_name
+				// + "' is not used in table 'tblService_Division'.");
+				// warnings++;
+				// }
 
 				if (!all_departments_divisions.contains(div_name)) {
 					System.err.println("Division '" + div_name
@@ -186,8 +193,8 @@ public class DBValidator {
 		}
 
 		if (all_incidents != null) {
-			for (TblIncident div : all_incidents) {
-				byte inc_id = div.getIncidentId();
+			for (TblIncident inc : all_incidents) {
+				byte inc_id = inc.getIncidentId();
 
 				if (!all_event_incident_ids.contains(inc_id)) {
 					System.err.println("Incident '" + inc_id
@@ -211,13 +218,14 @@ public class DBValidator {
 			}
 		}
 
-//		Collection<TblService_Division> all_service_divisions = new TblServiceDivisionDaoImpl()
-//				.getAllServiceDivisions();
-//		if (all_service_divisions != null) {
-//			for (TblService_Division ser_div : all_service_divisions) {
-//				all_service_bizUnit_ids.add(ser_div.getService_ID());
-//			}
-//		}
+		// Collection<TblService_Division> all_service_divisions = new
+		// TblServiceDivisionDaoImpl()
+		// .getAllServiceDivisions();
+		// if (all_service_divisions != null) {
+		// for (TblService_Division ser_div : all_service_divisions) {
+		// all_service_bizUnit_ids.add(ser_div.getService_ID());
+		// }
+		// }
 
 		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
 		HashSet<Byte> all_event_service_ids = new HashSet<>();
@@ -304,6 +312,40 @@ public class DBValidator {
 					System.err.println("Supplier '" + supp_name
 							+ "' is not used in table 'tblCI'.");
 					warnings++;
+				}
+			}
+		}
+	}
+
+	public static void checkSettings(Settings sett) {
+		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
+				.getAllIncidents();
+		int rounds = sett.getRounds();
+		int sessionsPerRound = sett.getSessionsPerRound();
+
+		int[][] inc_counts = new int[rounds][sessionsPerRound];
+		SimulationTime inc_time;
+		for (TblIncident inc : all_incidents) {
+			inc_time = inc.getSimulationTime();
+			inc_counts[inc_time.getRound() - 1][inc_time.getSessionInRound() - 1]++;
+		}
+
+		for (int r = 1; r < rounds; r++) {
+			for (int s = 1; s < sessionsPerRound; s++) {
+				int num_of_incidents = inc_counts[r][s];
+				int round = r+1;
+				int session = s+1;
+				if (num_of_incidents < MIN_INCIDENTS) {
+					System.err.println("Round " + round + "session " + session
+							+ ": Insufficient incidents (" + num_of_incidents
+							+ " < " + MIN_INCIDENTS + ").");
+					continue;
+				}
+
+				if (num_of_incidents > MAX_INCIDENTS) {
+					System.err.println("Round " + round + "session " + session
+							+ ": Too many incidents (" + num_of_incidents
+							+ " > " + MAX_INCIDENTS + ").");
 				}
 			}
 		}

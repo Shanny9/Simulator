@@ -35,6 +35,8 @@ import com.model.TblService;
 import com.model.TblSupplier;
 
 public class LogUtils {
+	
+	private static HashMap<Byte, SimulationTime> timeIncidents = new HashMap<>();
 
 	/**
 	 * @return A map of the CI's and their affected services
@@ -199,9 +201,18 @@ public class LogUtils {
 		
 		for (TblIncident inc : all_incidents) {
 			incidents.put(inc.getSimulationTime(), (byte) inc.getIncidentId());
+			timeIncidents.put((byte) inc.getIncidentId(), inc.getSimulationTime());
 		}
 		return incidents;
 	}
+	
+	/**
+	 * @return The incidents and their timings (key= time, value= incident)
+	 */
+	static HashMap<Byte, SimulationTime> getTimeIncidents() {
+		return timeIncidents;
+	}
+	
 
 	/**
 	 * @return The incidents and their events (key= incident, value= set of

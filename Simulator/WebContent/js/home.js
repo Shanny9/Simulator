@@ -269,7 +269,8 @@ function getEvents() {
 }
 
 /**
- * Fetches events from the servlet and puts them in {@code solutionHistory} variable.
+ * Fetches events from the servlet and puts them in {@code solutionHistory}
+ * variable.
  */
 function getSolutionHistory() {
 	$.ajax({
@@ -311,31 +312,52 @@ function showEventsInTime() {
 /**
  * comparator for events ( showSessionEvents() )
  */
-function compare(a,b) {
-	  if (a.time < b.time)
-	    return -1;
-	  if (a.time > b.time)
-	    return 1;
-	  return 0;
-	}
+function compare(a, b) {
+	if (a.time < b.time)
+		return -1;
+	if (a.time > b.time)
+		return 1;
+	return 0;
+}
 
 /**
  * Presents events that should appear now (in case of refresh etc.).
  */
 function showSessionEvents() {
-	var roundRunTime = settings["runTime"] * settings["sessionsPerRound"];
-	var sessionStartTime = (round - 1) * roundRunTime + 1;
+	var isSolvedMarom = false;
+	var isSolvedRakia = false;
+	// var roundRunTime = settings["runTime"] * settings["sessionsPerRound"];
+	// var sessionStartTime = (round - 1) * roundRunTime + 1;
 	/* copy the object: eventsData to an array and sort it */
 	var sortedEventsData = new Array();
-	$.each(eventsData, function(k, v){
+	$.each(eventsData, function(k, v) {
 		sortedEventsData.push(v);
 	});
 	sortedEventsData.sort(compare);
-	
+	var eventsOnScreen = 0;
 	$.each(sortedEventsData, function(i, item) {
-		if (item.time <= elapsedRunTime && item.time >= sessionStartTime) {
+		if (item.round == round && item.session == session
+				&& item.time <= elapsedRunTime) {
+			isSolvedMarom = false;
+			isSolvedRakia = false;
+			$.each(solutionHistory, function(j, sol) {
+				if ($.inArray(item.event_id.toString(), sol.events) >= 0) {
+					if (sol.team == "Marom") {
+						isSolvedMarom = true;
+					}
+					if (sol.team == "Rakia") {
+						isSolvedRakia = true;
+					}
+				}
+			});
 			var row = eventsOnScreen + 1;
-			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
+			// marom
+			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(0).addClass(
+					(isSolvedMarom) ? "success" : "danger");
+			// rakia
+			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(1).addClass(
+					(isSolvedRakia) ? "success" : "danger");
+
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
 					.html(item.event_id);
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
@@ -431,9 +453,10 @@ function startSimulator() {
 
 /**
  * Fetches clocks sent from the server ({@code elapsedClock},
- * {@code remainingClock}, {@code elapsedRunTime}, {@code isRunTime} and
- * {@code serverTime}), synchronizes the clinet-side clock with the server
- * clock and update the percentage bar.
+ * {@code remainingClock}, {@code elapsedRunTime}, {@code isRunTime},
+ * {@code serverTime}), {@code round}) and {@code session})
+ * synchronizes the clinet-side clock with the server clock and update the
+ * percentage bar.
  */
 function getTime() {
 	var start = (new Date).getTime();
@@ -449,7 +472,12 @@ function getTime() {
 					var latency = Math
 							.round((((new Date).getTime() - start) / 2) / 1000);
 					var remainingClock = data.remainingClock;
-
+					
+					round = data.round;
+					session = data.session;
+					$('#round').html(round);
+					$('#session').html(session);
+					
 					elapsedTime = Math.floor(data.elapsedClock + latency);
 					elapsedRunTime = Math.floor(data.elapsedRunTime + latency);
 					showTime = Math.floor(remainingClock + latency);

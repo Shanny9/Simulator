@@ -321,6 +321,21 @@ public class DBValidator {
 		String str = "";
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllIncidents();
+
+		String minErr = "Round [R] session [S]:\r\n"
+				+ "Insufficient incidents ([COUNT] < [MIN]).\r\n"
+				+ "Consider the follwoing options:\r\n"
+				+ "1. Decrease the number of sessions per round.\r\n"
+				+ "2. Increase the run time duration.\r\n"
+				+ "3. Add [A] incidents between [T1] to [T2].\n\n";
+
+		String maxErr = "Round [R] session [S]:\r\n"
+				+ "Too many incidents ([COUNT] > [MAX]).\r\n"
+				+ "Consider the follwoing options:\r\n"
+				+ "1. Increase the number of sessions per round.\r\n"
+				+ "2. Decreade the run time duration.\r\n"
+				+ "3. Reduce [A] incidents between [T1] to [T2].\n\n";
+		
 		int rounds = sett.getRounds();
 		int sessionsPerRound = sett.getSessionsPerRound();
 
@@ -329,33 +344,53 @@ public class DBValidator {
 		for (TblIncident inc : all_incidents) {
 			inc_time = inc.getSimulationTime();
 			int round = Math.min(inc_time.getRound(), sett.getRounds());
-			int session = Math.min(inc_time.getSessionInRound(), sett.getSessionsPerRound());
-			inc_counts[round-1][session-1]++;
+			int session = Math.min(inc_time.getSessionInRound(),
+					sett.getSessionsPerRound());
+			inc_counts[round - 1][session - 1]++;
 		}
-
+		SimulationTime startTime;
+		SimulationTime endTime;
+		int a;
+		String err = "";
 		for (int r = 1; r < rounds; r++) {
 			for (int s = 1; s < sessionsPerRound; s++) {
 				int num_of_incidents = inc_counts[r][s];
-				int round = r+1;
-				int session = s+1;
 				if (num_of_incidents < MIN_INCIDENTS) {
-					System.err.println("Round " + round + " session " + session
-							+ ": Insufficient incidents (" + num_of_incidents
-							+ " < " + MIN_INCIDENTS + ").");
-					str += "Round " + round + " at session "+ session +
-							"has insufficient incidents (" +num_of_incidents+ " < " + MIN_INCIDENTS+").\n";
+					startTime = new SimulationTime(r
+							* sett.getRoundRunTime() + s * sett.getRunTime());
+					endTime = new SimulationTime(
+							startTime.getRunTime() + sett.getRunTime());
+					a = num_of_incidents = MIN_INCIDENTS;
+					err += minErr
+							.replace("[R]", String.valueOf(r + 1))
+							.replace("[S]", String.valueOf(s + 1))
+							.replace("[COUNT]",
+									String.valueOf(num_of_incidents))
+							.replace("[MIN]", String.valueOf(MIN_INCIDENTS))
+							.replace("[A]", String.valueOf(a))
+							.replace("[T1]", startTime.toString())
+							.replace("[T2]", endTime.toString());
 					continue;
 				}
 
 				if (num_of_incidents > MAX_INCIDENTS) {
-					System.err.println("Round " + round + " session " + session
-							+ ": Too many incidents (" + num_of_incidents
-							+ " > " + MAX_INCIDENTS + ").");
-					str += "Round " + round + " at session "+ session +
-							"has too many incidents (" +num_of_incidents+ " > " + MAX_INCIDENTS+").\n";
+					startTime = new SimulationTime(r * sett.getRoundRunTime()
+							+ s * sett.getRunTime());
+					endTime = new SimulationTime(startTime.getRunTime()
+							+ sett.getRunTime());
+					a = MAX_INCIDENTS - num_of_incidents;
+					err += maxErr
+							.replace("[R]", String.valueOf(r + 1))
+							.replace("[S]", String.valueOf(s + 1))
+							.replace("[COUNT]",
+									String.valueOf(num_of_incidents))
+							.replace("[MAX]", String.valueOf(MAX_INCIDENTS))
+							.replace("[A]", String.valueOf(a))
+							.replace("[T1]", startTime.toString())
+							.replace("[T2]", endTime.toString());
 				}
 			}
 		}
-		return str;
+		return err;
 	}
 }

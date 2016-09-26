@@ -102,7 +102,12 @@ function checkSettings(){
 			}
 			else{
 				isSettingOk = false;
-				mscAlert(msg);
+				mscAlert({
+					title: "",
+					subtitle: msg,
+					 dismissOverlay: true
+				});
+				$(".msc-sub").css("margin-right","3px");
 			}
 		},
 		error: function(xhr, status, error) {

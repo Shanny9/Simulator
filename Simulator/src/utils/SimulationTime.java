@@ -63,7 +63,7 @@ public class SimulationTime implements Serializable {
 	private boolean isTooBig(int timeToCheck) {
 		if (timeToCheck > 3600 * 24) {
 			try {
-				throw new Exception(
+				System.err.println(
 						"SimulationTime: Time cannot exceed one day ("
 								+ timeToCheck + " > " + 3600 * 24 + ").");
 			} catch (Exception e) {
@@ -74,7 +74,7 @@ public class SimulationTime implements Serializable {
 
 		if (timeToCheck > totalSimulationRunTime) {
 			try {
-				throw new Exception(
+				System.err.println(
 						"SimulationTime: Time cannot exceed the simulation's duration ("
 								+ timeToCheck + " > " + totalSimulationRunTime
 								+ ").");

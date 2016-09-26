@@ -22,6 +22,7 @@ import log.SimulationLog;
 import log.SimulationTester;
 import log.SolutionLog;
 import utils.ClockIncrementor;
+import utils.DBValidator;
 import utils.PasswordAuthentication;
 import utils.SimulationTime;
 import utils.TimerManager;
@@ -208,6 +209,25 @@ public class HomeController extends HttpServlet {
 			}
 
 			response.sendRedirect("newCourse.jsp?action=OK");
+			break;
+		case "checkSettings": //checks the max/min number incident in session
+			String courseNameCheck = request.getParameter("courseName");
+			int roundsCheck = Integer.valueOf(request
+					.getParameter("numOfRounds"));
+			int runTimeCheck = Integer.valueOf(request.getParameter("runTime"));
+			int pauseTimeCheck = Integer.valueOf(request
+					.getParameter("pauseTime"));
+			int sessionsPerRoundCheck = Integer.valueOf(request
+					.getParameter("sessions"));
+			int initCapitalCheck = Integer.valueOf(request
+					.getParameter("initCapital"));
+
+			Settings setCheck = new Settings(courseNameCheck, roundsCheck, runTimeCheck, pauseTimeCheck,
+					sessionsPerRoundCheck, initCapitalCheck);
+			SimulationTime.initialize(runTimeCheck, pauseTimeCheck, sessionsPerRoundCheck, roundsCheck);
+			String msg = DBValidator.checkSettings(setCheck);
+			response.setContentType("text/html");
+			response.getWriter().print(msg); // msg == "" means all OK.
 			break;
 		case "checkLog":
 			boolean courseExists = (FilesUtils.openSettings(request

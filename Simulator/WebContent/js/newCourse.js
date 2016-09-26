@@ -2,6 +2,7 @@
  * 
  */
 var isExist;
+var isSettingOk;
 $(document).ready(function() {
 	
     /*
@@ -40,8 +41,14 @@ $(document).ready(function() {
 	    			e.preventDefault();
 	    			$("#form-courseName").addClass('input-error');
 				}
-				else
+				else{
 					$("#form-courseName").removeClass('input-error');
+					//check setting
+					checkSettings();
+					if(!isSettingOk){
+						e.preventDefault();
+					}
+				}
 			}
 			
 	    });
@@ -71,6 +78,36 @@ function checkLog(directory) {
 		error : function(e) {
 			console.log("js: Error in checkLog");
 		}
+	});
+}
+
+function checkSettings(){
+	$.ajax({
+		url : "HomeController",
+		data : {
+			action : "checkSettings",
+			courseName : $("#form-courseName").val(),
+			numOfRounds : $("#form-numOfRounds").val(),
+			runTime : $("#form-runTime").val(),
+			pauseTime : $("#form-pauseTime").val(),
+			sessions : $("#form-sessions").val(),
+			initCapital : $("#form-initCapital").val()
+			
+		},
+		async: false,
+		dataType: "text", 
+		success : function(msg) {
+			if (msg == "") {
+				isSettingOk = true;
+			}
+			else{
+				isSettingOk = false;
+				mscAlert(msg);
+			}
+		},
+		error: function(xhr, status, error) {
+			  console.log(err.Message);
+			}
 	});
 }
 

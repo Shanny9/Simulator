@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="css/header.css">
 		<link rel="stylesheet" href="css/footer.css">
 
+		<link rel="stylesheet" href="css/msc-style.css">
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -111,6 +112,7 @@
         <script src="js/jquery-1.11.3.min.js"></script>
         <script src="js/bootstrap-3.3.5.min.js"></script>
         <script src="js/jquery.backstretch.min.js"></script>
+        <script src="js/msc-script.js"></script>
         <script src="js/newCourse.js"></script>
         
 <%

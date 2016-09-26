@@ -317,7 +317,8 @@ public class DBValidator {
 		}
 	}
 
-	public static void checkSettings(Settings sett) {
+	public static String checkSettings(Settings sett) {
+		String str = "";
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllIncidents();
 		int rounds = sett.getRounds();
@@ -327,7 +328,9 @@ public class DBValidator {
 		SimulationTime inc_time;
 		for (TblIncident inc : all_incidents) {
 			inc_time = inc.getSimulationTime();
-			inc_counts[inc_time.getRound() - 1][inc_time.getSessionInRound() - 1]++;
+			int round = Math.min(inc_time.getRound(), sett.getRounds());
+			int session = Math.min(inc_time.getSessionInRound(), sett.getSessionsPerRound());
+			inc_counts[round-1][session-1]++;
 		}
 
 		for (int r = 1; r < rounds; r++) {
@@ -336,18 +339,23 @@ public class DBValidator {
 				int round = r+1;
 				int session = s+1;
 				if (num_of_incidents < MIN_INCIDENTS) {
-					System.err.println("Round " + round + "session " + session
+					System.err.println("Round " + round + " session " + session
 							+ ": Insufficient incidents (" + num_of_incidents
 							+ " < " + MIN_INCIDENTS + ").");
+					str += "Round " + round + " at session "+ session +
+							"has insufficient incidents (" +num_of_incidents+ " < " + MIN_INCIDENTS+").\n";
 					continue;
 				}
 
 				if (num_of_incidents > MAX_INCIDENTS) {
-					System.err.println("Round " + round + "session " + session
+					System.err.println("Round " + round + " session " + session
 							+ ": Too many incidents (" + num_of_incidents
 							+ " > " + MAX_INCIDENTS + ").");
+					str += "Round " + round + " at session "+ session +
+							"has too many incidents (" +num_of_incidents+ " > " + MAX_INCIDENTS+").\n";
 				}
 			}
 		}
+		return str;
 	}
 }

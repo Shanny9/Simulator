@@ -61,7 +61,6 @@ $(document).ready(function() {
 			    			isNumbersOk = false;
 			    		}
 			    		else{
-			    			
 							if($(this).attr('id') == $("#form-initCapital").attr('id') && $(this).val()<10000){
 								$(this).addClass('input-error');
 								showErrMsg($("#form-initCapitalErr"), "Field should be greater than 9999.");

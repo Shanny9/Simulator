@@ -354,16 +354,17 @@ public class DBValidator {
 		String err = "";
 		for (int r = 1; r < rounds; r++) {
 			for (int s = 1; s < sessionsPerRound; s++) {
+				
 				int num_of_incidents = inc_counts[r][s];
 				if (num_of_incidents < MIN_INCIDENTS) {
 					startTime = new SimulationTime(r
 							* sett.getRoundRunTime() + s * sett.getRunTime());
 					endTime = new SimulationTime(
 							startTime.getRunTime() + sett.getRunTime());
-					a = num_of_incidents = MIN_INCIDENTS;
+					a = num_of_incidents - MIN_INCIDENTS;
 					err += minErr
-							.replace("[R]", String.valueOf(r + 1))
-							.replace("[S]", String.valueOf(s + 1))
+							.replace("[R]", String.valueOf(r))
+							.replace("[S]", String.valueOf(s))
 							.replace("[COUNT]",
 									String.valueOf(num_of_incidents))
 							.replace("[MIN]", String.valueOf(MIN_INCIDENTS))
@@ -380,8 +381,8 @@ public class DBValidator {
 							+ sett.getRunTime());
 					a = MAX_INCIDENTS - num_of_incidents;
 					err += maxErr
-							.replace("[R]", String.valueOf(r + 1))
-							.replace("[S]", String.valueOf(s + 1))
+							.replace("[R]", String.valueOf(r))
+							.replace("[S]", String.valueOf(s))
 							.replace("[COUNT]",
 									String.valueOf(num_of_incidents))
 							.replace("[MAX]", String.valueOf(MAX_INCIDENTS))

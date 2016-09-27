@@ -53,7 +53,7 @@
 						</div>
 						<div class="form-bottom">
 							<form role="form" action="HomeController?action=selectCourse"
-								method="post" class="login-form create-form">
+								method="post" class="login-form create-form select-form">
 
 								<div class="form-group">
 									<span class="_label">Course name</span> <select

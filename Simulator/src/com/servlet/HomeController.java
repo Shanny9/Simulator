@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+
 import log.FilesUtils;
 import log.Settings;
 import log.SimulationLog;
@@ -120,6 +122,11 @@ public class HomeController extends HttpServlet {
 				break;
 			}
 
+			break;
+		case "getTimeToWait":
+			JSONObject json = new JSONObject();
+			json.put("timeToWait",  ClockIncrementor.getRemainingRoundTime());
+			response.getWriter().print(json);
 			break;
 		case "isAlive":
 			response.getWriter().print("yes");

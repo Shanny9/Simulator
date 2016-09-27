@@ -1,12 +1,17 @@
 /**
  * 
  */
-
+var isStarted = false; // in case the simulator wasn't running, tells if it started
+var timeToWait;
 $(document).ready(function() {
 	/*
 	 * Fullscreen background
 	 */
 	$.backstretch("./css/home_images/runway.jpg");
+	
+	/* check if simulator is started */
+	checkStartSimulator();
+	
 	getCourses();
 	disable($("#start"), true);
 	disable($("#delete"), true);
@@ -25,8 +30,74 @@ $(document).ready(function() {
 		isRoundDone($(this).val() , $('#form-courseName').val());
 
 	});
+	
+	$('.select-form').on('submit', function(e){
+		if(isStarted){
+			e.preventDefault();
+			getTimeToWait();
+			defineWaitDialog(timeToWait);
+		}
+	});
 
 });
+
+/**
+ * checks whether the simulator has started.
+ */
+function checkStartSimulator() {
+
+	$.ajax({
+		url : "ClientController",
+		data : {
+			action : "checkSimulator",
+		},
+		dataType : "json",
+		timeout : 0,
+		success : function(msg) {
+			isStarted = true;
+			checkEndSimulator();
+		},
+		error : function(e) {
+			console.log("js:checkStartSimulator: Error in checkSimulator.");
+		}
+	});
+}
+
+/**
+ * checks whether the simulator has ended.
+ */
+function checkEndSimulator() {
+
+	$.ajax({
+		url : "ClientController",
+		data : {
+			action : "checkEndSimulator",
+		},
+		dataType : "json",
+		timeout : 0,
+		success : function(msg) {
+			isStarted = false;
+			checkStartSimulator();
+		},
+		error : function(e) {
+			console.log("js:checkEndSimulator: Error in checkSimulator.");
+		}
+	});
+}
+
+function getTimeToWait(){
+	$.ajax({
+		url : "HomeController?action=getTimeToWait",
+		datatype : "json",
+		async : false,
+		success : function(data) {
+			timeToWait = data.timeToWait;
+		},
+		error : function(e) {
+			console.log("js: Error in getTimeToWait");
+		}
+	});
+}
 
 function isRoundDone(round, course){
 	
@@ -174,6 +245,26 @@ function defineConfirmDialog(){
 
 		  onOk: function() {
 			  deleteCourse($('#form-courseName option:selected').val());
+		  }
+		});
+}
+
+function defineWaitDialog(waitTime){
+	mscConfirm({
+		  title: '',
+
+		  subtitle: 'There is already a running simulation,\n Would like to return to scoreboard or wait '+ waitTime+' seconds?',  // default: ''
+
+		  okText: 'Go to Scoreboard',    // default: OK
+
+		  cancelText: 'Wait', // default: Cancel
+
+		  onOk: function() {
+			  window.location.replace("index.jsp");
+		  },
+
+		  onCancel: function() {
+		    
 		  }
 		});
 }

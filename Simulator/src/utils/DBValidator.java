@@ -354,13 +354,14 @@ public class DBValidator {
 		String err = "";
 		for (int r = 1; r < rounds; r++) {
 			for (int s = 1; s < sessionsPerRound; s++) {
+				
 				int num_of_incidents = inc_counts[r][s];
 				if (num_of_incidents < MIN_INCIDENTS) {
 					startTime = new SimulationTime(r
 							* sett.getRoundRunTime() + s * sett.getRunTime());
 					endTime = new SimulationTime(
 							startTime.getRunTime() + sett.getRunTime());
-					a = num_of_incidents = MIN_INCIDENTS;
+					a = num_of_incidents - MIN_INCIDENTS;
 					err += minErr
 							.replace("[R]", String.valueOf(r))
 							.replace("[S]", String.valueOf(s))

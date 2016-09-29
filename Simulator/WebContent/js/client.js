@@ -41,10 +41,10 @@ $(document).ready(
 			setPauseSource();
 			run(isRunTime);
 			
-			// when a key released in the incident field - updates if the menus could toggle
-			$("#incidentID").on('keyup', function () {
-				// checks if incident field is empty
-			    if ($('#incidentID').val()==""){
+			// when a key released in the ci field - updates if the menus could toggle
+			$("#ciId").on('keyup', function () {
+				// checks if ci field is empty
+			    if ($('#ciId').val()==""){
 			    	$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
 			    } else{
 			    	$(".collapse-menu").attr('data-toggle',"collapse"); //enables toggle
@@ -53,14 +53,14 @@ $(document).ready(
 			
 			// when the solve menu is clicked - handles the event 
 			$("#solveMenu").click(function () {
-				// checks if incident field is empty
-				if ($("#incidentID").val() == ""){
-					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
+				// checks if ci field is empty
+				if ($("#ciId").val() == ""){
+					$("#noCiId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
-				// checks if incident is currently open
-				if (checkIncident()==false){
-					$("#wrongIncId").slideToggle("slow").delay(2000).slideToggle("slow");
+				// checks if ci is currently open
+				if (checkCi()==false){
+					$("#wrongCiId").slideToggle("slow").delay(2000).slideToggle("slow");
 					$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
 					return;
 				}
@@ -68,26 +68,26 @@ $(document).ready(
 				//checks if the menu is going to expand
 				var willExpand = $("#solveMenu").attr("aria-expanded") != 'true';
 				if (willExpand){
-					$('#incidentID').attr('readonly', 'readonly'); //locks the incident field
+					$('#ciId').attr('readonly', 'readonly'); //locks the ci field
 					$('#solutionID').val(""); //empties the solution field
 					$('#submitSol').attr('disabled'); //disables the submit button
 				} else{
-					$('#incidentID').removeAttr('readonly'); //unlocks the incident field
+					$('#ciId').removeAttr('readonly'); //unlocks the ci field
 				}
 			});
 			
 			// when the purchase menu is clicked - handles the event 
 			$("#purchaseMenu").click(function () {
 				
-				// checks if incident field is empty
-				if ($("#incidentID").val() == ""){
-					$("#noIncidentId").slideToggle("slow").delay(2000).slideToggle("slow");
+				// checks if ci field is empty
+				if ($("#ciId").val() == ""){
+					$("#noCiId").slideToggle("slow").delay(2000).slideToggle("slow");
 					return;
 				}
 				
-				// checks if incident is currently open
-				if (checkIncident()==false){
-					$("#wrongIncId").slideToggle("slow").delay(2000).slideToggle("slow");
+				// checks if ci is currently open
+				if (checkCi()==false){
+					$("#wrongCiId").slideToggle("slow").delay(2000).slideToggle("slow");
 					$(".collapse-menu").removeAttr('data-toggle'); //disables toggle
 					return;
 				}
@@ -95,10 +95,10 @@ $(document).ready(
 				//checks if the menu is going to expand
 				var willExpand = $("#purchaseMenu").attr("aria-expanded") != 'true';
 				if (willExpand){
-					$('#incidentID').attr('readonly', 'readonly');//locks the incident field
+					$('#ciId').attr('readonly', 'readonly');//locks the ci field
 					showPrice();
 				} else{
-					$('#incidentID').removeAttr('readonly'); //unlocks the incident field
+					$('#ciId').removeAttr('readonly'); //unlocks the ci field
 				}
 			});
 			
@@ -125,8 +125,8 @@ $(document).ready(
 				$(id).delay(3000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success/failure message
 				setTimeout(function () {
 					$('.panel-collapse.in').collapse('hide'); //collapses the menu
-					$('#incidentID').val(""); //empties the incident field
-					$('#incidentID').removeAttr('readonly'); // unlocks the incident field 
+					$('#ciId').val(""); //empties the ci field
+					$('#ciId').removeAttr('readonly'); // unlocks the ci field 
 					$("#solveMenu").removeAttr('data-toggle'); //disables solve menu to toggle 
 				}, 3000);
 				
@@ -150,11 +150,11 @@ function run (isRun){
 }
 
 function showPrice(){
-	var inc_id = $('#incidentID').val();
+	var ci_id = $('#ciId').val();
 	var currencyTag;
 	var cost;
 	$.each(solutionsData, function(i, item) {
-		if (inc_id == item.incident_id) {
+		if (ci_id == item.ci_id) {
 			cost = item.solution_cost;
 			switch (item.currency){
 			case "NIS": currencyTag = 'ils';
@@ -250,12 +250,12 @@ function getTime() {
 	});
 }
 
-function checkIncident(){
-	var inc_id = $('#incidentID').val();
+function checkCi(){
+	var ci_id = $('#ciId').val();
 	var doesExist = false;
-	// first check - does the incident exist
+	// first check - does the ci exist
 	$.each(solutionsData, function(i, item) {
-		if (i == item.incident_id) {
+		if (i == item.ci_id) {
 			doesExist = true;
 			return;
 		}
@@ -266,22 +266,22 @@ function checkIncident(){
 	}
 	
 	var isOpen = false;
-	// second check - is the incident currently open
+	// second check - is the ci currently open
 	$.ajax({
 		url : "ClientController",
 		dataType : "json",
 		data : {
-			action : "checkIncident",
+			action : "checkCi",
 			team : team,
-			inc_id : inc_id
+			ci_id : ci_id
 		},
 		async : false,
 		success : function(data) {
 			isOpen = data;
-			console.log("checkIncident: isOpen: "+ isOpen);
+			console.log("checkCi: isOpen: "+ isOpen);
 		},
 		error : function(e) {
-			console.log("js:checkIncident: Error in checking incidents.");
+			console.log("js:checkCi: Error in checking cis.");
 		}
 	});
 	return isOpen;
@@ -289,11 +289,11 @@ function checkIncident(){
 
 // checks if the solution is correct
 function checkSolution(){
-	var inc_id = $('#incidentID').val();
+	var ci_id = $('#ciId').val();
 	var sol = $('#solutionID').val();
 	var isCorrect = false;
 	$.each(solutionsData, function(i, item) {
-		if (inc_id == item.incident_id) {
+		if (ci_id == item.ci_id) {
 			if (team == "Marom" && item.solution_marom == sol){
 				isCorrect = true;
 				return;
@@ -325,7 +325,7 @@ function getSolutions() {
 
 //sends the solution to the server
 function sendSolution() {
-	var inc_id = $('#incidentID').val();
+	var ci_id = $('#ciId').val();
 	var sol = $('#solutionID').val();
 
 	$.ajax({
@@ -333,7 +333,7 @@ function sendSolution() {
 		dataType : "json",
 		data : {
 			team : team,
-			inc_id : inc_id,
+			ci_id : ci_id,
 		},
 		success : function(msg) {
 			console.log(msg);
@@ -366,21 +366,21 @@ function checkSimulator() {
 // sends the purchase to the server
 function buySolution() {
 
-	var inc_id = $('#incidentID').val();
+	var ci_id = $('#ciId').val();
 	$.ajax({
 		url : "ClientController",
 		dataType : "json",
 		data : {
 			action : "buySolution",
 			team : team,
-			inc_id : inc_id
+			ci_id : ci_id
 		},
 		success : function(msg) {
 			$('#success').delay(1000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message
 			setTimeout(function () {
 				$('.panel-collapse.in').collapse('hide'); //collapses the menu
-				$('#incidentID').val(""); //empties the incident field
-				$('#incidentID').removeAttr('readonly'); // unlocks the incident field 
+				$('#ciId').val(""); //empties the ci field
+				$('#ciId').removeAttr('readonly'); // unlocks the ci field 
 				$("#solveMenu").removeAttr('data-toggle'); //disables solve menu to toggle 
 			}, 1000);
 		},
@@ -389,8 +389,8 @@ function buySolution() {
 			$('#success').delay(1000).slideToggle("slow").delay(3000).slideToggle("slow"); // shows success message
 			setTimeout(function () {
 				$('.panel-collapse.in').collapse('hide'); //collapses the menu
-				$('#incidentID').val(""); //empties the incident field
-				$('#incidentID').removeAttr('readonly'); // unlocks the incident field 
+				$('#ciId').val(""); //empties the ci field
+				$('#ciId').removeAttr('readonly'); // unlocks the ci field 
 				$("#solveMenu").removeAttr('data-toggle'); //disables solve menu to toggle 
 			}, 1000);
 			

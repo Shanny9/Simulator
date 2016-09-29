@@ -1,7 +1,6 @@
 package com.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 /**
@@ -22,10 +21,7 @@ public class TblCI implements Serializable {
 	
 	private String supplierName2;
 	
-	private List<TblResource_CI> tblResourceCis;
-
-
-	private List<TblService> tblServices;
+	private int solutionId;
 
 	public TblCI() {
 	}
@@ -34,25 +30,17 @@ public class TblCI implements Serializable {
 		return supplierName1;
 	}
 
-
-
 	public void setSupplierName1(String supplierName1) {
 		this.supplierName1 = supplierName1;
 	}
-
-
 
 	public String getSupplierName2() {
 		return supplierName2;
 	}
 
-
-
 	public void setSupplierName2(String supplierName2) {
 		this.supplierName2 = supplierName2;
 	}
-
-
 
 	public byte getCiId() {
 		return this.ciId;
@@ -77,51 +65,12 @@ public class TblCI implements Serializable {
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
-//	public TblSupplier getTblSupplier1() {
-//		return this.tblSupplier1;
-//	}
-
-//	public void setTblSupplier1(TblSupplier tblSupplier1) {
-//		this.tblSupplier1 = tblSupplier1;
-//	}
-
-//	public TblSupplier getTblSupplier2() {
-//		return this.tblSupplier2;
-//	}
-
-//	public void setTblSupplier2(TblSupplier tblSupplier2) {
-//		this.tblSupplier2 = tblSupplier2;
-//	}
-
-	public List<TblResource_CI> getTblResourceCis() {
-		return this.tblResourceCis;
+	
+	public int getSolutionId() {
+		return solutionId;
 	}
 
-	public void setTblResourceCis(List<TblResource_CI> tblResourceCis) {
-		this.tblResourceCis = tblResourceCis;
+	public void setSolutionId(int solutionId) {
+		this.solutionId = solutionId;
 	}
-
-	public TblResource_CI addTblResourceCi(TblResource_CI tblResourceCi) {
-		getTblResourceCis().add(tblResourceCi);
-		tblResourceCi.setTblCi(this);
-
-		return tblResourceCi;
-	}
-
-	public TblResource_CI removeTblResourceCi(TblResource_CI tblResourceCi) {
-		getTblResourceCis().remove(tblResourceCi);
-		tblResourceCi.setTblCi(null);
-
-		return tblResourceCi;
-	}
-
-	public List<TblService> getTblServices() {
-		return this.tblServices;
-	}
-
-	public void setTblServices(List<TblService> tblServices) {
-		this.tblServices = tblServices;
-	}
-
 }

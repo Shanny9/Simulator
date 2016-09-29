@@ -40,9 +40,9 @@ public class ClientController extends HttpServlet {
 	 */
 	private String team;
 	/**
-	 * The incident ID retrieved from the user interface.
+	 * The CI ID retrieved from the user interface.
 	 */
-	private byte inc_id;
+	private byte ci_id;
 	/**
 	 * The current simulation <b>server time</b> retrieved from the
 	 * {@code ClockIncrementor}.
@@ -99,12 +99,12 @@ public class ClientController extends HttpServlet {
 					new GsonBuilder().setPrettyPrinting().create()
 							.toJson(getSolutions()));
 			break;
-		case "checkIncident":
+		case "checkCi":
 			team = request.getParameter("team");
-			inc_id = Byte.valueOf(request.getParameter("inc_id"));
+			ci_id = Byte.valueOf(request.getParameter("ci_id"));
 			time = ClockIncrementor.getSimRunTime();
 			boolean isGood = SimulationLog.getInstance().checkIncident(
-					SimulationLog.getTeamConst(team), inc_id, time);
+					SimulationLog.getTeamConst(team), ci_id, time);
 			// System.out.println("ClientController: " + team + " Inc:" + inc_id
 			// + " Time:" + time + " isGood:" + isGood);
 			response.getWriter().print(isGood);
@@ -113,12 +113,12 @@ public class ClientController extends HttpServlet {
 			isBaught = true;
 		case "sendSolution":
 			team = request.getParameter("team");
-			inc_id = Byte.valueOf(request.getParameter("inc_id"));
+			ci_id = Byte.valueOf(request.getParameter("ci_id"));
 			time = ClockIncrementor.getSimRunTime();
 
 			SimulationLog.getInstance().incidentSolved(
-					SimulationLog.getTeamConst(team), inc_id, time, isBaught);
-			log.SimulationLog.getInstance().addSolution(new SolutionLog(courseName, team, inc_id));
+					SimulationLog.getTeamConst(team), ci_id, time, isBaught);
+			log.SimulationLog.getInstance().addSolution(new SolutionLog(courseName, team, ci_id));
 			response.getWriter().print(true);
 			break;
 		case "checkSimulator":
@@ -171,7 +171,7 @@ public class ClientController extends HttpServlet {
 
 	/**
 	 * 
-	 * @return A {@code HashMap} (key= {@code incident_id}, value=
+	 * @return A {@code HashMap} (key= {@code ci_id}, value=
 	 *         {@code SolutionElement}) of all solutions including relevant data
 	 *         for the client screen.
 	 */
@@ -182,8 +182,8 @@ public class ClientController extends HttpServlet {
 			ResultSet rs = stmt.executeQuery(Queries.solutionsForClient);
 			while (rs.next()) {
 				solutions.put(
-						rs.getInt("incident_id"),
-						new SolutionElement(rs.getInt("incident_id"), rs
+						rs.getInt("ci_id"),
+						new SolutionElement(rs.getInt("ci_id"), rs
 								.getInt("solution_marom"), rs
 								.getInt("solution_rakia"), rs
 								.getDouble("solution_cost"), rs

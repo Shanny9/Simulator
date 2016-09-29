@@ -91,11 +91,8 @@ var solutionListener = function(e) {
 
 	var data = JSON.parse(e.data);
 	var column = (data.team == "Marom") ? 0 : 1;
-
 	for (var row = 1; row <= 12; row++) {
-		var eventOnBoard = $(
-				".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
-				.eq(column).html();
+		var eventOnBoard = $(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)").eq(column).html();
 		if ($.inArray(eventOnBoard, data.events) > -1) {
 			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(column)
 					.removeClass("danger");
@@ -295,16 +292,18 @@ function getSolutionHistory() {
  * Presents the events that start NOW.
  */
 function showEventsInTime() {
-	$.each(eventsData, function(i, item) {
-		if (elapsedRunTime == item.time) {
-			var row = eventsOnScreen + 1;
-			$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
-			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
-					.html(item.event_id);
-			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
-					.html(item.time.toHHMMSS());
-			delete eventsData[i];
-			eventsOnScreen++;
+	$.each(eventsData, function(i, time_event) {
+		if (elapsedRunTime == time_event.time) {
+			$.each(time_event.events, function(j,event){
+				var row = eventsOnScreen + 1;
+				$(".score-tbl tbody tr:nth-child(" + row + ")").addClass("danger");
+				$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
+						.html(event);
+				$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
+						.html(time_event.time.toHHMMSS());
+				delete eventsData[i];
+				eventsOnScreen++;
+			});
 		}
 	});
 }
@@ -335,21 +334,24 @@ function showSessionEvents() {
 	});
 	sortedEventsData.sort(compare);
 	var eventsOnScreen = 0;
-	$.each(sortedEventsData, function(i, item) {
-		if (item.round == round && item.session == session
-				&& item.time <= elapsedRunTime) {
+	$.each(sortedEventsData, function(i, time_event) {
+		if (time_event.round == round && time_event.session == session
+				&& time_event.time <= elapsedRunTime) {
 			isSolvedMarom = false;
 			isSolvedRakia = false;
-			$.each(solutionHistory, function(j, sol) {
-				if ($.inArray(item.event_id.toString(), sol.events) >= 0) {
-					if (sol.team == "Marom") {
-						isSolvedMarom = true;
+			$.each(time_event.events,function(j,event){
+				$.each(solutionHistory, function(k, sol) {
+					if ($.inArray(event, sol.events) >= 0) {
+						if (sol.team == "Marom") {
+							isSolvedMarom = true;
+						}
+						if (sol.team == "Rakia") {
+							isSolvedRakia = true;
+						}
 					}
-					if (sol.team == "Rakia") {
-						isSolvedRakia = true;
-					}
-				}
+				});
 			});
+			
 			var row = eventsOnScreen + 1;
 			// marom
 			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(0).addClass(
@@ -359,9 +361,9 @@ function showSessionEvents() {
 					(isSolvedRakia) ? "success" : "danger");
 
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
-					.html(item.event_id);
+					.html(time_event.event_id);
 			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
-					.html(item.time.toHHMMSS());
+					.html(time_event.time.toHHMMSS());
 			delete eventsData[i];
 			eventsOnScreen++;
 		}
@@ -454,9 +456,8 @@ function startSimulator() {
 /**
  * Fetches clocks sent from the server ({@code elapsedClock},
  * {@code remainingClock}, {@code elapsedRunTime}, {@code isRunTime},
- * {@code serverTime}), {@code round}) and {@code session})
- * synchronizes the clinet-side clock with the server clock and update the
- * percentage bar.
+ * {@code serverTime}), {@code round}) and {@code session}) synchronizes the
+ * clinet-side clock with the server clock and update the percentage bar.
  */
 function getTime() {
 	var start = (new Date).getTime();

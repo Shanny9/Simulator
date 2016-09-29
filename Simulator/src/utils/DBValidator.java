@@ -1,11 +1,18 @@
 package utils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import log.Settings;
 
@@ -13,7 +20,6 @@ import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblDepartmentDaoImpl;
 import com.daoImpl.TblDivisionDaoImpl;
-import com.daoImpl.TblEventDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblServiceDepartmentDaoImpl;
@@ -23,7 +29,6 @@ import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblDepartment;
 import com.model.TblDivision;
-import com.model.TblEvent;
 import com.model.TblIncident;
 import com.model.TblService;
 import com.model.TblService_Department;
@@ -32,19 +37,17 @@ import com.model.TblSupplier;
 
 public class DBValidator {
 
+	private static final Logger LOGGER = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
+
 	static final int MIN_INCIDENTS = 1;
 
 	static final int MAX_INCIDENTS = 12;
 
 	static int warnings = 0;
-	
-	static String str="";
 
 	public static void main(String[] args) {
-		checkForWarnings();
-	}
-	
-	public static String checkForWarnings(){
+
 		Object instance;
 		try {
 			Class<?> c = DBValidator.class;
@@ -54,7 +57,7 @@ public class DBValidator {
 			Method[] methods = c.getDeclaredMethods();
 
 			if (methods == null) {
-				return "";
+				return;
 			}
 
 			for (Method method : methods) {
@@ -70,14 +73,46 @@ public class DBValidator {
 			}
 			System.out.println("Total DB warnings: "
 					+ warnings.getInt(instance) + ".");
-			str += "Total DB warnings: "
-					+ warnings.getInt(instance) + ".\n";
+			logQuery();
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
-		return str;
+	}
+
+	public static void logQuery() {
+		Formatter simpleFormatter = null;
+		Handler fileHandler = null;
+		try {
+			// Creating FileHandler
+			fileHandler = new FileHandler("./mylog.log");
+
+			// Creating SimpleFormatter
+			simpleFormatter = new SimpleFormatter();
+
+			// Assigning handler to logger
+			LOGGER.addHandler(fileHandler);
+
+			// Logging message of Level info (this should be publish in the
+			// default format i.e. XMLFormat)
+			LOGGER.info("Finnest message: Logger with DEFAULT FORMATTER");
+			LOGGER.info("AAA");
+			LOGGER.info("BBB");
+
+			// Setting formatter to the handler
+			fileHandler.setFormatter(simpleFormatter);
+
+			// Setting Level to ALL
+			fileHandler.setLevel(Level.ALL);
+			LOGGER.setLevel(Level.ALL);
+
+			// Logging message of Level finest (this should be publish in the
+			// simple format)
+
+		} catch (IOException exception) {
+			LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
+		}
 	}
 
 	static void validateTblCI() {
@@ -106,16 +141,12 @@ public class DBValidator {
 				if (!all_cmdb_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblCMDB'.");
-					str += "CI '" + ci_id
-							+ "' is not used in table 'tblCMDB'.<br>\n";
 					warnings++;
 				}
 
 				if (!all_incidents_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblIncident'.");
-					str += "CI '" + ci_id
-							+ "' is not used in table 'tblIncident'.<br>\n";
 					warnings++;
 				}
 			}
@@ -144,9 +175,6 @@ public class DBValidator {
 							.println("Department '"
 									+ dep_name
 									+ "' is not used in table 'tblService_Department'.");
-					str += "Department '"
-							+ dep_name
-							+ "' is not used in table 'tblService_Department'.<br>\n";
 					warnings++;
 				}
 			}
@@ -156,16 +184,6 @@ public class DBValidator {
 	static void validateTblDivision() {
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllDivisions();
-
-		// Collection<TblService_Division> all_service_divisions = new
-		// TblServiceDivisionDaoImpl()
-		// .getAllServiceDivisions();
-		// HashSet<String> all_service_division_names = new HashSet<>();
-		// if (all_service_divisions != null) {
-		// for (TblService_Division ser_div : all_service_divisions) {
-		// all_service_division_names.add(ser_div.getDivisionName());
-		// }
-		// }
 
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
@@ -180,44 +198,9 @@ public class DBValidator {
 			for (TblDivision div : all_divisions) {
 				String div_name = div.getDivisionName();
 
-				// if (!all_service_division_names.contains(div_name)) {
-				// System.err.println("Division '" + div_name
-				// + "' is not used in table 'tblService_Division'.");
-				// warnings++;
-				// }
-
 				if (!all_departments_divisions.contains(div_name)) {
 					System.err.println("Division '" + div_name
 							+ "' is not used in table 'tblDepartment'.");
-					str += "Division '" + div_name
-							+ "' is not used in table 'tblDepartment'.<br>\n";
-					warnings++;
-				}
-			}
-		}
-	}
-
-	static void validateTblIncident() {
-		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
-				.getAllIncidents();
-
-		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
-		HashSet<Byte> all_event_incident_ids = new HashSet<>();
-		if (all_events != null) {
-			for (TblEvent event : all_events) {
-				all_event_incident_ids.add(event.getIncidentId());
-			}
-		}
-
-		if (all_incidents != null) {
-			for (TblIncident inc : all_incidents) {
-				byte inc_id = inc.getIncidentId();
-
-				if (!all_event_incident_ids.contains(inc_id)) {
-					System.err.println("Incident '" + inc_id
-							+ "' is not used in table 'tblEvent'.");
-					str += "Incident '" + inc_id
-							+ "' is not used in table 'tblEvent'.<br>\n";
 					warnings++;
 				}
 			}
@@ -237,23 +220,6 @@ public class DBValidator {
 			}
 		}
 
-		// Collection<TblService_Division> all_service_divisions = new
-		// TblServiceDivisionDaoImpl()
-		// .getAllServiceDivisions();
-		// if (all_service_divisions != null) {
-		// for (TblService_Division ser_div : all_service_divisions) {
-		// all_service_bizUnit_ids.add(ser_div.getService_ID());
-		// }
-		// }
-
-		Collection<TblEvent> all_events = new TblEventDaoImpl().getAllEvents();
-		HashSet<Byte> all_event_service_ids = new HashSet<>();
-		if (all_events != null) {
-			for (TblEvent event : all_events) {
-				all_event_service_ids.add(event.getServiceId());
-			}
-		}
-
 		if (all_services != null) {
 			for (TblService ser : all_services) {
 				byte ser_id = ser.getServiceId();
@@ -264,18 +230,6 @@ public class DBValidator {
 									+ ser_id
 									+ "' is not used in tables"
 									+ " 'tblService_Division' and 'tblService_Department'.");
-					str += "Service '"
-							+ ser_id
-							+ "' is not used in tables"
-							+ " 'tblService_Division' and 'tblService_Department'.<br>\n";
-					warnings++;
-				}
-
-				if (!all_event_service_ids.contains(ser_id)) {
-					System.err.println("Service '" + ser_id
-							+ "' is not used in table 'tblEvent'.");
-					str += "Service '" + ser_id
-							+ "' is not used in table 'tblEvent'.<br>\n";
 					warnings++;
 				}
 			}
@@ -294,12 +248,11 @@ public class DBValidator {
 			}
 		}
 
-		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
-				.getAllIncidents();
-		HashSet<Integer> all_incidents_solutions = new HashSet<>();
-		if (all_incidents != null) {
-			for (TblIncident inc : all_incidents) {
-				all_incidents_solutions.add(inc.getSolutionId());
+		Collection<TblCI> all_cis = new TblCIDaoImpl().getAllCIs();
+		HashSet<Integer> all_cis_solutions = new HashSet<>();
+		if (all_cis != null) {
+			for (TblCI inc : all_cis) {
+				all_cis_solutions.add(inc.getSolutionId());
 			}
 		}
 
@@ -307,11 +260,9 @@ public class DBValidator {
 			for (TblSolution sol : all_solutions) {
 				int sol_id = sol.getSolutionId();
 
-				if (!all_incidents_solutions.contains(sol_id)) {
+				if (!all_cis_solutions.contains(sol_id)) {
 					System.err.println("Solution '" + sol_id
 							+ "' is not used in table 'tblIncident'.");
-					str += "Solution '" + sol_id
-							+ "' is not used in table 'tblIncident'.<br>\n";
 					warnings++;
 				}
 			}
@@ -338,8 +289,6 @@ public class DBValidator {
 				if (!all_ci_suppliers.contains(supp_name)) {
 					System.err.println("Supplier '" + supp_name
 							+ "' is not used in table 'tblCI'.");
-					str += "Supplier '" + supp_name
-							+ "' is not used in table 'tblCI'.<br>\n";
 					warnings++;
 				}
 			}
@@ -347,7 +296,6 @@ public class DBValidator {
 	}
 
 	public static String checkSettings(Settings sett) {
-		String str = "";
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllIncidents();
 
@@ -364,7 +312,7 @@ public class DBValidator {
 				+ "1. Increase the number of sessions per round.\r\n"
 				+ "2. Decreade the run time duration.\r\n"
 				+ "3. Reduce [A] incidents between [T1] to [T2].\n\n";
-		
+
 		int rounds = sett.getRounds();
 		int sessionsPerRound = sett.getSessionsPerRound();
 
@@ -383,13 +331,13 @@ public class DBValidator {
 		String err = "";
 		for (int r = 1; r < rounds; r++) {
 			for (int s = 1; s < sessionsPerRound; s++) {
-				
+
 				int num_of_incidents = inc_counts[r][s];
 				if (num_of_incidents < MIN_INCIDENTS) {
-					startTime = new SimulationTime(r
-							* sett.getRoundRunTime() + s * sett.getRunTime());
-					endTime = new SimulationTime(
-							startTime.getRunTime() + sett.getRunTime());
+					startTime = new SimulationTime(r * sett.getRoundRunTime()
+							+ s * sett.getRunTime());
+					endTime = new SimulationTime(startTime.getRunTime()
+							+ sett.getRunTime());
 					a = num_of_incidents - MIN_INCIDENTS;
 					err += minErr
 							.replace("[R]", String.valueOf(r))

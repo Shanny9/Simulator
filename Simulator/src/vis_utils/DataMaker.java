@@ -1,8 +1,5 @@
 package vis_utils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,10 +31,6 @@ import com.jdbc.DBUtility;
 import com.model.TblService;
 
 public class DataMaker {
-
-	// Delimiter used in CSV file
-	private static final String COMMA_DELIMITER = ",";
-	private static final String NEW_LINE_SEPARATOR = "\n";
 	private static Settings settings;
 
 	private static Settings getSettings(String courseName) {
@@ -66,40 +59,50 @@ public class DataMaker {
 				JSONObject department = null;
 				boolean newDivision = false;
 				boolean newDepartment = false;
-				
+
 				for (DepartmentService dep_ser : all_departments) {
-					String division_name = dep_ser.getDepartmentName().split("-")[0];
+					String division_name = dep_ser.getDepartmentName().split(
+							"-")[0];
 					newDivision = !division_name.equals(previous_division_name);
-					if (newDivision){
+					if (newDivision) {
 						division = new JSONObject();
 						division.put("division", division_name);
 						division.put("departments", new JSONArray());
-						
+
 					}
-					String department_name = dep_ser.getDepartmentName().split("-")[1];
-					newDepartment = (newDivision)?true:!department_name.equals(previous_department_name); 
-					if (newDepartment){
-						if (!newDivision && previous_department != null){((JSONArray)division.get("departments")).add(previous_department);}
+					String department_name = dep_ser.getDepartmentName().split(
+							"-")[1];
+					newDepartment = (newDivision) ? true : !department_name
+							.equals(previous_department_name);
+					if (newDepartment) {
+						if (!newDivision && previous_department != null) {
+							((JSONArray) division.get("departments"))
+									.add(previous_department);
+						}
 						department = new JSONObject();
 						department.put("department", department_name);
 						department.put("services", new JSONArray());
-						
+
 					}
-					
-					if (newDivision && previous_division != null){
-						if (previous_department != null){((JSONArray)previous_division.get("departments")).add(previous_department);}
+
+					if (newDivision && previous_division != null) {
+						if (previous_department != null) {
+							((JSONArray) previous_division.get("departments"))
+									.add(previous_department);
+						}
 						divisions.add(previous_division);
 					}
 
-					String service_name = dep_ser.getServiceName(); 
-					((JSONArray)department.get("services")).add(service_name);
-					
+					String service_name = dep_ser.getServiceName();
+					((JSONArray) department.get("services")).add(service_name);
+
 					previous_division_name = division_name;
 					previous_division = division;
 					previous_department_name = department_name;
 					previous_department = department;
 				}
-				((JSONArray)previous_division.get("departments")).add(previous_department);
+				((JSONArray) previous_division.get("departments"))
+						.add(previous_department);
 				divisions.add(previous_division);
 
 			} else {
@@ -122,10 +125,11 @@ public class DataMaker {
 	 *            The Round
 	 * @param team
 	 *            The team name
-	 * @return 
+	 * @return
 	 */
-	public static JSONArray generateITBudgetBreakdown(String courseName, int round,
-			String team, byte service_id, boolean isAbbreviated) {
+	@SuppressWarnings("unchecked")
+	public static JSONArray generateITBudgetBreakdown(String courseName,
+			int round, String team, byte service_id, boolean isAbbreviated) {
 
 		// Initializes an array of rounds
 		Set<Integer> rounds = getRounds(round, getSettings(courseName)
@@ -191,58 +195,45 @@ public class DataMaker {
 				for (DepartmentService bus : departmentServiceArr) {
 					JSONArray item = new JSONArray();
 					item.add(bus.getDepartmentName()
-							+ ((service_id == 0) ? "-"
-									+ bus.getServiceName() : ""));
+							+ ((service_id == 0) ? "-" + bus.getServiceName()
+									: ""));
 					item.add(fmt(bus.getExpense()));
 					data.add(item);
 				}
 			}
-			
-/*			final String FILE_HEADER = "bizUnitName,gain";
-			final String FILE_NAME = "ITBudgetBreakdown.csv";
 
-			FileWriter fileWriter = null;
-
-			try {
-				fileWriter = new FileWriter("C:" + File.separator + "SIMULATOR"
-						+ File.separator + FILE_NAME);
-				// Writes the CSV file header
-				fileWriter.append(FILE_HEADER.toString());
-				// Adds a new line separator after the header
-				fileWriter.append(NEW_LINE_SEPARATOR);
-
-				// Writes a new BizUnitService object list to the CSV file
-				if (departmentServiceArr != null) {
-					for (DepartmentService bus : departmentServiceArr) {
-						fileWriter.append(bus.getDepartmentName()
-								+ ((service_id == 0) ? "-"
-										+ bus.getServiceName() : ""));
-						fileWriter.append(COMMA_DELIMITER);
-						fileWriter.append(fmt(bus.getExpense()));
-						fileWriter.append(NEW_LINE_SEPARATOR);
-					}
-				}
-				System.out.println("DataMaker: CSV file was created.");
-			} catch (Exception e) {
-				System.err.println("DataMaker: Error in CsvFileWriter.");
-				e.printStackTrace();
-			} finally {
-				try {
-					fileWriter.flush();
-					fileWriter.close();
-				} catch (IOException e) {
-					System.err
-							.println("DataMaker: Error while flushing/closing fileWriter");
-					e.printStackTrace();
-				}
-			}*/
+			/*
+			 * final String FILE_HEADER = "bizUnitName,gain"; final String
+			 * FILE_NAME = "ITBudgetBreakdown.csv";
+			 * 
+			 * FileWriter fileWriter = null;
+			 * 
+			 * try { fileWriter = new FileWriter("C:" + File.separator +
+			 * "SIMULATOR" + File.separator + FILE_NAME); // Writes the CSV file
+			 * header fileWriter.append(FILE_HEADER.toString()); // Adds a new
+			 * line separator after the header
+			 * fileWriter.append(NEW_LINE_SEPARATOR);
+			 * 
+			 * // Writes a new BizUnitService object list to the CSV file if
+			 * (departmentServiceArr != null) { for (DepartmentService bus :
+			 * departmentServiceArr) { fileWriter.append(bus.getDepartmentName()
+			 * + ((service_id == 0) ? "-" + bus.getServiceName() : ""));
+			 * fileWriter.append(COMMA_DELIMITER);
+			 * fileWriter.append(fmt(bus.getExpense()));
+			 * fileWriter.append(NEW_LINE_SEPARATOR); } }
+			 * System.out.println("DataMaker: CSV file was created."); } catch
+			 * (Exception e) {
+			 * System.err.println("DataMaker: Error in CsvFileWriter.");
+			 * e.printStackTrace(); } finally { try { fileWriter.flush();
+			 * fileWriter.close(); } catch (IOException e) { System.err
+			 * .println("DataMaker: Error while flushing/closing fileWriter");
+			 * e.printStackTrace(); } }
+			 */
 			return data;
-		}
-		else
+		} else
 			return null;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	/**
 	 * 
@@ -649,9 +640,8 @@ public class DataMaker {
 		RangeCountArray rca = new RangeCountArray();
 
 		// HashMap of all services and their incidents
-		HashMap<Byte, HashSet<Byte>> service_incidents = LogUtils
-				.getServiceIncidents();
-
+		HashMap<Byte, HashSet<Byte>> service_cis = LogUtils
+				.getDBAffectedServices();
 		// Adds all the selected ranges to the RangeCountArray (variable
 		// 'rca')
 		if (ranges != null) {
@@ -671,7 +661,7 @@ public class DataMaker {
 				// The course's simulation log
 				SimulationLog simLog = FilesUtils.openLog(courseName, r);
 
-				// The constant of the team name (NULL means both teams)
+				// The constant of the team name (null means both teams)
 				Boolean teamConst = SimulationLog.getTeamConst(team);
 
 				// HashMap of all relevant incident logs
@@ -684,25 +674,24 @@ public class DataMaker {
 					// specific team - adds the team's incident logs to
 					// variable team_inc_log
 					team_inc_logs = (HashSet<IncidentLog>) simLog
-							.getTeam(teamConst).getClosedIncident_logs()
+							.getTeam(teamConst).getClosedIncidentLogs()
 							.values();
 				} else {
 					// both teams - adds both teams' incident logs to variable
 					// team_inc_log
 					team_inc_logs.addAll(simLog.getTeam(SimulationLog.MAROM)
-							.getClosedIncident_logs().values());
+							.getClosedIncidentLogs().values());
 					team_inc_logs.addAll(simLog.getTeam(SimulationLog.RAKIA)
-							.getClosedIncident_logs().values());
+							.getClosedIncidentLogs().values());
 				}
 
 				if (team_inc_logs != null) {
 					if (service_id != 0) {
 						// Specific service - takes only relevant logs and adds
-						// them
-						// to variable relevant_inc_logs
+						// them to variable relevant_inc_logs
 						for (IncidentLog inc_log : team_inc_logs) {
-							if (service_incidents.get(service_id).contains(
-									inc_log.getIncident_id())) {
+							if (service_cis.get(service_id).contains(
+									inc_log.getCiId())) {
 								relevant_inc_logs.add(inc_log);
 							}
 						}
@@ -921,8 +910,8 @@ public class DataMaker {
 			ResultSet rs;
 			for (TblService ser : all_services) {
 
-				pstmt1 = DBUtility.getConnection()
-						.prepareStatement(Queries.getDepartmentsByService);
+				pstmt1 = DBUtility.getConnection().prepareStatement(
+						Queries.getDepartmentsByService);
 
 				pstmt1.setByte(1, ser.getServiceId());
 				rs = pstmt1.executeQuery();
@@ -937,7 +926,7 @@ public class DataMaker {
 					String service_name = (isAbbreviated) ? rs
 							.getString("service_code") : rs
 							.getString("service_name");
-				
+
 					departmentService = new DepartmentService();
 					departmentService.setDepartmentName(division_name + "-"
 							+ department_name);
@@ -945,15 +934,15 @@ public class DataMaker {
 					departmentService.setserviceName(service_name);
 					temp.add(departmentService);
 				}
-				
-				double departmentPercentage = (temp.size() == 0) ? 1 : 1.d / temp.size();
-				for (DepartmentService ds : temp){
+
+				double departmentPercentage = (temp.size() == 0) ? 1
+						: 1.d / temp.size();
+				for (DepartmentService ds : temp) {
 					ds.setPercentage(departmentPercentage);
 					result.add(ds);
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (isSorted) {

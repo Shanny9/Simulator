@@ -12,80 +12,78 @@ import com.dao.TblServiceDao;
 import com.jdbc.DBUtility;
 import com.model.TblService;
 
+public class TblServiceDaoImpl implements TblServiceDao {
 
-public class TblServiceDaoImpl implements TblServiceDao{
-	
 	private Connection dbConnection;
 	private PreparedStatement pStmt;
 
 	public TblServiceDaoImpl() {
 		dbConnection = DBUtility.getConnection();
 	}
-	
+
 	@Override
 	public void addService(TblService service) throws SQLException {
-		String insertQuery = "INSERT INTO tblService(service_id, service_code, " 
-	+ "service_name, isTechnical, supplier_level2, supplier_level3, fixed_cost,fixed_income, isActive, urgency, impact ) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+		String insertQuery = "INSERT INTO tblService(service_id, service_code, "
+				+ "service_name, isTechnical, supplier_level2, supplier_level3, fixed_cost, "
+				+ "fixed_income, isActive, urgency, impact, event_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setByte(1, service.getServiceId());
-			pStmt.setString(2, service.getServiceCode());
-			pStmt.setString(3, service.getServiceName());
-			pStmt.setBoolean(4, service.getIsTechnical());
-			pStmt.setString(5, service.getSupplierLevel2());
-			pStmt.setString(6, service.getSupplierLevel3());
-			pStmt.setDouble(7, service.getFixedCost());
-			pStmt.setDouble(8, service.getFixedIncome());
-			pStmt.setBoolean(9, service.getIsActive());
-			pStmt.setString(10, service.getUrgency());
-			pStmt.setString(11, service.getImpact());
-			pStmt.executeUpdate();
+		pStmt = dbConnection.prepareStatement(insertQuery);
+		pStmt.setByte(1, service.getServiceId());
+		pStmt.setString(2, service.getServiceCode());
+		pStmt.setString(3, service.getServiceName());
+		pStmt.setBoolean(4, service.getIsTechnical());
+		pStmt.setString(5, service.getSupplierLevel2());
+		pStmt.setString(6, service.getSupplierLevel3());
+		pStmt.setDouble(7, service.getFixedCost());
+		pStmt.setDouble(8, service.getFixedIncome());
+		pStmt.setBoolean(9, service.getIsActive());
+		pStmt.setString(10, service.getUrgency());
+		pStmt.setString(11, service.getImpact());
+		pStmt.setInt(12, service.getEventId());
+		pStmt.executeUpdate();
 
-		
 	}
 
 	@Override
 	public void deleteService(Byte id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblService WHERE service_id = ?";
-
-			pStmt = dbConnection.prepareStatement(deleteQuery);
-			pStmt.setByte(1, id);
-			pStmt.executeUpdate();
-
-		
+		pStmt = dbConnection.prepareStatement(deleteQuery);
+		pStmt.setByte(1, id);
+		pStmt.executeUpdate();
 	}
 
 	@Override
 	public void updateService(TblService service, byte id) throws SQLException {
-		String updateQuery = "UPDATE tblService SET \n " + "service_id=?, service_code=?, \n" + 
-				" service_name=?, isTechnical=?, supplier_level2=?, supplier_level3=?, fixed_cost=? ,fixed_income=?, isActive=?, urgency=?, impact=?  WHERE service_id = ?";
+		String updateQuery = "UPDATE tblService SET service_id = ?, service_code = ?, "
+				+ "service_name = ?, isTechnical = ?, supplier_level2 = ?, supplier_level3=?, "
+				+ "fixed_cost = ? ,fixed_income = ?, isActive = ?, urgency = ?, impact = ?, "
+				+ "event_id = ? WHERE service_id = ?;";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setByte(1, service.getServiceId());
-			pStmt.setString(2, service.getServiceCode());
-			pStmt.setString(3, service.getServiceName());
-			pStmt.setBoolean(4, service.getIsTechnical());
-			pStmt.setString(5, service.getSupplierLevel2());
-			pStmt.setString(6, service.getSupplierLevel3());
-			pStmt.setDouble(7, service.getFixedCost());
-			pStmt.setDouble(8, service.getFixedIncome());
-			pStmt.setBoolean(9, service.getIsActive());
-			pStmt.setString(10, service.getUrgency());
-			pStmt.setString(11, service.getImpact());
-			
-			pStmt.setByte(12, id);
-			pStmt.executeUpdate();
+		pStmt = dbConnection.prepareStatement(updateQuery);
+		pStmt.setByte(1, service.getServiceId());
+		pStmt.setString(2, service.getServiceCode());
+		pStmt.setString(3, service.getServiceName());
+		pStmt.setBoolean(4, service.getIsTechnical());
+		pStmt.setString(5, service.getSupplierLevel2());
+		pStmt.setString(6, service.getSupplierLevel3());
+		pStmt.setDouble(7, service.getFixedCost());
+		pStmt.setDouble(8, service.getFixedIncome());
+		pStmt.setBoolean(9, service.getIsActive());
+		pStmt.setString(10, service.getUrgency());
+		pStmt.setString(11, service.getImpact());
+		pStmt.setInt(12, service.getEventId());
+		pStmt.setByte(13, id);
+		pStmt.executeUpdate();
 
-
-		
 	}
 
 	@Override
-	public List<TblService> getAllServices(int startPageIndex, int recordsPerPage) {
+	public List<TblService> getAllServices(int startPageIndex,
+			int recordsPerPage) {
 		List<TblService> services = new ArrayList<TblService>();
 
-		String query = "SELECT * FROM tblService \n" + "limit " + startPageIndex + ","
-				+ recordsPerPage;
+		String query = "SELECT * FROM tblService " + "limit " + startPageIndex
+				+ "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
@@ -104,6 +102,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
+				service.setEventId(rs.getByte("event_id"));
 				services.add(service);
 			}
 		} catch (SQLException e) {
@@ -123,7 +122,6 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblService service = new TblService();
-
 				service.setFixedCost(rs.getDouble("fixed_cost"));
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
@@ -135,6 +133,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
+				service.setEventId(rs.getByte("event_id"));
 				services.add(service);
 			}
 		} catch (SQLException e) {
@@ -142,7 +141,7 @@ public class TblServiceDaoImpl implements TblServiceDao{
 		}
 		return services;
 	}
-	
+
 	@Override
 	public TblService getServiceById(byte id) {
 		TblService service = null;
@@ -152,21 +151,22 @@ public class TblServiceDaoImpl implements TblServiceDao{
 			pStmt = dbConnection.prepareStatement(query);
 			pStmt.setByte(1, id);
 			ResultSet rs = pStmt.executeQuery();
-			rs.next();
-			service = new TblService();
-			
-			service.setFixedCost(rs.getDouble("fixed_cost"));
-			service.setFixedIncome(rs.getDouble("fixed_income"));
-			service.setImpact(rs.getString("impact"));
-			service.setIsActive(rs.getBoolean("isActive"));
-			service.setIsTechnical(rs.getBoolean("isTechnical"));
-			service.setServiceId(rs.getByte("service_id"));
-			service.setServiceCode(rs.getString("service_code"));
-			service.setServiceName(rs.getString("service_name"));
-			service.setSupplierLevel2(rs.getString("supplier_level2"));
-			service.setSupplierLevel3(rs.getString("supplier_level3"));
-			service.setUrgency(rs.getString("urgency"));
 
+			if (rs.next()) {
+				service = new TblService();
+				service.setFixedCost(rs.getDouble("fixed_cost"));
+				service.setFixedIncome(rs.getDouble("fixed_income"));
+				service.setImpact(rs.getString("impact"));
+				service.setIsActive(rs.getBoolean("isActive"));
+				service.setIsTechnical(rs.getBoolean("isTechnical"));
+				service.setServiceId(rs.getByte("service_id"));
+				service.setServiceCode(rs.getString("service_code"));
+				service.setServiceName(rs.getString("service_name"));
+				service.setSupplierLevel2(rs.getString("supplier_level2"));
+				service.setSupplierLevel3(rs.getString("supplier_level3"));
+				service.setUrgency(rs.getString("urgency"));
+				service.setEventId(rs.getByte("event_id"));
+			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
@@ -178,7 +178,8 @@ public class TblServiceDaoImpl implements TblServiceDao{
 		int count = 0;
 		try {
 			Statement stmt = dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblService;");
+			ResultSet rs = stmt
+					.executeQuery("SELECT COUNT(*) AS COUNT FROM tblService;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");
 			}

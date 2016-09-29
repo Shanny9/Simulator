@@ -1,5 +1,7 @@
 package log;
 
+import java.util.HashSet;
+
 import utils.SimulationTime;
 
 public class LogManager implements Runnable {
@@ -21,7 +23,7 @@ public class LogManager implements Runnable {
 	 * 
 	 * @param setings
 	 */
-	public static void initialize(Settings setings) {	
+	public static void initialize(Settings setings) {
 		SimulationLog.getInstance().initialize(setings);
 		elapsed_time = new SimulationTime(0);
 		isRunning = false;
@@ -107,11 +109,11 @@ public class LogManager implements Runnable {
 			// occurs every second
 			elapsed_time.increment();
 
-			if (SimulationLog.getInstance().getIncidentTimes()
+			if (SimulationLog.getInstance().getIncidents()
 					.containsKey(elapsed_time)) {
-				byte inc_id = SimulationLog.getInstance().getIncidentTimes()
-						.get(elapsed_time);
-				SimulationLog.getInstance().incidentStarted(inc_id,
+				HashSet<Byte> ci_ids = SimulationLog.getInstance()
+						.getIncidents().get(elapsed_time);
+				SimulationLog.getInstance().incidentsStarted(ci_ids,
 						elapsed_time);
 			}
 			SimulationLog.getInstance().updateTeamProfits(elapsed_time);

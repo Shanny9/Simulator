@@ -13,6 +13,7 @@ import utils.SimulationTime;
 import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
 import com.model.TblIncident;
+import com.model.TblIncidentPK;
 
 public class TblIncidentDaoImpl implements TblIncidentDao {
 
@@ -25,46 +26,40 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 
 	@Override
 	public void addIncident(TblIncident incident) throws SQLException {
-		String insertQuery = "INSERT INTO `SIMULATOR`.`tblIncident`\r\n"
-				+ "(`incident_id`,\r\n" + "`incidentTime`,\r\n"
-				+ "`ci_id`,\r\n" + "`isActive`,\r\n" + "`solution_id`)\r\n"
-				+ "VALUES\r\n" + "(?,?,?,?,?)";
+		String insertQuery = "INSERT INTO tblIncident "
+				+ "(time, ci_id, isActive) VALUES (?,?,?);";
 
 		pStmt = dbConnection.prepareStatement(insertQuery);
-		pStmt.setByte(1, incident.getIncidentId());
-		pStmt.setInt(2, incident.getIncidentTime());
-		pStmt.setByte(3, incident.getCiId());
-		pStmt.setBoolean(4, incident.getIsActive());
-		pStmt.setInt(5, incident.getSolutionId());
+		pStmt.setInt(1, incident.getIncidentTime());
+		pStmt.setByte(2, incident.getCiId());
+		pStmt.setBoolean(3, incident.getIsActive());
 		pStmt.executeUpdate();
 
 	}
 
 	@Override
-	public void deleteIncident(Byte id) throws SQLException {
-		String deleteQuery = "DELETE FROM tblIncident WHERE incident_id = ?";
+	public void deleteIncident(TblIncidentPK pk)
+			throws SQLException {
+		String deleteQuery = "DELETE FROM tblIncident WHERE time = ? and ci_id = ?;";
 
 		pStmt = dbConnection.prepareStatement(deleteQuery);
-		pStmt.setByte(1, id);
+		pStmt.setInt(1, pk.getTime());
+		pStmt.setByte(2, pk.getCiId());
 		pStmt.executeUpdate();
 
 	}
 
 	@Override
-	public void updateIncident(TblIncident incident, byte id)
-			throws SQLException {
-		String updateQuery = "UPDATE `SIMULATOR`.`tblIncident`\r\n" + "SET\r\n"
-				+ "`incident_id` = ?,\r\n" + "`incidentTime` = ?,\r\n"
-				+ "`ci_id` = ?,\r\n" + "`isActive` = ?,\r\n"
-				+ "`solution_id` = ?\r\n" + "WHERE `incident_id` = ?;";
+	public void updateIncident(TblIncident incident, TblIncidentPK pk) throws SQLException {
+		String updateQuery = "UPDATE tblIncident SET time = ?, "
+				+ "ci_id = ?, isActive = ? WHERE time = ? and ci_id = ?;";
 
 		pStmt = dbConnection.prepareStatement(updateQuery);
-		pStmt.setByte(1, incident.getIncidentId());
-		pStmt.setInt(2, incident.getIncidentTime());
-		pStmt.setByte(3, incident.getCiId());
-		pStmt.setBoolean(4, incident.getIsActive());
-		pStmt.setInt(5, incident.getSolutionId());
-		pStmt.setByte(6, id);
+		pStmt.setInt(1, incident.getIncidentTime());
+		pStmt.setByte(2, incident.getCiId());
+		pStmt.setBoolean(3, incident.getIsActive());
+		pStmt.setInt(4, pk.getTime());
+		pStmt.setByte(5, pk.getCiId());
 		pStmt.executeUpdate();
 	}
 
@@ -72,21 +67,17 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	public List<TblIncident> getAllIncidents(int startPageIndex,
 			int recordsPerPage) {
 		List<TblIncident> incidents = new ArrayList<TblIncident>();
-		String query = "SELECT * FROM SIMULATOR.tblIncident \n" + "limit "
-				+ startPageIndex + "," + recordsPerPage;
+		String query = "SELECT * FROM tblIncident limit " + startPageIndex
+				+ "," + recordsPerPage;
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblIncident incident = new TblIncident();
-
-				incident.setIncidentId(rs.getByte("incident_id"));
+				incident.setIncidentTime(rs.getInt("time"));
 				incident.setCiId(rs.getByte("ci_id"));
-				int time = rs.getInt("incidentTime");
-				incident.setIncidentTime(time);
 				incident.setIsActive(rs.getBoolean("isActive"));
-				incident.setSolutionId(rs.getInt("solution_id"));
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -99,19 +90,16 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	public List<TblIncident> getAllIncidents() {
 		List<TblIncident> incidents = new ArrayList<TblIncident>();
 
-		String query = "SELECT * FROM tblIncident";
+		String query = "SELECT * FROM tblIncident;";
 
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblIncident incident = new TblIncident();
-
-				incident.setIncidentId(rs.getByte("incident_id"));
+				incident.setIncidentTime(rs.getInt("time"));
 				incident.setCiId(rs.getByte("ci_id"));
-				incident.setIncidentTime(rs.getInt("incidentTime"));
 				incident.setIsActive(rs.getBoolean("isActive"));
-				incident.setSolutionId(rs.getInt("solution_id"));
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -121,24 +109,23 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 	}
 
 	@Override
-	public TblIncident getIncidentById(byte id) {
+	public TblIncident getIncidentById(TblIncidentPK pk) {
 		TblIncident inci = null;
-		String query = "SELECT * FROM tblIncident WHERE incident_id = ?";
+		String query = "SELECT * FROM tblIncident WHERE time = ? and ci_id = ?";
 
 		try {
 			pStmt = dbConnection.prepareStatement(query);
-			pStmt.setByte(1, id);
+			pStmt.setInt(1, pk.getTime());
+			pStmt.setByte(1, pk.getCiId());
 
 			ResultSet rs = pStmt.executeQuery();
-			rs.next();
-			inci = new TblIncident();
-
-			inci.setIncidentId(rs.getByte("incident_id"));
-			inci.setIncidentTime(rs.getInt("incidentTime"));
-			inci.setCiId(rs.getByte("ci_id"));
-			inci.setIsActive(rs.getBoolean("isActive"));
-			inci.setSolutionId(rs.getInt("solution_id"));
-
+			if (rs.next()) {
+				inci = new TblIncident();
+				inci.setIncidentTime(rs.getInt("time"));
+				inci.setCiId(rs.getByte("ci_id"));
+				inci.setIsActive(rs.getBoolean("isActive"));
+			}
+			
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
@@ -151,7 +138,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		try {
 			Statement stmt = dbConnection.createStatement();
 			ResultSet rs = stmt
-					.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblIncident;");
+					.executeQuery("SELECT COUNT(*) AS COUNT FROM tblIncident;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");
 			}

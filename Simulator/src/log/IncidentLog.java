@@ -11,13 +11,9 @@ public class IncidentLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * The ID of the incident
-	 */
-	private byte incident_id;
-	/**
 	 * The CI that triggers the incident
 	 */
-	private byte root_ci;
+	private byte ci_id;
 	/**
 	 * The time when incident occurs
 	 */
@@ -27,50 +23,35 @@ public class IncidentLog implements Serializable {
 	 */
 	private int end_time;
 
+
 	/**
-	 * Full Constructor
-	 * 
-	 * @param incident_id
-	 *            The ID of the incident
-	 * @param root_ci
-	 *            The CI that triggers the incident
 	 * @param start_time
-	 *            The time when incident occurs
-	 * @param end_time
-	 *            The time when the incident is solved
+	 * @param ci_id
 	 */
-	public IncidentLog(byte incident_id, byte root_ci, SimulationTime start_time) {
+	public IncidentLog(SimulationTime start_time, byte ci_id) {
 		super();
-		this.incident_id = incident_id;
-		this.root_ci = root_ci;
+		this.ci_id = ci_id;
 		this.start_time = start_time.getRunTime();
 	}
 
 	/**
-	 * @return The incident_id
+	 * @return The ci_id
 	 */
-	public byte getIncident_id() {
-		return incident_id;
-	}
-
-	/**
-	 * @return The root_ci
-	 */
-	byte getRoot_ci() {
-		return root_ci;
+	public byte getCiId() {
+		return ci_id;
 	}
 
 	/**
 	 * @return The start_time
 	 */
-	SimulationTime getStart_time() {
+	SimulationTime getStartTime() {
 		return new SimulationTime(start_time);
 	}
 
 	/**
 	 * @return The end_time
 	 */
-	SimulationTime getEnd_time() {
+	SimulationTime getEndTime() {
 		return new SimulationTime(end_time);
 	}
 
@@ -118,7 +99,7 @@ public class IncidentLog implements Serializable {
 	}
 
 	public String toString() {
-		return "Incident id=" + incident_id + ", start_time= " + start_time
+		return "ci id=" + ci_id + ", start_time= " + start_time
 				+ ", end_time= " + end_time;
 	}
 }

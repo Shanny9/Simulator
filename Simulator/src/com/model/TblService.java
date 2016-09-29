@@ -31,6 +31,8 @@ public class TblService implements Serializable {
 
 	private String urgency;
 	
+	private int event_id;
+	
 	public String getUrgency() {
 		return urgency;
 	}
@@ -122,5 +124,13 @@ public class TblService implements Serializable {
 
 	public void setSupplierLevel3(String supplierLevel3) {
 		this.supplierLevel3 = supplierLevel3;
+	}
+	
+	public int getEventId() {
+		return this.event_id;
+	}
+
+	public void setEventId(int event_id) {
+		this.event_id = event_id;
 	}
 }

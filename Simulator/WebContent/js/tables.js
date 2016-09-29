@@ -31,9 +31,6 @@ $(document).ready(function() {
 	case "tblServiceDep":
 		serviceDepTable();
 		break;
-/*	case "tblServiceDiv":
-		serviceDivTable();
-		break;*/
 	case "tblSolution":
 		solutionTable();
 		break;
@@ -267,31 +264,23 @@ function incidentTable(){
 	          ]
 	    },
 		fields : {
-			incidentId : {
-				title : 'Incident ID',
+			ci_id : {
+				title : 'Configuration Item ID',
 				key : true,
 				list : true,
 				edit : true,
 				create : true,
 				inputClass: 'validate[required,custom[integer],min[1],max[127],maxSize[3]]'
 			},
-			incidentTime : {
+			time : {
 				title : 'Incident Time',
+				key : true,
 				edit : true,
+				create : true,
 				inputClass: 'validate[required]',
 				display: function(data){
-					return data.record.incidentTime.toHHMMSS();
+					return data.record.time.toHHMMSS();
 				}
-			},
-			ciId : {
-				title : 'Configuration Item',
-				edit : true,
-				options: 'DataController?options=ci'
-			},
-			solutionId : {
-				title : 'Solution',
-				edit : true,
-				options: 'DataController?options=solution'
 			},
 			isActive : {
 				title : 'Active?',
@@ -304,7 +293,7 @@ function incidentTable(){
         //Initialize validation logic when a form is created
         formCreated: function (event, data) {
             data.form.validationEngine();
-            data.form.find('[name=incidentId]').attr('maxlength','3');
+            data.form.find('[name=ci_id]').attr('maxlength','3');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -1112,6 +1101,11 @@ function ciTable(){
 //				width : '25%',
 				edit : true,
 				options:  'DataController?options=supplier'
+			},
+			solutionId : {
+				title : 'Solution ID',
+				edit : true,
+				options: 'DataController?options=solution'
 			},
 			isActive : {
 				title : 'Active?',

@@ -112,22 +112,23 @@ public class SimulationTester implements Runnable {
 			}
 
 			// 2. start incidents
-			HashSet<Byte> affected_services = null;
-			if (simLog.getIncidentTimes().containsKey(elapsed_time)) {
+			HashSet<Byte> affected_services = new HashSet<>();
+			if (simLog.getIncidents().containsKey(elapsed_time)) {
 
-				byte inc_id = simLog.getIncidentTimes().get(elapsed_time);
-				byte ci_id = marom.getIncident_logs().get(inc_id).getRoot_ci();
-				affected_services = simLog.getAffectingCis().get(ci_id);
+				HashSet<Byte> ci_ids = simLog.getIncidents().get(elapsed_time);
+				for (byte ci_id : ci_ids){
+					affected_services.addAll(simLog.getAffectingCis().get(ci_id));
+				}
+				
+				marom.incidentsStarted(ci_ids, elapsed_time);
 
-				marom.incidentStarted(inc_id, elapsed_time);
-
-				if (simLog.getAffectingCis().get(ci_id) != null) {
+//				if (simLog.getAffectingCis().get(ci_id) != null) {
 					// System.out
 					// .println("SimulationTester: " + elapsed_time
 					// + " services "
 					// + simLog.getAffectingCis().get(ci_id)
 					// + " are down");
-				}
+//				}
 			}
 
 			// 3. schedule services that are down

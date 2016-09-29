@@ -2,7 +2,6 @@ package log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import utils.SimulationTime;
 
 import com.daoImpl.TblServiceDaoImpl;
-import com.google.gson.JsonObject;
 import com.model.TblService;
 
 public class SimulationLog extends Thread implements Serializable {
@@ -23,15 +24,13 @@ public class SimulationLog extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * The simulation's incidents and their times (key=start_time,
-	 * value=incident_id)
+	 * The incidents (key=start_time, value= HashSet of ci_id)
 	 */
-	private HashMap<SimulationTime, Byte> incident_times = new HashMap<>();
+	private HashMap<SimulationTime, HashSet<Byte>> time_cis;
 	/**
-	 * The simulation's incidents and their times (key=incident_id,
-	 * value=start_time)
+	 * The incidents (key=ci_id, value= HashSet of SimulationTime)
 	 */
-	private HashMap<Byte,SimulationTime> times_incidents;
+	private HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
@@ -46,7 +45,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's incidents and their events (key = incident_id, value=set
 	 * of events)
 	 */
-	private HashMap<Byte, HashSet<String>> incident_events;
+	private HashMap<SimulationTime, HashSet<String>> time_events;
 
 	/**
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
@@ -89,42 +88,57 @@ public class SimulationLog extends Thread implements Serializable {
 
 	public void initialize(Settings _settings) {
 
-		settings = _settings;
-		affecting_cis = LogUtils.getDBAffectingCIs();
-		affected_services = LogUtils.getDBAffectedServices();
-		ciSolCosts = LogUtils.getCISolCosts();
-		incident_times = LogUtils.getIncidentTimes();
-		times_incidents = LogUtils.getTimeIncidents();
-		incident_events = LogUtils.getIncidentEvents();
-
-		List<TblService> services = new TblServiceDaoImpl().getAllServices();
-		HashMap<Byte, Double> serviceDownTimeCosts = LogUtils
-				.getServiceDownTimeCosts();
-		HashMap<Byte, ServiceLog> service_logs = new HashMap<>();
-
-		double initDiff = 0;
-
-		// initializes service logs
-		if (services != null) {
-			for (TblService service : services) {
-				byte service_id = service.getServiceId();
-				service_logs.put(
-						service_id,
-						new ServiceLog(service_id, service.getFixedCost(),
-								service.getFixedIncome(), serviceDownTimeCosts
-										.get(service_id)));
-				initDiff += service_logs.get(service_id).getDiff();
-			}
+		if (settings == null) {
+			settings = _settings;
+		}
+		if (affecting_cis == null) {
+			affecting_cis = LogUtils.getDBAffectingCIs();
+		}
+		if (affected_services == null) {
+			affected_services = LogUtils.getDBAffectedServices();
+		}
+		if (ciSolCosts == null) {
+			ciSolCosts = LogUtils.getCISolCosts();
+		}
+		if (time_cis == null) {
+			time_cis = LogUtils.getTimeCis();
+		}
+		if (cis_time == null) {
+			cis_time = LogUtils.getCisTime();
+		}
+		if (time_events == null) {
+			time_events = LogUtils.getTimetEvents();
 		}
 
-		@SuppressWarnings("unchecked")
-		HashMap<Byte, ServiceLog> service_logs_copy = (HashMap<Byte, ServiceLog>) LogUtils
-				.copy(service_logs);
+		if (marom == null || rakia == null) {
+			List<TblService> services = new TblServiceDaoImpl()
+					.getAllServices();
+			HashMap<Byte, Double> serviceDownTimeCosts = LogUtils
+					.getServiceDownTimeCosts();
+			HashMap<Byte, ServiceLog> service_logs = new HashMap<>();
 
-		marom = new TeamLog("Marom", service_logs, initDiff);
-		rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
+			double initDiff = 0;
 
-		System.out.println("SimulationLog: SimulationLog is initalized.");
+			// initializes service logs \\TODO: move to LogUtis
+			if (services != null) {
+				for (TblService service : services) {
+					byte service_id = service.getServiceId();
+					service_logs.put(service_id, new ServiceLog(service_id,
+							service.getFixedCost(), service.getFixedIncome(),
+							serviceDownTimeCosts.get(service_id)));
+					initDiff += service_logs.get(service_id).getDiff();
+				}
+			}
+
+			@SuppressWarnings("unchecked")
+			HashMap<Byte, ServiceLog> service_logs_copy = (HashMap<Byte, ServiceLog>) LogUtils
+					.copy(service_logs);
+
+			marom = new TeamLog("Marom", service_logs, initDiff);
+			rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
+
+			System.out.println("SimulationLog: SimulationLog is initalized.");
+		}
 	}
 
 	/**
@@ -139,18 +153,8 @@ public class SimulationLog extends Thread implements Serializable {
 		rakia.setRound(currentRound);
 
 		// initializes incident logs
-		HashMap<Byte, IncidentLog> incident_logs_current_round = new HashMap<>();
-		Collection<IncidentLog> inc_logs_all_rounds = (Collection<IncidentLog>) LogUtils
-				.getIncidentLogs().values();
-		if (inc_logs_all_rounds != null) {
-			for (IncidentLog inc_log : inc_logs_all_rounds) {
-				int inc_round = inc_log.getStart_time().getRound();
-				if (inc_round == round) {
-					incident_logs_current_round.put(inc_log.getIncident_id(),
-							inc_log);
-				}
-			}
-		}
+		HashMap<Byte, IncidentLog> incident_logs_current_round = LogUtils
+				.getIncidentLogsOfRound(round);
 
 		@SuppressWarnings("unchecked")
 		HashMap<Byte, IncidentLog> incident_logs_current_round_copy = (HashMap<Byte, IncidentLog>) LogUtils
@@ -238,7 +242,8 @@ public class SimulationLog extends Thread implements Serializable {
 			// ". Rakia: " + rakiaWithoutInit / targetScore * 100);
 			// System.out.println();
 		} catch (IndexOutOfBoundsException e) {
-			System.out.println("SimulationLog: getTeamProfits problem line 202");
+			System.out
+					.println("SimulationLog: getTeamProfits problem line 202");
 		}
 		return profits;
 
@@ -261,10 +266,10 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * @return The events of the incident
+	 * @return The events of the ci
 	 */
-	HashSet<String> getIncidentEvents(byte inc_id) {
-		return incident_events.get(inc_id);
+	HashSet<String> getTimeEvents(byte ci_id) {
+		return time_events.get(ci_id);
 	}
 
 	/**
@@ -293,29 +298,29 @@ public class SimulationLog extends Thread implements Serializable {
 	 * 
 	 * @param team
 	 *            The team that solved the incident
-	 * @param inc_id
+	 * @param ci_id
 	 *            The incident that was solved
 	 * @param time
 	 *            The time when the incident was solved
 	 * @param isBought
 	 *            True weather the incident was bought. False otherwise.
 	 */
-	public boolean incidentSolved(boolean team, byte inc_id,
+	public boolean incidentSolved(boolean team, byte ci_id,
 			SimulationTime time, boolean isBought) {
-		return getTeam(team).incidentSolved(inc_id, time, isBought);
+		return getTeam(team).incidentSolved(ci_id, time, isBought);
 	}
 
 	/**
 	 * Fires an incident in the teams' logs
 	 * 
-	 * @param inc_id
+	 * @param ci_id
 	 *            The incident that has been fired
 	 * @param time
 	 *            The time of the incident
 	 */
-	public void incidentStarted(byte inc_id, SimulationTime time) {
-		marom.incidentStarted(inc_id, time);
-		rakia.incidentStarted(inc_id, time);
+	public void incidentsStarted(HashSet<Byte> ci_ids, SimulationTime time) {
+		marom.incidentsStarted(ci_ids, time);
+		rakia.incidentsStarted(ci_ids, time);
 	}
 
 	/**
@@ -343,33 +348,31 @@ public class SimulationLog extends Thread implements Serializable {
 	 * 
 	 * @param team
 	 *            The team that the check refers to
-	 * @param inc_id
+	 * @param ci_id
 	 *            The incident to be checked
 	 * @param time
 	 *            The time to be checked
 	 * @return True if the incident is open. False otherwise.
 	 */
-	public boolean checkIncident(boolean team, byte inc_id, SimulationTime time) {
-		return getTeam(team).isIncidentOpen(inc_id, time);
+	public boolean checkIncident(boolean team, byte ci_id, SimulationTime time) {
+		return getTeam(team).isIncidentOpen(ci_id, time);
 	}
 
 	/**
-	 * @return The simulation's incidents and their times (key=start_time,
-	 *         value=incident_id)
+	 * @return The incidents (key=start_time, value=HashSet of ci_ids)
 	 */
-	public HashMap<SimulationTime, Byte> getIncidentTimes() {
-		return incident_times;
+	public HashMap<SimulationTime, HashSet<Byte>> getIncidents() {
+		return time_cis;
 	}
 
 	public void addSolution(SolutionLog sol) {
 		solutionQueue.offer(sol);
 		solutionHistory.add(sol);
 	}
-	
-	public Set<SolutionLog> getSolutionHistory(){
+
+	public Set<SolutionLog> getSolutionHistory() {
 		return solutionHistory;
 	}
-
 
 	/**
 	 * @return The simulation's live queue of current solutions
@@ -396,9 +399,9 @@ public class SimulationLog extends Thread implements Serializable {
 	public int getRound() {
 		return round;
 	}
-	
-	public SimulationTime getTimeOfIncident(byte inc_id){
-		return times_incidents.get(inc_id);
+
+	public HashSet<SimulationTime> getCiTimes(byte ci_id) {
+		return cis_time.get(ci_id);
 	}
 
 	/**
@@ -406,28 +409,21 @@ public class SimulationLog extends Thread implements Serializable {
 	 *            The course's settings
 	 * @return The events considering stretching and pause times
 	 */
-	public List<JsonObject> getEventsForHomeScreen() {
-		List<JsonObject> eventList = new ArrayList<JsonObject>();
+	@SuppressWarnings("unchecked")
+	public List<JSONObject> getEventsForHomeScreen() {
+		List<JSONObject> eventList = new ArrayList<JSONObject>();
 
-		if (incident_times != null) {
-			
-			for (Map.Entry<SimulationTime, Byte> incident : incident_times
+		if (time_cis != null) {
+			for (Map.Entry<SimulationTime, HashSet<String>> time_event : time_events
 					.entrySet()) {
-				HashSet<String> events = incident_events.get(incident
-						.getValue());
-
-				if (events == null) {
-					continue;
-				}
-
-				for (String event : events) {
-					JsonObject row = new JsonObject();
-					row.addProperty("time", incident.getKey().getRunTime());
-					row.addProperty("round", incident.getKey().getRound());
-					row.addProperty("session", incident.getKey().getSessionInRound());
-					row.addProperty("event_id", Integer.valueOf(event));
-					eventList.add(row);
-				}
+				JSONObject row = new JSONObject();
+				row.put("time", time_event.getKey().getRunTime());
+				row.put("round", time_event.getKey().getRound());
+				row.put("session", time_event.getKey().getSessionInRound());
+				JSONArray events = new JSONArray();
+				events.addAll(time_event.getValue());
+				row.put("events", events);
+				eventList.add(row);
 			}
 		}
 		return eventList;

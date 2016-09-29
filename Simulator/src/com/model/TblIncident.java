@@ -12,65 +12,39 @@ import utils.SimulationTime;
 public class TblIncident implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private byte incidentId;
-
-	private byte ciId;
-
-	private int incidentTime;
-
+	private TblIncidentPK pk = new TblIncidentPK();
+	private byte ci_id;
+	private int time;
 	private boolean isActive;
-
-//	private List<TblChange> tblChanges;
-//
-//	private List<TblEvent> tblEvents;
-//
-//	private TblSolution tblSolution;
 	
-	private int solutionId;
-
 	public TblIncident() {
 	}
-
 	
-	
-	public int getSolutionId() {
-		return solutionId;
-	}
-
-
-
-	public void setSolutionId(int solutionId) {
-		this.solutionId = solutionId;
-	}
-
-
-
-	public byte getIncidentId() {
-		return this.incidentId;
-	}
-
-	public void setIncidentId(byte i) {
-		this.incidentId = i;
-	}
-
-	public byte getCiId() {
-		return this.ciId;
-	}
-
-	public void setCiId(byte ciId) {
-		this.ciId = ciId;
-	}
-
 	public int getIncidentTime() {
-		return this.incidentTime;
+		return this.pk.getTime();
 	}
 	
 	public SimulationTime getSimulationTime() {
-		return new SimulationTime(incidentTime);
+		return this.pk.getSimulationTime();
 	}
 
-	public void setIncidentTime(int time) {
-		this.incidentTime = time;
+	public void setIncidentTime(SimulationTime time) {
+		this.pk.setTime(time);
+		this.time = time.getRunTime();
+	}
+	
+	public void setIncidentTime (int time) {
+		this.pk.setTime(time);
+		this.time = time;
+	}
+
+	public byte getCiId() {
+		return pk.getCiId();
+	}
+
+	public void setCiId(byte ciId) {
+		this.pk.setCiId(ciId);
+		this.ci_id = ciId;
 	}
 
 	public boolean getIsActive() {

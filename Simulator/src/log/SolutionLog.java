@@ -3,25 +3,17 @@ package log;
 import java.io.Serializable;
 import java.util.HashSet;
 
-import utils.SimulationTime;
-
 public class SolutionLog implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String team;
-	private int round;
-	private int sessionInRound;
 	private HashSet<String> events;
-	private static SimulationLog simLog = SimulationLog.getInstance();
 	
-	public SolutionLog(String courseName, String team, byte inc_id){
+	public SolutionLog(String courseName, String team, byte ci_id){
 		this.team = team;
-		this.events = simLog.getIncidentEvents(inc_id);
-		SimulationTime sTime = simLog.getTimeOfIncident(inc_id);
-		round = sTime.getRound();
-		sessionInRound = sTime.getSessionInRound();
+		this.events = SimulationLog.getInstance().getTimeEvents(ci_id);
 	}
 	
 	/**
@@ -36,13 +28,5 @@ public class SolutionLog implements Serializable{
 	 */
 	public HashSet<String> getEvents(){
 		return events;
-	}
-	
-	public int getRound(){
-		return round;
-	}
-	
-	public int getSessionInRound(){
-		return sessionInRound;
 	}
 }

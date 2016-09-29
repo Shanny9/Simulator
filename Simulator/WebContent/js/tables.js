@@ -2,7 +2,7 @@
  * 
  */
 $(document).ready(function() {
-
+	$("#validate").click(getWarnings);
 	switch(tbl){
 	case "tblCi":
 		ciTable();
@@ -62,7 +62,20 @@ $(document).ready(function() {
 	
 });
 
-
+function getWarnings(tblName){
+	$("#dbInfo").html("");
+	$.ajax({
+		url : "DataController?action=warnings",
+		datatype : "json",
+		async : false,
+		success : function(data) {
+			$("#dbInfo").html(data.warnings);
+		},
+		error : function(e) {
+			console.log("js: Error in getWarnings");
+		}
+	});
+}
 
 function supplierTable(){
 	$("#tblTitle").append("Supplier List");

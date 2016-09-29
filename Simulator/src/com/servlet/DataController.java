@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import utils.SimulationTime;
+import utils.DBValidator;
 
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
@@ -77,7 +77,7 @@ public class DataController extends HttpServlet {
 		daoPriorityCost = new TblPriorityCostDaoImpl();
 		daoService = new TblServiceDaoImpl();
 		daoServiceDepartment = new TblServiceDepartmentDaoImpl();
-//		daoServiceDivision = new TblServiceDivisionDaoImpl();
+		// daoServiceDivision = new TblServiceDivisionDaoImpl();
 		daoCI = new TblCIDaoImpl();
 		daoCMDB = new TblCMDBDaoImpl();
 		daoDepartment = new TblDepartmentDaoImpl();
@@ -153,43 +153,50 @@ public class DataController extends HttpServlet {
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
 
-		switch (table) {
-		case "supplier":
-			tblSuppliers(action, request, response, gson);
-			break;
-		case "solution":
-			tblSolution(action, request, response, gson);
-			break;
-		case "incident":
-			tblIncident(action, request, response, gson);
-			break;
-		case "priority":
-			tblPriorityCost(action, request, response, gson);
-			break;
-		case "service":
-			tblService(action, request, response, gson);
-			break;
-		case "serviceDepartment":
-			tblServiceDepartment(action, request, response, gson);
-			break;
-//		case "serviceDivision":
-//			tblServiceDivision(action, request, response, gson);
-//			break;
-		case "ci":
-			tblCIs(action, request, response, gson);
-			break;
-		case "cmdb":
-			tblCMDBs(action, request, response, gson);
-			break;
-		case "department":
-			tblDepartments(action, request, response, gson);
-			break;
-		case "division":
-			tblDivisions(action, request, response, gson);
-			break;
-		case "event":
-			tblEvents(action, request, response, gson);
-			break;
+		if (action != null && action.equals("warnings")) {
+			JSONObject json = new JSONObject();
+			json.put("warnings", DBValidator.checkForWarnings());
+			response.getWriter().print(json);
+		}
+		if (table != null) {
+			switch (table) {
+			case "supplier":
+				tblSuppliers(action, request, response, gson);
+				break;
+			case "solution":
+				tblSolution(action, request, response, gson);
+				break;
+			case "incident":
+				tblIncident(action, request, response, gson);
+				break;
+			case "priority":
+				tblPriorityCost(action, request, response, gson);
+				break;
+			case "service":
+				tblService(action, request, response, gson);
+				break;
+			case "serviceDepartment":
+				tblServiceDepartment(action, request, response, gson);
+				break;
+			// case "serviceDivision":
+			// tblServiceDivision(action, request, response, gson);
+			// break;
+			case "ci":
+				tblCIs(action, request, response, gson);
+				break;
+			case "cmdb":
+				tblCMDBs(action, request, response, gson);
+				break;
+			case "department":
+				tblDepartments(action, request, response, gson);
+				break;
+			case "division":
+				tblDivisions(action, request, response, gson);
+				break;
+			case "event":
+				tblEvents(action, request, response, gson);
+				break;
+			}
 		}
 	}// end
 		// doPost
@@ -926,128 +933,129 @@ public class DataController extends HttpServlet {
 		}
 	}
 
-//	protected void tblServiceDivision(String action,
-//			HttpServletRequest request, HttpServletResponse response, Gson gson)
-//			throws IOException {
-//
-//		List<TblService_Division> serDivList = new ArrayList<TblService_Division>();
-//		if (action != null) {
-//			try {
-//				if (action.equals("list")) {
-//					// Fetch Data from User Table
-//					int startPageIndex = Integer.parseInt(request
-//							.getParameter("jtStartIndex"));
-//					int recordsPerPage = Integer.parseInt(request
-//							.getParameter("jtPageSize"));
-//					// Fetch Data from Supplier Table
-//					serDivList = daoServiceDivision.getAllServiceDivisions(
-//							startPageIndex, recordsPerPage);
-//					// Get Total Record Count for Pagination
-//					int userCount = daoServiceDivision
-//							.getServiceDivisionCount();
-//					// Return in the format required by jTable plugin
-//					JSONROOT.put("Result", "OK");
-//					JSONROOT.put("Records", serDivList);
-//					JSONROOT.put("TotalRecordCount", userCount);
-//
-//					// Convert Java Object to Json
-//					String jsonArray = gson.toJson(JSONROOT);
-//					response.getWriter().print(jsonArray);
-//				} else if (action.equals("create") || action.equals("update")) {
-//					TblService_Division ser = new TblService_Division();
-//
-//					// Set fields
-//					if (request.getParameter("service_ID") != null) {
-//						byte serId = Byte.parseByte(request
-//								.getParameter("service_ID"));
-//						ser.setService_ID(serId);
-//
-//					}
-//
-//					if (request.getParameter("divisionName") != null) {
-//						String divisionName = request
-//								.getParameter("divisionName");
-//						ser.setDivisionName(divisionName);
-//					}
-//
-//					if (request.getParameter("isActive") != null) {
-//						boolean active = Boolean.parseBoolean(request
-//								.getParameter("isActive"));
-//						ser.setIsActive(active);
-//					}
-//
-//					// end set fields
-//
-//					if (action.equals("create")) {
-//						// Create new record
-//						daoServiceDivision.addServiceDivision(ser);
-//					} else if (action.equals("update")) {
-//						// Update existing record
-//						byte id = Byte.parseByte(request
-//								.getParameter("jtRecordKey_service_ID"));
-//						String divName = request
-//								.getParameter("jtRecordKey_divisionName");
-//						TblService_DivisionPK pk = new TblService_DivisionPK();
-//						pk.setService_ID(id);
-//						pk.setDivisionName(divName);
-//						daoServiceDivision.updateServiceDivision(ser, pk);
-//					}
-//
-//					// Return in the format required by jTable plugin
-//					JSONROOT.put("Result", "OK");
-//					JSONROOT.put("Record", ser);
-//
-//					// Convert Java Object to Json
-//					String jsonArray = gson.toJson(JSONROOT);
-//					response.getWriter().print(jsonArray);
-//				} else if (action.equals("delete")) {
-//					// Delete record
-//					if (request.getParameter("service_ID") != null) {
-//						byte serId = Byte.parseByte(request
-//								.getParameter("service_ID"));
-//						if (request.getParameter("divisionName") != null) {
-//							String divisionName = request
-//									.getParameter("divisionName");
-//							TblService_DivisionPK pk = new TblService_DivisionPK();
-//							pk.setService_ID(serId);
-//							pk.setDivisionName(divisionName);
-//
-//							daoServiceDivision.deleteServiceDivision(pk);
-//
-//							// Return in the format required by jTable plugin
-//							JSONROOT.put("Result", "OK");
-//
-//							// Convert Java Object to Json
-//							String jsonArray = gson.toJson(JSONROOT);
-//							response.getWriter().print(jsonArray);
-//						}
-//					}
-//
-//				} else if (action.equals("excel")) {
-//					// Export to excel
-//					serDivList = daoServiceDivision.getAllServiceDivisions();
-//					// Return in the format required by jTable plugin
-//					JSONROOT.clear();
-//					JSONROOT.put("Records", serDivList);
-//					// Convert Java Object to Json
-//					String jsonArray = gson.toJson(JSONROOT);
-//					response.getWriter().print(jsonArray);
-//				}
-//			} catch (Exception ex) {
-//				ex.printStackTrace();
-//				System.out.println("DataController: Data-tblServiceDiv: "
-//						+ ex.getMessage());
-//				JSONROOT.put("Result", "ERROR");
-//				JSONROOT.put(
-//						"Message",
-//						(ex instanceof SQLException) ? getErrorMsg(
-//								((SQLException) ex).getErrorCode(),
-//								ex.getMessage(), action) : ex.getMessage());
-//				String error = gson.toJson(JSONROOT);
-//				response.getWriter().print(error);
-//			}
-//		}
-//	}
+	// protected void tblServiceDivision(String action,
+	// HttpServletRequest request, HttpServletResponse response, Gson gson)
+	// throws IOException {
+	//
+	// List<TblService_Division> serDivList = new
+	// ArrayList<TblService_Division>();
+	// if (action != null) {
+	// try {
+	// if (action.equals("list")) {
+	// // Fetch Data from User Table
+	// int startPageIndex = Integer.parseInt(request
+	// .getParameter("jtStartIndex"));
+	// int recordsPerPage = Integer.parseInt(request
+	// .getParameter("jtPageSize"));
+	// // Fetch Data from Supplier Table
+	// serDivList = daoServiceDivision.getAllServiceDivisions(
+	// startPageIndex, recordsPerPage);
+	// // Get Total Record Count for Pagination
+	// int userCount = daoServiceDivision
+	// .getServiceDivisionCount();
+	// // Return in the format required by jTable plugin
+	// JSONROOT.put("Result", "OK");
+	// JSONROOT.put("Records", serDivList);
+	// JSONROOT.put("TotalRecordCount", userCount);
+	//
+	// // Convert Java Object to Json
+	// String jsonArray = gson.toJson(JSONROOT);
+	// response.getWriter().print(jsonArray);
+	// } else if (action.equals("create") || action.equals("update")) {
+	// TblService_Division ser = new TblService_Division();
+	//
+	// // Set fields
+	// if (request.getParameter("service_ID") != null) {
+	// byte serId = Byte.parseByte(request
+	// .getParameter("service_ID"));
+	// ser.setService_ID(serId);
+	//
+	// }
+	//
+	// if (request.getParameter("divisionName") != null) {
+	// String divisionName = request
+	// .getParameter("divisionName");
+	// ser.setDivisionName(divisionName);
+	// }
+	//
+	// if (request.getParameter("isActive") != null) {
+	// boolean active = Boolean.parseBoolean(request
+	// .getParameter("isActive"));
+	// ser.setIsActive(active);
+	// }
+	//
+	// // end set fields
+	//
+	// if (action.equals("create")) {
+	// // Create new record
+	// daoServiceDivision.addServiceDivision(ser);
+	// } else if (action.equals("update")) {
+	// // Update existing record
+	// byte id = Byte.parseByte(request
+	// .getParameter("jtRecordKey_service_ID"));
+	// String divName = request
+	// .getParameter("jtRecordKey_divisionName");
+	// TblService_DivisionPK pk = new TblService_DivisionPK();
+	// pk.setService_ID(id);
+	// pk.setDivisionName(divName);
+	// daoServiceDivision.updateServiceDivision(ser, pk);
+	// }
+	//
+	// // Return in the format required by jTable plugin
+	// JSONROOT.put("Result", "OK");
+	// JSONROOT.put("Record", ser);
+	//
+	// // Convert Java Object to Json
+	// String jsonArray = gson.toJson(JSONROOT);
+	// response.getWriter().print(jsonArray);
+	// } else if (action.equals("delete")) {
+	// // Delete record
+	// if (request.getParameter("service_ID") != null) {
+	// byte serId = Byte.parseByte(request
+	// .getParameter("service_ID"));
+	// if (request.getParameter("divisionName") != null) {
+	// String divisionName = request
+	// .getParameter("divisionName");
+	// TblService_DivisionPK pk = new TblService_DivisionPK();
+	// pk.setService_ID(serId);
+	// pk.setDivisionName(divisionName);
+	//
+	// daoServiceDivision.deleteServiceDivision(pk);
+	//
+	// // Return in the format required by jTable plugin
+	// JSONROOT.put("Result", "OK");
+	//
+	// // Convert Java Object to Json
+	// String jsonArray = gson.toJson(JSONROOT);
+	// response.getWriter().print(jsonArray);
+	// }
+	// }
+	//
+	// } else if (action.equals("excel")) {
+	// // Export to excel
+	// serDivList = daoServiceDivision.getAllServiceDivisions();
+	// // Return in the format required by jTable plugin
+	// JSONROOT.clear();
+	// JSONROOT.put("Records", serDivList);
+	// // Convert Java Object to Json
+	// String jsonArray = gson.toJson(JSONROOT);
+	// response.getWriter().print(jsonArray);
+	// }
+	// } catch (Exception ex) {
+	// ex.printStackTrace();
+	// System.out.println("DataController: Data-tblServiceDiv: "
+	// + ex.getMessage());
+	// JSONROOT.put("Result", "ERROR");
+	// JSONROOT.put(
+	// "Message",
+	// (ex instanceof SQLException) ? getErrorMsg(
+	// ((SQLException) ex).getErrorCode(),
+	// ex.getMessage(), action) : ex.getMessage());
+	// String error = gson.toJson(JSONROOT);
+	// response.getWriter().print(error);
+	// }
+	// }
+	// }
 
 	protected void tblCIs(String action, HttpServletRequest request,
 			HttpServletResponse response, Gson gson) throws IOException {
@@ -1314,12 +1322,13 @@ public class DataController extends HttpServlet {
 								.getParameter("departmentName");
 						department.setDepartmentName(departmentName);
 					}
-					
+
 					if (request.getParameter("divisionName") != null) {
-						String divisionName = request.getParameter("divisionName");
+						String divisionName = request
+								.getParameter("divisionName");
 						department.setDivisionName(divisionName);
 					}
-					
+
 					if (request.getParameter("shortName") != null) {
 						String shortName = request.getParameter("shortName");
 						department.setShortName(shortName);
@@ -1338,8 +1347,10 @@ public class DataController extends HttpServlet {
 						daoDepartment.addDepartment(department);
 					} else if (action.equals("update")) {
 						// Update existing record
-						String dep = request.getParameter("jtRecordKey_departmentName");
-						String div = request.getParameter("jtRecordKey_divisionName");
+						String dep = request
+								.getParameter("jtRecordKey_departmentName");
+						String div = request
+								.getParameter("jtRecordKey_divisionName");
 
 						pk.setDepartmentName(dep);
 						pk.setDevisionName(div);
@@ -1357,8 +1368,10 @@ public class DataController extends HttpServlet {
 					// Delete record
 					if (request.getParameter("departmentName") != null
 							&& request.getParameter("divisionName") != null) {
-						String departmentName = request.getParameter("departmentName");
-						String divisionName = request.getParameter("divisionName");
+						String departmentName = request
+								.getParameter("departmentName");
+						String divisionName = request
+								.getParameter("divisionName");
 						pk.setDepartmentName(departmentName);
 						pk.setDevisionName(divisionName);
 						daoDepartment.deleteDepartment(pk);
@@ -1431,7 +1444,7 @@ public class DataController extends HttpServlet {
 						division.setDivisionName(divisionName);
 
 					}
-					
+
 					if (request.getParameter("shortName") != null) {
 						String shortName = request.getParameter("shortName");
 						division.setShortName(shortName);
@@ -1549,14 +1562,16 @@ public class DataController extends HttpServlet {
 								.getParameter("serviceId"));
 						event.setServiceId(serviceId);
 					}
-					
+
 					if (request.getParameter("round") != null) {
-						Byte round = Byte.parseByte(request.getParameter("round"));
+						Byte round = Byte.parseByte(request
+								.getParameter("round"));
 						event.setRound(round);
 					}
-					
+
 					if (request.getParameter("session") != null) {
-						Byte session = Byte.parseByte(request.getParameter("session"));
+						Byte session = Byte.parseByte(request
+								.getParameter("session"));
 						event.setSession(session);
 					}
 

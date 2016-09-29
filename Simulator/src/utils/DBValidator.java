@@ -37,9 +37,14 @@ public class DBValidator {
 	static final int MAX_INCIDENTS = 12;
 
 	static int warnings = 0;
+	
+	static String str="";
 
 	public static void main(String[] args) {
-
+		checkForWarnings();
+	}
+	
+	public static String checkForWarnings(){
 		Object instance;
 		try {
 			Class<?> c = DBValidator.class;
@@ -49,7 +54,7 @@ public class DBValidator {
 			Method[] methods = c.getDeclaredMethods();
 
 			if (methods == null) {
-				return;
+				return "";
 			}
 
 			for (Method method : methods) {
@@ -65,11 +70,14 @@ public class DBValidator {
 			}
 			System.out.println("Total DB warnings: "
 					+ warnings.getInt(instance) + ".");
+			str += "Total DB warnings: "
+					+ warnings.getInt(instance) + ".\n";
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
+		return str;
 	}
 
 	static void validateTblCI() {
@@ -98,12 +106,16 @@ public class DBValidator {
 				if (!all_cmdb_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblCMDB'.");
+					str += "CI '" + ci_id
+							+ "' is not used in table 'tblCMDB'.<br>\n";
 					warnings++;
 				}
 
 				if (!all_incidents_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblIncident'.");
+					str += "CI '" + ci_id
+							+ "' is not used in table 'tblIncident'.<br>\n";
 					warnings++;
 				}
 			}
@@ -132,6 +144,9 @@ public class DBValidator {
 							.println("Department '"
 									+ dep_name
 									+ "' is not used in table 'tblService_Department'.");
+					str += "Department '"
+							+ dep_name
+							+ "' is not used in table 'tblService_Department'.<br>\n";
 					warnings++;
 				}
 			}
@@ -174,6 +189,8 @@ public class DBValidator {
 				if (!all_departments_divisions.contains(div_name)) {
 					System.err.println("Division '" + div_name
 							+ "' is not used in table 'tblDepartment'.");
+					str += "Division '" + div_name
+							+ "' is not used in table 'tblDepartment'.<br>\n";
 					warnings++;
 				}
 			}
@@ -199,6 +216,8 @@ public class DBValidator {
 				if (!all_event_incident_ids.contains(inc_id)) {
 					System.err.println("Incident '" + inc_id
 							+ "' is not used in table 'tblEvent'.");
+					str += "Incident '" + inc_id
+							+ "' is not used in table 'tblEvent'.<br>\n";
 					warnings++;
 				}
 			}
@@ -245,12 +264,18 @@ public class DBValidator {
 									+ ser_id
 									+ "' is not used in tables"
 									+ " 'tblService_Division' and 'tblService_Department'.");
+					str += "Service '"
+							+ ser_id
+							+ "' is not used in tables"
+							+ " 'tblService_Division' and 'tblService_Department'.<br>\n";
 					warnings++;
 				}
 
 				if (!all_event_service_ids.contains(ser_id)) {
 					System.err.println("Service '" + ser_id
 							+ "' is not used in table 'tblEvent'.");
+					str += "Service '" + ser_id
+							+ "' is not used in table 'tblEvent'.<br>\n";
 					warnings++;
 				}
 			}
@@ -285,6 +310,8 @@ public class DBValidator {
 				if (!all_incidents_solutions.contains(sol_id)) {
 					System.err.println("Solution '" + sol_id
 							+ "' is not used in table 'tblIncident'.");
+					str += "Solution '" + sol_id
+							+ "' is not used in table 'tblIncident'.<br>\n";
 					warnings++;
 				}
 			}
@@ -311,6 +338,8 @@ public class DBValidator {
 				if (!all_ci_suppliers.contains(supp_name)) {
 					System.err.println("Supplier '" + supp_name
 							+ "' is not used in table 'tblCI'.");
+					str += "Supplier '" + supp_name
+							+ "' is not used in table 'tblCI'.<br>\n";
 					warnings++;
 				}
 			}

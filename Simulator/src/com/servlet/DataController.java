@@ -153,12 +153,34 @@ public class DataController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
-
+		String validateTable = request.getParameter("vTable");
 
 		if (action != null && action.equals("warnings")) {
-			JSONObject json = new JSONObject();
-			json.put("warnings", DBValidator.checkForWarnings());
-			response.getWriter().print(json);
+			if(validateTable!=null){
+				JSONObject json = new JSONObject();
+				switch(validateTable){
+				case "tblCi":
+					json.put("warnings", DBValidator.validateTblCI());
+					break;
+				case "tblDepartment":
+					json.put("warnings", DBValidator.validateTblDepartment());
+					break;
+				case "tblDivision":
+					json.put("warnings", DBValidator.validateTblDivision());
+					break;
+				case "tblService":
+					json.put("warnings", DBValidator.validateTblService());
+					break;
+				case "tblSupplier":
+					json.put("warnings", DBValidator.validateTblSupplier());
+					break;
+				case "tblSolution":
+					json.put("warnings", DBValidator.validateTblSolution());
+					break;
+				}
+				response.getWriter().print(json);
+			}
+		
 		}
 		if (table != null) {
 			switch (table) {

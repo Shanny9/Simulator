@@ -2,13 +2,16 @@
  * 
  */
 $(document).ready(function() {
-	$("#validate").click(getWarnings);
+	$("#validate").click(function(){
+		getWarnings(tbl);
+	});
 	switch(tbl){
 	case "tblCi":
 		ciTable();
 		break;
 	case "tblCMDB":
 		CMDBTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblDepartment":
 		departmentTable();
@@ -21,15 +24,18 @@ $(document).ready(function() {
 		break;
 	case "tblIncident":
 		incidentTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblPriorityCost":
 		priorityCostTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblService":
 		serviceTable();
 		break;
 	case "tblServiceDep":
 		serviceDepTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblSolution":
 		solutionTable();
@@ -62,7 +68,11 @@ $(document).ready(function() {
 function getWarnings(tblName){
 	$("#dbInfo").html("");
 	$.ajax({
-		url : "DataController?action=warnings",
+		url : "DataController",
+		data : {
+			action : "warnings",
+			vTable : tblName
+		},
 		datatype : "json",
 		async : false,
 		success : function(data) {

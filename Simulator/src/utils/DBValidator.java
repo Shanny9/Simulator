@@ -115,7 +115,9 @@ public class DBValidator {
 		}
 	}
 
-	static void validateTblCI() {
+	public static String validateTblCI() {
+		String str ="";
+		int ciWarnings = 0;
 		Collection<TblCI> all_cis = new TblCIDaoImpl().getAllCIs();
 
 		Collection<TblCMDB> all_cmdbs = new TblCMDBDaoImpl().getAllCMDBs();
@@ -141,19 +143,29 @@ public class DBValidator {
 				if (!all_cmdb_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblCMDB'.");
+					str += "CI '" + ci_id
+							+ "' is not used in table 'tblCMDB'.<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 
 				if (!all_incidents_ci_ids.contains(ci_id)) {
 					System.err.println("CI '" + ci_id
 							+ "' is not used in table 'tblIncident'.");
+					str += "CI '" + ci_id
+							+ "' is not used in table 'tblIncident'.<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+ciWarnings;
+		return str;
 	}
 
-	static void validateTblDepartment() {
+	public static String validateTblDepartment() {
+		String str ="";
+		int depWarnings = 0;
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllDepartments();
 
@@ -175,13 +187,21 @@ public class DBValidator {
 							.println("Department '"
 									+ dep_name
 									+ "' is not used in table 'tblService_Department'.");
+					str += "Department '"
+							+ dep_name
+							+ "' is not used in table 'tblService_Department'.<br>\n";
 					warnings++;
+					depWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+depWarnings;
+		return str;
 	}
 
-	static void validateTblDivision() {
+	public static String validateTblDivision() {
+		String str ="";
+		int divWarnings = 0;
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllDivisions();
 
@@ -201,13 +221,20 @@ public class DBValidator {
 				if (!all_departments_divisions.contains(div_name)) {
 					System.err.println("Division '" + div_name
 							+ "' is not used in table 'tblDepartment'.");
+					str += "Division '" + div_name
+							+ "' is not used in table 'tblDepartment'.<br>\n";
+					divWarnings++;
 					warnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+divWarnings;
+		return str;
 	}
 
-	static void validateTblService() {
+	public static String validateTblService() {
+		String str ="";
+		int serWarnings = 0;
 		Collection<TblService> all_services = new TblServiceDaoImpl()
 				.getAllServices();
 
@@ -230,13 +257,22 @@ public class DBValidator {
 									+ ser_id
 									+ "' is not used in tables"
 									+ " 'tblService_Division' and 'tblService_Department'.");
+					str += "Service '"
+							+ ser_id
+							+ "' is not used in tables"
+							+ " 'tblService_Division' and 'tblService_Department'.<br>\n";
 					warnings++;
+					serWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+serWarnings;
+		return str;
 	}
 
-	static void validateTblSolution() {
+	public static String validateTblSolution() {
+		String str ="";
+		int solWarnings = 0;
 		Collection<TblSolution> all_solutions = new TblSolutionDaoImpl()
 				.getAllSolutions();
 
@@ -263,13 +299,20 @@ public class DBValidator {
 				if (!all_cis_solutions.contains(sol_id)) {
 					System.err.println("Solution '" + sol_id
 							+ "' is not used in table 'tblIncident'.");
+					str += "Solution '" + sol_id
+							+ "' is not used in table 'tblIncident'.<br>\n";
+					solWarnings++;
 					warnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+solWarnings;
+		return str;
 	}
 
-	static void validateTblSupplier() {
+	public static String validateTblSupplier() {
+		String str ="";
+		int supWarnings = 0;
 		Collection<TblSupplier> all_suppliers = new TblSupplierDaoImpl()
 				.getAllSuppliers();
 
@@ -289,10 +332,15 @@ public class DBValidator {
 				if (!all_ci_suppliers.contains(supp_name)) {
 					System.err.println("Supplier '" + supp_name
 							+ "' is not used in table 'tblCI'.");
+					str += "Supplier '" + supp_name
+							+ "' is not used in table 'tblCI'.<br>\n";
+					supWarnings++;
 					warnings++;
 				}
 			}
 		}
+		str += "Total Warnings: "+supWarnings;
+		return str;
 	}
 
 	public static String checkSettings(Settings sett) {

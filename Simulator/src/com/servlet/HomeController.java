@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,11 +30,11 @@ import utils.PasswordAuthentication;
 import utils.SimulationTime;
 import utils.TimerManager;
 
-import com.dao.TblGeneralParametersDao;
-import com.daoImpl.TblGeneralParametersDaoImpl;
+import com.dao.TblUserDao;
+import com.daoImpl.TblUserDaoImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.model.TblGeneral_parameter;
+import com.model.TblUser;
 
 /**
  * Servlet implementation class HomeController
@@ -84,9 +85,10 @@ public class HomeController extends HttpServlet {
 		case "authenticate":
 
 			response.setContentType("text/html");
-
-			switch (authenticate(request)) {
+			int au = authenticate(request);
+			switch (au) {
 			case 1:
+			case 4:
 				Object session = getServletContext().getAttribute("isLogged");
 				if (session != null) {
 					try {
@@ -97,12 +99,20 @@ public class HomeController extends HttpServlet {
 					getServletContext().setAttribute("isLogged",
 							request.getSession());
 					request.getSession().setAttribute("isLogged", "1");
+					if(au == 1)
+						request.getSession().setAttribute("type", "Admin");
+					else
+						request.getSession().setAttribute("type", "Operator");
 					response.sendRedirect("opening.jsp");
 					System.out.println("New Session "+request.getSession().getId()+" was stored.");
 				}
 				// response.sendRedirect("login.jsp");
 				else {
 					request.getSession().setAttribute("isLogged", "1");
+					if(au == 1)
+						request.getSession().setAttribute("type", "Admin");
+					else
+						request.getSession().setAttribute("type", "Operator");
 					getServletContext().setAttribute("isLogged",
 							request.getSession());
 					response.sendRedirect("opening.jsp");
@@ -342,10 +352,11 @@ public class HomeController extends HttpServlet {
 	 * uses utils.PasswordAuthentication to verify password from the client
 	 * 
 	 * @param response
-	 * @return 1 - Admin login, 2 - Marom, 3 - Rakia, 0 - None (invalid details)
+	 * @return 1 - Admin login, 2 - Marom, 3 - Rakia, 4 - Operator, 0 - None (invalid details)
 	 */
 	protected int authenticate(HttpServletRequest request) {
-		int result;
+		int result = 0;
+		String type="";
 		char[] user = request.getParameter("form-username").toCharArray();
 		// System.out.println("HomeController: username= " +
 		// request.getParameter("form-username"));
@@ -353,20 +364,26 @@ public class HomeController extends HttpServlet {
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
 
-		TblGeneralParametersDao daoGP = new TblGeneralParametersDaoImpl();
-		TblGeneral_parameter gp = daoGP.getGeneralParameters();
+		TblUserDao daoUser = new TblUserDaoImpl();
+		List<TblUser> users = daoUser.getAllUsers();
 
 		PasswordAuthentication au = new PasswordAuthentication(); // default
 																	// cost is
 																	// 16
-
-		// Admin
-		if (au.authenticate(user, gp.getHomeUser())
-				&& au.authenticate(pass, gp.getHomePass())) {
-			result = 1;
+		for(TblUser u: users){
+			if(au.authenticate(user, u.getUsername())
+					&& au.authenticate(pass, u.getPassword())){
+				type = u.getType();
+			}
 		}
-		// Team
-		else {
+		switch(type){
+		case "Admin":
+			result = 1;
+			break;
+		case "Operator":
+			result = 4;
+			break;
+		case "": //Team
 			// Marom
 			if (String.valueOf(user).equals("Marom")
 					&& String.valueOf(pass).equals("m"))
@@ -382,9 +399,10 @@ public class HomeController extends HttpServlet {
 				else
 					result = 0;
 			}
-
+			break;
 		}
-		gp = null;
+		
+		users = null;
 		emptyChar(pass);
 		emptyChar(user);
 		return result;

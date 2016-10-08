@@ -40,7 +40,7 @@ $(document).ready(function() {
 </head>
 <body>
 
-	<%@ include file="header.html"%>
+	<%@ include file="header.jsp"%>
 	<div class="background-image">
 		<center>
 			<div class="container-fluid">

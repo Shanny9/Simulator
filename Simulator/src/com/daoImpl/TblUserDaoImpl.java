@@ -5,36 +5,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.dao.TblGeneralParametersDao;
+import com.dao.TblUserDao;
 import com.jdbc.DBUtility;
-import com.model.TblGeneral_parameter;
+import com.model.TblUser;
 
-public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
+public class TblUserDaoImpl implements TblUserDao {
 
 	private Connection dbConnection;
 	private PreparedStatement pStmt;
-	private static TblGeneral_parameter gp;
+	private static TblUser gp;
 	private static int sessionTime;
 	private static int roundTime;
 
-	public TblGeneralParametersDaoImpl() {
+	public TblUserDaoImpl() {
 		dbConnection = DBUtility.getConnection();
 	}
 
 	@Override
-	public void addGeneralParameters(TblGeneral_parameter generalParameter) {
-		String insertQuery = "INSERT INTO `SIMULATOR`.`tblGeneral_parameters`\r\n" + "(`pk`,\r\n"
-				+ "`num_of_rounds`,\r\n" + "`run_time`,\r\n" + "`pause_time`,\r\n" + "`sessions_per_round`,\r\n"
-				+ "`initial_capital`)\r\n" + "VALUES\r\n" + "(?,?,?,?,?,?);\r\n";
+	public void addUser(TblUser user) {
+		String insertQuery = "INSERT INTO `SIMULATOR`.`tblUser`\r\n" + "(`username`,\r\n"
+				+ "`password`,\r\n" + "`type`\n" + "VALUES\r\n" + "(?,?,?);\r\n";
 		try {
 			pStmt = dbConnection.prepareStatement(insertQuery);
-			pStmt.setInt(1, generalParameter.getPk());
-			pStmt.setByte(2, generalParameter.getNumOfRounds());
-			pStmt.setInt(3, generalParameter.getRunTime());
-			pStmt.setInt(4, generalParameter.getPauseTime());
-			pStmt.setByte(5, generalParameter.getSessionsPerRound());
-			pStmt.setDouble(6, generalParameter.getInitialCapital());
+			pStmt.setString(1, user.getUsername());
+			pStmt.setString(2, user.getPassword());
+			pStmt.setString(3, user.getType());
+
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -42,11 +41,11 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 	}
 
 	@Override
-	public void deleteGeneralParameters(int pk) {
-		String deleteQuery = "DELETE FROM tblGeneral_parameters WHERE pk = ?";
+	public void deleteUser(String pk) {
+		String deleteQuery = "DELETE FROM tblUser WHERE username = ?";
 		try {
 			pStmt = dbConnection.prepareStatement(deleteQuery);
-			pStmt.setInt(1, pk);
+			pStmt.setString(1, pk);
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -54,19 +53,13 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 	}
 
 	@Override
-	public void updateGeneralParameters(TblGeneral_parameter generalParameter) {
-		String updateQuery = "UPDATE `SIMULATOR`.`tblGeneral_parameters`\r\n" + "SET\r\n" + "`pk` =?\r\n"
-				+ "`num_of_rounds` =?\r\n" + "`run_time` =?\r\n" + "`pause_time` =?\r\n" + "`sessions_per_round` =?\r\n"
-				+ "`initial_capital` =?\r\n" + "WHERE `pk` =?\r\n" + "`\r\n" + "WHERE pk =?;\r\n";
+	public void updateUser(TblUser user) {
+		String updateQuery = "UPDATE tblUser SET username=?, password=?, type=? WHERE username=?";
 		try {
 			pStmt = dbConnection.prepareStatement(updateQuery);
-			pStmt.setInt(1, generalParameter.getPk());
-			pStmt.setByte(2, generalParameter.getNumOfRounds());
-			pStmt.setInt(3, generalParameter.getRunTime());
-			pStmt.setInt(4, generalParameter.getPauseTime());
-			pStmt.setByte(5, generalParameter.getSessionsPerRound());
-			pStmt.setDouble(6, generalParameter.getInitialCapital());
-			pStmt.setInt(7, generalParameter.getPk());
+			pStmt.setString(1, user.getUsername());
+			pStmt.setString(2, user.getPassword());
+			pStmt.setString(3, user.getType());
 			pStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -75,8 +68,30 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 	}
 
 	@Override
-	public TblGeneral_parameter getGeneralParameters() {
-		gp = new TblGeneral_parameter();
+	public List<TblUser> getAllUsers() {
+		List<TblUser> users = new ArrayList<TblUser>();
+
+		String query = "SELECT * FROM tblUser";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblUser user = new TblUser();
+
+				user.setUsername(rs.getString("username"));
+				user.setPassword(rs.getString("password"));
+				user.setType(rs.getString("type"));
+				users.add(user);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return users;
+	}
+	
+/*	@Override
+	public TblUser getUser() {
 
 		String query = "SELECT * FROM tblGeneral_parameters";
 
@@ -99,13 +114,13 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 			System.err.println(e.getMessage());
 		}
 		return gp;
-	}
+	}*/
 
-	@Override
+/*	@Override
 	public int getSessionTime() {
 		if (sessionTime == 0) {
 			if (gp == null)
-				getGeneralParameters();
+				getUser();
 			sessionTime = gp.getPauseTime() + gp.getRunTime();
 		}
 		return sessionTime;
@@ -130,5 +145,5 @@ public class TblGeneralParametersDaoImpl implements TblGeneralParametersDao {
 	@Override
 	public int getRoundTotalRunTime() {
 		return getRoundTime() * gp.getSessionsPerRound();
-	}
+	}*/
 }

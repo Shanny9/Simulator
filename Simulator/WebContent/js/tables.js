@@ -19,9 +19,9 @@ $(document).ready(function() {
 	case "tblDivision":
 		divisionTable();
 		break;
-	case "tblEvent":
+/*	case "tblEvent":
 		eventTable();
-		break;
+		break;*/
 	case "tblIncident":
 		incidentTable();
 		$("#validationDiv").css("display","none");

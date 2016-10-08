@@ -20,7 +20,7 @@ public class DBUtility {
 	public synchronized static Connection getConnection() {
 		if (connection != null) {
 			try {
-				String query = "SELECT * FROM tblGeneral_parameters";
+				String query = "SELECT * FROM tblCI";
 				Statement stmt = connection.createStatement();
 				ResultSet rs = stmt.executeQuery(query);
 			} catch (com.mysql.jdbc.exceptions.jdbc4.CommunicationsException ex) {

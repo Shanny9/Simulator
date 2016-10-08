@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,14 +13,12 @@ import com.model.TblUser;
 
 public class TblUserDaoImpl implements TblUserDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
-	private static TblUser gp;
-	private static int sessionTime;
-	private static int roundTime;
+
 
 	public TblUserDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
@@ -29,7 +26,7 @@ public class TblUserDaoImpl implements TblUserDao {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblUser`\r\n" + "(`username`,\r\n"
 				+ "`password`,\r\n" + "`type`\n" + "VALUES\r\n" + "(?,?,?);\r\n";
 		try {
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setString(1, user.getUsername());
 			pStmt.setString(2, user.getPassword());
 			pStmt.setString(3, user.getType());
@@ -44,7 +41,7 @@ public class TblUserDaoImpl implements TblUserDao {
 	public void deleteUser(String pk) {
 		String deleteQuery = "DELETE FROM tblUser WHERE username = ?";
 		try {
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, pk);
 			pStmt.executeUpdate();
 		} catch (SQLException e) {
@@ -56,7 +53,7 @@ public class TblUserDaoImpl implements TblUserDao {
 	public void updateUser(TblUser user) {
 		String updateQuery = "UPDATE tblUser SET username=?, password=?, type=? WHERE username=?";
 		try {
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setString(1, user.getUsername());
 			pStmt.setString(2, user.getPassword());
 			pStmt.setString(3, user.getType());
@@ -74,7 +71,7 @@ public class TblUserDaoImpl implements TblUserDao {
 		String query = "SELECT * FROM tblUser";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblUser user = new TblUser();
@@ -96,7 +93,7 @@ public class TblUserDaoImpl implements TblUserDao {
 		String query = "SELECT * FROM tblGeneral_parameters";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			if (rs.next()) {
 				gp.setInitialCapital(rs.getDouble("initial_capital"));

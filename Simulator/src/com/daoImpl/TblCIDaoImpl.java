@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +13,10 @@ import com.model.TblCI;
 
 public class TblCIDaoImpl implements TblCIDao {
 
-	private Connection dbConnection;
 	private PreparedStatement pStmt;
 
 	public TblCIDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
@@ -26,7 +24,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		String insertQuery = "INSERT INTO tblCI(CI_ID, CI_name, "
 				+ "supplier_level2, supplier_level3, isActive, solution_id) VALUES (?,?,?,?,?,?)";
 
-		pStmt = dbConnection.prepareStatement(insertQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 		pStmt.setByte(1, ci.getCiId());
 		pStmt.setString(2, ci.getCI_name());
 		pStmt.setString(3, ci.getSupplierName1());
@@ -40,7 +38,7 @@ public class TblCIDaoImpl implements TblCIDao {
 	@Override
 	public void deleteCI(byte ci_id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblCI WHERE CI_ID = ?";
-		pStmt = dbConnection.prepareStatement(deleteQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 		pStmt.setByte(1, ci_id);
 		pStmt.executeUpdate();
 
@@ -52,7 +50,7 @@ public class TblCIDaoImpl implements TblCIDao {
 				+ "supplier_level2 = ?, supplier_level3 = ?, isActive = ?, "
 				+ "solution_id = ? WHERE CI_ID = ?";
 
-		pStmt = dbConnection.prepareStatement(updateQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 		pStmt.setByte(1, ci.getCiId());
 		pStmt.setString(2, ci.getCI_name());
 		pStmt.setString(3, ci.getSupplierName1());
@@ -73,7 +71,7 @@ public class TblCIDaoImpl implements TblCIDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblCI ci = new TblCI();
@@ -99,7 +97,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		String query = "SELECT * FROM tblCI";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblCI ci = new TblCI();
@@ -125,7 +123,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		String query = "SELECT * FROM tblCI WHERE CI_ID = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setByte(1, ci_id);
 			ResultSet rs = pStmt.executeQuery();
 			if (rs.next()) {
@@ -147,7 +145,7 @@ public class TblCIDaoImpl implements TblCIDao {
 	public int getCICount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt
 					.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblCI;");
 			while (rs.next()) {

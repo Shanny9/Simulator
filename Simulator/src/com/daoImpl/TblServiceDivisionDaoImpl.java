@@ -15,11 +15,11 @@
 //
 //public class TblServiceDivisionDaoImpl implements TblServiceDivisionDao {
 //
-//	private Connection dbConnection;
+//	
 //	private PreparedStatement pStmt;
 //
 //	public TblServiceDivisionDaoImpl() {
-//		dbConnection = DBUtility.getConnection();
+//		
 //	}
 //	
 //	@Override
@@ -28,7 +28,7 @@
 //		String insertQuery = "INSERT INTO tblService_Division (service_id, division_name, " 
 //	+ " isActive) VALUES (?,?,?)";
 //
-//			pStmt = dbConnection.prepareStatement(insertQuery);
+//			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 //			pStmt.setByte(1, service.getService_ID());
 //			pStmt.setString(2, service.getDivisionName());
 //			pStmt.setBoolean(3, service.getIsActive());
@@ -42,7 +42,7 @@
 //		String deleteQuery = "DELETE FROM tblService_Division WHERE service_id = ? AND"
 //				+ " division_name=?";
 //
-//			pStmt = dbConnection.prepareStatement(deleteQuery);
+//			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 //			pStmt.setByte(1, pk.getService_ID());
 //			pStmt.setString(2, pk.getDivisionName());
 //			pStmt.executeUpdate();
@@ -59,7 +59,7 @@
 //				+ recordsPerPage;
 //
 //		try {
-//			Statement stmt = dbConnection.createStatement();
+//			Statement stmt = DBUtility.getConnection().createStatement();
 //			ResultSet rs = stmt.executeQuery(query);
 //			while (rs.next()) {
 //				TblService_Division service = new TblService_Division();
@@ -84,7 +84,7 @@
 //		String query = "SELECT * FROM tblService_Division";
 //
 //		try {
-//			Statement stmt = dbConnection.createStatement();
+//			Statement stmt = DBUtility.getConnection().createStatement();
 //			ResultSet rs = stmt.executeQuery(query);
 //			while (rs.next()) {
 //				TblService_Division service = new TblService_Division();
@@ -108,7 +108,7 @@
 //		String query = "SELECT * FROM tblService_Division WHERE service_id = ? AND division_name=? ";
 //
 //		try {
-//			pStmt = dbConnection.prepareStatement(query);
+//			pStmt = DBUtility.getConnection().prepareStatement(query);
 //			pStmt.setByte(1, pk.getService_ID());
 //			pStmt.setString(2, pk.getDivisionName());
 //			
@@ -131,7 +131,7 @@
 //	public int getServiceDivisionCount() {
 //		int count = 0;
 //		try {
-//			Statement stmt = dbConnection.createStatement();
+//			Statement stmt = DBUtility.getConnection().createStatement();
 //			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblService_Division;");
 //			while (rs.next()) {
 //				count = rs.getInt("COUNT");
@@ -148,7 +148,7 @@
 //		String updateQuery = "UPDATE tblService_Division SET \n " + "service_id=?, division_name=?,  \r\n" + 
 //				" isActive=? WHERE service_id = ? AND division_name=? ";
 //
-//			pStmt = dbConnection.prepareStatement(updateQuery);
+//			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 //			pStmt.setByte(1, service.getService_ID());
 //			pStmt.setString(2, service.getDivisionName());
 //			pStmt.setBoolean(3, service.getIsActive());

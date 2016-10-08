@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +13,11 @@ import com.model.TblService;
 
 public class TblServiceDaoImpl implements TblServiceDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 
 	public TblServiceDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				+ "service_name, isTechnical, supplier_level2, supplier_level3, fixed_cost, "
 				+ "fixed_income, isActive, urgency, impact, event_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-		pStmt = dbConnection.prepareStatement(insertQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 		pStmt.setByte(1, service.getServiceId());
 		pStmt.setString(2, service.getServiceCode());
 		pStmt.setString(3, service.getServiceName());
@@ -47,7 +46,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 	@Override
 	public void deleteService(Byte id) throws SQLException {
 		String deleteQuery = "DELETE FROM tblService WHERE service_id = ?";
-		pStmt = dbConnection.prepareStatement(deleteQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 		pStmt.setByte(1, id);
 		pStmt.executeUpdate();
 	}
@@ -59,7 +58,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				+ "fixed_cost = ? ,fixed_income = ?, isActive = ?, urgency = ?, impact = ?, "
 				+ "event_id = ? WHERE service_id = ?;";
 
-		pStmt = dbConnection.prepareStatement(updateQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 		pStmt.setByte(1, service.getServiceId());
 		pStmt.setString(2, service.getServiceCode());
 		pStmt.setString(3, service.getServiceName());
@@ -86,7 +85,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				+ "," + recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblService service = new TblService();
@@ -118,7 +117,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		String query = "SELECT * FROM tblService";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblService service = new TblService();
@@ -148,7 +147,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		String query = "SELECT * FROM tblService WHERE service_id = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setByte(1, id);
 			ResultSet rs = pStmt.executeQuery();
 
@@ -177,7 +176,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 	public int getServiceCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt
 					.executeQuery("SELECT COUNT(*) AS COUNT FROM tblService;");
 			while (rs.next()) {

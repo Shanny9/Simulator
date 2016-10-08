@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,18 +13,18 @@ import com.model.TblSupplier;
 
 public class TblSupplierDaoImpl implements TblSupplierDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 
 	public TblSupplierDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
 	public void addSupplier(TblSupplier supplier) throws SQLException {
 		String insertQuery = "INSERT INTO tblSupplier(supplier_name, solution_cost, " + "isActive, currency) VALUES (?,?,?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setString(1, supplier.getSupplierName());
 			pStmt.setDouble(2, supplier.getSolutionCost());
 			pStmt.setBoolean(3, supplier.getIsActive());
@@ -38,7 +37,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 	public void deleteSupplier(String name) throws SQLException {
 		String deleteQuery = "DELETE FROM tblSupplier WHERE supplier_name = ?";
 
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, name);
 			pStmt.executeUpdate();
 
@@ -48,7 +47,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 	public void updateSupplier(TblSupplier supplier, String name) throws SQLException {
 		String updateQuery = "UPDATE tblSupplier SET \n " + "supplier_name = ?, solution_cost = ?, isActive = ?, currency = ? WHERE supplier_name = ?";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setString(1, supplier.getSupplierName());
 			pStmt.setDouble(2, supplier.getSolutionCost());
 			pStmt.setBoolean(3, supplier.getIsActive());
@@ -66,7 +65,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblSupplier supplier = new TblSupplier();
@@ -90,7 +89,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 		String query = "SELECT * FROM tblSupplier ORDER BY supplier_name";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblSupplier supplier = new TblSupplier();
@@ -112,7 +111,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 		String query = "SELECT * FROM tblSupplier WHERE supplier_name = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setString(1, name);
 			ResultSet rs = pStmt.executeQuery();
 			rs.next();
@@ -132,7 +131,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 	public int getSupplierCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblSupplier;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");

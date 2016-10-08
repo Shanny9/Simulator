@@ -11,6 +11,8 @@ public class TblLevel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String level;
+	
+	private boolean isActive;
 
 //	private List<TblPriority> tblPriorities1;
 //
@@ -22,6 +24,20 @@ public class TblLevel implements Serializable {
 
 	public TblLevel() {
 	}
+
+	
+	
+	public boolean isActive() {
+		return isActive;
+	}
+
+
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+
 
 	public String getLevel() {
 		return this.level;

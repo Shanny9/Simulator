@@ -42,6 +42,7 @@
                       <li><a href="tables.jsp?tbl=tblDivision" id="tblDivision">Division</a></li>
                     <!--   <li><a href="tables.jsp?tbl=tblEvent" id="tblEvent">Event</a></li> -->
                       <li><a href="tables.jsp?tbl=tblIncident" id="tblIncident">Incident</a></li>
+                      <li><a href="tables.jsp?tbl=tblLevel" id="tblLevel">Level</a></li>
                       <li><a href="tables.jsp?tbl=tblPriorityCost" id="tblPriorityCost">Priority Cost</a></li>
                       <li><a href="tables.jsp?tbl=tblService" id="tblService">Service</a></li>
                       <li><a href="tables.jsp?tbl=tblServiceDep" id="tblServiceDep">Service Department</a></li>

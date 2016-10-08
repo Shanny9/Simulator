@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,18 +14,18 @@ import com.model.TblService_DepartmentPK;
 
 public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 	
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 	
 	public TblServiceDepartmentDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 	@Override
 	public void addServiceDepartment(TblService_Department service) throws SQLException {
 		String insertQuery = "INSERT INTO tblService_Department (service_id, devision_name, " 
 	+ "department_name, isActive) VALUES (?,?,?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
@@ -42,7 +41,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 		String deleteQuery = "DELETE FROM tblService_Department WHERE service_id = ? AND"
 				+ " devision_name=? AND department_name=?";
 
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setByte(1, pk.getService_ID());
 			pStmt.setString(2, pk.getDivisionName());
 			pStmt.setString(3, pk.getDepartmentName());
@@ -56,7 +55,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 		String updateQuery = "UPDATE tblService_Department SET \n " + "service_id=?, devision_name=?,  \r\n" + 
 				"department_name=?, isActive=? WHERE service_id = ? AND devision_name=? AND department_name=?";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
@@ -79,7 +78,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblService_Department service = new TblService_Department();
@@ -106,7 +105,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 		String query = "SELECT * FROM tblService_Department";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblService_Department service = new TblService_Department();
@@ -132,7 +131,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 		String query = "SELECT * FROM tblService_Department WHERE service_id = ? AND devision_name=? AND department_name=?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setByte(1, pk.getService_ID());
 			pStmt.setString(2, pk.getDivisionName());
 			pStmt.setString(3, pk.getDepartmentName());
@@ -157,7 +156,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 	public int getServiceDepartmentCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblService_Department;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");

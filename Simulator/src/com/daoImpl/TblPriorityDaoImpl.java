@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +14,11 @@ import com.model.TblPriorityPK;
 
 public class TblPriorityDaoImpl implements TblPriorityDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 
 	public TblPriorityDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
@@ -31,7 +30,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 				"VALUES\r\n" + 
 				"(?,?,?);";
 		try {
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setString(1, priority.getId().getUrgency());
 			pStmt.setString(2, priority.getId().getImpact());
 			pStmt.setString(3, priority.getPriorityName());
@@ -45,7 +44,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	public void deletePriority(TblPriorityPK pk) {
 		String deleteQuery = "DELETE FROM tblPriority WHERE urgency = ? and impact = ?";
 		try {
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, pk.getUrgency());
 			pStmt.setString(2, pk.getImpact());
 			pStmt.executeUpdate();
@@ -63,7 +62,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 				"`priorityName` = ?\r\n" + 
 				"WHERE `urgency` = ? AND `impact` = ?;";
 		try {
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setString(1, priority.getId().getUrgency());
 			pStmt.setString(2, priority.getId().getImpact());
 			pStmt.setString(3, priority.getPriorityName());
@@ -84,7 +83,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority pr = new TblPriority();
@@ -109,7 +108,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 		String query = "SELECT distinct priorityName FROM tblPriority";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority pr = new TblPriority();
@@ -134,7 +133,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	public int getPriorityCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblPriority;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");

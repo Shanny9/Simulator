@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +13,11 @@ import com.model.TblSolution;
 
 public class TblSolutionDaoImpl implements TblSolutionDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 	
 	public TblSolutionDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 	
 	@Override
@@ -27,7 +26,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 		String insertQuery = "INSERT INTO tblSolution (solution_id, solution_marom, " 
 	+ "solution_rakia, isActive) VALUES (?,?,?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setInt(1, sol.getSolutionId());
 			pStmt.setInt(2, sol.getSolutionMarom());
 			pStmt.setInt(3, sol.getSolutionRakia());
@@ -42,7 +41,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 
 		String deleteQuery = "DELETE FROM tblSolution WHERE solution_id = ? ";
 
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setInt(1, id);
 
 			pStmt.executeUpdate();
@@ -56,7 +55,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 		String updateQuery = "UPDATE tblSolution SET \n " + "solution_id=?, solution_marom=?, \r\n" + 
 				"solution_rakia=?, isActive=? WHERE solution_id = ?";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setInt(1, sol.getSolutionId());
 			pStmt.setInt(2, sol.getSolutionMarom());
 			pStmt.setInt(3, sol.getSolutionRakia());
@@ -78,7 +77,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblSolution sol = new TblSolution();
@@ -104,7 +103,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 		String query = "SELECT * FROM tblSolution ";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblSolution sol = new TblSolution();
@@ -129,7 +128,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 		String query = "SELECT * FROM tblSolution WHERE solution_id = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setInt(1, id);
 			
 			ResultSet rs = pStmt.executeQuery();
@@ -152,7 +151,7 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 	public int getSolutionCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblSolution;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");

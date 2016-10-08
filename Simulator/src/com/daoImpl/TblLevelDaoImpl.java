@@ -1,6 +1,6 @@
 package com.daoImpl;
 
-import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,34 +13,73 @@ import com.model.TblLevel;
 
 public class TblLevelDaoImpl implements TblLevelDao {
 	
-	private Connection dbConnection;
+	private PreparedStatement pStmt;
 	
 	public TblLevelDaoImpl() {
-		dbConnection = DBUtility.getConnection();
-	}
-
-	@Override
-	public void addLevel(TblLevel Level) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void deleteLevel(String name) {
-		// TODO Auto-generated method stub
+	public void addLevel(TblLevel Level) throws SQLException {
+		String insertQuery = "INSERT INTO `SIMULATOR`.`tblLevel`\r\n" + 
+				"(`level`,\r\n" + 
+				"`isActive`)\r\n" + 
+				" VALUES (?,?);";
+
+				pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
+				pStmt.setString(1, Level.getLevel());
+				pStmt.setBoolean(2, Level.isActive());
+				pStmt.executeUpdate();
 
 	}
 
 	@Override
-	public void updateLevel(TblLevel Level) {
-		// TODO Auto-generated method stub
+	public void deleteLevel(String name) throws SQLException {
+		String deleteQuery = "DELETE FROM tblLevel WHERE level = ?";
+
+		pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
+		pStmt.setString(1, name);
+		pStmt.executeUpdate();
+
+	}
+
+	@Override
+	public void updateLevel(TblLevel Level, String name) throws SQLException {
+		String updateQuery = "UPDATE `SIMULATOR`.`tblLevel`\r\n" + 
+				"SET\r\n" + 
+				"`level` = ?,\r\n" + 
+				"`isActive` = ?\r\n" + 
+				"WHERE `level` = ?;";
+
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
+			pStmt.setString(1, Level.getLevel());
+			pStmt.setBoolean(2, Level.isActive());
+			pStmt.setString(3, name);
+
+			pStmt.executeUpdate();
 
 	}
 
 	@Override
 	public List<TblLevel> getAllLevels(int startPageIndex, int recordsPerPage) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TblLevel> levels = new ArrayList<TblLevel>();
+
+		String query = "SELECT * FROM tblLevel "+ "limit " + startPageIndex + ","
+				+ recordsPerPage;
+
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblLevel level = new TblLevel();
+				level.setLevel(rs.getString("level"));
+				level.setActive(rs.getBoolean("isActive"));
+				levels.add(level);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return levels;
 	}
 
 	@Override
@@ -50,12 +89,12 @@ public class TblLevelDaoImpl implements TblLevelDao {
 		String query = "SELECT * FROM tblLevel";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblLevel level = new TblLevel();
 				level.setLevel(rs.getString("level"));
-				//TODO: LEVEL SET IS-ACTIVE!
+				level.setActive(rs.getBoolean("isActive"));
 				levels.add(level);
 			}
 		} catch (SQLException e) {
@@ -72,8 +111,17 @@ public class TblLevelDaoImpl implements TblLevelDao {
 
 	@Override
 	public int getLevelCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		int count = 0;
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblLevel;");
+			while (rs.next()) {
+				count = rs.getInt("COUNT");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return count;
 	}
 
 }

@@ -20,7 +20,7 @@ public class DBUtility {
 	public synchronized static Connection getConnection() {
 		if (connection != null) {
 			try {
-				String query = "SELECT * FROM tblCI";
+				String query = "SELECT 1";
 				Statement stmt = connection.createStatement();
 				ResultSet rs = stmt.executeQuery(query);
 			} catch (com.mysql.jdbc.exceptions.jdbc4.CommunicationsException ex) {
@@ -28,9 +28,13 @@ public class DBUtility {
 					connection.close();
 					return createNewConnection();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					return createNewConnection();
+					
 				}
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException ex) {
+				//connection is closed
+				return createNewConnection();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

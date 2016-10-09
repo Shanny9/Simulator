@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class TblLevel implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String level;
+	private String level;	
 	private boolean isActive;
 
 	public TblLevel() {

@@ -24,11 +24,12 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-
+	
+	    <script src="js/jquery-1.11.3.min.js"></script>
     </head>
 
     <body>
-		<%@ include file="header.html"%>
+		<%@ include file="header.jsp"%>
         <!-- Top content -->
         <div class="top-content">
         	
@@ -57,28 +58,33 @@
 			                        <span class = "_label">Course name</span>
 			                        	<input type="text" name="form-courseName" class="form-courseName form-control" id="form-courseName">
 			                        </div>
-			                        <p id="err" class="message">This course name is already taken. Please choose a different name</p>
+			                        <p id="form-courseNameErr" ></p>
 			                        <hr class="separator">
 			                        <div class="form-group">
 			                    	<span class = "_label">Rounds</span>
 			                        	<input type="number" name="form-numOfRounds" class="form-numOfRounds form-control" id="form-numOfRounds">
 			                      	</div>
+			                      	<p id="form-numOfRoundsErr" ></p>
 			                        <div class="form-group">
 			                        <span class = "_label">Run time (Seconds)</span>
 			                        	<input type="number" name="form-runTime" class="form-runTime form-control" id="form-runTime">
 			                        </div>
+			                        <p id="form-runTimeErr" ></p>
 			                        <div class="form-group">
 			                        <span class = "_label">Pause time (Seconds)</span>
 			                        	<input type="number" name="form-pauseTime" class="form-pauseTime form-control" id="form-pauseTime">
 			                        </div>
+			                        <p id="form-pauseTimeErr" ></p>
 			                        <div class="form-group">
 			                        <span class = "_label">Sessions per round</span>
 			                        	<input type="number" name="form-sessions" class="form-sessions form-control" id="form-sessions">
 			                        </div>
+			                        <p id="form-sessionsErr" ></p>
 			                        <div class="form-group">
 			                        <span class = "_label">Initial capital</span>
 			                        	<input type="number" name="form-initCapital" class="form-initCapital form-control" id="form-initCapital">
 			                        </div>
+			                        <p id="form-initCapitalErr" ></p>
 			                        <button type="submit" class="btn" id="create">Create</button>
 			                    </form>
 			                   
@@ -103,13 +109,13 @@
                     </div> -->
                 </div>
             </div>
-            
+          
         </div>
         <%@ include file="footer.html"%> 
 
 
         <!-- Javascript -->
-        <script src="js/jquery-1.11.3.min.js"></script>
+
         <script src="js/bootstrap-3.3.5.min.js"></script>
         <script src="js/jquery.backstretch.min.js"></script>
         <script src="js/msc-script.js"></script>

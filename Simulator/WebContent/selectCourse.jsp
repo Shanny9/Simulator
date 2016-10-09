@@ -26,10 +26,12 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+<script src="js/jquery-1.11.3.min.js"></script>
+
 </head>
 
 <body>
-	<%@ include file="header.html"%>
+	<%@ include file="header.jsp"%>
 
 	<!-- Top content -->
 	<div class="top-content">
@@ -53,7 +55,7 @@
 						</div>
 						<div class="form-bottom">
 							<form role="form" action="HomeController?action=selectCourse"
-								method="post" class="login-form create-form">
+								method="post" class="login-form create-form select-form">
 
 								<div class="form-group">
 									<span class="_label">Course name</span> <select
@@ -107,7 +109,7 @@
 
 
 	<!-- Javascript -->
-	<script src="js/jquery-1.11.3.min.js"></script>
+
 	<script src="js/bootstrap-3.3.5.min.js"></script>
 	<script src="js/jquery.backstretch.min.js"></script>
 	<script src="js/msc-script.js"></script>

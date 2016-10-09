@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,18 +15,18 @@ import com.model.TblDivision;
 
 public class TblDivisionDaoImpl implements TblDivisionDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 
 	public TblDivisionDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
 	public void addDivision(TblDivision division) throws SQLException {
 		String insertQuery = "INSERT INTO tblDivision(division_name, isActive, shortName) VALUES (?,?,?)";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.isActive());
 			pStmt.setString(3, division.getShortName());
@@ -39,7 +38,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	public void deleteDivision(String name) throws SQLException {
 		String deleteQuery = "DELETE FROM tblDivision WHERE division_name = ?";
 
-		pStmt = dbConnection.prepareStatement(deleteQuery);
+		pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 		pStmt.setString(1, name);
 		pStmt.executeUpdate();
 		QueryLogger.log(pStmt.toString());
@@ -49,7 +48,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	public void updateDivision(TblDivision division, String divisionName) throws SQLException {
 		String updateQuery = "UPDATE tblDivision SET division_name = ?, isActive = ?, shortName = ? WHERE division_name = ?";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.isActive());
 			pStmt.setString(3, division.getShortName());
@@ -68,7 +67,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 				+ "," + recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblDivision division = new TblDivision();
@@ -90,7 +89,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		String query = "SELECT * FROM tblDivision";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblDivision division = new TblDivision();
@@ -112,7 +111,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		String query = "SELECT * FROM tblDivision WHERE isActive = 1;";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblDivision division = new TblDivision();
@@ -133,7 +132,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		String query = "SELECT * FROM tblDivision WHERE division_name = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setString(1, divisionName);
 			ResultSet rs = pStmt.executeQuery();
 			rs.next();
@@ -152,7 +151,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 	public int getDivisionCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt
 					.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblDivision;");
 			while (rs.next()) {

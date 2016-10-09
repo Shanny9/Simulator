@@ -76,7 +76,10 @@ public class DBValidator {
 		}
 	}
 
-	static void validateTblCI() {
+	public static String validateTblCI() {
+		String str = "";
+		int ciWarnings = 0;
+
 		Collection<TblCI> all_cis = new TblCIDaoImpl().getAllActiveCIs();
 
 		Collection<TblCMDB> all_cmdbs = new TblCMDBDaoImpl()
@@ -110,33 +113,50 @@ public class DBValidator {
 				byte ci_id = ci.getCiId();
 
 				if (!all_cmdb_ci_ids.contains(ci_id)) {
-					System.err.println("CI '" + ci_id
-							+ "' is not used in table 'tblCMDB'.");
+					String warning = "CI '" + ci_id
+							+ "' is not used in table 'tblCMDB'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 
 				if (!all_incidents_ci_ids.contains(ci_id)) {
-					System.err.println("CI '" + ci_id
-							+ "' is not used in table 'tblIncident'.");
+					String warning = "CI '" + ci_id
+							+ "' is not used in table 'tblIncident'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 
 				if (inactive_suppliers.contains(ci.getSupplierName1())) {
-					System.err.println("CI '" + ci_id
-							+ "' has an inactive supplier2'.");
+					String warning = "CI '" + ci_id
+							+ "' has an inactive supplier2'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 
 				if (inactive_suppliers.contains(ci.getSupplierName2())) {
-					System.err.println("CI '" + ci_id
-							+ "' has an inactive supplier3'.");
+					String warning = "CI '" + ci_id
+							+ "' has an inactive supplier3'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					ciWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + ciWarnings;
+		return str;
 	}
 
-	static void validateTblCMDB() {
+	public static String validateTblCMDB() {
+		String str = "";
+		int cmdbWarnings = 0;
+
 		Collection<TblCMDB> all_cmdbs = new TblCMDBDaoImpl()
 				.getAllActiveCMDBs();
 
@@ -159,19 +179,32 @@ public class DBValidator {
 
 		for (TblCMDB cmdb : all_cmdbs) {
 			if (inactive_cis.contains(cmdb.getCiId())) {
-				System.err.println("CMDB '(" + cmdb.getCiId() + ", "
-						+ cmdb.getServiceId() + ")' has an inactive CI'.");
+				String warning = "CMDB '(" + cmdb.getCiId() + ", "
+						+ cmdb.getServiceId() + ")' has an inactive CI'.";
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				cmdbWarnings++;
+
 			}
 			if (inactive_services.contains(cmdb.getCiId())) {
-				System.err.println("CMDB '(" + cmdb.getCiId() + ", "
-						+ cmdb.getServiceId() + ")' has an inactive service'.");
+				String warning = "CMDB '(" + cmdb.getCiId() + ", "
+						+ cmdb.getServiceId() + ")' has an inactive service'.";
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				cmdbWarnings++;
+
 			}
 		}
+		str += "Total Warnings: " + cmdbWarnings;
+		return str;
 	}
 
-	static void validateTblDepartment() {
+	public static String validateTblDepartment() {
+		String str = "";
+		int departmentWarnings = 0;
+
 		Collection<TblDepartment> all_departments = new TblDepartmentDaoImpl()
 				.getAllActiveDepartments();
 
@@ -198,23 +231,32 @@ public class DBValidator {
 				String dep_name = dep.getDepartmentName();
 
 				if (!all_service_departments.contains(dep_name)) {
-					System.err
-							.println("Department '"
-									+ dep_name
-									+ "' is not used in table 'tblService_Department'.");
+					String warning = "Department '" + dep_name
+							+ "' is not used in table 'tblService_Department'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					departmentWarnings++;
 				}
 
 				if (inactive_divisions.contains(dep.getDivisionName())) {
-					System.err.println("Department '" + dep_name
-							+ "' has an inactive division'.");
+					String warning = "Department '" + dep_name
+							+ "' has an inactive division'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					departmentWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + departmentWarnings;
+		return str;
 	}
 
-	static void validateTblDivision() {
+	public static String validateTblDivision() {
+		String str = "";
+		int divisionWarnings = 0;
+
 		Collection<TblDivision> all_divisions = new TblDivisionDaoImpl()
 				.getAllActiveDivisions();
 
@@ -232,15 +274,23 @@ public class DBValidator {
 				String div_name = div.getDivisionName();
 
 				if (!all_departments_divisions.contains(div_name)) {
-					System.err.println("Division '" + div_name
-							+ "' is not used in table 'tblDepartment'.");
+					String warning = "Division '" + div_name
+							+ "' is not used in table 'tblDepartment'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					divisionWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + divisionWarnings;
+		return str;
 	}
 
-	static void validateTblIncident() {
+	public static String validateTblIncident() {
+		String str = "";
+		int incidentWarnings = 0;
+
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllActiveIncidents();
 
@@ -254,14 +304,23 @@ public class DBValidator {
 
 		for (TblIncident inc : all_incidents) {
 			if (inactive_cis.contains(inc.getCiId())) {
-				System.err.println("Incident '(" + inc.getIncidentTime() + ", "
-						+ inc.getCiId() + ")' has an inactive CI'.");
+				String warning = "Incident '(" + inc.getIncidentTime() + ", "
+						+ inc.getCiId() + ")' has an inactive CI'.";
+
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				incidentWarnings++;
 			}
 		}
+		str += "Total Warnings: " + incidentWarnings;
+		return str;
 	}
 
-	static void validateTblPriority() {
+	public static String validateTblPriority() {
+		String str = "";
+		int priorityWarnings = 0;
+		
 		Collection<TblPriority> all_priorities = new TblPriorityDaoImpl()
 				.getAllActivePriorities();
 
@@ -275,41 +334,61 @@ public class DBValidator {
 
 		for (TblPriority pr : all_priorities) {
 			if (inactive_levels.contains(pr.getUrgency())) {
-				System.err.println("Service '(" + pr.getUrgency() + ", "
-						+ pr.getImpact() + ")' has an inactive urgency.");
+				String warning = "Service '(" + pr.getUrgency() + ", "
+						+ pr.getImpact() + ")' has an inactive urgency.";
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				priorityWarnings++;
 			}
 
 			if (inactive_levels.contains(pr.getImpact())) {
-				System.err.println("Service '(" + pr.getUrgency() + ", "
-						+ pr.getImpact() + ")' has an inactive impact.");
+				String warning = "Service '(" + pr.getUrgency() + ", "
+						+ pr.getImpact() + ")' has an inactive impact.";
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				priorityWarnings++;
 			}
 		}
+		str += "Total Warnings: " + priorityWarnings;
+		return str;
 	}
 
-	static void validateTblPriorityCost() {
+	public static String validateTblPriorityCost() {
+		String str = "";
+		int priorityCostWarnings = 0;
+		
 		Collection<TblPriority_Cost> all_priority_costs = new TblPriorityCostDaoImpl()
 				.getAllActivePriorityCosts();
-		
-		Collection<TblPriority> all_priorities = new TblPriorityDaoImpl().getAllPriorities();
+
+		Collection<TblPriority> all_priorities = new TblPriorityDaoImpl()
+				.getAllPriorities();
 		HashSet<String> inactive_priorities = new HashSet<>();
-		for (TblPriority pr : all_priorities){
-			if (!pr.isActive()){
+		for (TblPriority pr : all_priorities) {
+			if (!pr.isActive()) {
 				inactive_priorities.add(pr.getPriorityName());
 			}
 		}
-		
-		for (TblPriority_Cost pc : all_priority_costs){
-			if (inactive_priorities.contains(pc.getPName())){
-				System.err.println("PriorityCost '(" + pc.getPName() + ", "
-						+ pc.getPCost() + ")' has an inactive priority name.");
+
+		for (TblPriority_Cost pc : all_priority_costs) {
+			if (inactive_priorities.contains(pc.getPName())) {
+				String warning = "PriorityCost '(" + pc.getPName() + ", "
+						+ pc.getPCost() + ")' has an inactive priority name.";
+				System.err.println(warning);
+				str += warning + "<br>\n";
 				warnings++;
+				priorityCostWarnings++;
 			}
 		}
+		str += "Total Warnings: " + priorityCostWarnings;
+		return str;
 	}
 
-	static void validateTblService() {
+	public static String validateTblService() {
+		String str = "";
+		int serviceWarnings = 0;
+		
 		Collection<TblService> all_services = new TblServiceDaoImpl()
 				.getAllActiveServices();
 
@@ -335,30 +414,43 @@ public class DBValidator {
 				byte ser_id = ser.getServiceId();
 
 				if (!all_service_bizUnit_ids.contains(ser_id)) {
-					System.err
-							.println("Service '"
+					String warning = "Service '"
 									+ ser_id
 									+ "' is not used in tables"
-									+ " 'tblService_Division' and 'tblService_Department'.");
+									+ " 'tblService_Division' and 'tblService_Department'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					serviceWarnings++;
 				}
 
 				if (inactive_levels.contains(ser.getUrgency())) {
-					System.err.println("Service '" + ser_id
-							+ "' has an inactive urgency.");
+					String warning = "Service '" + ser_id
+							+ "' has an inactive urgency.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					serviceWarnings++;
 				}
 
 				if (inactive_levels.contains(ser.getImpact())) {
-					System.err.println("Service '" + ser_id
-							+ "' has an inactive impact.");
+					String warning = "Service '" + ser_id
+							+ "' has an inactive impact.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					serviceWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + serviceWarnings;
+		return str;
 	}
 
-	static void validateTblSolution() {
+	public static String validateTblSolution() {
+		String str = "";
+		int solutionWarnings = 0;
+		
 		Collection<TblSolution> all_solutions = new TblSolutionDaoImpl()
 				.getAllActiveSolutions();
 
@@ -384,15 +476,23 @@ public class DBValidator {
 				int sol_id = sol.getSolutionId();
 
 				if (!all_cis_solutions.contains(sol_id)) {
-					System.err.println("Solution '" + sol_id
-							+ "' is not used in table 'tblIncident'.");
+					String warning = "Solution '" + sol_id
+							+ "' is not used in table 'tblIncident'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					solutionWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + solutionWarnings;
+		return str;
 	}
 
-	static void validateTblSupplier() {
+	public static String validateTblSupplier() {
+		String str = "";
+		int supplierWarnings = 0;
+		
 		Collection<TblSupplier> all_suppliers = new TblSupplierDaoImpl()
 				.getAllActiveSuppliers();
 
@@ -410,12 +510,17 @@ public class DBValidator {
 				String supp_name = supp.getSupplierName();
 
 				if (!all_ci_suppliers.contains(supp_name)) {
-					System.err.println("Supplier '" + supp_name
-							+ "' is not used in table 'tblCI'.");
+					String warning = "Supplier '" + supp_name
+							+ "' is not used in table 'tblCI'.";
+					System.err.println(warning);
+					str += warning + "<br>\n";
 					warnings++;
+					supplierWarnings++;
 				}
 			}
 		}
+		str += "Total Warnings: " + supplierWarnings;
+		return str;
 	}
 
 	public static String checkSettings(Settings sett) {

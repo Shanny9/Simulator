@@ -1,6 +1,5 @@
 package com.daoImpl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,11 +16,11 @@ import com.model.TblPriority_Cost;
 
 public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 
-	private Connection dbConnection;
+
 	private PreparedStatement pStmt;
 
 	public TblPriorityCostDaoImpl() {
-		dbConnection = DBUtility.getConnection();
+
 	}
 
 	@Override
@@ -32,7 +31,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 				"`isActive`)\r\n" + 
 				" VALUES (?,?,?);";
 
-			pStmt = dbConnection.prepareStatement(insertQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
 			pStmt.setBoolean(3, priority.isActive());
@@ -44,7 +43,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 	public void deletePriorityCost(String pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblPriority_Cost WHERE pName = ?";
 
-			pStmt = dbConnection.prepareStatement(deleteQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, pk);
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
@@ -59,7 +58,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 				"`isActive` = ?\r\n" + 
 				"WHERE `pName` = ?;";
 
-			pStmt = dbConnection.prepareStatement(updateQuery);
+			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
 			pStmt.setBoolean(3, priority.isActive());
@@ -76,7 +75,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 				+ recordsPerPage;
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority_Cost pr = new TblPriority_Cost();
@@ -98,7 +97,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 		String query = "SELECT * FROM tblPriority";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority_Cost pr = new TblPriority_Cost();
@@ -120,7 +119,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 		String query = "SELECT * FROM tblPriority WHERE isActive = 1;";
 
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				TblPriority_Cost pr = new TblPriority_Cost();
@@ -139,7 +138,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 	public int getPriorityCostCount() {
 		int count = 0;
 		try {
-			Statement stmt = dbConnection.createStatement();
+			Statement stmt = DBUtility.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblPriority_Cost;");
 			while (rs.next()) {
 				count = rs.getInt("COUNT");
@@ -156,7 +155,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 		String query = "SELECT * FROM tblPriority_Cost WHERE pName = ?";
 
 		try {
-			pStmt = dbConnection.prepareStatement(query);
+			pStmt = DBUtility.getConnection().prepareStatement(query);
 			pStmt.setString(1, name);
 			ResultSet rs = pStmt.executeQuery();
 			rs.next();

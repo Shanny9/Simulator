@@ -21,8 +21,11 @@
 </script>
 <%
 	}
-	else
+	else{
 		System.out.println("index.jsp: round or course was not selected.");
+		response.sendRedirect("selectCourse.jsp");
+		return;
+	}
 %>
 
 <script src="js/jquery-1.11.3.min.js"></script>
@@ -50,7 +53,7 @@
 </head>
 <body>
 
-	<%@ include file="header.html"%>
+	<%@ include file="header.jsp"%>
 	<div class="background-image">
 		<center>
 			<div class="container-fluid">

@@ -66,7 +66,7 @@
 </head>
 <body>
 
-	<%@ include file="header.html"%>
+	<%@ include file="header.jsp"%>
 	<div class="background-image">
 		
 		<div class="container-fluid">

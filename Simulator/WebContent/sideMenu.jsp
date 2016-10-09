@@ -40,8 +40,9 @@
                       <li><a href="tables.jsp?tbl=tblCMDB" id="tblCMDB">CMDB</a></li>
                       <li><a href="tables.jsp?tbl=tblDepartment" id="tblDepartment">Department</a></li>
                       <li><a href="tables.jsp?tbl=tblDivision" id="tblDivision">Division</a></li>
-                      <li><a href="tables.jsp?tbl=tblEvent" id="tblEvent">Event</a></li>
+                    <!--   <li><a href="tables.jsp?tbl=tblEvent" id="tblEvent">Event</a></li> -->
                       <li><a href="tables.jsp?tbl=tblIncident" id="tblIncident">Incident</a></li>
+                      <li><a href="tables.jsp?tbl=tblLevel" id="tblLevel">Level</a></li>
                       <li><a href="tables.jsp?tbl=tblPriorityCost" id="tblPriorityCost">Priority Cost</a></li>
                       <li><a href="tables.jsp?tbl=tblService" id="tblService">Service</a></li>
                       <li><a href="tables.jsp?tbl=tblServiceDep" id="tblServiceDep">Service Department</a></li>
@@ -63,7 +64,7 @@
               <div class="menu_section">
                 <ul class="nav side-menu">
                   <li><a href="login.jsp?action=logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-                  <li><a href="openning.jsp"><i class="fa fa-arrow-left"></i> Go Back<!--  <span class="label label-success pull-right">Main Page</span> --></a></li>
+                  <li><a href="opening.jsp"><i class="fa fa-arrow-left"></i> Go Back<!--  <span class="label label-success pull-right">Main Page</span> --></a></li>
                 </ul>
               </div>
 

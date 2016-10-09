@@ -190,4 +190,9 @@ public class ClockIncrementor implements Runnable {
 	public static boolean isRunTime() {
 		return isRunTime;
 	}
+	
+	public static int getRemainingRoundTime() {
+		int elapsedTotalTime = (current_round-1) * settings.getRoundTime() + elapsedTime;
+		return settings.getRoundTime() - elapsedTotalTime;
+	}
 }

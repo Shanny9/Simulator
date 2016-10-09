@@ -13,7 +13,14 @@
 <script src="js/jquery.backstretch.min.js"></script>
 <script src="js/date.format.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/home.js"></script>
+<!-- <script src="js/home.js"></script> -->
+<script>
+$(document).ready(function() {
+
+	// sets the background picture to fullscreen.
+	$.backstretch("./css/home_images/runway.jpg");
+});
+</script>
 
 <%
 	response.setHeader("Cache-Control", "no-cache");
@@ -33,7 +40,7 @@
 </head>
 <body>
 
-	<%@ include file="header.html"%>
+	<%@ include file="header.jsp"%>
 	<div class="background-image">
 		<center>
 			<div class="container-fluid">

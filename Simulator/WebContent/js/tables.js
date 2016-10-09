@@ -2,13 +2,16 @@
  * 
  */
 $(document).ready(function() {
-
+	$("#validate").click(function(){
+		getWarnings(tbl);
+	});
 	switch(tbl){
 	case "tblCi":
 		ciTable();
 		break;
 	case "tblCMDB":
 		CMDBTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblDepartment":
 		departmentTable();
@@ -16,20 +19,27 @@ $(document).ready(function() {
 	case "tblDivision":
 		divisionTable();
 		break;
-	case "tblEvent":
+/*	case "tblEvent":
 		eventTable();
-		break;
+		break;*/
 	case "tblIncident":
 		incidentTable();
+		$("#validationDiv").css("display","none");
+		break;
+	case "tblLevel":
+		levelTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblPriorityCost":
 		priorityCostTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblService":
 		serviceTable();
 		break;
 	case "tblServiceDep":
 		serviceDepTable();
+		$("#validationDiv").css("display","none");
 		break;
 	case "tblSolution":
 		solutionTable();
@@ -59,7 +69,24 @@ $(document).ready(function() {
 	
 });
 
-
+function getWarnings(tblName){
+	$("#dbInfo").html("");
+	$.ajax({
+		url : "DataController",
+		data : {
+			action : "warnings",
+			vTable : tblName
+		},
+		datatype : "json",
+		async : false,
+		success : function(data) {
+			$("#dbInfo").html(data.warnings);
+		},
+		error : function(e) {
+			console.log("js: Error in getWarnings");
+		}
+	});
+}
 
 function supplierTable(){
 	$("#tblTitle").append("Supplier List");
@@ -100,7 +127,7 @@ function supplierTable(){
 		            			 
 		                    },
 		                    error: function(e) {
-		            			alert("error in getting users!");
+		            			alert("Error Excel");
 		                    }
 		                });
 		            }
@@ -228,7 +255,7 @@ function incidentTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -354,7 +381,7 @@ function solutionTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -491,7 +518,7 @@ function priorityCostTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -574,6 +601,118 @@ function priorityCostTable(){
 	$('#tableContainer').jtable('load');
 }
 
+function levelTable(){
+	$("#tblTitle").append("Level List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblLevel").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
+	$('#tableContainer').jtable({
+		title : 'Level List',
+		paging: true, //Set paging enabled
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
+		selecting: true,
+		selectingCheckboxes: true,
+		multiselect: true,
+		deleteConfirmation: true,
+	//	editinline:{enable:true},
+	//	toolbarsearch:true,
+		actions : {
+			listAction : 'DataController?action=list&table=level',
+			createAction : 'DataController?action=create&table=level',
+			updateAction : 'DataController?action=update&table=level',
+			deleteAction : 'DataController?action=delete&table=level'
+		},
+		toolbar: {
+	        items: [{
+	            tooltip: 'Click here to export this table to excel',
+	            text: 'Export to Excel',
+	            icon: 'css/metro/Excel-icon.png',
+	            click: function () {
+	                $.ajax({
+	                    url: 'DataController?action=excel&table=level',     
+	            		dataType: "json",
+	                    success: function(data) {  
+	                    	JSONToCSVConvertor(data.Records,"Levels",true);
+	            			 
+	                    },
+	                    error: function(e) {
+	            			alert("Error Excel");
+	                    }
+	                });
+	            }
+	        }, {
+	            icon: 'css/metro/delete_toolbar2.png',
+	            text: 'Delete Selected',
+	            click: function () {
+	            	var $selectedRows = $('#tableContainer').jtable('selectedRows');
+	            	//show confirmation dialog
+	            	$('<div></div>').appendTo('body')
+	            	  .html('<div><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="jtable-delete-confirm-message">'+$selectedRows.length+ ' record(s) will be deleted. Are you sure?</span></p></div>')
+	            	  .dialog({
+	            	      modal: true, title: 'Are you sure?', zIndex: 10000, autoOpen: true,
+	            	      width: 'auto', resizable: false,
+	            	      buttons: {
+	            	          Cancel: function () {
+		            	              $(this).dialog("close");
+		            	          },
+	            	          Delete: function () {
+	            	        	 //call the delete function from jtable 
+	      		                $('#tableContainer').jtable('deleteRows', $selectedRows);
+	            	              $(this).dialog("close");
+	            	          }
+
+	            	      },
+	            	      close: function (event, ui) {
+	            	          $(this).remove();
+	            	      }
+	            	});
+	            	
+	            }//end click function
+	        }//end delete button
+	          ]
+	    },
+		fields : {
+			level : {
+				title : 'Level',
+				key : true,
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[maxSize[6]]'
+
+			},
+			isActive : {
+				title : 'Active?',
+//				width : '20%',
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes'},
+                defaultValue: 'true',
+				edit : true
+			}
+		},
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=level]').attr('maxlength','6');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+
+	});
+	$('#tableContainer').jtable('load');
+}
+
 function serviceTable(){
 	$("#tblTitle").append("Service List");
 	
@@ -613,7 +752,7 @@ function serviceTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -788,7 +927,7 @@ function serviceTable(){
 		            			 
 		                    },
 		                    error: function(e) {
-		            			alert("error in getting users!");
+		            			alert("Error Excel");
 		                    }
 		                });
 		            }
@@ -920,7 +1059,7 @@ function serviceTable(){
 		            			 
 		                    },
 		                    error: function(e) {
-		            			alert("error in getting users!");
+		            			alert("Error Excel");
 		                    }
 		                });
 		            }
@@ -1039,7 +1178,7 @@ function ciTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -1175,7 +1314,7 @@ function CMDBTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -1294,7 +1433,7 @@ function departmentTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -1423,7 +1562,7 @@ function divisionTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }
@@ -1542,7 +1681,7 @@ function eventTable(){
 	            			 
 	                    },
 	                    error: function(e) {
-	            			alert("error in getting users!");
+	            			alert("Error Excel");
 	                    }
 	                });
 	            }

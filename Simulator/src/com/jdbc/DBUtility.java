@@ -2,14 +2,11 @@ package com.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBUtility {
 	private static Connection connection = null;
-	private PreparedStatement pStmt;
 	private static final String driver = "jdbc:mysql";
 	private static final String server = "132.75.252.108";
 	private static final String port = "3306";
@@ -20,17 +17,21 @@ public class DBUtility {
 	public synchronized static Connection getConnection() {
 		if (connection != null) {
 			try {
-				String query = "SELECT * FROM tblGeneral_parameters";
+				String query = "SELECT 1";
 				Statement stmt = connection.createStatement();
-				ResultSet rs = stmt.executeQuery(query);
+				stmt.executeQuery(query);
 			} catch (com.mysql.jdbc.exceptions.jdbc4.CommunicationsException ex) {
 				try {
 					connection.close();
 					return createNewConnection();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					return createNewConnection();
+
 				}
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException ex) {
+				// connection is closed
+				return createNewConnection();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

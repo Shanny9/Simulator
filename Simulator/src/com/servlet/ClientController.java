@@ -12,15 +12,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.GsonBuilder;
-import com.jdbc.DBUtility;
-
 import log.SimulationLog;
 import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.Queries;
 import utils.SimulationTime;
 import utils.SolutionElement;
+
+import com.google.gson.GsonBuilder;
+import com.jdbc.DBUtility;
 
 /**
  * Servlet implementation class ClientController
@@ -130,7 +130,19 @@ public class ClientController extends HttpServlet {
 			}
 			response.getWriter().print(true);
 			break;
-
+		case "checkEndSimulator":
+			while (ClockIncrementor.isRunning()) {
+				synchronized (this) {
+					try {
+						wait(1000);
+					} catch (Throwable e) {
+						// e.printStackTrace();
+					}
+				}
+			}
+			response.getWriter().print(false);
+			break;
+			
 		case "pauseOrResume":
 			while (log.SimulationLog.getServerPaused() == log.SimulationLog
 					.getClientPaused()) {

@@ -86,9 +86,13 @@
     margin: 0 0 0.1em 0;
 }
 .msc-body {
-    font-size: 1.2em;
+    font-size: /*1.2em*/ 1.0em;
     margin-bottom: 1em;
     color: #666;
+    /* ADDED FOR SCROLL */
+  display: inline-block !important;
+  max-height: 45%;
+  overflow: auto;/* Or scroll, depending on your needs*/}
 }
 .msc-body p {
     margin: 0 0 10px 0;

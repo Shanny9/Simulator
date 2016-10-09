@@ -33,7 +33,7 @@
 					</ul></li> -->
 					
 				<li><a href="selectCourse_reports.jsp">REPORTS</a></li>
-				<li><a href="tables.jsp?tbl=tblCi">MANAGE DATA</a></li>
+				<li class="adminOnly"><a href="tables.jsp?tbl=tblCi">MANAGE DATA</a></li>
 <!-- 				<li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#">MORE <span class="caret"></span>
 				</a>
@@ -48,3 +48,18 @@
 		</div>
 	</div>
 </nav>
+<%
+	Object type = session.getAttribute("type");
+	if (type != null) {
+
+%>
+
+<script type="text/javascript">
+				var type =  '<%=type%>'; 
+				console.log("User type: "+type);
+				if(type == "Operator")
+					$(".adminOnly").css("display","none");
+</script>
+<%
+	}
+%>

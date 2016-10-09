@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import utils.DBValidator;
+
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblDepartmentDaoImpl;
@@ -39,6 +41,7 @@ import com.model.TblDepartmentPK;
 import com.model.TblDivision;
 import com.model.TblIncident;
 import com.model.TblIncidentPK;
+import com.model.TblLevel;
 import com.model.TblPriority_Cost;
 import com.model.TblService;
 import com.model.TblService_Department;
@@ -73,6 +76,9 @@ public class DataController extends HttpServlet {
 		daoPriorityCost = new TblPriorityCostDaoImpl();
 		daoService = new TblServiceDaoImpl();
 		daoServiceDepartment = new TblServiceDepartmentDaoImpl();
+
+		// daoServiceDivision = new TblServiceDivisionDaoImpl();
+
 		daoCI = new TblCIDaoImpl();
 		daoCMDB = new TblCMDBDaoImpl();
 		daoDepartment = new TblDepartmentDaoImpl();
@@ -146,41 +152,78 @@ public class DataController extends HttpServlet {
 
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
+		String validateTable = request.getParameter("vTable");
 
-		switch (table) {
-		case "supplier":
-			tblSuppliers(action, request, response, gson);
-			break;
-		case "solution":
-			tblSolution(action, request, response, gson);
-			break;
-		case "incident":
-			tblIncident(action, request, response, gson);
-			break;
-		case "priority":
-			tblPriorityCost(action, request, response, gson);
-			break;
-		case "service":
-			tblService(action, request, response, gson);
-			break;
-		case "serviceDepartment":
-			tblServiceDepartment(action, request, response, gson);
-			break;
-		case "ci":
-			tblCIs(action, request, response, gson);
-			break;
-		case "cmdb":
-			tblCMDBs(action, request, response, gson);
-			break;
-		case "department":
-			tblDepartments(action, request, response, gson);
-			break;
-		case "division":
-			tblDivisions(action, request, response, gson);
-			break;
-		// case "event":
-		// tblEvents(action, request, response, gson);
-		// break;
+		if (action != null && action.equals("warnings")) {
+			if(validateTable!=null){
+				JSONObject json = new JSONObject();
+				switch(validateTable){
+				case "tblCi":
+					json.put("warnings", DBValidator.validateTblCI());
+					break;
+				case "tblDepartment":
+					json.put("warnings", DBValidator.validateTblDepartment());
+					break;
+				case "tblDivision":
+					json.put("warnings", DBValidator.validateTblDivision());
+					break;
+				case "tblService":
+					json.put("warnings", DBValidator.validateTblService());
+					break;
+				case "tblSupplier":
+					json.put("warnings", DBValidator.validateTblSupplier());
+					break;
+				case "tblSolution":
+					json.put("warnings", DBValidator.validateTblSolution());
+					break;
+				}
+				response.getWriter().print(json);
+			}
+		
+		}
+		if (table != null) {
+			switch (table) {
+			case "supplier":
+				tblSuppliers(action, request, response, gson);
+				break;
+			case "solution":
+				tblSolution(action, request, response, gson);
+				break;
+			case "incident":
+				tblIncident(action, request, response, gson);
+				break;
+			case "priority":
+				tblPriorityCost(action, request, response, gson);
+				break;
+			case "service":
+				tblService(action, request, response, gson);
+				break;
+			case "serviceDepartment":
+				tblServiceDepartment(action, request, response, gson);
+				break;
+			// case "serviceDivision":
+			// tblServiceDivision(action, request, response, gson);
+			// break;
+			case "ci":
+				tblCIs(action, request, response, gson);
+				break;
+			case "cmdb":
+				tblCMDBs(action, request, response, gson);
+				break;
+			case "department":
+				tblDepartments(action, request, response, gson);
+				break;
+			case "division":
+				tblDivisions(action, request, response, gson);
+				break;
+			case "level":
+				tblLevel(action, request, response, gson);
+				break;
+/*			case "event":
+				tblEvents(action, request, response, gson);
+				break;*/
+			}
+
 		}
 	}// end
 		// doPost
@@ -405,6 +448,106 @@ public class DataController extends HttpServlet {
 			}
 		}
 	}
+	
+	protected void tblLevel(String action, HttpServletRequest request,
+			HttpServletResponse response, Gson gson) throws IOException {
+
+		List<TblLevel> levelList = new ArrayList<TblLevel>();
+		if (action != null) {
+			try {
+				if (action.equals("list")) {
+					// Fetch Data from User Table
+					int startPageIndex = Integer.parseInt(request
+							.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request
+							.getParameter("jtPageSize"));
+					// Fetch Data from Supplier Table
+					levelList = daoLevel.getAllLevels(startPageIndex,
+							recordsPerPage);
+					// Get Total Record Count for Pagination
+					int userCount = daoLevel.getLevelCount();
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Records", levelList);
+					JSONROOT.put("TotalRecordCount", userCount);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("create") || action.equals("update")) {
+					TblLevel level = new TblLevel();
+
+					// Set fields
+					if (request.getParameter("level") != null) {
+						String levelName = request.getParameter("level");
+						level.setLevel(levelName);
+
+					}
+
+					if (request.getParameter("isActive") != null) {
+						boolean isActive = Boolean.parseBoolean(request
+								.getParameter("isActive"));
+						level.setActive(isActive);
+					}
+
+					// end set fields
+
+					if (action.equals("create")) {
+						// Create new record
+						daoLevel.addLevel(level);
+					} else if (action.equals("update")) {
+						// Update existing record
+						String name = request
+								.getParameter("jtRecordKey_level");
+						daoLevel.updateLevel(level, name);
+					}
+
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Record", level);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("delete")) {
+					// Delete record
+					if (request.getParameter("level") != null) {
+						String name = request.getParameter("level");
+						daoLevel.deleteLevel(name);
+
+						// Return in the format required by jTable plugin
+						JSONROOT.put("Result", "OK");
+
+						// Convert Java Object to Json
+						String jsonArray = gson.toJson(JSONROOT);
+						response.getWriter().print(jsonArray);
+					}
+				} else if (action.equals("excel")) {
+					// Export to excel
+					levelList = daoLevel.getAllLevels();
+					// Return in the format required by jTable plugin
+					JSONROOT.clear();
+					JSONROOT.put("Records", levelList);
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				}
+			} catch (Exception ex) {
+				System.out.println("DataController: Data-tblLevel: "
+						+ ex.getMessage());
+				JSONROOT.put("Result", "ERROR");
+				JSONROOT.put(
+						"Message",
+						(ex instanceof SQLException) ? getErrorMsg(
+								((SQLException) ex).getErrorCode(),
+								ex.getMessage(), action) : ex.getMessage());
+				String error = gson.toJson(JSONROOT);
+				response.getWriter().print(error);
+			}
+
+		}
+	}
+
 
 	protected void tblIncident(String action, HttpServletRequest request,
 			HttpServletResponse response, Gson gson) throws IOException {

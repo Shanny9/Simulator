@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblServiceDepartmentDao;
 import com.jdbc.DBUtility;
 import com.model.TblService_Department;
@@ -30,10 +32,8 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
 			pStmt.setBoolean(4, service.getIsActive());
-
 			pStmt.executeUpdate();
-
-		
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -46,8 +46,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setString(2, pk.getDivisionName());
 			pStmt.setString(3, pk.getDepartmentName());
 			pStmt.executeUpdate();
-
-		
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -60,13 +59,11 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
 			pStmt.setBoolean(4, service.getIsActive());
-			
 			pStmt.setByte(5, pk.getService_ID());
 			pStmt.setString(6, pk.getDivisionName());
 			pStmt.setString(7, pk.getDepartmentName());
 			pStmt.executeUpdate();
-
-		
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

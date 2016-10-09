@@ -7,6 +7,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+import utils.SimulationTime;
+
+
 import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
 import com.model.TblIncident;
@@ -31,7 +35,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt.setByte(2, incident.getCiId());
 		pStmt.setBoolean(3, incident.getIsActive());
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt.setInt(1, pk.getTime());
 		pStmt.setByte(2, pk.getCiId());
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -58,6 +62,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt.setInt(4, pk.getTime());
 		pStmt.setByte(5, pk.getCiId());
 		pStmt.executeUpdate();
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

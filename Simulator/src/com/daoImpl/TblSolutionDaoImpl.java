@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblSolutionDao;
 import com.jdbc.DBUtility;
 import com.model.TblSolution;
@@ -31,9 +33,8 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 			pStmt.setInt(2, sol.getSolutionMarom());
 			pStmt.setInt(3, sol.getSolutionRakia());
 			pStmt.setBoolean(4, sol.isActive());
-
 			pStmt.executeUpdate();
-		
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -43,10 +44,8 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 
 			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setInt(1, id);
-
 			pStmt.executeUpdate();
-
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -60,12 +59,9 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 			pStmt.setInt(2, sol.getSolutionMarom());
 			pStmt.setInt(3, sol.getSolutionRakia());
 			pStmt.setBoolean(4, sol.isActive());
-			
 			pStmt.setInt(5, id);
-
 			pStmt.executeUpdate();
-
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

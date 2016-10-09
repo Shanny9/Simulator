@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblSupplierDao;
 import com.jdbc.DBUtility;
 import com.model.TblSupplier;
@@ -30,7 +32,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			pStmt.setBoolean(3, supplier.getIsActive());
 			pStmt.setString(4, supplier.getCurrency());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, name);
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			pStmt.setString(4, supplier.getCurrency());
 			pStmt.setString(5, name);
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

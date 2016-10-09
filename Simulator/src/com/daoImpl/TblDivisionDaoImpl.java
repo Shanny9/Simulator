@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblDivisionDao;
 import com.jdbc.DBUtility;
 import com.model.TblDivision;
@@ -29,7 +31,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 			pStmt.setBoolean(2, division.getIsActive());
 			pStmt.setString(3, division.getShortName());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 		pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 		pStmt.setString(1, name);
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -50,10 +52,9 @@ public class TblDivisionDaoImpl implements TblDivisionDao {
 			pStmt.setString(1, division.getDivisionName());
 			pStmt.setBoolean(2, division.getIsActive());
 			pStmt.setString(3, division.getShortName());
-			
 			pStmt.setString(4, divisionName);
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 
 	}
 

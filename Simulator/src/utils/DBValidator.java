@@ -161,6 +161,7 @@ public class DBValidator {
 		}
 		str += "Total Warnings: "+ciWarnings;
 		return str;
+
 	}
 
 	public static String validateTblDepartment() {

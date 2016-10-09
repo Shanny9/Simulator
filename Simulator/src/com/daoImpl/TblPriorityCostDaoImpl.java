@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblPriorityCostDao;
 import com.jdbc.DBUtility;
 import com.model.TblPriority_Cost;
@@ -34,7 +36,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			pStmt.setDouble(2, priority.getPCost());
 			pStmt.setBoolean(3, priority.getIsActive());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, pk);
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -61,9 +63,8 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			pStmt.setDouble(2, priority.getPCost());
 			pStmt.setBoolean(3, priority.getIsActive());
 			pStmt.setString(4, name);
-
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

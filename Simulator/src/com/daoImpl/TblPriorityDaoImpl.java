@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblPriorityDao;
 import com.jdbc.DBUtility;
 import com.model.TblPriority;
@@ -35,6 +37,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			pStmt.setString(2, priority.getId().getImpact());
 			pStmt.setString(3, priority.getPriorityName());
 			pStmt.executeUpdate();
+			QueryLogger.log(pStmt.toString());
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
@@ -48,6 +51,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			pStmt.setString(1, pk.getUrgency());
 			pStmt.setString(2, pk.getImpact());
 			pStmt.executeUpdate();
+			QueryLogger.log(pStmt.toString());
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
@@ -69,7 +73,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			pStmt.setString(4, priority.getId().getUrgency());
 			pStmt.setString(5, priority.getId().getImpact());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}

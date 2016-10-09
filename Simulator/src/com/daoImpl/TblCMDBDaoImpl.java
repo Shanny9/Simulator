@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblCMDBDao;
 import com.jdbc.DBUtility;
 import com.model.TblCMDB;
@@ -29,7 +31,7 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			pStmt.setByte(2, cmdb.getServiceId());
 			pStmt.setBoolean(3, cmdb.getIsActive());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			pStmt.setByte(1, pk.getCiId());
 			pStmt.setByte(2, pk.getServiceId());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -53,10 +55,8 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			pStmt.setBoolean(3, cmdb.getIsActive());
 			pStmt.setByte(4, id.getCiId());
 			pStmt.setByte(5, id.getServiceId());
-			
 			pStmt.executeUpdate();
-
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

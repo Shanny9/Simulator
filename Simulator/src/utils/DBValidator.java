@@ -37,9 +37,6 @@ import com.model.TblSupplier;
 
 public class DBValidator {
 	
-	private static final Logger LOGGER = Logger.getLogger(
-		    Thread.currentThread().getStackTrace()[0].getClassName() );
-	
 	static final int MIN_INCIDENTS = 1;
 
 	static final int MAX_INCIDENTS = 12;
@@ -79,36 +76,6 @@ public class DBValidator {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void logQuery(String query){
-		Formatter simpleFormatter = null;
-		Handler fileHandler = null;
-        try{
-            // Creating FileHandler
-            fileHandler = new FileHandler("./mylog.log");
-             
-            // Creating SimpleFormatter
-            simpleFormatter = new SimpleFormatter();
-             
-            // Assigning handler to logger
-            LOGGER.addHandler(fileHandler);
-             
-            // Logging message of Level info (this should be publish in the default format i.e. XMLFormat)
-            LOGGER.info("Finnest message: Logger with DEFAULT FORMATTER");
-             
-            // Setting formatter to the handler
-            fileHandler.setFormatter(simpleFormatter);
-             
-            // Setting Level to ALL
-            fileHandler.setLevel(Level.ALL);
-            LOGGER.setLevel(Level.ALL);
-             
-            // Logging message of Level finest (this should be publish in the simple format)
-            LOGGER.finest(query);
-        }catch(IOException exception){
-            LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
-        }
-	}
 
 	static void validateTblCI() {
 		Collection<TblCI> all_cis = new TblCIDaoImpl().getAllCIs();
@@ -146,8 +113,6 @@ public class DBValidator {
 				}
 			}
 		}
-		
-		logQuery("INSERT blabla into blabla");
 	}
 
 	static void validateTblDepartment() {

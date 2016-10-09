@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblServiceDao;
 import com.jdbc.DBUtility;
 import com.model.TblService;
@@ -41,7 +43,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setString(11, service.getImpact());
 		pStmt.setInt(12, service.getEventId());
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -50,6 +52,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt = dbConnection.prepareStatement(deleteQuery);
 		pStmt.setByte(1, id);
 		pStmt.executeUpdate();
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setInt(12, service.getEventId());
 		pStmt.setByte(13, id);
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblDepartmentDao;
 import com.jdbc.DBUtility;
 import com.model.TblDepartment;
@@ -33,7 +35,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			pStmt.setBoolean(3, department.getIsActive());
 			pStmt.setString(4, department.getShortName());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 		pStmt.setString(1, pk.getDevisionName());
 		pStmt.setString(2, pk.getDepartmentName());
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -56,11 +58,10 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			pStmt.setString(2, department.getDivisionName());
 			pStmt.setBoolean(3, department.getIsActive());
 			pStmt.setString(4, department.getShortName());
-			
 			pStmt.setString(5, pk.getDevisionName());
 			pStmt.setString(6, pk.getDepartmentName());
 			pStmt.executeUpdate();
-
+			QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.QueryLogger;
+
 import com.dao.TblCIDao;
 import com.jdbc.DBUtility;
 import com.model.TblCI;
@@ -34,7 +36,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		pStmt.setBoolean(5, ci.getIsActive());
 		pStmt.setInt(6, ci.getSolutionId());
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		pStmt = dbConnection.prepareStatement(deleteQuery);
 		pStmt.setByte(1, ci_id);
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override
@@ -61,7 +63,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		pStmt.setInt(6, ci.getSolutionId());
 		pStmt.setByte(7, ciId);
 		pStmt.executeUpdate();
-
+		QueryLogger.log(pStmt.toString());
 	}
 
 	@Override

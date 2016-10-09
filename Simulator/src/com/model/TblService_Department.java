@@ -8,7 +8,7 @@ import java.io.Serializable;
  * The persistent class for the tblService_Department database table.
  * 
  */
-public class TblService_Department implements Serializable {
+public class TblService_Department implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private byte service_ID;
@@ -28,11 +28,11 @@ public class TblService_Department implements Serializable {
 	public TblService_Department() {
 	}
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

@@ -9,7 +9,7 @@ import java.util.List;
  * 
  */
 
-public class TblDivision implements Serializable {
+public class TblDivision implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 
@@ -44,11 +44,11 @@ public class TblDivision implements Serializable {
 		this.shortName = shortName;
 	}
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

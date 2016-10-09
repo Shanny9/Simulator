@@ -129,6 +129,29 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	}
 	
 	@Override
+	public List<TblPriority> getAllActivePriorities() {
+		List<TblPriority> priorities = new ArrayList<TblPriority>();
+
+		String query = "SELECT priorityName FROM tblPriority WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblPriority pr = new TblPriority();
+				pr.setImpact(rs.getString("impact"));
+				pr.setUrgency(rs.getString("urgency"));
+				pr.setPriorityName(rs.getString("priorityName"));
+				pr.setActive(rs.getBoolean("isActive"));
+				priorities.add(pr);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return priorities;
+	}
+	
+	@Override
 	public TblPriority getPriorityById(String name) {
 		// TODO Auto-generated method stub
 		return null;

@@ -33,7 +33,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		pStmt.setString(2, ci.getCI_name());
 		pStmt.setString(3, ci.getSupplierName1());
 		pStmt.setString(4, ci.getSupplierName2());
-		pStmt.setBoolean(5, ci.getIsActive());
+		pStmt.setBoolean(5, ci.isActive());
 		pStmt.setInt(6, ci.getSolutionId());
 		pStmt.executeUpdate();
 		QueryLogger.log(pStmt.toString());
@@ -59,7 +59,7 @@ public class TblCIDaoImpl implements TblCIDao {
 		pStmt.setString(2, ci.getCI_name());
 		pStmt.setString(3, ci.getSupplierName1());
 		pStmt.setString(4, ci.getSupplierName2());
-		pStmt.setBoolean(5, ci.getIsActive());
+		pStmt.setBoolean(5, ci.isActive());
 		pStmt.setInt(6, ci.getSolutionId());
 		pStmt.setByte(7, ciId);
 		pStmt.executeUpdate();
@@ -84,7 +84,7 @@ public class TblCIDaoImpl implements TblCIDao {
 				ci.setCI_name(rs.getString("CI_name"));
 				ci.setSupplierName1(rs.getString("supplier_level2"));
 				ci.setSupplierName2(rs.getString("supplier_level3"));
-				ci.setIsActive(rs.getBoolean("isActive"));
+				ci.setActive(rs.getBoolean("isActive"));
 				ci.setSolutionId(rs.getInt("solution_id"));
 				cis.add(ci);
 			}
@@ -110,7 +110,33 @@ public class TblCIDaoImpl implements TblCIDao {
 				ci.setCI_name(rs.getString("CI_name"));
 				ci.setSupplierName1(rs.getString("supplier_level2"));
 				ci.setSupplierName2(rs.getString("supplier_level3"));
-				ci.setIsActive(rs.getBoolean("isActive"));
+				ci.setActive(rs.getBoolean("isActive"));
+				ci.setSolutionId(rs.getInt("solution_id"));
+				cis.add(ci);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return cis;
+	}
+	
+	@Override
+	public List<TblCI> getAllActiveCIs() {
+		List<TblCI> cis = new ArrayList<TblCI>();
+
+		String query = "SELECT * FROM tblCI WHERE isActive = 1";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblCI ci = new TblCI();
+
+				ci.setCiId(rs.getByte("CI_ID"));
+				ci.setCI_name(rs.getString("CI_name"));
+				ci.setSupplierName1(rs.getString("supplier_level2"));
+				ci.setSupplierName2(rs.getString("supplier_level3"));
+				ci.setActive(rs.getBoolean("isActive"));
 				ci.setSolutionId(rs.getInt("solution_id"));
 				cis.add(ci);
 			}
@@ -136,7 +162,7 @@ public class TblCIDaoImpl implements TblCIDao {
 				ci.setCI_name(rs.getString("CI_name"));
 				ci.setSupplierName1(rs.getString("supplier_level2"));
 				ci.setSupplierName2(rs.getString("supplier_level3"));
-				ci.setIsActive(rs.getBoolean("isActive"));
+				ci.setActive(rs.getBoolean("isActive"));
 				ci.setSolutionId(rs.getInt("solution_id"));
 			}
 		} catch (SQLException e) {

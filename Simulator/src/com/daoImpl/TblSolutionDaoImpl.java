@@ -118,6 +118,32 @@ public class TblSolutionDaoImpl implements TblSolutionDao {
 		}
 		return solutions;
 	}
+	
+	@Override
+	public List<TblSolution> getAllActiveSolutions() {
+		List<TblSolution> solutions = new ArrayList<TblSolution>();
+
+		String query = "SELECT * FROM tblSolution WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblSolution sol = new TblSolution();
+				
+				sol.setSolutionId(rs.getInt("solution_id"));
+				sol.setSolutionMarom(rs.getInt("solution_marom"));
+				sol.setSolutionRakia(rs.getInt("solution_rakia"));
+				sol.setActive(rs.getBoolean("isActive"));
+
+
+				solutions.add(sol);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return solutions;
+	}
 
 	@Override
 	public TblSolution getSolutionById(int id) {

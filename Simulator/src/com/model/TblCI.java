@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  */
 
-public class TblCI implements Serializable {
+public class TblCI implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private byte ciId;
@@ -58,11 +58,11 @@ public class TblCI implements Serializable {
 		this.CI_name = CI_name;
 	}
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 	

@@ -38,7 +38,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setString(6, service.getSupplierLevel3());
 		pStmt.setDouble(7, service.getFixedCost());
 		pStmt.setDouble(8, service.getFixedIncome());
-		pStmt.setBoolean(9, service.getIsActive());
+		pStmt.setBoolean(9, service.isActive());
 		pStmt.setString(10, service.getUrgency());
 		pStmt.setString(11, service.getImpact());
 		pStmt.setInt(12, service.getEventId());
@@ -71,7 +71,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setString(6, service.getSupplierLevel3());
 		pStmt.setDouble(7, service.getFixedCost());
 		pStmt.setDouble(8, service.getFixedIncome());
-		pStmt.setBoolean(9, service.getIsActive());
+		pStmt.setBoolean(9, service.isActive());
 		pStmt.setString(10, service.getUrgency());
 		pStmt.setString(11, service.getImpact());
 		pStmt.setInt(12, service.getEventId());
@@ -97,7 +97,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setFixedCost(rs.getDouble("fixed_cost"));
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
-				service.setIsActive(rs.getBoolean("isActive"));
+				service.setActive(rs.getBoolean("isActive"));
 				service.setIsTechnical(rs.getBoolean("isTechnical"));
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
@@ -128,7 +128,38 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setFixedCost(rs.getDouble("fixed_cost"));
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
-				service.setIsActive(rs.getBoolean("isActive"));
+				service.setActive(rs.getBoolean("isActive"));
+				service.setIsTechnical(rs.getBoolean("isTechnical"));
+				service.setServiceId(rs.getByte("service_id"));
+				service.setServiceCode(rs.getString("service_code"));
+				service.setServiceName(rs.getString("service_name"));
+				service.setSupplierLevel2(rs.getString("supplier_level2"));
+				service.setSupplierLevel3(rs.getString("supplier_level3"));
+				service.setUrgency(rs.getString("urgency"));
+				service.setEventId(rs.getByte("event_id"));
+				services.add(service);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return services;
+	}
+	
+	@Override
+	public List<TblService> getAllActiveServices() {
+		List<TblService> services = new ArrayList<TblService>();
+
+		String query = "SELECT * FROM tblService WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblService service = new TblService();
+				service.setFixedCost(rs.getDouble("fixed_cost"));
+				service.setFixedIncome(rs.getDouble("fixed_income"));
+				service.setImpact(rs.getString("impact"));
+				service.setActive(rs.getBoolean("isActive"));
 				service.setIsTechnical(rs.getBoolean("isTechnical"));
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
@@ -160,7 +191,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setFixedCost(rs.getDouble("fixed_cost"));
 				service.setFixedIncome(rs.getDouble("fixed_income"));
 				service.setImpact(rs.getString("impact"));
-				service.setIsActive(rs.getBoolean("isActive"));
+				service.setActive(rs.getBoolean("isActive"));
 				service.setIsTechnical(rs.getBoolean("isTechnical"));
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));

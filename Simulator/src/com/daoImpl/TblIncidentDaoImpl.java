@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utils.QueryLogger;
-import utils.SimulationTime;
 
 import com.dao.TblIncidentDao;
 import com.jdbc.DBUtility;
@@ -33,7 +32,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt = dbConnection.prepareStatement(insertQuery);
 		pStmt.setInt(1, incident.getIncidentTime());
 		pStmt.setByte(2, incident.getCiId());
-		pStmt.setBoolean(3, incident.getIsActive());
+		pStmt.setBoolean(3, incident.isActive());
 		pStmt.executeUpdate();
 		QueryLogger.log(pStmt.toString());
 	}
@@ -58,7 +57,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 		pStmt = dbConnection.prepareStatement(updateQuery);
 		pStmt.setInt(1, incident.getIncidentTime());
 		pStmt.setByte(2, incident.getCiId());
-		pStmt.setBoolean(3, incident.getIsActive());
+		pStmt.setBoolean(3, incident.isActive());
 		pStmt.setInt(4, pk.getTime());
 		pStmt.setByte(5, pk.getCiId());
 		pStmt.executeUpdate();
@@ -79,7 +78,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				TblIncident incident = new TblIncident();
 				incident.setIncidentTime(rs.getInt("time"));
 				incident.setCiId(rs.getByte("ci_id"));
-				incident.setIsActive(rs.getBoolean("isActive"));
+				incident.setActive(rs.getBoolean("isActive"));
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -101,7 +100,29 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				TblIncident incident = new TblIncident();
 				incident.setIncidentTime(rs.getInt("time"));
 				incident.setCiId(rs.getByte("ci_id"));
-				incident.setIsActive(rs.getBoolean("isActive"));
+				incident.setActive(rs.getBoolean("isActive"));
+				incidents.add(incident);
+			}
+		} catch (SQLException e) {
+			System.err.println("getAllIncidents: " + e.getMessage());
+		}
+		return incidents;
+	}
+	
+	@Override
+	public List<TblIncident> getAllActiveIncidents() {
+		List<TblIncident> incidents = new ArrayList<TblIncident>();
+
+		String query = "SELECT * FROM tblIncident WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblIncident incident = new TblIncident();
+				incident.setIncidentTime(rs.getInt("time"));
+				incident.setCiId(rs.getByte("ci_id"));
+				incident.setActive(rs.getBoolean("isActive"));
 				incidents.add(incident);
 			}
 		} catch (SQLException e) {
@@ -125,7 +146,7 @@ public class TblIncidentDaoImpl implements TblIncidentDao {
 				inci = new TblIncident();
 				inci.setIncidentTime(rs.getInt("time"));
 				inci.setCiId(rs.getByte("ci_id"));
-				inci.setIsActive(rs.getBoolean("isActive"));
+				inci.setActive(rs.getBoolean("isActive"));
 			}
 			
 		} catch (SQLException e) {

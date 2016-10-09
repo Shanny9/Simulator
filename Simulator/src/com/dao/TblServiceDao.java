@@ -12,6 +12,7 @@ public interface TblServiceDao {
 	public void updateService(TblService service, byte id) throws SQLException;
 	public List<TblService> getAllServices(int startPageIndex, int recordsPerPage);
 	public List<TblService> getAllServices();
+	public List<TblService> getAllActiveServices();
 	public TblService getServiceById(byte id);
 	public int getServiceCount();
 }

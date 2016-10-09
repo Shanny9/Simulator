@@ -12,6 +12,7 @@ public interface TblDivisionDao {
 	public void updateDivision(TblDivision Division, String divisionName) throws SQLException;
 	public List<TblDivision> getAllDivisions(int startPageIndex, int recordsPerPage);
 	public List<TblDivision> getAllDivisions();
+	public List<TblDivision> getAllActiveDivisions();
 	public TblDivision getDivisionById(String DivisionName);
 	public int getDivisionCount();
 }

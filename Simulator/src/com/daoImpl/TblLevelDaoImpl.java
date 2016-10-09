@@ -55,6 +55,27 @@ public class TblLevelDaoImpl implements TblLevelDao {
 			while (rs.next()) {
 				TblLevel level = new TblLevel();
 				level.setLevel(rs.getString("level"));
+				level.setActive(rs.getBoolean("isActive"));
+				levels.add(level);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return levels;
+	}
+	
+	@Override
+	public List<TblLevel> getAllActiveLevels() {
+		List<TblLevel> levels = new ArrayList<TblLevel>();
+
+		String query = "SELECT * FROM tblLevel WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblLevel level = new TblLevel();
+				level.setLevel(rs.getString("level"));
 				//TODO: LEVEL SET IS-ACTIVE!
 				levels.add(level);
 			}

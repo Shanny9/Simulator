@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 
  */
 
-public class TblCMDB implements Serializable {
+public class TblCMDB implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 	private byte ciId;
 	private byte serviceId;
@@ -32,19 +32,11 @@ public class TblCMDB implements Serializable {
 		this.serviceId = serviceId;
 	}
 
-	// public TblCMDBPK getId() {
-	// return this.id;
-	// }
-
-	// public void setId(TblCMDBPK id) {
-	// this.id = id;
-	// }
-
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

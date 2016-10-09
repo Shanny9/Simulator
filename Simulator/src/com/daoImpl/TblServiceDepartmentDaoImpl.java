@@ -32,7 +32,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
-			pStmt.setBoolean(4, service.getIsActive());
+			pStmt.setBoolean(4, service.isActive());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
 	}
@@ -59,7 +59,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			pStmt.setByte(1, service.getService_ID());
 			pStmt.setString(2, service.getDivisionName());
 			pStmt.setString(3, service.getDepartmentName());
-			pStmt.setBoolean(4, service.getIsActive());
+			pStmt.setBoolean(4, service.isActive());
 			pStmt.setByte(5, pk.getService_ID());
 			pStmt.setString(6, pk.getDivisionName());
 			pStmt.setString(7, pk.getDepartmentName());
@@ -85,7 +85,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 				service.setDivisionName(rs.getString("devision_name"));
 				service.setDepartmentName(rs.getString("department_name"));
 
-				service.setIsActive(rs.getBoolean("isActive"));
+				service.setActive(rs.getBoolean("isActive"));
 
 
 				services.add(service);
@@ -112,7 +112,34 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 				service.setDivisionName(rs.getString("devision_name"));
 				service.setDepartmentName(rs.getString("department_name"));
 
-				service.setIsActive(rs.getBoolean("isActive"));
+				service.setActive(rs.getBoolean("isActive"));
+
+
+				services.add(service);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return services;
+	}
+	
+	@Override
+	public List<TblService_Department> getAllActiveServiceDepartments() {
+		List<TblService_Department> services = new ArrayList<TblService_Department>();
+
+		String query = "SELECT * FROM tblService_Department WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblService_Department service = new TblService_Department();
+
+				service.setService_ID(rs.getByte("service_id"));
+				service.setDivisionName(rs.getString("devision_name"));
+				service.setDepartmentName(rs.getString("department_name"));
+
+				service.setActive(rs.getBoolean("isActive"));
 
 
 				services.add(service);
@@ -141,7 +168,7 @@ public class TblServiceDepartmentDaoImpl implements TblServiceDepartmentDao {
 			service.setService_ID(pk.getService_ID());
 			service.setDivisionName(pk.getDivisionName());
 			service.setDepartmentName(pk.getDepartmentName());
-			service.setIsActive(rs.getBoolean("isActive"));
+			service.setActive(rs.getBoolean("isActive"));
 
 
 		} catch (SQLException e) {

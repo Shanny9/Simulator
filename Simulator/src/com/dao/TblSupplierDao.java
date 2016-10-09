@@ -12,6 +12,7 @@ public interface TblSupplierDao {
 	public void updateSupplier(TblSupplier supplier, String name) throws SQLException;
 	public List<TblSupplier> getAllSuppliers(int startPageIndex, int recordsPerPage);
 	public List<TblSupplier> getAllSuppliers();
+	public List<TblSupplier> getAllActiveSuppliers();
 	public TblSupplier getSupplierById(String name);
 	public int getSupplierCount();
 }

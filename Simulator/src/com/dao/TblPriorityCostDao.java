@@ -12,6 +12,7 @@ public interface TblPriorityCostDao {
 	public void updatePriorityCost(TblPriority_Cost priority, String name) throws SQLException;
 	public List<TblPriority_Cost> getAllPriorityCost(int startPageIndex, int recordsPerPage);
 	public List<TblPriority_Cost> getAllPriorityCost();
+	public List<TblPriority_Cost> getAllActivePriorityCosts();
 	public TblPriority_Cost getPriorityCostById(String name);
 	public int getPriorityCostCount();
 }

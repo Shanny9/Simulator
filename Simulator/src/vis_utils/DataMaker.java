@@ -365,7 +365,7 @@ public class DataMaker {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
-		List<TblService> services = new TblServiceDaoImpl().getAllServices();
+		List<TblService> services = new TblServiceDaoImpl().getAllActiveServices();
 
 		Set<Integer> rounds = getRounds(0, getSettings(courseName)
 				.getRoundsDone());
@@ -510,7 +510,7 @@ public class DataMaker {
 
 		JSONObject obj = new JSONObject();
 		JSONArray labels = new JSONArray();
-		List<TblService> services = new TblServiceDaoImpl().getAllServices();
+		List<TblService> services = new TblServiceDaoImpl().getAllActiveServices();
 
 		// set of all requested rounds
 		Set<Integer> rounds = getRounds(round, getSettings(courseName)
@@ -898,7 +898,7 @@ public class DataMaker {
 		try {
 			DepartmentService departmentService;
 			List<TblService> all_services = (service_id == 0) ? new TblServiceDaoImpl()
-					.getAllServices() : new ArrayList<>(
+					.getAllActiveServices() : new ArrayList<>(
 					Arrays.asList(new TblService[] { new TblServiceDaoImpl()
 							.getServiceById(service_id) }));
 

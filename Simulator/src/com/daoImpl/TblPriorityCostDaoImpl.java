@@ -35,7 +35,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
-			pStmt.setBoolean(3, priority.getIsActive());
+			pStmt.setBoolean(3, priority.isActive());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
 	}
@@ -62,7 +62,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, priority.getPName());
 			pStmt.setDouble(2, priority.getPCost());
-			pStmt.setBoolean(3, priority.getIsActive());
+			pStmt.setBoolean(3, priority.isActive());
 			pStmt.setString(4, name);
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
@@ -82,7 +82,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 				TblPriority_Cost pr = new TblPriority_Cost();
 				pr.setPName(rs.getString("pName"));
 				pr.setPCost(rs.getDouble("pCost"));
-				pr.setIsActive(rs.getBoolean("isActive"));
+				pr.setActive(rs.getBoolean("isActive"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -104,7 +104,29 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 				TblPriority_Cost pr = new TblPriority_Cost();
 				pr.setPName(rs.getString("pName"));
 				pr.setPCost(rs.getDouble("pCost"));
-				pr.setIsActive(rs.getBoolean("isActive"));
+				pr.setActive(rs.getBoolean("isActive"));
+				priorities.add(pr);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return priorities;
+	}
+	
+	@Override
+	public List<TblPriority_Cost> getAllActivePriorityCosts() {
+		List<TblPriority_Cost> priorities = new ArrayList<TblPriority_Cost>();
+
+		String query = "SELECT * FROM tblPriority WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblPriority_Cost pr = new TblPriority_Cost();
+				pr.setPName(rs.getString("pName"));
+				pr.setPCost(rs.getDouble("pCost"));
+				pr.setActive(rs.getBoolean("isActive"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -141,7 +163,7 @@ public class TblPriorityCostDaoImpl implements TblPriorityCostDao {
 			p = new TblPriority_Cost();
 			p.setPName(rs.getString("pName"));
 			p.setPCost(rs.getDouble("pCost"));
-			p.setIsActive(rs.getBoolean("isActive"));
+			p.setActive(rs.getBoolean("isActive"));
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

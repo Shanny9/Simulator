@@ -12,6 +12,7 @@ public interface TblPriorityDao {
 	public void updatePriority(TblPriority priority);
 	public List<TblPriority> getAllPriorities(int startPageIndex, int recordsPerPage);
 	public List<TblPriority> getAllPriorities();
+	public List<TblPriority> getAllActivePriorities();
 	public TblPriority getPriorityById(String name);
 	public int getPriorityCount();
 }

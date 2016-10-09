@@ -112,7 +112,7 @@ public class SimulationLog extends Thread implements Serializable {
 
 		if (marom == null || rakia == null) {
 			List<TblService> services = new TblServiceDaoImpl()
-					.getAllServices();
+					.getAllActiveServices();
 			HashMap<Byte, Double> serviceDownTimeCosts = LogUtils
 					.getServiceDownTimeCosts();
 			HashMap<Byte, ServiceLog> service_logs = new HashMap<>();

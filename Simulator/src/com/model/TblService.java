@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  */
 
-public class TblService implements Serializable {
+public class TblService implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private byte serviceId;
@@ -78,11 +78,11 @@ public class TblService implements Serializable {
 		this.fixedIncome = fixedIncome;
 	}
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

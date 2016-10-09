@@ -12,6 +12,7 @@ public interface TblCIDao {
 	public void updateCI(TblCI ci, byte ciId) throws SQLException;
 	public List<TblCI> getAllCIs(int startPageIndex, int recordsPerPage);
 	public List<TblCI> getAllCIs();
+	public List<TblCI> getAllActiveCIs();
 	public TblCI getCIById(byte ci_id);
 	public int getCICount();
 }

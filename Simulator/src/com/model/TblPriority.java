@@ -7,16 +7,14 @@ import java.io.Serializable;
  * 
  */
 
-public class TblPriority implements Serializable {
+public class TblPriority implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private TblPriorityPK id;
-
 	private String priorityName;
-
 	private String urgency;
-
 	private String impact;
+	private boolean isActive;
 	
 	public String getPriorityName() {
 		return priorityName;
@@ -25,8 +23,6 @@ public class TblPriority implements Serializable {
 	public void setPriorityName(String priorityName) {
 		this.priorityName = priorityName;
 	}
-
-	
 	
 	public String getUrgency() {
 		return urgency;
@@ -44,7 +40,15 @@ public class TblPriority implements Serializable {
 		this.impact = impact;
 	}
 
+	@Override
+	public boolean isActive() {
+		return this.isActive;
+	}
 
+	@Override
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	private TblLevel tblLevel1;
 
@@ -86,5 +90,4 @@ public class TblPriority implements Serializable {
 	public void setTblPriorityCost(TblPriority_Cost tblPriorityCost) {
 		this.tblPriorityCost = tblPriorityCost;
 	}
-
 }

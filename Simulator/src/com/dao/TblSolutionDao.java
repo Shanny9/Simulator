@@ -12,6 +12,7 @@ public interface TblSolutionDao {
 	public void updateSolution(TblSolution sol, int id) throws SQLException;
 	public List<TblSolution> getAllSolutions(int startPageIndex, int recordsPerPage);
 	public List<TblSolution> getAllSolutions();
+	public List<TblSolution> getAllActiveSolutions();
 	public TblSolution getSolutionById(int id);
 	public int getSolutionCount();
 }

@@ -32,7 +32,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, department.getDepartmentName());
 			pStmt.setString(2, department.getDivisionName());
-			pStmt.setBoolean(3, department.getIsActive());
+			pStmt.setBoolean(3, department.isActive());
 			pStmt.setString(4, department.getShortName());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
@@ -56,7 +56,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, department.getDepartmentName());
 			pStmt.setString(2, department.getDivisionName());
-			pStmt.setBoolean(3, department.getIsActive());
+			pStmt.setBoolean(3, department.isActive());
 			pStmt.setString(4, department.getShortName());
 			pStmt.setString(5, pk.getDevisionName());
 			pStmt.setString(6, pk.getDepartmentName());
@@ -79,7 +79,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 				TblDepartment department = new TblDepartment();
 				department.setDivisionName(rs.getString("division_name"));
 				department.setDepartmentName(rs.getString("department_name"));
-				department.setIsActive(rs.getBoolean("isActive"));
+				department.setActive(rs.getBoolean("isActive"));
 				department.setShortName(rs.getString("shortName"));
 				departments.add(department);
 			}
@@ -102,7 +102,30 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 				TblDepartment department = new TblDepartment();
 				department.setDivisionName(rs.getString("division_name"));
 				department.setDepartmentName(rs.getString("department_name"));
-				department.setIsActive(rs.getBoolean("isActive"));
+				department.setActive(rs.getBoolean("isActive"));
+				department.setShortName(rs.getString("shortName"));
+				departments.add(department);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return departments;
+	}
+	
+	@Override
+	public List<TblDepartment> getAllActiveDepartments() {
+		List<TblDepartment> departments = new ArrayList<TblDepartment>();
+
+		String query = "SELECT * FROM tblDepartment WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblDepartment department = new TblDepartment();
+				department.setDivisionName(rs.getString("division_name"));
+				department.setDepartmentName(rs.getString("department_name"));
+				department.setActive(rs.getBoolean("isActive"));
 				department.setShortName(rs.getString("shortName"));
 				departments.add(department);
 			}
@@ -127,7 +150,7 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 			department = new TblDepartment();
 			department.setDivisionName(rs.getString("division_name"));
 			department.setDepartmentName(rs.getString("department_name"));
-			department.setIsActive(rs.getBoolean("isActive"));
+			department.setActive(rs.getBoolean("isActive"));
 			department.setShortName(rs.getString("shortName"));
 
 		} catch (SQLException e) {

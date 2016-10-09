@@ -8,26 +8,13 @@ import java.io.Serializable;
  * 
  */
 
-public class TblSolution implements Serializable {
+public class TblSolution implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private int solutionId;
-
 	private int solutionMarom;
-
 	private int solutionRakia;
-	
 	private boolean isActive;
-
-	public boolean isActive() {
-		return isActive;
-	}
-
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-
-//	private List<TblIncident> tblIncidents;
 
 	public TblSolution() {
 	}
@@ -56,26 +43,13 @@ public class TblSolution implements Serializable {
 		this.solutionRakia = solutionRakia;
 	}
 
-//	public List<TblIncident> getTblIncidents() {
-//		return this.tblIncidents;
-//	}
-//
-//	public void setTblIncidents(List<TblIncident> tblIncidents) {
-//		this.tblIncidents = tblIncidents;
-//	}
-//
-//	public TblIncident addTblIncident(TblIncident tblIncident) {
-//		getTblIncidents().add(tblIncident);
-//		tblIncident.setTblSolution(this);
-//
-//		return tblIncident;
-//	}
-//
-//	public TblIncident removeTblIncident(TblIncident tblIncident) {
-//		getTblIncidents().remove(tblIncident);
-//		tblIncident.setTblSolution(null);
-//
-//		return tblIncident;
-//	}
+	@Override
+	public boolean isActive() {
+		return this.isActive;
+	}
 
+	@Override
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 }

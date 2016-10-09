@@ -9,7 +9,7 @@ import utils.SimulationTime;
  * 
  */
 
-public class TblIncident implements Serializable {
+public class TblIncident implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private TblIncidentPK pk = new TblIncidentPK();
@@ -47,11 +47,11 @@ public class TblIncident implements Serializable {
 		this.ci_id = ciId;
 	}
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return this.isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 }

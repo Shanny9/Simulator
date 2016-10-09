@@ -60,7 +60,7 @@ public class LogUtils {
 		}
 
 		TblCMDBDao dao = new TblCMDBDaoImpl();
-		Collection<TblCMDB> all_cmdbs = dao.getAllCMDBs();
+		Collection<TblCMDB> all_cmdbs = dao.getAllActiveCMDBs();
 
 		if (all_cmdbs == null) {
 			return null;
@@ -79,33 +79,6 @@ public class LogUtils {
 		return dbAffectingCis;
 	}
 
-	// /**
-	// * @return A map of CIs and their incidents
-	// */
-	// static HashMap<Byte, HashSet<Byte>> getCIsAndTheirIncidents() {
-	// if (ci_incidents != null) {
-	// return ci_incidents;
-	// }
-	//
-	// TblIncidentDao dao = new TblIncidentDaoImpl();
-	// Collection<TblIncident> all_incidents = dao.getAllIncidents();
-	//
-	// if (all_incidents == null) {
-	// return null;
-	// }
-	//
-	// for (TblIncident incident : all_incidents) {
-	// byte ci = incident.getCiId();
-	// HashSet<Byte> incidents = ci_incidents.get(ci);
-	// if (incidents == null) {
-	// incidents = new HashSet<Byte>();
-	// }
-	// incidents.add(incident.getIncidentId());
-	// ci_incidents.put(ci, incidents);
-	// }
-	// return ci_incidents;
-	// }
-
 	/**
 	 * @return A map of the services and their affecting CIs
 	 */
@@ -116,7 +89,7 @@ public class LogUtils {
 		}
 
 		TblCMDBDao dao = new TblCMDBDaoImpl();
-		Collection<TblCMDB> all_cmdbs = dao.getAllCMDBs();
+		Collection<TblCMDB> all_cmdbs = dao.getAllActiveCMDBs();
 
 		if (all_cmdbs == null) {
 			return null;
@@ -145,7 +118,7 @@ public class LogUtils {
 
 		HashMap<Byte, Double> ciSolCosts = new HashMap<>();
 		TblCIDao dao = new TblCIDaoImpl();
-		Collection<TblCI> all_cis = dao.getAllCIs();
+		Collection<TblCI> all_cis = dao.getAllActiveCIs();
 
 		if (all_cis == null) {
 			return null;
@@ -224,7 +197,7 @@ public class LogUtils {
 
 		incidentLogs = new HashMap<>();
 		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
-				.getAllIncidents();
+				.getAllActiveIncidents();
 		for (TblIncident inc : incidents) {
 			byte ci_id = inc.getCiId();
 			SimulationTime inc_time = inc.getSimulationTime();
@@ -244,7 +217,7 @@ public class LogUtils {
 
 		time_cis = new HashMap<>();
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
-				.getAllIncidents();
+				.getAllActiveIncidents();
 		for (TblIncident inc : all_incidents) {
 			HashSet<Byte> cis = time_cis.get(inc.getIncidentTime());
 			if (cis == null) {
@@ -258,18 +231,6 @@ public class LogUtils {
 	}
 
 	/**
-	 * @return The incidents and their timings (key= time, value= incident)
-	 */
-	// static HashMap<SimulationTime, Byte> getIncidentTimes() {
-	// if (incidentTimes != null) {
-	// return incidentTimes;
-	// }
-	// getIncidentLogs();
-	// return incidentTimes;
-	//
-	// }
-
-	/**
 	 * @return The incidents (key= ci, value= time)
 	 */
 	static HashMap<Byte, HashSet<SimulationTime>> getCisTime() {
@@ -280,7 +241,7 @@ public class LogUtils {
 
 		cis_time = new HashMap<>();
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
-				.getAllIncidents();
+				.getAllActiveIncidents();
 		for (TblIncident inc : all_incidents) {
 			HashSet<SimulationTime> times = cis_time.get(inc.getCiId());
 			if (times == null) {

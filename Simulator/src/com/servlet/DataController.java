@@ -229,7 +229,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						boolean isActive = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						supplier.setIsActive(isActive);
+						supplier.setActive(isActive);
 					}
 
 					if (request.getParameter("currency") != null) {
@@ -450,7 +450,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						incident.setIsActive(active);
+						incident.setActive(active);
 					}
 					
 					// end set fields
@@ -564,7 +564,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						pc.setIsActive(active);
+						pc.setActive(active);
 					}
 
 					// end set fields
@@ -675,7 +675,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						ser.setIsActive(active);
+						ser.setActive(active);
 					}
 
 					if (request.getParameter("isTechnical") != null) {
@@ -831,7 +831,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						boolean active = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						ser.setIsActive(active);
+						ser.setActive(active);
 					}
 
 					// end set fields
@@ -1089,7 +1089,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						Boolean isActive = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						ci.setIsActive(isActive);
+						ci.setActive(isActive);
 					}
 
 					if (request.getParameter("supplierName1") != null) {
@@ -1205,7 +1205,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						Boolean isActive = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						cmdb.setIsActive(isActive);
+						cmdb.setActive(isActive);
 					}
 					// end set fields
 
@@ -1328,7 +1328,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						Boolean isActive = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						department.setIsActive(isActive);
+						department.setActive(isActive);
 					}
 					// end set fields
 
@@ -1443,7 +1443,7 @@ public class DataController extends HttpServlet {
 					if (request.getParameter("isActive") != null) {
 						Boolean isActive = Boolean.parseBoolean(request
 								.getParameter("isActive"));
-						division.setIsActive(isActive);
+						division.setActive(isActive);
 					}
 
 					// end set fields

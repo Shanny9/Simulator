@@ -13,5 +13,6 @@ public interface TblCMDBDao {
 	public void updateCMDB(TblCMDB cmdb, TblCMDBPK id) throws SQLException;
 	public List<TblCMDB> getAllCMDBs(int startPageIndex, int recordsPerPage);
 	public List<TblCMDB> getAllCMDBs();
+	public List<TblCMDB> getAllActiveCMDBs();
 	public int getCMDBCount();
 }

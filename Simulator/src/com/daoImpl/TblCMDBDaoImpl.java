@@ -31,7 +31,7 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setByte(1, cmdb.getCiId());
 			pStmt.setByte(2, cmdb.getServiceId());
-			pStmt.setBoolean(3, cmdb.getIsActive());
+			pStmt.setBoolean(3, cmdb.isActive());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
 	}
@@ -54,7 +54,7 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setByte(1, cmdb.getCiId());
 			pStmt.setByte(2, cmdb.getServiceId());
-			pStmt.setBoolean(3, cmdb.getIsActive());
+			pStmt.setBoolean(3, cmdb.isActive());
 			pStmt.setByte(4, id.getCiId());
 			pStmt.setByte(5, id.getServiceId());
 			pStmt.executeUpdate();
@@ -74,7 +74,7 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 				TblCMDB cmdb = new TblCMDB();
 				cmdb.setCiId(rs.getByte("ci_id"));
 				cmdb.setServiceId(rs.getByte("service_id"));
-				cmdb.setIsActive(rs.getBoolean("isActive"));
+				cmdb.setActive(rs.getBoolean("isActive"));
 				ci_services.add(cmdb);
 			}
 		} catch (SQLException e) {
@@ -96,7 +96,29 @@ public class TblCMDBDaoImpl implements TblCMDBDao {
 				TblCMDB cmdb = new TblCMDB();
 				cmdb.setCiId(rs.getByte("ci_id"));
 				cmdb.setServiceId(rs.getByte("service_id"));
-				cmdb.setIsActive(rs.getBoolean("isActive"));
+				cmdb.setActive(rs.getBoolean("isActive"));
+				ci_services.add(cmdb);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return ci_services;
+	}
+	
+	@Override
+	public List<TblCMDB> getAllActiveCMDBs() {
+		List<TblCMDB> ci_services = new ArrayList<>();
+
+		String query = "SELECT * FROM tblCMDB WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblCMDB cmdb = new TblCMDB();
+				cmdb.setCiId(rs.getByte("ci_id"));
+				cmdb.setServiceId(rs.getByte("service_id"));
+				cmdb.setActive(rs.getBoolean("isActive"));
 				ci_services.add(cmdb);
 			}
 		} catch (SQLException e) {

@@ -13,6 +13,7 @@ public interface TblDepartmentDao {
 	public void updateDepartment(TblDepartment department, TblDepartmentPK pk) throws SQLException;
 	public List<TblDepartment> getAllDepartments(int startPageIndex, int recordsPerPage);
 	public List<TblDepartment> getAllDepartments();
+	public List<TblDepartment> getAllActiveDepartments();
 	public TblDepartment getDepartmentById(String divisionName, String departmentName);
 	public int getDepartmentCount();
 }

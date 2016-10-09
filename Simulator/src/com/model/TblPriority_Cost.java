@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 
  */
 
-public class TblPriority_Cost implements Serializable {
+public class TblPriority_Cost implements Activable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String pName;
@@ -16,11 +16,11 @@ public class TblPriority_Cost implements Serializable {
 	
 	private boolean isActive;
 
-	public boolean getIsActive() {
+	public boolean isActive() {
 		return isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

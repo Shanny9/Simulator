@@ -13,6 +13,7 @@ public interface TblServiceDepartmentDao {
 	public void updateServiceDepartment(TblService_Department service, TblService_DepartmentPK pk) throws SQLException;
 	public List<TblService_Department> getAllServiceDepartments(int startPageIndex, int recordsPerPage);
 	public List<TblService_Department> getAllServiceDepartments();
+	public List<TblService_Department> getAllActiveServiceDepartments();
 	public TblService_Department getServiceDepartmentById(TblService_DepartmentPK pk);
 	public int getServiceDepartmentCount();
 }

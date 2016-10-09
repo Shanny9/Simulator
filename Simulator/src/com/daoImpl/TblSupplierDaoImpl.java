@@ -30,7 +30,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			pStmt = dbConnection.prepareStatement(insertQuery);
 			pStmt.setString(1, supplier.getSupplierName());
 			pStmt.setDouble(2, supplier.getSolutionCost());
-			pStmt.setBoolean(3, supplier.getIsActive());
+			pStmt.setBoolean(3, supplier.isActive());
 			pStmt.setString(4, supplier.getCurrency());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
@@ -53,7 +53,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			pStmt = dbConnection.prepareStatement(updateQuery);
 			pStmt.setString(1, supplier.getSupplierName());
 			pStmt.setDouble(2, supplier.getSolutionCost());
-			pStmt.setBoolean(3, supplier.getIsActive());
+			pStmt.setBoolean(3, supplier.isActive());
 			pStmt.setString(4, supplier.getCurrency());
 			pStmt.setString(5, name);
 			pStmt.executeUpdate();
@@ -75,7 +75,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 
 				supplier.setSupplierName(rs.getString("supplier_name"));
 				supplier.setSolutionCost(rs.getDouble("solution_cost"));
-				supplier.setIsActive(rs.getBoolean("isActive"));
+				supplier.setActive(rs.getBoolean("isActive"));
 				supplier.setCurrency(rs.getString("currency"));
 				suppliers.add(supplier);
 			}
@@ -98,7 +98,30 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 				TblSupplier supplier = new TblSupplier();
 				supplier.setSupplierName(rs.getString("supplier_name"));
 				supplier.setSolutionCost(rs.getDouble("solution_cost"));
-				supplier.setIsActive(rs.getBoolean("isActive"));
+				supplier.setActive(rs.getBoolean("isActive"));
+				supplier.setCurrency(rs.getString("currency"));
+				suppliers.add(supplier);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return suppliers;
+	}
+	
+	@Override
+	public List<TblSupplier> getAllActiveSuppliers() {
+		List<TblSupplier> suppliers = new ArrayList<TblSupplier>();
+
+		String query = "SELECT * FROM tblSupplier WHERE isActive = 1;";
+
+		try {
+			Statement stmt = dbConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblSupplier supplier = new TblSupplier();
+				supplier.setSupplierName(rs.getString("supplier_name"));
+				supplier.setSolutionCost(rs.getDouble("solution_cost"));
+				supplier.setActive(rs.getBoolean("isActive"));
 				supplier.setCurrency(rs.getString("currency"));
 				suppliers.add(supplier);
 			}
@@ -121,7 +144,7 @@ public class TblSupplierDaoImpl implements TblSupplierDao {
 			supplier = new TblSupplier();
 			supplier.setSupplierName(rs.getString("supplier_name"));
 			supplier.setSolutionCost(rs.getDouble("solution_cost"));
-			supplier.setIsActive(rs.getBoolean("isActive"));
+			supplier.setActive(rs.getBoolean("isActive"));
 			supplier.setCurrency(rs.getString("currency"));
 
 		} catch (SQLException e) {

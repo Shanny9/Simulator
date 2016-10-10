@@ -27,16 +27,23 @@ function generateFile(round, service, team){
 			service: service,
 			team: team
 		},
+/*		beforeSend: function(){
+			$('#loading').css("display","block");
+		},*/
 		dataType : "json",
 		async : false,
 		success : function(data) {
+			
 			console.log("generateITBudgetBreakdown:OK");
 			csv = data;
 
 		},
 		error: function(xhr, status, error) {
 			  console.log(xhr.responseText);
-			}
+			},
+		complete: function(){
+			$('#loading').css("display","none");
+		}
 	});
 
 }
@@ -71,6 +78,9 @@ function divideLegend(catagories, titles){
 	var length = Math.floor((Object.keys(catagories).length)/2);
 	var remain = (Object.keys(catagories).length)%2;
 	Object.keys(catagories).forEach(function(key,index) {
+		if(catagories[key] == "#8d8d8d"){ // defines which color to skip and not show at the legend. (services color)
+			return true;
+		} 
 	    // key: the name of the object key
 	    // index: the ordinal position of the key within the object 		
 			if(index >= 0 && index < length)

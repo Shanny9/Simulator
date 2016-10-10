@@ -116,7 +116,7 @@
 											<button id="submitSol" disabled="disabled"
 												class="btn btn-green">Submit Solution</button>
 											<img id="gif" style="-webkit-user-select: none"
-												src="https://thomas.vanhoutte.be/miniblog/wp-content/uploads/spinningwheel.gif">
+												src="css/spinningwheel.gif">
 										</div>
 									</div>
 								</div>

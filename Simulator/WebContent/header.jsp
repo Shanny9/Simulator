@@ -7,7 +7,7 @@
 				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a id="startSimulator" class="navbar-brand" href="#">LOGO</a>
+			<a id="startSimulator" href="opening.jsp"><img src="css/home_images/Danbert_logo.png"></a>
 		</div>
 		
 		<div class="collapse navbar-collapse" id="myNavbar">

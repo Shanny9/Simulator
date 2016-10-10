@@ -213,7 +213,7 @@ li {
 							<div class="row x_title">
 								<div class="col-md-5">
 									<h3>
-										Network Activities <small>Graph title sub-title</small>
+										IT Budget Breakdown 
 									</h3>
 								</div>
 
@@ -235,9 +235,11 @@ li {
 								<div id="main">
 									<div id="sequence"></div>
 									<div id="chart">
+<!-- 									<center>
+										<img id="loading" src="css/ring.gif" style="display: none;">
+									</center> -->
 										<div id="explanation" style="visibility: hidden;">
-											<span id="percentage"></span><br /> of visits begin with this
-											sequence of pages
+											<span id="percentage"></span><br /> of the budget
 										</div>
 									</div>
 								</div>

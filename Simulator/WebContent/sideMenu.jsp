@@ -5,7 +5,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><i class="fa fa-plane"></i> <span>ITIL Simulator</span></a>
+              <a href="opening.jsp" class="site_title"><i class="fa fa-plane"></i> <span>ITIL Simulator</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -34,7 +34,7 @@
                       <li><a href="selectCourse_reports.jsp">Select Other Course</a></li>
                     </ul>
                   </li>
-                  <li id="tables"><a><i class="fa fa-edit"></i> Tables <span class="fa fa-chevron-down"></span></a>
+                  <li id="tables" class="adminOnly"><a><i class="fa fa-edit"></i> Tables <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu" id="ulTables">
                       <li><a href="tables.jsp?tbl=tblCi" id="tblCi">Configuration Item</a></li>
                       <li><a href="tables.jsp?tbl=tblCMDB" id="tblCMDB">CMDB</a></li>
@@ -89,3 +89,18 @@
             <!-- /menu footer buttons -->
           </div>
         </div>
+<%
+	Object type = session.getAttribute("type");
+	if (type != null) {
+
+%>
+
+<script type="text/javascript">
+				var type =  '<%=type%>'; 
+				console.log("User type: "+type);
+				if(type == "Operator")
+					$(".adminOnly").css("display","none");
+</script>
+<%
+	}
+%>

@@ -1,8 +1,10 @@
 package com.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +30,7 @@ import log.SolutionLog;
 import utils.ClockIncrementor;
 import utils.DBValidator;
 import utils.PasswordAuthentication;
+import utils.ReportGenerator;
 import utils.SimulationTime;
 import utils.TimerManager;
 
@@ -277,7 +281,34 @@ public class HomeController extends HttpServlet {
 					selectedCourseName);
 			response.sendRedirect("index.jsp");
 			break;
+			
+/*		case "generateIncidentFlowFile":
+			String cName = request.getParameter("form-courseName");
+			ReportGenerator.generateTable(cName);
+//			RequestDispatcher rd = request.getRequestDispatcher("DownloadServlet");
+//			rd.forward(request,response);
+			
+			//Download
+			response.setContentType("text/html");
+			PrintWriter out = response.getWriter();
+			//TODO: set paths in context no here
+			String filename = "workbook.xls";
+			String filepath = "";
+			response.setContentType("APPLICATION/OCTET-STREAM");
+			response.setHeader("Content-Disposition", "attachment; filename=\""
+					+ filename + "\"");
 
+			FileInputStream fileInputStream = new FileInputStream(filepath
+					+ filename);
+
+			int index;
+			while ((index = fileInputStream.read()) != -1) {
+				out.write(index);
+			}
+			fileInputStream.close();
+			out.close();
+			break;
+*/
 		case "deleteCourse":
 			try {
 				response.setContentType("text/html");

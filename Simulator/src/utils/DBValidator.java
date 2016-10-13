@@ -566,7 +566,7 @@ public class DBValidator {
 							+ s * sett.getRunTime());
 					endTime = new SimulationTime(startTime.getRunTime()
 							+ sett.getRunTime());
-					a = num_of_incidents - MIN_INCIDENTS;
+					a = MIN_INCIDENTS - num_of_incidents;
 					err += minErr
 							.replace("[R]", String.valueOf(r))
 							.replace("[S]", String.valueOf(s))
@@ -584,7 +584,7 @@ public class DBValidator {
 							+ s * sett.getRunTime());
 					endTime = new SimulationTime(startTime.getRunTime()
 							+ sett.getRunTime());
-					a = MAX_INCIDENTS - num_of_incidents;
+					a = num_of_incidents - MAX_INCIDENTS;
 					err += maxErr
 							.replace("[R]", String.valueOf(r))
 							.replace("[S]", String.valueOf(s))

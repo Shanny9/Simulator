@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import utils.ReportGenerator;
+
 /**
  * Servlet implementation class DownloadServlet
  */
@@ -19,12 +21,13 @@ public class DownloadServlet extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		String cName = request.getParameter("form-courseName");
+		ReportGenerator.generateTable(cName);
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		//TODO: set paths in context no here
 		String filename = "workbook.xls";
-		String filepath = "C:\\Users\\ROBERT\\Desktop\\";
+		String filepath = "";
 		response.setContentType("APPLICATION/OCTET-STREAM");
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ filename + "\"");
@@ -38,5 +41,10 @@ public class DownloadServlet extends HttpServlet {
 		}
 		fileInputStream.close();
 		out.close();
+	}
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	
 	}
 }

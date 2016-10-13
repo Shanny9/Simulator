@@ -74,8 +74,7 @@ public class ReportGenerator {
 	final static short pomegranate = registerColor(192, 57, 43);
 	final static short peterRiver = registerColor(52, 152, 219);
 
-	public static void main(String args[]) {
-		String courseName = "21-09-16";
+	public static void generateTable(String courseName) {
 		List<IncidentRow> incidents = generateIncidentsList(courseName);
 		generateStyles();
 		exportToExcel(incidents);

@@ -38,11 +38,13 @@
                     <ul class="nav child_menu" id="ulTables">
                       <li><a href="tables.jsp?tbl=tblCi" id="tblCi">Configuration Item</a></li>
                       <li><a href="tables.jsp?tbl=tblCMDB" id="tblCMDB">CMDB</a></li>
+                      <li><a href="tables.jsp?tbl=tblCurrency" id="tblCurrency">Currency</a></li>
                       <li><a href="tables.jsp?tbl=tblDepartment" id="tblDepartment">Department</a></li>
                       <li><a href="tables.jsp?tbl=tblDivision" id="tblDivision">Division</a></li>
                     <!--   <li><a href="tables.jsp?tbl=tblEvent" id="tblEvent">Event</a></li> -->
                       <li><a href="tables.jsp?tbl=tblIncident" id="tblIncident">Incident</a></li>
                       <li><a href="tables.jsp?tbl=tblLevel" id="tblLevel">Level</a></li>
+                      <li><a href="tables.jsp?tbl=tblPriority" id="tblPriority">Priority</a></li>
                       <li><a href="tables.jsp?tbl=tblPriorityCost" id="tblPriorityCost">Priority Cost</a></li>
                       <li><a href="tables.jsp?tbl=tblService" id="tblService">Service</a></li>
                       <li><a href="tables.jsp?tbl=tblServiceDep" id="tblServiceDep">Service Department</a></li>

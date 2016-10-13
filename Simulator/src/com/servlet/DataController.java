@@ -21,6 +21,7 @@ import utils.DBValidator;
 
 import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
+import com.daoImpl.TblCurrencyDaoImpl;
 import com.daoImpl.TblDepartmentDaoImpl;
 import com.daoImpl.TblDivisionDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
@@ -36,12 +37,15 @@ import com.google.gson.GsonBuilder;
 import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblCMDBPK;
+import com.model.TblCurrency;
 import com.model.TblDepartment;
 import com.model.TblDepartmentPK;
 import com.model.TblDivision;
 import com.model.TblIncident;
 import com.model.TblIncidentPK;
 import com.model.TblLevel;
+import com.model.TblPriority;
+import com.model.TblPriorityPK;
 import com.model.TblPriority_Cost;
 import com.model.TblService;
 import com.model.TblService_Department;
@@ -65,6 +69,7 @@ public class DataController extends HttpServlet {
 	private TblDivisionDaoImpl daoDivision;
 	private TblPriorityDaoImpl daoPriority;
 	private TblLevelDaoImpl daoLevel;
+	private TblCurrencyDaoImpl daoCurrency;
 
 	/**
 	 * Empty Constructor
@@ -76,6 +81,7 @@ public class DataController extends HttpServlet {
 		daoPriorityCost = new TblPriorityCostDaoImpl();
 		daoService = new TblServiceDaoImpl();
 		daoServiceDepartment = new TblServiceDepartmentDaoImpl();
+		daoCurrency = new TblCurrencyDaoImpl();
 
 		// daoServiceDivision = new TblServiceDivisionDaoImpl();
 
@@ -136,12 +142,16 @@ public class DataController extends HttpServlet {
 						"incidentId", "incidentId");
 				break;
 			case "priority":
-				optionArr = toOptionArray(daoPriority.getAllPriorities(),
+				optionArr = toOptionArray(daoPriority.getAllPrioritiesDistinct(),
 						"priorityName", "priorityName");
 				break;
 			case "level":
 				optionArr = toOptionArray(daoLevel.getAllLevels(), "level",
 						"level");
+				break;
+			case "currency":
+				optionArr = toOptionArray(daoCurrency.getAllCurrencies(), "currency",
+						"currency");
 				break;
 			}
 			jo.put("Result", "OK");
@@ -192,8 +202,11 @@ public class DataController extends HttpServlet {
 			case "incident":
 				tblIncident(action, request, response, gson);
 				break;
-			case "priority":
+			case "priorityCost":
 				tblPriorityCost(action, request, response, gson);
+				break;
+			case "priority":
+				tblPriority(action, request, response, gson);
 				break;
 			case "service":
 				tblService(action, request, response, gson);
@@ -209,6 +222,9 @@ public class DataController extends HttpServlet {
 				break;
 			case "cmdb":
 				tblCMDBs(action, request, response, gson);
+				break;
+			case "currency":
+				tblCurrency(action, request, response, gson);
 				break;
 			case "department":
 				tblDepartments(action, request, response, gson);
@@ -547,7 +563,113 @@ public class DataController extends HttpServlet {
 
 		}
 	}
+	
+	
 
+	protected void tblCurrency(String action, HttpServletRequest request,
+			HttpServletResponse response, Gson gson) throws IOException {
+
+		List<TblCurrency> curList = new ArrayList<TblCurrency>();
+		if (action != null) {
+			try {
+				if (action.equals("list")) {
+					// Fetch Data from User Table
+					int startPageIndex = Integer.parseInt(request
+							.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request
+							.getParameter("jtPageSize"));
+					// Fetch Data from Supplier Table
+					curList = daoCurrency.getAllCurrencies(startPageIndex,
+							recordsPerPage);
+					// Get Total Record Count for Pagination
+					int userCount = daoCurrency.getCurrencyCount();
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Records", curList);
+					JSONROOT.put("TotalRecordCount", userCount);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("create") || action.equals("update")) {
+					TblCurrency cur = new TblCurrency();
+
+					// Set fields
+					if (request.getParameter("currency") != null) {
+						String currency = request.getParameter("currency");
+						cur.setCurrency(currency);
+
+					}
+					
+					if (request.getParameter("value") != null) {
+						Double value = Double.parseDouble(request.getParameter("value"));
+						cur.setValue(value);
+
+					}
+
+					if (request.getParameter("isActive") != null) {
+						boolean isActive = Boolean.parseBoolean(request
+								.getParameter("isActive"));
+						cur.setActive(isActive);
+					}
+
+					// end set fields
+
+					if (action.equals("create")) {
+						// Create new record
+						daoCurrency.addCurrency(cur);
+					} else if (action.equals("update")) {
+						// Update existing record
+						String name = request
+								.getParameter("jtRecordKey_currency");
+						daoCurrency.updateCurrency(cur, name);
+					}
+
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Record", cur);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("delete")) {
+					// Delete record
+					if (request.getParameter("currency") != null) {
+						String name = request.getParameter("currency");
+						daoCurrency.deleteCurrency(name);
+
+						// Return in the format required by jTable plugin
+						JSONROOT.put("Result", "OK");
+
+						// Convert Java Object to Json
+						String jsonArray = gson.toJson(JSONROOT);
+						response.getWriter().print(jsonArray);
+					}
+				} else if (action.equals("excel")) {
+					// Export to excel
+					curList = daoCurrency.getAllCurrencies();
+					// Return in the format required by jTable plugin
+					JSONROOT.clear();
+					JSONROOT.put("Records", curList);
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				}
+			} catch (Exception ex) {
+				System.out.println("DataController: Data-tblCurrency: "
+						+ ex.getMessage());
+				JSONROOT.put("Result", "ERROR");
+				JSONROOT.put(
+						"Message",
+						(ex instanceof SQLException) ? getErrorMsg(
+								((SQLException) ex).getErrorCode(),
+								ex.getMessage(), action) : ex.getMessage());
+				String error = gson.toJson(JSONROOT);
+				response.getWriter().print(error);
+			}
+
+		}
+	}
 
 	protected void tblIncident(String action, HttpServletRequest request,
 			HttpServletResponse response, Gson gson) throws IOException {
@@ -755,6 +877,128 @@ public class DataController extends HttpServlet {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				System.out.println("DataController: Data-tblPriorityCost: "
+						+ ex.getMessage());
+				JSONROOT.put("Result", "ERROR");
+				JSONROOT.put(
+						"Message",
+						(ex instanceof SQLException) ? getErrorMsg(
+								((SQLException) ex).getErrorCode(),
+								ex.getMessage(), action) : ex.getMessage());
+				String error = gson.toJson(JSONROOT);
+				response.getWriter().print(error);
+			}
+		}
+	}
+	
+	protected void tblPriority(String action, HttpServletRequest request,
+			HttpServletResponse response, Gson gson) throws IOException {
+
+		List<TblPriority> pList = new ArrayList<TblPriority>();
+		if (action != null) {
+			try {
+				if (action.equals("list")) {
+					// Fetch Data from User Table
+					int startPageIndex = Integer.parseInt(request
+							.getParameter("jtStartIndex"));
+					int recordsPerPage = Integer.parseInt(request
+							.getParameter("jtPageSize"));
+					// Fetch Data from Supplier Table
+					pList = daoPriority.getAllPriorities(startPageIndex,
+							recordsPerPage);
+					// Get Total Record Count for Pagination
+					int userCount = daoPriority.getPriorityCount();
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Records", pList);
+					JSONROOT.put("TotalRecordCount", userCount);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("create") || action.equals("update")) {
+					TblPriority pc = new TblPriority();
+
+					// Set fields
+					if (request.getParameter("urgency") != null) {
+						String ur = request.getParameter("urgency");
+						pc.setUrgency(ur);
+
+					}
+
+					if (request.getParameter("impact") != null) {
+						String im = request.getParameter("impact");
+						pc.setImpact(im);
+
+					}
+					
+					if (request.getParameter("priorityName") != null) {
+						String name = request.getParameter("priorityName");
+						pc.setPriorityName(name);
+
+					}
+
+					if (request.getParameter("isActive") != null) {
+						boolean active = Boolean.parseBoolean(request
+								.getParameter("isActive"));
+						pc.setActive(active);
+					}
+
+					// end set fields
+
+					if (action.equals("create")) {
+						// Create new record
+						daoPriority.addPriority(pc);
+					} else if (action.equals("update")) {
+						// Update existing record
+						String urgency = request
+								.getParameter("jtRecordKey_urgency");
+						String impact = request
+								.getParameter("jtRecordKey_impact");
+						TblPriorityPK id = new TblPriorityPK();
+						id.setUrgency(urgency);
+						id.setImpact(impact);
+						daoPriority.updatePriority(pc,id);
+					}
+
+					// Return in the format required by jTable plugin
+					JSONROOT.put("Result", "OK");
+					JSONROOT.put("Record", pc);
+
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				} else if (action.equals("delete")) {
+					// Delete record
+					TblPriorityPK id  = new TblPriorityPK();
+					if (request.getParameter("urgency") != null
+							&& request.getParameter("impact") != null) {
+						String urgency = request
+								.getParameter("urgency");
+						String impact = request
+								.getParameter("impact");
+						id.setUrgency(urgency);
+						id.setImpact(impact);
+						daoPriority.deletePriority(id);
+						// Return in the format required by jTable plugin
+						JSONROOT.put("Result", "OK");
+
+						// Convert Java Object to Json
+						String jsonArray = gson.toJson(JSONROOT);
+						response.getWriter().print(jsonArray);
+					}
+				} else if (action.equals("excel")) {
+					// Export to excel
+					pList = daoPriority.getAllPriorities();
+					// Return in the format required by jTable plugin
+					JSONROOT.clear();
+					JSONROOT.put("Records", pList);
+					// Convert Java Object to Json
+					String jsonArray = gson.toJson(JSONROOT);
+					response.getWriter().print(jsonArray);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("DataController: Data-tblPriority: "
 						+ ex.getMessage());
 				JSONROOT.put("Result", "ERROR");
 				JSONROOT.put(

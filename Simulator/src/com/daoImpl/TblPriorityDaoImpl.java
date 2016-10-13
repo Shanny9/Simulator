@@ -24,59 +24,56 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	}
 
 	@Override
-	public void addPriority(TblPriority priority) {
+	public void addPriority(TblPriority priority) throws SQLException {
 		String insertQuery = "INSERT INTO `SIMULATOR`.`tblPriority`\r\n" + 
 				"(`urgency`,\r\n" + 
 				"`impact`,\r\n" + 
-				"`priorityName`)\r\n" + 
+				"`priorityName`,\r\n" + 
+				"`isActive`)\r\n" + 
 				"VALUES\r\n" + 
-				"(?,?,?);";
-		try {
+				"(?,?,?,?);";
 			pStmt = DBUtility.getConnection().prepareStatement(insertQuery);
-			pStmt.setString(1, priority.getId().getUrgency());
-			pStmt.setString(2, priority.getId().getImpact());
+			pStmt.setString(1, priority.getUrgency());
+			pStmt.setString(2, priority.getImpact());
 			pStmt.setString(3, priority.getPriorityName());
+			pStmt.setBoolean(4, priority.isActive());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void deletePriority(TblPriorityPK pk) {
+	public void deletePriority(TblPriorityPK pk) throws SQLException {
 		String deleteQuery = "DELETE FROM tblPriority WHERE urgency = ? and impact = ?";
-		try {
+
 			pStmt = DBUtility.getConnection().prepareStatement(deleteQuery);
 			pStmt.setString(1, pk.getUrgency());
 			pStmt.setString(2, pk.getImpact());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
-	public void updatePriority(TblPriority priority) {
+	public void updatePriority(TblPriority priority, TblPriorityPK id) throws SQLException {
 		String updateQuery = "UPDATE `SIMULATOR`.`tblPriority`\r\n" + 
 				"SET\r\n" + 
 				"`urgency` = ?,\r\n" + 
 				"`impact` = ?,\r\n" + 
-				"`priorityName` = ?\r\n" + 
+				"`priorityName` = ?,\r\n" + 
+				"`isActive` = ?\r\n" + 
 				"WHERE `urgency` = ? AND `impact` = ?;";
-		try {
+
 			pStmt = DBUtility.getConnection().prepareStatement(updateQuery);
-			pStmt.setString(1, priority.getId().getUrgency());
-			pStmt.setString(2, priority.getId().getImpact());
+			pStmt.setString(1, priority.getUrgency());
+			pStmt.setString(2, priority.getImpact());
 			pStmt.setString(3, priority.getPriorityName());
-			pStmt.setString(4, priority.getId().getUrgency());
-			pStmt.setString(5, priority.getId().getImpact());
+			pStmt.setBoolean(4, priority.isActive());
+			pStmt.setString(5, id.getUrgency());
+			pStmt.setString(6, id.getImpact());
 			pStmt.executeUpdate();
 			QueryLogger.log(pStmt.toString());
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+
 	}
 
 	@Override
@@ -94,6 +91,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 				pr.setImpact(rs.getString("impact"));
 				pr.setUrgency(rs.getString("urgency"));
 				pr.setPriorityName(rs.getString("priorityName"));
+				pr.setActive(rs.getBoolean("isActive"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -106,7 +104,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 	/**
 	 * gets all priorities by DISTINCT NAMES
 	 */
-	public List<TblPriority> getAllPriorities() {
+	public List<TblPriority> getAllPrioritiesDistinct() {
 		List<TblPriority> priorities = new ArrayList<TblPriority>();
 
 		String query = "SELECT distinct priorityName FROM tblPriority";
@@ -119,6 +117,7 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 //				pr.setImpact(rs.getString("impact"));
 //				pr.setUrgency(rs.getString("urgency"));
 				pr.setPriorityName(rs.getString("priorityName"));
+//				pr.setActive(rs.getBoolean("isActive"));
 				priorities.add(pr);
 			}
 		} catch (SQLException e) {
@@ -169,5 +168,28 @@ public class TblPriorityDaoImpl implements TblPriorityDao {
 			System.err.println(e.getMessage());
 		}
 		return count;
+	}
+
+	@Override
+	public List<TblPriority> getAllPriorities() {
+		List<TblPriority> priorities = new ArrayList<TblPriority>();
+
+		String query = "SELECT * FROM tblPriority ";
+
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblPriority pr = new TblPriority();
+				pr.setImpact(rs.getString("impact"));
+				pr.setUrgency(rs.getString("urgency"));
+				pr.setPriorityName(rs.getString("priorityName"));
+				pr.setActive(rs.getBoolean("isActive"));
+				priorities.add(pr);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return priorities;
 	}	
 }

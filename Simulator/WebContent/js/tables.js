@@ -13,6 +13,10 @@ $(document).ready(function() {
 		CMDBTable();
 		$("#validationDiv").css("display","none");
 		break;
+	case "tblCurrency":
+		currencyTable();
+		$("#validationDiv").css("display","none");
+		break;
 	case "tblDepartment":
 		departmentTable();
 		break;
@@ -32,6 +36,10 @@ $(document).ready(function() {
 		break;
 	case "tblPriorityCost":
 		priorityCostTable();
+		$("#validationDiv").css("display","none");
+		break;
+	case "tblPriority":
+		priorityTable();
 		$("#validationDiv").css("display","none");
 		break;
 	case "tblService":
@@ -189,7 +197,7 @@ function supplierTable(){
 				currency : {
 					title : 'Currency',
 					width : '25%',
-					options: { 'NIS': 'NIS', 'USD': 'USD', 'EUR' : 'EUR'},
+					options:  'DataController?options=currency',
 					edit : true
 				}
 			},
@@ -212,6 +220,135 @@ function supplierTable(){
 //				data.form.find('[name=solutionCost]').attr('min','0');
 //				data.form.find('[name=solutionCost]').attr('max','1.7976931348623157E+308');				
 //		    }
+		});
+		$('#tableContainer').jtable('load');
+}
+
+function priorityTable(){
+	$("#tblTitle").append("Priority List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblPriority").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
+		$('#tableContainer').jtable({
+			title : 'Priority List',
+			paging: true, //Set paging enabled
+			pageSize: 10, //Set page size
+			pageSizes: [10,15,20],
+			selecting: true,
+			selectingCheckboxes: true,
+			multiselect: true,
+			deleteConfirmation: true,
+		//	editinline:{enable:true},
+		//	toolbarsearch:true,
+			actions : {
+				listAction : 'DataController?action=list&table=priority',
+				createAction : 'DataController?action=create&table=priority',
+				updateAction : 'DataController?action=update&table=priority',
+				deleteAction : 'DataController?action=delete&table=priority'
+			},
+			toolbar: {
+		        items: [{
+		            tooltip: 'Click here to export this table to excel',
+		            text: 'Export to Excel',
+		            icon: 'css/metro/Excel-icon.png',
+		            click: function () {
+		                $.ajax({
+		                    url: 'DataController?action=excel&table=priority',     
+		            		dataType: "json",
+		                    success: function(data) {  
+		                    	JSONToCSVConvertor(data.Records,"Priorities",true);
+		            			 
+		                    },
+		                    error: function(e) {
+		            			alert("Error Excel");
+		                    }
+		                });
+		            }
+		        }, {
+		            icon: 'css/metro/delete_toolbar2.png',
+		            text: 'Delete Selected',
+		            click: function () {
+		            	var $selectedRows = $('#tableContainer').jtable('selectedRows');
+		            	//show confirmation dialog
+		            	$('<div></div>').appendTo('body')
+		            	  .html('<div><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="jtable-delete-confirm-message">'+$selectedRows.length+ ' record(s) will be deleted. Are you sure?</span></p></div>')
+		            	  .dialog({
+		            	      modal: true, title: 'Are you sure?', zIndex: 10000, autoOpen: true,
+		            	      width: 'auto', resizable: false,
+		            	      buttons: {
+		            	          Cancel: function () {
+			            	              $(this).dialog("close");
+			            	          },
+		            	          Delete: function () {
+		            	        	 //call the delete function from jtable 
+		      		                $('#tableContainer').jtable('deleteRows', $selectedRows);
+		            	              $(this).dialog("close");
+		            	          }
+
+		            	      },
+		            	      close: function (event, ui) {
+		            	          $(this).remove();
+		            	      }
+		            	});
+		            	
+		            }//end click function
+		        }//end delete button
+		          ]
+		    },
+			fields : {
+				urgency : {
+					title : 'Urgency',
+					width : '30%',
+					key : true,
+					list : true,
+					edit : true,
+					create : true,
+					options: 'DataController?options=level'
+				},
+				impact : {
+					title : 'Impact',
+					width : '25%',
+					key : true,
+					list : true,
+					edit : true,
+					create : true,
+					options: 'DataController?options=level'
+				},
+				priorityName : {
+					title : 'Priority Name',
+					width : '25%',
+					list : true,
+					edit : true,
+					create : true,
+					inputClass: 'validate[required,maxSize[8]]'
+				},
+				isActive : {
+					title : 'Active?',
+					width : '20%',
+					type : 'checkbox',
+					values: {'false': 'No' , 'true': 'Yes'},
+					defaultValue: 'true',
+					edit : true
+				}
+			},
+            //Initialize validation logic when a form is created
+            formCreated: function (event, data) {
+                data.form.validationEngine();
+                data.form.find('[name=priorityName]').attr('maxlength','8');
+            },
+            //Validate form when it is being submitted
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            //Dispose validation logic when form is closed
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+
 		});
 		$('#tableContainer').jtable('load');
 }
@@ -499,10 +636,10 @@ function priorityCostTable(){
 	//	editinline:{enable:true},
 	//	toolbarsearch:true,
 		actions : {
-			listAction : 'DataController?action=list&table=priority',
-			createAction : 'DataController?action=create&table=priority',
-			updateAction : 'DataController?action=update&table=priority',
-			deleteAction : 'DataController?action=delete&table=priority'
+			listAction : 'DataController?action=list&table=priorityCost',
+			createAction : 'DataController?action=create&table=priorityCost',
+			updateAction : 'DataController?action=update&table=priorityCost',
+			deleteAction : 'DataController?action=delete&table=priorityCost'
 		},
 		toolbar: {
 	        items: [{
@@ -511,7 +648,7 @@ function priorityCostTable(){
 	            icon: 'css/metro/Excel-icon.png',
 	            click: function () {
 	                $.ajax({
-	                    url: 'DataController?action=excel&table=priority',     
+	                    url: 'DataController?action=excel&table=priorityCost',     
 	            		dataType: "json",
 	                    success: function(data) {  
 	                    	JSONToCSVConvertor(data.Records,"Priority Cost",true);
@@ -682,7 +819,7 @@ function levelTable(){
 				list : true,
 				edit : true,
 				create : true,
-				inputClass: 'validate[maxSize[6]]'
+				inputClass: 'validate[required,maxSize[6]]'
 
 			},
 			isActive : {
@@ -698,6 +835,125 @@ function levelTable(){
         formCreated: function (event, data) {
             data.form.validationEngine();
             data.form.find('[name=level]').attr('maxlength','6');
+        },
+        //Validate form when it is being submitted
+        formSubmitting: function (event, data) {
+            return data.form.validationEngine('validate');
+        },
+        //Dispose validation logic when form is closed
+        formClosed: function (event, data) {
+            data.form.validationEngine('hide');
+            data.form.validationEngine('detach');
+        }
+
+	});
+	$('#tableContainer').jtable('load');
+}
+
+function currencyTable(){
+	$("#tblTitle").append("Currency List");
+	
+	$( "#ulTables" ).children().removeClass();
+	$("#tblCurrency").addClass("selected");
+	
+	$( "#tableContainer" ).remove();
+	$( "#tbl" ).append('<div id="tableContainer"></div>');
+	$('#tableContainer').jtable({
+		title : 'Currency List',
+		paging: true, //Set paging enabled
+		pageSize: 10, //Set page size
+		pageSizes: [10,15,20],
+		selecting: true,
+		selectingCheckboxes: true,
+		multiselect: true,
+		deleteConfirmation: true,
+	//	editinline:{enable:true},
+	//	toolbarsearch:true,
+		actions : {
+			listAction : 'DataController?action=list&table=currency',
+			createAction : 'DataController?action=create&table=currency',
+			updateAction : 'DataController?action=update&table=currency',
+			deleteAction : 'DataController?action=delete&table=currency'
+		},
+		toolbar: {
+	        items: [{
+	            tooltip: 'Click here to export this table to excel',
+	            text: 'Export to Excel',
+	            icon: 'css/metro/Excel-icon.png',
+	            click: function () {
+	                $.ajax({
+	                    url: 'DataController?action=excel&table=currency',     
+	            		dataType: "json",
+	                    success: function(data) {  
+	                    	JSONToCSVConvertor(data.Records,"Currencies",true);
+	            			 
+	                    },
+	                    error: function(e) {
+	            			alert("Error Excel");
+	                    }
+	                });
+	            }
+	        }, {
+	            icon: 'css/metro/delete_toolbar2.png',
+	            text: 'Delete Selected',
+	            click: function () {
+	            	var $selectedRows = $('#tableContainer').jtable('selectedRows');
+	            	//show confirmation dialog
+	            	$('<div></div>').appendTo('body')
+	            	  .html('<div><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="jtable-delete-confirm-message">'+$selectedRows.length+ ' record(s) will be deleted. Are you sure?</span></p></div>')
+	            	  .dialog({
+	            	      modal: true, title: 'Are you sure?', zIndex: 10000, autoOpen: true,
+	            	      width: 'auto', resizable: false,
+	            	      buttons: {
+	            	          Cancel: function () {
+		            	              $(this).dialog("close");
+		            	          },
+	            	          Delete: function () {
+	            	        	 //call the delete function from jtable 
+	      		                $('#tableContainer').jtable('deleteRows', $selectedRows);
+	            	              $(this).dialog("close");
+	            	          }
+
+	            	      },
+	            	      close: function (event, ui) {
+	            	          $(this).remove();
+	            	      }
+	            	});
+	            	
+	            }//end click function
+	        }//end delete button
+	          ]
+	    },
+		fields : {
+			currency : {
+				title : 'Currency',
+				key : true,
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,maxSize[3]]'
+
+			},
+			value : {
+				title : 'Value',
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,custom[number],min[0],max[1.7976931348623157E+308]]'
+			},
+			isActive : {
+				title : 'Active?',
+//				width : '20%',
+				type: 'checkbox',
+                values: { 'false': 'No', 'true': 'Yes'},
+                defaultValue: 'true',
+				edit : true
+			}
+		},
+        //Initialize validation logic when a form is created
+        formCreated: function (event, data) {
+            data.form.validationEngine();
+            data.form.find('[name=currency]').attr('maxlength','3');
         },
         //Validate form when it is being submitted
         formSubmitting: function (event, data) {
@@ -842,6 +1098,11 @@ function serviceTable(){
 				title : 'Impact',
 				options: 'DataController?options=level',
 				edit : true
+			},
+			event_id : {
+				title : 'Event',
+				edit : true,
+				inputClass: 'validate[required,custom[integer],min[1],max[4294967295]]'
 			},
 			isActive : {
 				title : 'Active?',

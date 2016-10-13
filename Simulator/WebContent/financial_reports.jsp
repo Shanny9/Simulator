@@ -291,7 +291,6 @@ li {
 
 
 
-
 	<!-- Bootstrap -->
 	<script src="js/bootstrap-3.3.5.min.js"></script>
 	<!-- FastClick -->

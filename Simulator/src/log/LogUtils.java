@@ -15,18 +15,14 @@ import java.util.Map;
 
 import utils.Queries;
 import utils.SimulationTime;
+import utils.SolutionElement;
 
-import com.dao.TblCIDao;
 import com.dao.TblCMDBDao;
-import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
-import com.daoImpl.TblSupplierDaoImpl;
 import com.jdbc.DBUtility;
-import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblIncident;
-import com.model.TblSupplier;
 
 public class LogUtils {
 
@@ -39,6 +35,8 @@ public class LogUtils {
 	private static HashMap<Byte, String> servicePriority;
 	private static HashMap<SimulationTime, HashSet<Byte>> time_cis;
 	private static HashMap<Byte, HashSet<SimulationTime>> cis_time;
+	private static HashMap<Byte, SolutionElement> cis_solutions;
+	private static HashMap<Byte,HashSet<String>> ci_events;
 
 	public static void runAll() {
 		LogUtils.dbAffectingCis = getDBAffectingCIs();
@@ -49,6 +47,32 @@ public class LogUtils {
 		LogUtils.time_events = getTimetEvents();
 		LogUtils.servicePriority = getServicePriorities();
 		LogUtils.time_cis = getTimeCis();
+		LogUtils.cis_solutions = getCiSolutions();
+		LogUtils.ci_events = getCiEvents();
+	}
+
+	static HashMap<Byte, SolutionElement> getCiSolutions() {
+		if (cis_solutions != null) {
+			return cis_solutions;
+		}
+
+		HashMap<Byte, SolutionElement> solutions = new HashMap<>();
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(Queries.solutionsForClient);
+			while (rs.next()) {
+				solutions.put(
+						rs.getByte("ci_id"),
+						new SolutionElement(rs.getByte("ci_id"), rs
+								.getInt("solution_marom"), rs
+								.getInt("solution_rakia"), rs
+								.getDouble("solution_cost"), rs
+								.getString("currency")));
+			}
+			return solutions;
+		} catch (SQLException e) {
+		}
+		return null;
 	}
 
 	/**
@@ -116,36 +140,18 @@ public class LogUtils {
 			return ciSolCosts;
 		}
 
-		HashMap<Byte, Double> ciSolCosts = new HashMap<>();
-		TblCIDao dao = new TblCIDaoImpl();
-		Collection<TblCI> all_cis = dao.getAllActiveCIs();
-
-		if (all_cis == null) {
-			return null;
-		}
-
-		for (TblCI ci : all_cis) {
-			byte ci_id = ci.getCiId();
-			String supName = ci.getSupplierName1();
-			TblSupplier sup = new TblSupplierDaoImpl().getSupplierById(supName);
-			int mul = 1;
-			switch (sup.getCurrency()) {
-			// TODO: hard-coded currencies and values. Can be stored somewhere
-			case "NIS":
-				mul = 1;
-				break;
-			case "USD":
-				mul = 4;
-				break;
-			case "EUR":
-				mul = 5;
-				break;
+		ciSolCosts = new HashMap<>();
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(Queries.ci_sol_costs);
+			while (rs.next()) {
+				ciSolCosts.put(rs.getByte("ci_id"),
+						rs.getDouble("solution_cost"));
 			}
-			double solCost = sup.getSolutionCost() * mul;
-
-			ciSolCosts.put(ci_id, solCost);
+			return ciSolCosts;
+		} catch (SQLException e) {
 		}
-		return ciSolCosts;
+		return null;
 	}
 
 	/**
@@ -155,7 +161,7 @@ public class LogUtils {
 		if (serviceCosts != null) {
 			return serviceCosts;
 		}
-		
+
 		serviceCosts = new HashMap<>();
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
@@ -171,7 +177,7 @@ public class LogUtils {
 	}
 
 	static HashMap<Byte, IncidentLog> getIncidentLogsOfRound(int round) {
-		
+
 		if (incidentLogs == null) {
 			incidentLogs = getIncidentLogs();
 		}
@@ -262,7 +268,7 @@ public class LogUtils {
 		if (time_events != null) {
 			return time_events;
 		}
-		
+
 		time_events = new HashMap<>();
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
@@ -290,7 +296,7 @@ public class LogUtils {
 		if (servicePriority != null) {
 			return servicePriority;
 		}
-		
+
 		servicePriority = new HashMap<>();
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
@@ -300,6 +306,31 @@ public class LogUtils {
 						rs.getString("priorityName"));
 			}
 			return servicePriority;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static HashMap<Byte, HashSet<String>> getCiEvents() {
+		if (ci_events != null) {
+			return ci_events;
+		}
+
+		ci_events = new HashMap<>();
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(Queries.ci_events);
+			while (rs.next()) {
+				byte ci_id = rs.getByte("ci_id");
+				HashSet<String> events = ci_events.get(ci_id);
+				if (events == null){
+					events = new HashSet<>();
+				}
+				events.add(rs.getString("event_id"));
+				ci_events.put(ci_id,events);
+			}
+			return ci_events;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

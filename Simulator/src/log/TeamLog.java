@@ -122,11 +122,11 @@ public class TeamLog implements Serializable {
 	 * @param isBought
 	 *            indicates if the incident was bought or not.
 	 */
-	synchronized boolean incidentSolved(byte ci_id, SimulationTime time,
+	synchronized void incidentSolved(byte ci_id, SimulationTime time,
 			boolean isBought) {
 
-		if (isFinished || !isIncidentOpen(ci_id, time)) {
-			return false;
+		if (isFinished) {
+			return;
 		}
 
 		incident_logs.get(ci_id).close(time);
@@ -140,19 +140,20 @@ public class TeamLog implements Serializable {
 						.ciUpdate(ci_id, true, time);
 			}
 		}
-
+		
 		if (isBought) {
 			purchases.put(time.getRunTime(), ci_id);
 			double solutionCost = SimulationLog.getInstance()
 					.getCISolutionCost(ci_id);
 			double profitToSet = getProfit(time) - solutionCost;
 			setProfit(time, profitToSet);
-			// System.out.println("Team " + teamName + ": solution baught at " +
-			// time + "seconds for "
-			// +
-			// SimulationLog.getInstance(courseName).getCISolutionCost(ci_id));
+			 System.out.println("Team " + teamName + ": solution baught at " +
+			 time.toString() + "seconds.");
+		} else{
+			System.out.println("Team " + teamName + ": solution solved at " +
+					 time.toString() + "seconds.");
 		}
-		return true;
+		return;
 	}
 
 	/**

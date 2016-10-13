@@ -101,6 +101,10 @@ public class SimulationTime implements Serializable {
 	public int getSessionInRound() {
 		return (getRunTimeInRound() / run_time) + 1;
 	}
+	
+	public int getSession(){
+		return (getRunTime() / run_time) + 1;
+	}
 
 	public int getRunTime() {
 		return time;
@@ -108,6 +112,10 @@ public class SimulationTime implements Serializable {
 
 	public int getRunTimeInRound() {
 		return time - ((getRound() - 1) * getRoundRunTime());
+	}
+	
+	public int getTimeUntilSessionEnds(){
+		return run_time - getRunTimeInRound() % run_time; 
 	}
 
 	public int getTimeIncludingBreaks() {

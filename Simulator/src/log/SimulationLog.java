@@ -13,6 +13,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import utils.SimulationTime;
+import utils.SolutionElement;
 
 import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblService;
@@ -32,6 +33,10 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	/**
+	 * key = ci_id, value = set of events
+	 */
+	private HashMap<Byte,HashSet<String>> cis_events;
+	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
 	 */
@@ -42,7 +47,7 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<Byte, HashSet<Byte>> affected_services;
 	/**
-	 * The simulation's incidents and their events (key = incident_id, value=set
+	 * The simulation's incidents and their events (key = time, value=set
 	 * of events)
 	 */
 	private HashMap<SimulationTime, HashSet<String>> time_events;
@@ -109,7 +114,10 @@ public class SimulationLog extends Thread implements Serializable {
 		if (time_events == null) {
 			time_events = LogUtils.getTimetEvents();
 		}
-
+		
+		if (cis_events == null){
+			cis_events = LogUtils.getCiEvents();
+		}
 		if (marom == null || rakia == null) {
 			List<TblService> services = new TblServiceDaoImpl()
 					.getAllActiveServices();
@@ -268,8 +276,8 @@ public class SimulationLog extends Thread implements Serializable {
 	/**
 	 * @return The events of the ci
 	 */
-	HashSet<String> getTimeEvents(byte ci_id) {
-		return time_events.get(ci_id);
+	HashSet<String> getCiEvents(byte ci_id) {
+		return cis_events.get(ci_id);
 	}
 
 	/**
@@ -291,23 +299,6 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	double getServiceSolutionCost(byte ci_id) {
 		return getCISolutionCost(ci_id) / getAffectingCis().get(ci_id).size();
-	}
-
-	/**
-	 * Fires a solution in the team's logs
-	 * 
-	 * @param team
-	 *            The team that solved the incident
-	 * @param ci_id
-	 *            The incident that was solved
-	 * @param time
-	 *            The time when the incident was solved
-	 * @param isBought
-	 *            True weather the incident was bought. False otherwise.
-	 */
-	public boolean incidentSolved(boolean team, byte ci_id,
-			SimulationTime time, boolean isBought) {
-		return getTeam(team).incidentSolved(ci_id, time, isBought);
 	}
 
 	/**
@@ -363,11 +354,6 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	public HashMap<SimulationTime, HashSet<Byte>> getIncidents() {
 		return time_cis;
-	}
-
-	public void addSolution(SolutionLog sol) {
-		solutionQueue.offer(sol);
-		solutionHistory.add(sol);
 	}
 
 	public Set<SolutionLog> getSolutionHistory() {
@@ -469,5 +455,45 @@ public class SimulationLog extends Thread implements Serializable {
 
 	public double getMTRS(boolean team) {
 		return getTeam(team).getMTRS();
+	}
+
+	public boolean checkSolution(String courseName, String team, byte ci_id, SimulationTime time,
+			int solution, boolean isBought) {
+
+		boolean isSolved = false;
+		boolean temConst = getTeamConst(team);
+		TeamLog teamLog = getTeam(temConst);
+		if (teamLog == null) {
+			// should not happen
+			return false;
+		}
+		boolean is_open = teamLog.isIncidentOpen(ci_id, time);
+		if (!is_open) {
+			// ci is up
+			return false;
+		}
+		
+		if (isBought) {
+			isSolved = true;
+		} else {
+			SolutionElement sol = LogUtils.getCiSolutions().get(ci_id);
+			if (sol == null) {
+				// should not happen
+				return false;
+			}
+			int real_solution = (temConst) ? sol.getSolution_marom() : sol
+					.getSolution_rakia();
+			isSolved = solution == real_solution;
+		}
+		
+		if (!isSolved){
+			return false;
+		}
+		
+		teamLog.incidentSolved(ci_id, time, isBought);
+		SolutionLog sol = new SolutionLog(courseName, team, ci_id);
+		solutionQueue.offer(sol);
+		solutionHistory.add(sol);
+		return true;
 	}
 }

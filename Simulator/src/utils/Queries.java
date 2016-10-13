@@ -53,4 +53,52 @@ public class Queries {
 			"join tblService S on CMDB.service_id = S.service_id\r\n" + 
 			"where I.isActive = 1 and S.isActive = 1\r\n" + 
 			"order by time;";
+	
+	public static final String ci_events = "select CI.ci_id, S.event_id\r\n" + 
+			"from tblCI CI join tblCMDB CMDB on CI.ci_id = CMDB.ci_id\r\n" + 
+			"join tblService S on CMDB.service_id = S.service_id\r\n" + 
+			"where CI.isActive = 1 and CMDB.isActive = 1 and S.isActive = 1\r\n" + 
+			"order by ci_id";
+	
+	public static final String ci_sol_costs = "select CI.ci_id, Sup.solution_cost * C.value as 'solution_cost'\r\n" + 
+			"from tblCI CI join tblSupplier Sup on CI.supplier_level2 = Sup.supplier_name\r\n" + 
+			"	join tblCurrency C on Sup.currency = C.currency\r\n" + 
+			"where CI.isActive = 1 and Sup.isActive = 1 and C.isActive = 1";
+	
+	public static final String report_data = "select I.time,\r\n" + 
+			"	S.event_id, \r\n" + 
+			"	I.ci_id, \r\n" + 
+			"	CI.ci_name, \r\n" + 
+			"	S.service_id, \r\n" + 
+			"	S.service_code,\r\n" + 
+			"    Sol.solution_id,\r\n" + 
+			"	Sol.solution_marom,\r\n" + 
+			"	Sol.solution_rakia,\r\n" + 
+			"	P.priorityName,\r\n" + 
+			"	PC.pCost,\r\n" + 
+			"	S.fixed_income,\r\n" + 
+			"	Sup.solution_cost * C.value as 'solution_cost',\r\n" + 
+			"    case when I.ci_id in (SELECT CMDB.ci_id \r\n" + 
+			"		from SIMULATOR.tblCMDB CMDB\r\n" + 
+			"		where CMDB.isActive = 1\r\n" + 
+			"		group by CMDB.ci_id\r\n" + 
+			"		having count(CMDB.service_id) > 1) then 1 else 0 end as 'isSystematic'\r\n" + 
+			"		from tblIncident I join tblCI CI on I.ci_id = CI.ci_id\r\n" + 
+			"	join tblSolution Sol on CI.solution_id = Sol.solution_id\r\n" + 
+			"	join tblSupplier Sup on CI.supplier_level2  = Sup.supplier_name\r\n" + 
+			"	join tblCMDB CMDB on CI.ci_id = CMDB.ci_id\r\n" + 
+			"	join tblService S on CMDB.service_id = S.service_id\r\n" + 
+			"	join tblPriority P on S.urgency = P.urgency and S.impact = P.impact\r\n" + 
+			"	join tblPriority_Cost PC on P.priorityName = PC.pName\r\n" + 
+			"	join tblCurrency C on Sup.currency = C.currency\r\n" + 
+			"where I.isActive = 1 \r\n" + 
+			"	and CI.isActive = 1 \r\n" + 
+			"	and Sol.isActive = 1 \r\n" + 
+			"	and Sup.isActive = 1 \r\n" + 
+			"	and CMDB.isActive = 1 \r\n" + 
+			"	and S.isActive = 1\r\n" + 
+			"	and P.isActive = 1\r\n" + 
+			"	and PC.isActive = 1\r\n" + 
+			"	and C.isActive = 1\r\n" + 
+			"order by time";
 }

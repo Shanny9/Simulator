@@ -1,22 +1,22 @@
 package utils;
 
 public class SolutionElement {
-	private int incident_id;
+	private int ci_id;
 	private int solution_marom;
 	private int solution_rakia;
 	private double solution_cost;
 	private String currency;
 	/**
-	 * @param incident_id
+	 * @param ci_id
 	 * @param solution_marom
 	 * @param solution_rakia
 	 * @param solution_cost
 	 * @param currency
 	 */
-	public SolutionElement(int incident_id, int solution_marom, int solution_rakia, double solution_cost,
+	public SolutionElement(int ci_id, int solution_marom, int solution_rakia, double solution_cost,
 			String currency) {
 		super();
-		this.incident_id = incident_id;
+		this.ci_id = ci_id;
 		this.solution_marom = solution_marom;
 		this.solution_rakia = solution_rakia;
 		this.solution_cost = solution_cost;
@@ -26,13 +26,13 @@ public class SolutionElement {
 	 * @return the incident_id
 	 */
 	public int getIncident_id() {
-		return incident_id;
+		return ci_id;
 	}
 	/**
-	 * @param incident_id the inciden_id to set
+	 * @param ci_id the inciden_id to set
 	 */
 	public void setIncident_id(int inciden_id) {
-		this.incident_id = inciden_id;
+		this.ci_id = inciden_id;
 	}
 	/**
 	 * @return the solution_marom

@@ -1,10 +1,6 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,15 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import log.SimulationLog;
-import log.SolutionLog;
-import utils.ClockIncrementor;
-import utils.Queries;
-import utils.SimulationTime;
-import utils.SolutionElement;
+import org.json.simple.JSONObject;
 
-import com.google.gson.GsonBuilder;
-import com.jdbc.DBUtility;
+import log.SimulationLog;
+import utils.ClockIncrementor;
+import utils.SimulationTime;
 
 /**
  * Servlet implementation class ClientController
@@ -89,13 +81,6 @@ public class ClientController extends HttpServlet {
 		String action = request.getParameter("action");
 		boolean isBaught = false;
 		switch (action) {
-		case "getSolutions":
-			// System.out.println("ClientController: getSolutions= " +
-			// getSolutions());
-			response.getWriter().print(
-					new GsonBuilder().setPrettyPrinting().create()
-							.toJson(getSolutions()));
-			break;
 		case "checkCi":
 			team = request.getParameter("team");
 			ci_id = Byte.valueOf(request.getParameter("ci_id"));
@@ -112,11 +97,11 @@ public class ClientController extends HttpServlet {
 			team = request.getParameter("team");
 			ci_id = Byte.valueOf(request.getParameter("ci_id"));
 			time = ClockIncrementor.getSimRunTime();
-
-			SimulationLog.getInstance().incidentSolved(
-					SimulationLog.getTeamConst(team), ci_id, time, isBaught);
-			log.SimulationLog.getInstance().addSolution(new SolutionLog(courseName, team, ci_id));
-			response.getWriter().print(true);
+			int solution = Integer.valueOf(request.getParameter("solution"));
+			boolean isSolved = SimulationLog.getInstance().checkSolution(courseName, team,ci_id,time,solution,isBaught);
+			JSONObject result = new JSONObject();
+			result.put("message", isSolved);
+			response.getWriter().print(result);
 			break;
 		case "checkSimulator":
 			while (!ClockIncrementor.isRunning()) {
@@ -164,32 +149,5 @@ public class ClientController extends HttpServlet {
 					.getServerPaused());
 			break;
 		}
-	}
-
-	/**
-	 * 
-	 * @return A {@code HashMap} (key= {@code ci_id}, value=
-	 *         {@code SolutionElement}) of all solutions including relevant data
-	 *         for the client screen.
-	 */
-	private HashMap<Integer, SolutionElement> getSolutions() {
-		HashMap<Integer, SolutionElement> solutions = new HashMap<>();
-		try {
-			Statement stmt = DBUtility.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(Queries.solutionsForClient);
-			while (rs.next()) {
-				solutions.put(
-						rs.getInt("ci_id"),
-						new SolutionElement(rs.getInt("ci_id"), rs
-								.getInt("solution_marom"), rs
-								.getInt("solution_rakia"), rs
-								.getDouble("solution_cost"), rs
-								.getString("currency")));
-			}
-			return solutions;
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-		return null;
 	}
 }

@@ -9,15 +9,24 @@
   <welcome-file-list>
     <welcome-file>opening.jsp</welcome-file>
     <welcome-file>login.jsp</welcome-file>
+    <welcome-file>doc/index.html</welcome-file>
   </welcome-file-list>
   <servlet>
     <servlet-name>DataController</servlet-name>
     <servlet-class>com.servlet.DataController</servlet-class>
   </servlet>
+   <servlet>  
+	<servlet-name>DownloadServlet</servlet-name>  
+	<servlet-class>com.servlet.DownloadServlet</servlet-class>  
+	</servlet>  
   <servlet-mapping>
     <servlet-name>DataController</servlet-name>
     <url-pattern>/DataController</url-pattern>
   </servlet-mapping>
+	  <servlet-mapping>  
+	<servlet-name>DownloadServlet</servlet-name>  
+	<url-pattern>/servlet/DownloadServlet</url-pattern>  
+	</servlet-mapping>
   <resource-ref>
     <description>ITIL Simulator</description>
     <res-ref-name>jdbc/SIMULATOR</res-ref-name>

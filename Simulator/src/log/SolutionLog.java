@@ -13,7 +13,7 @@ public class SolutionLog implements Serializable{
 	
 	public SolutionLog(String courseName, String team, byte ci_id){
 		this.team = team;
-		this.events = SimulationLog.getInstance().getTimeEvents(ci_id);
+		this.events = SimulationLog.getInstance().getCiEvents(ci_id);
 	}
 	
 	/**

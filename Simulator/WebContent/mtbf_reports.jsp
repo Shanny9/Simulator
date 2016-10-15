@@ -99,10 +99,10 @@ li {
 							<a id="menu_toggle"><i class="fa fa-bars"></i></a>
 						</div>
 
-						<ul class="nav navbar-nav navbar-right">
+<!-- 						<ul class="nav navbar-nav navbar-right">
 							<li class=""><a href="javascript:;"
 								class="user-profile dropdown-toggle" data-toggle="dropdown"
-								aria-expanded="false"> <!-- <img src="images/img.jpg" alt=""> -->John
+								aria-expanded="false"> <img src="images/img.jpg" alt="">John
 									Doe <span class=" fa fa-angle-down"></span>
 							</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -154,7 +154,7 @@ li {
 										</div>
 									</li>
 								</ul></li>
-						</ul>
+						</ul> -->
 					</nav>
 				</div>
 			</div>

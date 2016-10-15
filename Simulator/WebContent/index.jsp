@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="css/bootstrap.min.css">
 
 <%
-	Object jspRound = session.getAttribute("selectedRound");
-	Object jspCourse = session.getAttribute("selectedCourseName");
+	Object jspRound = getServletContext().getAttribute("selectedRound");
+	Object jspCourse = getServletContext().getAttribute("selectedCourseName");
 	if (jspRound != null && jspCourse != null) {
 		Integer round = Integer.valueOf(String.valueOf(jspRound));
 %>

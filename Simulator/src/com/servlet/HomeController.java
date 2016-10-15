@@ -1,10 +1,8 @@
 package com.servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,17 +17,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.simple.JSONObject;
-
 import log.FilesUtils;
 import log.Settings;
 import log.SimulationLog;
 import log.SimulationTester;
 import log.SolutionLog;
+
+import org.json.simple.JSONObject;
+
 import utils.ClockIncrementor;
 import utils.DBValidator;
 import utils.PasswordAuthentication;
-import utils.ReportGenerator;
 import utils.SimulationTime;
 import utils.TimerManager;
 
@@ -287,6 +284,7 @@ public class HomeController extends HttpServlet {
 			// need to refresh.
 			getServletContext().setAttribute("selectedCourseName",
 					selectedCourseName);
+			getServletContext().setAttribute("selectedRound", round);
 			response.sendRedirect("index.jsp");
 			break;
 			

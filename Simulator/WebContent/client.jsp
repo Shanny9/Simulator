@@ -52,6 +52,7 @@
 %>
 <script type="text/javascript">
 	var courseName =  '<%= jspCourse %>';
+	console.log("client.jsp - courseName: " + courseName);
 </script>
 <%
 	}//end if jspCourse

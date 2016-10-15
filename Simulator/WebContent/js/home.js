@@ -66,11 +66,11 @@ var isSimulatorStarted = false;
 /**
  * The current score of Marom team.
  */
-var maromScore;
+var maromScore = 0;
 /**
  * The current score of Rakia team.
  */
-var rakiaScore;
+var rakiaScore = 0;
 /**
  * Indicates whether the round is finished.
  */
@@ -82,7 +82,7 @@ var solutionEventSource;
 /**
  * The event source of profits/scores sent from the servlet.
  */
-var profitEventSource;
+//var profitEventSource;
 /**
  * Listens to solutions sent from the servlet and updates the color of the
  * event.
@@ -100,39 +100,95 @@ var solutionListener = function(e) {
 					.addClass("success");
 		}
 	}
+	if (data.team == "Marom"){
+		setScoresOnBoard(++maromScore,rakiaScore);
+	} else{
+		setScoresOnBoard(maromScore,++rakiaScore);
+	}
+	
 	console.log("team= " + data.team + ", events= " + data.events);
 };
-/**
- * Listens to profits/scores sent from the servlet, updates the screen and
- * recolors them accordingly.
- */
-var profitListener = function(e) {
 
-	var data = JSON.parse(e.data);
-	$.each(data, function(i, obj) {
-		if (obj.team == 'marom') {
-			maromScore = obj.profit;
-		} else {
-			rakiaScore = obj.profit;
-		}
-		var scoreId = '#' + obj.team + '-score';
-		$(scoreId).html(obj.profit.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
-	});
-
-	var marom = '#marom-score';
-	var rakia = '#rakia-score';
-
+function setScoresOnBoard(marom,rakia){
+	var marom_id = '#marom-score';
+	var rakia_id = '#rakia-score';
+	
+	$(marom_id).html(marom);
+	$(rakia_id).html(rakia);
+	
 	if (maromScore > rakiaScore) {
-		$(marom).css('color', winnerColor);
-		$(rakia).css('color', looserColor);
+		$(marom_id).css('color', winnerColor);
+		$(rakia_id).css('color', looserColor);
 	} else if (maromScore < rakiaScore) {
-		$(rakia).css('color', winnerColor);
-		$(marom).css('color', looserColor);
+		$(rakia_id).css('color', winnerColor);
+		$(marom_id).css('color', looserColor);
 	} else {
-		$(marom).css('color', regularColor);
-		$(rakia).css('color', regularColor);
+		$(marom_id).css('color', regularColor);
+		$(rakia_id).css('color', regularColor);
 	}
-};
+}
+///**
+// * Listens to profits/scores sent from the servlet, updates the screen and
+// * recolors them accordingly.
+// */
+//var profitListener = function(e) {
+//
+//	var data = JSON.parse(e.data);
+//	$.each(data, function(i, obj) {
+//		if (obj.team == 'marom') {
+//			maromScore = obj.profit;
+//		} else {
+//			rakiaScore = obj.profit;
+//		}
+//		var scoreId = '#' + obj.team + '-score';
+//		$(scoreId).html(obj.profit.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+//	});
+//
+//	var marom = '#marom-score';
+//	var rakia = '#rakia-score';
+//
+//	if (maromScore > rakiaScore) {
+//		$(marom).css('color', winnerColor);
+//		$(rakia).css('color', looserColor);
+//	} else if (maromScore < rakiaScore) {
+//		$(rakia).css('color', winnerColor);
+//		$(marom).css('color', looserColor);
+//	} else {
+//		$(marom).css('color', regularColor);
+//		$(rakia).css('color', regularColor);
+//	}
+//};
+
+//request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser.'); 
+    return;
+  }
+
+  if (Notification.permission !== "granted")
+    Notification.requestPermission();
+});
+
+function notifyMe(title, icon, body, url) {
+	  if (Notification.permission !== "granted")
+	    Notification.requestPermission();
+	  else {
+	    var notification = new Notification(title, {
+	    	//TODO: choose other icon
+	      icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+	      body: body,
+	    });
+	    
+	    if (url != undefined){
+		    notification.onclick = function () {
+		      window.open(url);      
+		    };
+	    }
+
+	  }
+
+	}
 
 $(document).ready(function() {
 
@@ -234,14 +290,14 @@ function setSolutionSource() {
 	solutionEventSource.addEventListener('message', solutionListener, false);
 }
 
-/**
- * Bonds the {@code profitEventSource} variable to the profit/score stream sent
- * from the servlet.
- */
-function setProfitSource() {
-	profitEventSource = new EventSource("HomeController?action=profitStream");
-	profitEventSource.addEventListener('message', profitListener, false);
-}
+///**
+// * Bonds the {@code profitEventSource} variable to the profit/score stream sent
+// * from the servlet.
+// */
+//function setProfitSource() {
+//	profitEventSource = new EventSource("HomeController?action=profitStream");
+//	profitEventSource.addEventListener('message', profitListener, false);
+//}
 
 /**
  * Fetches events from the servlet and puts them in {@code eventsData} variable.
@@ -250,7 +306,7 @@ function getEvents() {
 	$.ajax({
 		url : "HomeController",
 		data : {
-			action : "getEvents",
+			action : "getEvents"
 		},
 		dataType : "json",
 		async : false,
@@ -333,9 +389,9 @@ function showSessionEvents() {
 		sortedEventsData.push(v);
 	});
 	sortedEventsData.sort(compare);
-	var eventsOnScreen = 0;
+	var events_on_screen = 0;
 	$.each(sortedEventsData, function(i, time_event) {
-		if (time_event.round == round && time_event.session == session
+		if (time_event.session == session
 				&& time_event.time <= elapsedRunTime) {
 			isSolvedMarom = false;
 			isSolvedRakia = false;
@@ -350,22 +406,24 @@ function showSessionEvents() {
 						}
 					}
 				});
-			});
+				
+				var row = events_on_screen + 1;
+				// marom
+				$(".score-tbl tbody tr:nth-child(" + row + ")").eq(0).addClass(
+						(isSolvedMarom) ? "success" : "danger");
+				// rakia
+				$(".score-tbl tbody tr:nth-child(" + row + ")").eq(1).addClass(
+						(isSolvedRakia) ? "success" : "danger");
+				
 			
-			var row = eventsOnScreen + 1;
-			// marom
-			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(0).addClass(
-					(isSolvedMarom) ? "success" : "danger");
-			// rakia
-			$(".score-tbl tbody tr:nth-child(" + row + ")").eq(1).addClass(
-					(isSolvedRakia) ? "success" : "danger");
-
-			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
-					.html(time_event.event_id);
-			$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
-					.html(time_event.time.toHHMMSS());
-			delete eventsData[i];
-			eventsOnScreen++;
+				$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(1)")
+						.html(event);
+				$(".score-tbl tbody tr:nth-child(" + row + ") td:nth-child(2)")
+						.html(time_event.time.toHHMMSS());
+				delete eventsData[i];
+				events_on_screen++;
+				eventsOnScreen++;
+			});
 		}
 	});
 }
@@ -438,13 +496,14 @@ function startSimulator() {
 			$("#round").html(round);
 
 			getEvents();
+			getTeamScores();
 			getSolutionHistory();
 			getTime();
 			showSessionEvents();
 
 			clockInterval = setInterval(incrementClock, 1000);
 			setSolutionSource();
-			setProfitSource();
+//			setProfitSource();
 		},
 		error : function(e) {
 			console.log("js:startSimulator: Error in starting simulator... "
@@ -528,6 +587,25 @@ function pauseSimulator() {
 		},
 		error : function(e) {
 			console.log("js:pauseSimulator: Error in pauseSimulator.");
+		}
+	});
+}
+
+function getTeamScores(){
+	$.ajax({
+		url : "HomeController",
+		data : {
+			action : "getTeamScores"
+		},
+		dataType : "json",
+		async : false,
+		success : function(data) {
+				maromScore = data.marom; 
+				rakiaScore = data.rakia;
+				setScoresOnBoard(maromScore,rakiaScore);
+		},
+		error : function(e) {
+			console.log("js:getIncidents: Error in getting events.");
 		}
 	});
 }
@@ -659,7 +737,7 @@ window.setInterval(function() {
 		},
 		error : function(xhr, ajaxOptions, thrownError) {
 			if (connection) {
-				alert("Lost connection to the server");
+				notifyMe("Connection Lost","","The connection to the server is lost. Waiting for the connection to reestablish...","");
 				clearInterval(clockInterval);
 			}
 			connection = false;

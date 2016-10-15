@@ -218,9 +218,6 @@ function incrementClock() {
 function startSimulator() {
 	// must not be called outside&before startSimulator.
 	getSettings(courseName);
-	currentRound = settings["currentRound"];// TODO:
-	console.log(currentRound);
-	finishRound = settings["roundTime"] * (settings["currentRound"] + 1);
 	getTime();
 	clockInterval = setInterval(incrementClock, 1000);
 }
@@ -242,6 +239,11 @@ function getTime() {
 			var remainingClock = data.remainingClock;
 			showTime = Math.floor(remainingClock + latency);
 			elapsedTime = Math.floor(data.elapsedClock + latency);
+			
+			currentRound = data["round"];
+			console.log(currentRound);
+			finishRound = settings["roundTime"] * (currentRound + 1);
+			
 			console.log("remainingClock " + remainingClock);
 			console.log("elapsed time " + elapsedTime);
 			console.log("latency: " + latency);

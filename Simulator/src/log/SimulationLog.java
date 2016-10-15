@@ -111,9 +111,6 @@ public class SimulationLog extends Thread implements Serializable {
 		if (cis_time == null) {
 			cis_time = LogUtils.getCisTime();
 		}
-		if (time_events == null) {
-			time_events = LogUtils.getTimetEvents();
-		}
 		
 		if (cis_events == null){
 			cis_events = LogUtils.getCiEvents();
@@ -144,7 +141,7 @@ public class SimulationLog extends Thread implements Serializable {
 
 			marom = new TeamLog("Marom", service_logs, initDiff);
 			rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
-
+			
 			System.out.println("SimulationLog: SimulationLog is initalized.");
 		}
 	}
@@ -157,6 +154,11 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	public void setRound(int currentRound) {
 		round = currentRound;
+		
+		if (time_events == null) {
+			time_events = LogUtils.getRoundEvents(currentRound);
+		}
+		
 		marom.setRound(currentRound);
 		rakia.setRound(currentRound);
 
@@ -396,18 +398,18 @@ public class SimulationLog extends Thread implements Serializable {
 	 * @return The events considering stretching and pause times
 	 */
 	@SuppressWarnings("unchecked")
-	public List<JSONObject> getEventsForHomeScreen() {
+	public List<JSONObject> getEventsForHomeScreen(int round) {
 		List<JSONObject> eventList = new ArrayList<JSONObject>();
 
 		if (time_cis != null) {
-			for (Map.Entry<SimulationTime, HashSet<String>> time_event : time_events
+			for (Map.Entry<SimulationTime, HashSet<String>> round_events : time_events
 					.entrySet()) {
 				JSONObject row = new JSONObject();
-				row.put("time", time_event.getKey().getRunTime());
-				row.put("round", time_event.getKey().getRound());
-				row.put("session", time_event.getKey().getSessionInRound());
+				row.put("time", round_events.getKey().getRunTime());
+//				row.put("round", round_events.getKey().getRound());
+				row.put("session", round_events.getKey().getSessionInRound());
 				JSONArray events = new JSONArray();
-				events.addAll(time_event.getValue());
+				events.addAll(round_events.getValue());
 				row.put("events", events);
 				eventList.add(row);
 			}

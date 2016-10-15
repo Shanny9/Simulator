@@ -5,13 +5,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import utils.Queries;
 import utils.SimulationTime;
@@ -23,6 +24,7 @@ import com.daoImpl.TblIncidentDaoImpl;
 import com.jdbc.DBUtility;
 import com.model.TblCMDB;
 import com.model.TblIncident;
+import com.model.TblIncidentPK;
 
 public class LogUtils {
 
@@ -30,13 +32,14 @@ public class LogUtils {
 	private static HashMap<Byte, HashSet<Byte>> dbAffectedServices;
 	private static HashMap<Byte, Double> ciSolCosts;
 	private static HashMap<Byte, Double> serviceCosts;
-	private static HashMap<Byte, IncidentLog> incidentLogs;
-	private static HashMap<SimulationTime, HashSet<String>> time_events;
+	private static Collection<IncidentLog> incidentLogs;
+	private static HashMap<SimulationTime, HashSet<String>> round_events;
 	private static HashMap<Byte, String> servicePriority;
 	private static HashMap<SimulationTime, HashSet<Byte>> time_cis;
 	private static HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	private static HashMap<Byte, SolutionElement> cis_solutions;
-	private static HashMap<Byte,HashSet<String>> ci_events;
+	private static HashMap<Byte, HashSet<String>> ci_events;
+	private static HashMap<Integer, Integer> incidents_in_round;
 
 	public static void runAll() {
 		LogUtils.dbAffectingCis = getDBAffectingCIs();
@@ -44,11 +47,12 @@ public class LogUtils {
 		LogUtils.ciSolCosts = getCISolCosts();
 		LogUtils.serviceCosts = getServiceDownTimeCosts();
 		LogUtils.incidentLogs = getIncidentLogs();
-		LogUtils.time_events = getTimetEvents();
 		LogUtils.servicePriority = getServicePriorities();
 		LogUtils.time_cis = getTimeCis();
+		LogUtils.cis_time = getCisTime();
 		LogUtils.cis_solutions = getCiSolutions();
 		LogUtils.ci_events = getCiEvents();
+		LogUtils.incidents_in_round = getIncidentsInRound();
 	}
 
 	static HashMap<Byte, SolutionElement> getCiSolutions() {
@@ -176,6 +180,11 @@ public class LogUtils {
 		return null;
 	}
 
+	/**
+	 * @param round
+	 *            the current round
+	 * @return empty incident logs for the current round
+	 */
 	static HashMap<Byte, IncidentLog> getIncidentLogsOfRound(int round) {
 
 		if (incidentLogs == null) {
@@ -183,31 +192,36 @@ public class LogUtils {
 		}
 
 		HashMap<Byte, IncidentLog> incidentLogsOfRound = new HashMap<>();
-		for (Map.Entry<Byte, IncidentLog> entry : incidentLogs.entrySet()) {
-			if (round == 0
-					|| round == entry.getValue().getStartTime().getRound()) {
-				incidentLogsOfRound.put(entry.getKey(), entry.getValue());
+		for (IncidentLog inc_log : incidentLogs) {
+			if (round == 0 || round == inc_log.getStartTime().getRound()) {
+				incidentLogsOfRound.put(inc_log.getCiId(), inc_log);
 			}
 		}
 		return incidentLogsOfRound;
 	}
 
 	/**
-	 * @return Initialized incident logs
+	 * Note that 'incidentLog' does not have a unique id (a CI can have multiple
+	 * logs.).
+	 * 
+	 * @return empty incident logs for the entire course.
 	 */
-	static HashMap<Byte, IncidentLog> getIncidentLogs() {
+	static Collection<IncidentLog> getIncidentLogs() {
 
 		if (incidentLogs != null) {
 			return incidentLogs;
 		}
 
-		incidentLogs = new HashMap<>();
+		incidentLogs = new ArrayList<>();
 		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
 				.getAllActiveIncidents();
 		for (TblIncident inc : incidents) {
 			byte ci_id = inc.getCiId();
-			SimulationTime inc_time = inc.getSimulationTime();
-			incidentLogs.put(ci_id, new IncidentLog(inc_time, ci_id));
+			int time = inc.getIncidentTime();
+			TblIncidentPK inc_pk = new TblIncidentPK();
+			inc_pk.setCiId(ci_id);
+			inc_pk.setTime(time);
+			incidentLogs.add(new IncidentLog(inc_pk));
 		}
 		return incidentLogs;
 	}
@@ -263,28 +277,33 @@ public class LogUtils {
 	/**
 	 * @return The incidents and their events (key= time, value= set of events)
 	 */
-	public static HashMap<SimulationTime, HashSet<String>> getTimetEvents() {
+	public static HashMap<SimulationTime, HashSet<String>> getRoundEvents(
+			int round) {
 
-		if (time_events != null) {
-			return time_events;
+		if (round_events != null) {
+			return round_events;
 		}
 
-		time_events = new HashMap<>();
+		round_events = new HashMap<>();
 		try {
-			Statement stmt = DBUtility.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(Queries.eventsInTime);
+			PreparedStatement pstmt = DBUtility.getConnection()
+					.prepareStatement(Queries.eventsInTime);
+			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				SimulationTime time = new SimulationTime(rs.getInt("time"));
-				HashSet<String> events = time_events.get(time);
+				if (time.getRound() != round) {
+					continue;
+				}
+				HashSet<String> events = round_events.get(time);
 				if (events == null) {
 					events = new HashSet<String>();
 				}
 				events.add(String.valueOf(rs.getInt("event_id")));
-				time_events.put(time, events);
+				round_events.put(time, events);
 			}
 		} catch (SQLException e) {
 		}
-		return time_events;
+		return round_events;
 	}
 
 	/**
@@ -311,7 +330,7 @@ public class LogUtils {
 		}
 		return null;
 	}
-	
+
 	public static HashMap<Byte, HashSet<String>> getCiEvents() {
 		if (ci_events != null) {
 			return ci_events;
@@ -324,17 +343,36 @@ public class LogUtils {
 			while (rs.next()) {
 				byte ci_id = rs.getByte("ci_id");
 				HashSet<String> events = ci_events.get(ci_id);
-				if (events == null){
+				if (events == null) {
 					events = new HashSet<>();
 				}
 				events.add(rs.getString("event_id"));
-				ci_events.put(ci_id,events);
+				ci_events.put(ci_id, events);
 			}
 			return ci_events;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static HashMap<Integer, Integer> getIncidentsInRound() {
+		if (incidents_in_round != null) {
+			return incidents_in_round;
+		}
+
+		incidents_in_round = new HashMap<>();
+		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
+				.getAllActiveIncidents();
+		for (TblIncident inc : incidents) {
+			int round = inc.getSimulationTime().getRound();
+			Integer count = incidents_in_round.get(round);
+			if (count == null) {
+				count = 0;
+			}
+			incidents_in_round.put(round, ++count);
+		}
+		return incidents_in_round;
 	}
 
 	/**

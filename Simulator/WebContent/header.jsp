@@ -21,6 +21,7 @@
 								Course</a></li>
 						<li><a id="createc" class="mItem" href="newCourse.jsp">Create New
 								Course</a></li>
+						<li><a id="createc" class="mItem" href="selectCourse_file.jsp">Download Incident Flow File</a></li>
 					</ul></li>
 
 

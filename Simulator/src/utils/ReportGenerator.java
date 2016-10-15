@@ -116,7 +116,7 @@ public class ReportGenerator {
 	private static void exportToExcel(List<IncidentRow> incidents) {
 
 		// declare headers
-		String[] headers = new String[] { "Session", "Time", "Error",
+		String[] headers = new String[] { "Session", "Time", "Error", "CI ID",
 				"CI Name", "ID", "Service", "Note", "Q", "Marom", "Rakia",
 				"Remark" };
 
@@ -163,9 +163,11 @@ public class ReportGenerator {
 			// session column
 			if (++incident_in_session == IncidentRow
 					.getNumOfIncidentsInSession(record.getSession()).intValue()) {
-				sheet.addMergedRegion(new CellRangeAddress(row
-						- incident_in_session + 1, row, col, col));
 
+				if (incident_in_session > 1) {
+					sheet.addMergedRegion(new CellRangeAddress(row
+							- incident_in_session + 1, row, col, col));
+				}
 				incident_in_session = 0;
 			}
 			Cell sessionCell = data_row.createCell(col++);
@@ -194,6 +196,12 @@ public class ReportGenerator {
 			Cell eventCell = data_row.createCell(col++);
 			eventCell.setCellValue(record.getEvent_id());
 			eventCell.setCellStyle((CellStyle) styleRegistry
+					.get(MIDDLE_ALIGN_STYLE));
+
+			// ci id column
+			Cell ciIdCell = data_row.createCell(col++);
+			ciIdCell.setCellValue(record.getCiId());
+			ciIdCell.setCellStyle((CellStyle) styleRegistry
 					.get(MIDDLE_ALIGN_STYLE));
 
 			// ci name column
@@ -487,7 +495,7 @@ public class ReportGenerator {
 		/**
 		 * @return the ci_id
 		 */
-		public byte getCi_id() {
+		public byte getCiId() {
 			return incident.getCiId();
 		}
 

@@ -39,7 +39,18 @@ public class DataMaker {
 		}
 		return DataMaker.settings;
 	}
-
+	
+	public static JSONObject getGeneralData(int round){
+		JSONObject obj = new JSONObject();
+				
+		obj.put("incidents",LogUtils.getIncidentsInRound().get(round));
+		obj.put("services", new TblServiceDaoImpl().getActiveServiceCount());
+		obj.put("rounds", settings.getRounds());
+		obj.put("round_time", settings.getRoundTime());
+		obj.put("rounds_done", settings.getRoundsDone().size());
+		return obj;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static JSONArray getBizUnits(boolean isAbbreviated,
 			boolean isHierachical, byte service_id) {

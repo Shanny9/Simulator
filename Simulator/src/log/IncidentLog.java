@@ -2,6 +2,8 @@ package log;
 
 import java.io.Serializable;
 
+import com.model.TblIncidentPK;
+
 import utils.SimulationTime;
 
 /**
@@ -28,10 +30,10 @@ public class IncidentLog implements Serializable {
 	 * @param start_time
 	 * @param ci_id
 	 */
-	public IncidentLog(SimulationTime start_time, byte ci_id) {
+	public IncidentLog(TblIncidentPK inc_pk) {
 		super();
-		this.ci_id = ci_id;
-		this.start_time = start_time.getRunTime();
+		this.ci_id = inc_pk.getCiId();
+		this.start_time = inc_pk.getTime();
 	}
 
 	/**

@@ -170,7 +170,7 @@ public class HomeController extends HttpServlet {
 			break;
 		case "getEvents":
 			response.getWriter().print(
-					SimulationLog.getInstance().getEventsForHomeScreen());
+					SimulationLog.getInstance().getEventsForHomeScreen(round));
 			break;
 		case "getSolutionHistory":
 			response.getWriter().write(
@@ -257,6 +257,14 @@ public class HomeController extends HttpServlet {
 
 			response.getOutputStream().print(courseExists);
 			break;
+		case "getTeamScores":
+			int maromScore = SimulationLog.getInstance().getTeam(SimulationLog.MAROM).getScore();
+			int rakiaScore = SimulationLog.getInstance().getTeam(SimulationLog.RAKIA).getScore();
+			JSONObject scores = new JSONObject();
+			scores.put("marom", maromScore);
+			scores.put("rakia", rakiaScore);
+			response.getWriter().print(scores);
+		break;
 		case "getRounds":
 			int tot_rounds = FilesUtils.openSettings(
 					request.getParameter("directory")).getRounds();

@@ -48,6 +48,10 @@ public class TeamLog implements Serializable {
 	 * The status of the log
 	 */
 	private boolean isFinished;
+	/**
+	 * The team's score
+	 */
+	private int score = 0;
 
 	/**
 	 * @param initProfit
@@ -128,7 +132,9 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-
+		
+		score++;
+		
 		incident_logs.get(ci_id).close(time);
 
 		HashSet<Byte> affectedServices = SimulationLog.getInstance()
@@ -363,6 +369,10 @@ public class TeamLog implements Serializable {
 
 	HashMap<Byte, IncidentLog> getIncident_logs() {
 		return incident_logs;
+	}
+	
+	public int getScore(){
+		return score;
 	}
 
 	public HashMap<Byte, IncidentLog> getClosedIncidentLogs() {

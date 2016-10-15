@@ -27,6 +27,7 @@ function generateFile(round, service, team){
 			service: service,
 			team: team
 		},
+		
 /*		beforeSend: function(){
 			$('#loading').css("display","block");
 		},*/

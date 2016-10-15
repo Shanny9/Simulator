@@ -187,7 +187,6 @@ function getCatagories(){
 	return catagory;
 }
 
-
 /*******  Creates the visualization   *******/
 function setVisualization(round, service, team, isDrawLegend){
 	// Dimensions of sunburst.

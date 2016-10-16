@@ -47,14 +47,20 @@ public class DBUtility {
 		String dbUrl = urlPattern.replace("[driver]", driver)
 				.replace("[server]", server).replace("[port]", port)
 				.replace("[schema]", schema);
-
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection(dbUrl, username, password);
-		} catch (Exception e) {
-			// com.mysql.jdbc.exceptions.jdbc4.CommunicationsException :
-			// communications link failure
-			e.printStackTrace();
+		boolean connected = false;
+		
+		while (!connected) {
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				connection = DriverManager.getConnection(dbUrl, username,
+						password);
+				connected = true;
+			} catch (Exception e) {
+				// com.mysql.jdbc.exceptions.jdbc4.CommunicationsException :
+				// communications link failure
+				System.out.println("createNewConnection Method: "
+						+ e.getMessage());
+			}
 		}
 		return connection;
 	}

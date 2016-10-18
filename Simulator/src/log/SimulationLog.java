@@ -412,7 +412,6 @@ public class SimulationLog extends Thread implements Serializable {
 					.entrySet()) {
 				JSONObject row = new JSONObject();
 				row.put("time", round_events.getKey().getRunTime());
-//				row.put("round", round_events.getKey().getRound());
 				row.put("session", round_events.getKey().getSessionInRound());
 				JSONArray events = new JSONArray();
 				events.addAll(round_events.getValue());

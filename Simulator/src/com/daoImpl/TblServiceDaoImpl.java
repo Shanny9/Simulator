@@ -104,7 +104,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
-				service.setEventId(rs.getByte("event_id"));
+				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
 			}
 		} catch (SQLException e) {
@@ -135,7 +135,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
-				service.setEventId(rs.getByte("event_id"));
+				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
 			}
 		} catch (SQLException e) {
@@ -166,7 +166,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
-				service.setEventId(rs.getByte("event_id"));
+				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
 			}
 		} catch (SQLException e) {
@@ -198,7 +198,7 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setSupplierLevel2(rs.getString("supplier_level2"));
 				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
-				service.setEventId(rs.getByte("event_id"));
+				service.setEventId(rs.getInt("event_id"));
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());

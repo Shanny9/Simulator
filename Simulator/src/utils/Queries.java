@@ -17,7 +17,7 @@ public class Queries {
 	 *         (int)</li> <li>{@code solution_cost} (int)</li> <li>
 	 *         {@code currency} (String)</li>
 	 */
-	public static final String solutionsForClient = "select I.ci_id, Sol.solution_marom, Sol.solution_rakia,\r\n" + 
+	public static final String solutionsForClient = "select I.ci_id, Sol.solution_id, Sol.solution_marom, Sol.solution_rakia,\r\n" + 
 			"Sup.solution_cost, Sup.currency\r\n" + 
 			"from tblIncident I join tblCI CI on I.ci_id = CI.ci_id\r\n" + 
 			"join tblSolution Sol on CI.solution_id = Sol.solution_id\r\n" + 
@@ -31,7 +31,11 @@ public class Queries {
 	public static final String servicePriorities = "select service_id, priorityName from tblService S \r\n" + 
 			"join tblPriority P on S.urgency = P.urgency and S.impact  = P.impact\r\n" + 
 			"where S.isActive = 1 and P.isActive = 1;";
-
+	
+	
+	public static final String service_prioritization = "select S.service_id, S.service_code, S.service_name, S.urgency,S.impact, S.isTechnical, P.priorityName\r\n" + 
+			"	from tblService S join tblPriority P on S.urgency = P.urgency and S.impact = P.impact\r\n" + 
+			"	where S.isActive = 1 and P.isActive = 1;";
 	/**
 	 * @param service_ID
 	 *            (byte)
@@ -65,7 +69,7 @@ public class Queries {
 			"	join tblCurrency C on Sup.currency = C.currency\r\n" + 
 			"where CI.isActive = 1 and Sup.isActive = 1 and C.isActive = 1";
 	
-	public static final String report_data = "select I.time,\r\n" + 
+	public static final String incidents_flow = "select I.time,\r\n" + 
 			"	S.event_id, \r\n" + 
 			"	I.ci_id, \r\n" + 
 			"	CI.ci_name, \r\n" + 

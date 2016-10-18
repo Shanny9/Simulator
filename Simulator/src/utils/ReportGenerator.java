@@ -86,7 +86,7 @@ public class ReportGenerator {
 
 		try {
 			Statement stmt = DBUtility.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(Queries.report_data);
+			ResultSet rs = stmt.executeQuery(Queries.incidents_flow);
 			while (rs.next()) {
 				IncidentRow ir = new IncidentRow();
 				TblIncidentPK inc = new TblIncidentPK();

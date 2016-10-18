@@ -18,10 +18,13 @@ import utils.Queries;
 import utils.SimulationTime;
 import utils.SolutionElement;
 
+import com.dao.TblCIDao;
 import com.dao.TblCMDBDao;
+import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblCMDBDaoImpl;
 import com.daoImpl.TblIncidentDaoImpl;
 import com.jdbc.DBUtility;
+import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblIncident;
 import com.model.TblIncidentPK;
@@ -40,6 +43,7 @@ public class LogUtils {
 	private static HashMap<Byte, SolutionElement> cis_solutions;
 	private static HashMap<Byte, HashSet<String>> ci_events;
 	private static HashMap<Integer, Integer> incidents_in_round;
+	private static HashMap<Integer, Byte> question_ci;
 
 	public static void runAll() {
 		LogUtils.dbAffectingCis = getDBAffectingCIs();
@@ -53,9 +57,29 @@ public class LogUtils {
 		LogUtils.cis_solutions = getCiSolutions();
 		LogUtils.ci_events = getCiEvents();
 		LogUtils.incidents_in_round = getIncidentsInRound();
+		LogUtils.question_ci = getQuestionsCis();
 	}
 
-	static HashMap<Byte, SolutionElement> getCiSolutions() {
+	static HashMap<Integer, Byte> getQuestionsCis() {
+		if (question_ci != null) {
+			return question_ci;
+		}
+
+		TblCIDao dao = new TblCIDaoImpl();
+		Collection<TblCI> all_cis = dao.getAllActiveCIs();
+
+		if (all_cis == null) {
+			return null;
+		}
+
+		question_ci = new HashMap<>();
+		for (TblCI ci : all_cis) {
+			question_ci.put(ci.getSolutionId(), ci.getCiId());
+		}
+		return question_ci;
+	}
+
+	public static HashMap<Byte, SolutionElement> getCiSolutions() {
 		if (cis_solutions != null) {
 			return cis_solutions;
 		}
@@ -68,6 +92,7 @@ public class LogUtils {
 				solutions.put(
 						rs.getByte("ci_id"),
 						new SolutionElement(rs.getByte("ci_id"), rs
+								.getInt("solution_id"), rs
 								.getInt("solution_marom"), rs
 								.getInt("solution_rakia"), rs
 								.getDouble("solution_cost"), rs

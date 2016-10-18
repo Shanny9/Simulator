@@ -22,7 +22,7 @@ public class DownloadServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String cName = request.getParameter("form-courseName");
-		ReportGenerator.generateTable(cName);
+		report.ReportGenerator.generateTable(cName);
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		//TODO: set paths in context no here

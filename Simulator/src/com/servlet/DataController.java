@@ -120,6 +120,11 @@ public class DataController extends HttpServlet {
 			case "solution":
 				optionArr = toOptionArray(daoSolution.getAllSolutions(),
 						"solutionId", "solutionId");
+				
+				JSONObject option = new JSONObject();
+				option.put("DisplayText", "No Solution");
+				option.put("Value", 0);
+				optionArr.add(option);
 				break;
 			case "supplier":
 				optionArr = toOptionArray(daoSupplier.getAllSuppliers(),

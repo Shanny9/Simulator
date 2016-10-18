@@ -82,8 +82,10 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
+		if (action == null){
+			return;
+		}
 		switch (action) {
-
 		case "authenticate":
 
 			response.setContentType("text/html");

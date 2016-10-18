@@ -1,6 +1,7 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,11 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import log.LogUtils;
+import log.SimulationLog;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import log.SimulationLog;
 import utils.ClockIncrementor;
 import utils.SimulationTime;
+import utils.SolutionElement;
 
 /**
  * Servlet implementation class ClientController
@@ -31,7 +36,7 @@ public class ClientController extends HttpServlet {
 	/**
 	 * The CI ID retrieved from the user interface.
 	 */
-	private byte ci_id;
+	private int question_id;
 	/**
 	 * The current simulation <b>server time</b> retrieved from the
 	 * {@code ClockIncrementor}.
@@ -61,6 +66,7 @@ public class ClientController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// General settings
@@ -80,25 +86,30 @@ public class ClientController extends HttpServlet {
 		// get the action
 		String action = request.getParameter("action");
 		boolean isBaught = false;
+		if (action == null){
+			return;
+		}
 		switch (action) {
-		case "checkCi":
-			team = request.getParameter("team");
-			ci_id = Byte.valueOf(request.getParameter("ci_id"));
-			time = ClockIncrementor.getSimRunTime();
-			boolean isGood = SimulationLog.getInstance().checkIncident(
-					SimulationLog.getTeamConst(team), ci_id, time);
-			// System.out.println("ClientController: " + team + " Inc:" + inc_id
-			// + " Time:" + time + " isGood:" + isGood);
-			response.getWriter().print(isGood);
+		case "getPriceList":
+			JSONArray questionCosts = new JSONArray();
+			HashMap<Byte, SolutionElement> solutions  = LogUtils.getCiSolutions();
+			for (SolutionElement sol : solutions.values()){
+				JSONObject questionCost = new JSONObject();
+				questionCost.put("question", sol.getQuestion_id());
+				questionCost.put("cost", sol.getSolution_cost());
+				questionCost.put("currency", sol.getCurrency());
+				questionCosts.add(questionCost);
+			}
+			response.getWriter().print(questionCosts);
 			break;
 		case "buySolution":
 			isBaught = true;
 		case "sendSolution":
 			team = request.getParameter("team");
-			ci_id = Byte.valueOf(request.getParameter("ci_id"));
+			question_id = Byte.valueOf(request.getParameter("question_id"));
 			time = ClockIncrementor.getSimRunTime();
 			int solution = Integer.valueOf(request.getParameter("solution"));
-			boolean isSolved = SimulationLog.getInstance().checkSolution(courseName, team,ci_id,time,solution,isBaught);
+			boolean isSolved = SimulationLog.getInstance().checkSolution(courseName, team,question_id,time,solution,isBaught);
 			JSONObject result = new JSONObject();
 			result.put("message", isSolved);
 			response.getWriter().print(result);

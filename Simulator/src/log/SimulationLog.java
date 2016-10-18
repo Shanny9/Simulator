@@ -56,6 +56,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
 	 */
 	private HashMap<Byte, Double> ciSolCosts;
+	
+	private HashMap<Integer,Byte> question_ci;
 	/**
 	 * The simulation's live queue of current solutions
 	 */
@@ -114,6 +116,10 @@ public class SimulationLog extends Thread implements Serializable {
 		
 		if (cis_events == null){
 			cis_events = LogUtils.getCiEvents();
+		}
+		
+		if (question_ci == null){
+			question_ci = LogUtils.getQuestionsCis();
 		}
 		if (marom == null || rakia == null) {
 			List<TblService> services = new TblServiceDaoImpl()
@@ -459,9 +465,9 @@ public class SimulationLog extends Thread implements Serializable {
 		return getTeam(team).getMTRS();
 	}
 
-	public boolean checkSolution(String courseName, String team, byte ci_id, SimulationTime time,
+	public boolean checkSolution(String courseName, String team, int question_id, SimulationTime time,
 			int solution, boolean isBought) {
-
+	
 		boolean isSolved = false;
 		boolean temConst = getTeamConst(team);
 		TeamLog teamLog = getTeam(temConst);
@@ -469,6 +475,12 @@ public class SimulationLog extends Thread implements Serializable {
 			// should not happen
 			return false;
 		}
+		Byte ci_id = question_ci.get(question_id);
+		if (ci_id == null){
+			// the question does not exist 
+			return false;
+		}
+		
 		boolean is_open = teamLog.isIncidentOpen(ci_id, time);
 		if (!is_open) {
 			// ci is up
@@ -493,6 +505,7 @@ public class SimulationLog extends Thread implements Serializable {
 		}
 		
 		teamLog.incidentSolved(ci_id, time, isBought);
+		teamLog.increaseScore();
 		SolutionLog sol = new SolutionLog(courseName, team, ci_id);
 		solutionQueue.offer(sol);
 		solutionHistory.add(sol);

@@ -132,9 +132,7 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		
-		score++;
-		
+				
 		incident_logs.get(ci_id).close(time);
 
 		HashSet<Byte> affectedServices = SimulationLog.getInstance()
@@ -364,15 +362,19 @@ public class TeamLog implements Serializable {
 	 * @return The team's profits (index= time)
 	 */
 	public ArrayList<Double> getProfits() {
-		return profits;
+		return this.profits;
 	}
 
 	HashMap<Byte, IncidentLog> getIncident_logs() {
-		return incident_logs;
+		return this.incident_logs;
 	}
 	
 	public int getScore(){
-		return score;
+		return this.score;
+	}
+	
+	void increaseScore(){
+		this.score++;
 	}
 
 	public HashMap<Byte, IncidentLog> getClosedIncidentLogs() {

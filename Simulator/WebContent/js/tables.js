@@ -1104,6 +1104,7 @@ function serviceTable(){
 				edit : true,
 				inputClass: 'validate[required,custom[integer],min[1],max[4294967295]]'
 			},
+			
 			isActive : {
 				title : 'Active?',
 				type: 'checkbox',

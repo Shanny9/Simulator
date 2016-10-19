@@ -161,46 +161,41 @@ li {
 				<!-- top tiles -->
 				<div class="row tile_count">
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-user"></i> Total
-							Users</span>
-						<div class="count">2500</div>
-						<span class="count_bottom"><i class="green">4% </i> From
-							last Week</span>
+						<span class="count_top"><i class="fa fa-clock-o"></i> Date</span>
+						<div id="hDate" class="count blue" style="font-size: 32px;"></div>
+<!-- 						<span class="count_bottom"><i class="green">4% </i> From
+							last Week</span> -->
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-clock-o"></i>
-							Average Time</span>
-						<div class="count">123.50</div>
-						<span class="count_bottom"><i class="green"><i
-								class="fa fa-sort-asc"></i>3% </i> From last Week</span>
+						<span class="count_top"><i class="fa fa-asterisk"></i>
+							Rounds Number</span>
+						<div id="hRoundsNum" class="count"></div>
+<!-- 						<span class="count_bottom"><i class="green"><i
+								class="fa fa-sort-asc"></i>3% </i> From last Week</span> -->
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-user"></i> Total
-							Males</span>
-						<div class="count green">2,500</div>
-						<span class="count_bottom"><i class="green"><i
-								class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+						<span class="count_top"><i class="fa fa-clock-o"></i> Round Time</span>
+						<div id="hRoundTime" class="count blue"></div>
+<!-- 						<span class="count_bottom"><i class="green"><i
+								class="fa fa-sort-asc"></i>34% </i> From last Week</span> -->
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-user"></i> Total
-							Females</span>
-						<div class="count">4,567</div>
-						<span class="count_bottom"><i class="red"><i
-								class="fa fa-sort-desc"></i>12% </i> From last Week</span>
+						<span class="count_top"><i class="fa fa-asterisk"></i> CI</span>
+						<div id="hCi" class="count"></div>
+<!-- 						<span class="count_bottom"><i class="red"><i
+								class="fa fa-sort-desc"></i>12% </i> From last Week</span> -->
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-user"></i> Total
-							Collections</span>
-						<div class="count">2,315</div>
-						<span class="count_bottom"><i class="green"><i
-								class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+						<span class="count_top"><i class="fa fa-asterisk"></i> Services</span>
+						<div id="hServices" class="count blue"></div>
+<!-- 						<span class="count_bottom"><i class="green"><i
+								class="fa fa-sort-asc"></i>34% </i> From last Week</span> -->
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-						<span class="count_top"><i class="fa fa-user"></i> Total
-							Connections</span>
-						<div class="count">7,325</div>
-						<span class="count_bottom"><i class="green"><i
-								class="fa fa-sort-asc"></i>34% </i> From last Week</span>
+						<span class="count_top"><i class="fa fa-asterisk"></i> Incidents</span>
+						<div id="hInci" class="count"></div>
+<!-- 						<span class="count_bottom"><i class="green"><i
+								class="fa fa-sort-asc"></i>34% </i> From last Week</span> -->
 					</div>
 				</div>
 				<!-- /top tiles -->
@@ -325,6 +320,9 @@ li {
 
 	<!-- Custom Theme Scripts -->
 	<script src="js/custom.js"></script>
+
+	<!-- Reports Header -->
+	<script src="js/reports_header.js"></script>
 
 	<!-- D3 -->
 	<script src="js/d3.v3.min.js"></script>

@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 import utils.DepartmentService;
 import utils.Queries;
 
+import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.jdbc.DBUtility;
 import com.model.TblService;
@@ -45,6 +46,7 @@ public class DataMaker {
 				
 		obj.put("incidents",LogUtils.getIncidentsInRound().get(round));
 		obj.put("services", new TblServiceDaoImpl().getActiveServiceCount());
+		obj.put("cis", new TblCIDaoImpl().getActiveCICount());
 		obj.put("rounds", settings.getRounds());
 		obj.put("round_time", settings.getRoundTime());
 		obj.put("rounds_done", settings.getRoundsDone().size());

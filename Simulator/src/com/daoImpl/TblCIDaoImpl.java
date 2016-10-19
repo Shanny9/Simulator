@@ -184,4 +184,19 @@ public class TblCIDaoImpl implements TblCIDao {
 		}
 		return count;
 	}
+	
+	public int getActiveCICount() {
+		int count = 0;
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT COUNT(*) AS COUNT FROM SIMULATOR.tblCI where isActive=1;");
+			while (rs.next()) {
+				count = rs.getInt("COUNT");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return count;
+	}
 }

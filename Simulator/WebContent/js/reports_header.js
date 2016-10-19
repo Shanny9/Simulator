@@ -46,6 +46,7 @@ function getHeader() {
 			action : "getHeaderData",
 			course : courseName
 		},
+		
 		dataType : "json",
 		success : function(data) {
 			$('#hDate').html(formatDate(new Date()));

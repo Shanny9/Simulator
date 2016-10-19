@@ -21,13 +21,16 @@ public class DownloadServlet extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String cName = request.getParameter("form-courseName");
-		report.ReportGenerator.generateTable(cName);
+		
+		String filename = "MyTable.xls";
+		String filepath = "";
+		
+		String courseName = request.getParameter("form-courseName");
+		report.ReportGenerator.generateReports(courseName, filename);
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		//TODO: set paths in context no here
-		String filename = "workbook.xls";
-		String filepath = "";
+		
 		response.setContentType("APPLICATION/OCTET-STREAM");
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ filename + "\"");

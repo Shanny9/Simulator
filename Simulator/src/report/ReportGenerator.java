@@ -16,11 +16,14 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import com.model.TblService;
+import com.model.TblSupplier;
+
 public class ReportGenerator {
 	static FileOutputStream fileOut;
 	private static String courseName = "";
 
-	public static void generateTable(String courseName){
+	public static void generateReports(String courseName, String fileName){
 		
 		ReportGenerator.courseName = courseName;
 		
@@ -28,6 +31,7 @@ public class ReportGenerator {
 		HSSFWorkbook wb = excelGen.getWb();
 		setColors(excelGen);
 		setStyles(excelGen);
+		
 		HSSFSheet sheet1 = generateSheet(excelGen, DataFactory.INCIDENTS_FLOW);
 		alignMergedCells(sheet1);
 		autoWidthColumns(sheet1);
@@ -36,8 +40,18 @@ public class ReportGenerator {
 				DataFactory.SERVICE_PRIORITIZATION);
 		alignMergedCells(sheet2);
 		autoWidthColumns(sheet2);
+		
+		HSSFSheet sheet3 = generateSheet(excelGen,
+				DataFactory.SUPPLIER_PRICE_LIST);
+		alignMergedCells(sheet3);
+		autoWidthColumns(sheet3);
+		
+		HSSFSheet sheet4 = generateSheet(excelGen,
+				DataFactory.SERVICE_EVENT_MAPPING);
+		alignMergedCells(sheet4);
+		autoWidthColumns(sheet4);
 
-		export(wb, "MyTable");
+		export(wb, fileName);
 	}
 
 	public static void setColors(ExcelGenerator excelGen) {
@@ -169,9 +183,82 @@ public class ReportGenerator {
 		case DataFactory.SERVICE_PRIORITIZATION:
 			return generateServicePrioritization(excelGen,
 					"Service Prioritization");
+		case DataFactory.SUPPLIER_PRICE_LIST:
+			return generateSupplierPriceList(excelGen, "Supplier Price List");
+		case DataFactory.SERVICE_EVENT_MAPPING:
+			return generateServiceEventsMapping(excelGen, "Service Event Mapping");
 		default:
 			return null;
 		}
+	}
+	
+	private static HSSFSheet generateServiceEventsMapping(
+			ExcelGenerator excelGen, String sheetName) {
+		HSSFWorkbook wb = excelGen.getWb();
+		HSSFSheet sheet = wb.createSheet(sheetName);
+
+		// declare headers
+		String[] headers = new String[] { "Service", "Error"};
+
+		int row = 0;
+		excelGen.createTitle(sheet.createRow(row++), 0, "STYLE_TITLE",
+				sheetName, headers.length - 1);
+		excelGen.createHeaders(sheet.createRow(row++), 0, "STYLE_HEADER",
+				headers);
+
+		List<Object> object_list = DataFactory.getInstance().getReportData(
+				DataFactory.SERVICE_EVENT_MAPPING, courseName);
+		
+		for (Object obj : object_list) {
+			TblService record = (TblService) obj;
+			HSSFRow data_row = null;
+			int col = 0;
+			data_row = sheet.createRow(row++);
+
+			// service name column
+			excelGen.createCell(data_row, col++, record.getServiceName());
+
+			// error column
+			excelGen.createCell(data_row, col++, record.getEventId());
+		}
+		return sheet;
+	}
+	
+	private static HSSFSheet generateSupplierPriceList(
+			ExcelGenerator excelGen, String sheetName) {
+		HSSFWorkbook wb = excelGen.getWb();
+		HSSFSheet sheet = wb.createSheet(sheetName);
+
+		// declare headers
+		String[] headers = new String[] { "#", "SUpplier", "Cost"};
+
+		int row = 0;
+		excelGen.createTitle(sheet.createRow(row++), 0, "STYLE_TITLE",
+				sheetName, headers.length - 1);
+		excelGen.createHeaders(sheet.createRow(row++), 0, "STYLE_HEADER",
+				headers);
+
+		List<Object> object_list = DataFactory.getInstance().getReportData(
+				DataFactory.SUPPLIER_PRICE_LIST, courseName);
+		
+		int count = 0;
+		for (Object obj : object_list) {
+			TblSupplier record = (TblSupplier) obj;
+			HSSFRow data_row = null;
+			int col = 0;
+			count++;
+			data_row = sheet.createRow(row++);
+
+			// # column
+			excelGen.createCell(data_row, col++, count);
+
+			// name column
+			excelGen.createCell(data_row, col++, record.getSupplierName());
+
+			// price column
+			excelGen.createCell(data_row, col++, (int)record.getSolutionCost() + " " + record.getCurrency());
+		}
+		return sheet;
 	}
 
 	private static HSSFSheet generateServicePrioritization(
@@ -382,7 +469,7 @@ public class ReportGenerator {
 	private static void export(HSSFWorkbook wb, String fileName) {
 
 		try {
-			fileOut = new FileOutputStream(fileName + ".xls");
+			fileOut = new FileOutputStream(fileName);
 			wb.write(fileOut);
 			wb.close();
 			fileOut.close();

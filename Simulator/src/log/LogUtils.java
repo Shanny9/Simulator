@@ -264,7 +264,7 @@ public class LogUtils {
 		Collection<TblIncident> all_incidents = new TblIncidentDaoImpl()
 				.getAllActiveIncidents();
 		for (TblIncident inc : all_incidents) {
-			HashSet<Byte> cis = time_cis.get(inc.getIncidentTime());
+			HashSet<Byte> cis = time_cis.get(inc.getSimulationTime());
 			if (cis == null) {
 				cis = new HashSet<>();
 			}

@@ -89,8 +89,7 @@ public class ClockIncrementor implements Runnable {
 		clocks.put("elapsedClock",
 				elapsedTime + (current_round - 1) * settings.getRoundTime());
 		clocks.put("remainingClock", remainingTime);
-		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime()
-				+ (current_round - 1) * settings.getRoundRunTime());
+		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime());
 		clocks.put("isRunTime", isRunTime);
 		clocks.put("round", current_round);
 		clocks.put("session", current_session);
@@ -138,7 +137,7 @@ public class ClockIncrementor implements Runnable {
 	 */
 	private static void initVariables() {
 		elapsedTime = 0;
-		elapsedRunTime = new SimulationTime(0);
+		elapsedRunTime = new SimulationTime(current_round,1,0);
 		remainingTime = settings.getPauseTime();
 		isRunTime = false;
 	}
@@ -149,9 +148,7 @@ public class ClockIncrementor implements Runnable {
 	 * @return The simulation run time.
 	 */
 	public static SimulationTime getSimRunTime() {
-		int runTime = elapsedRunTime.getRunTime() + (current_round - 1)
-				* settings.getRoundRunTime();
-		return new SimulationTime(runTime);
+		return elapsedRunTime;
 	}
 
 	/**

@@ -123,7 +123,7 @@ public class DataController extends HttpServlet {
 				
 				JSONObject option = new JSONObject();
 				option.put("DisplayText", "No Solution");
-				option.put("Value", 0);
+				option.put("Value", null);
 				optionArr.add(option);
 				break;
 			case "supplier":

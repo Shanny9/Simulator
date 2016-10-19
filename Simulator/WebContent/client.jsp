@@ -95,9 +95,9 @@
 							<div class="form-top-left">
 								<h3>Solve or purchase solution</h3>
 							</div>
-							<input type="number" pattern="[0-9]*" name="Configuration Item ID"
-								placeholder="CI #" class="form-username form-control"
-								id="ciId">
+							<input type="number" pattern="[0-9]*" name="Question ID"
+								placeholder="Q #" class="form-username form-control"
+								id="questionId">
 							<div class="row minHeight"></div>
 							<p>What do you wish to do?</p>
 							<div class="panel-group" id="accordion">
@@ -139,8 +139,7 @@
 								</div>
 								<div class="row minHeight"></div>
 								<center>
-									<p id="noCiId" class="message">Please enter CI ID</p>
-									<p id="wrongCiId" class="message">Wrong CI ID. Please try again</p>
+									<p id="noQuestionId" class="message">Please enter Question ID</p>
 									<h2 id="success" class="message">
 										Success <span class="glyphicon glyphicon-ok"></span>
 									</h2>

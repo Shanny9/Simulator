@@ -10,6 +10,7 @@ import java.util.List;
 import log.FilesUtils;
 import utils.Queries;
 
+import com.daoImpl.TblServiceDaoImpl;
 import com.daoImpl.TblSupplierDaoImpl;
 import com.jdbc.DBUtility;
 import com.model.TblIncidentPK;
@@ -118,6 +119,9 @@ public class DataFactory {
 			break;
 		case SUPPLIER_PRICE_LIST:
 			rows.addAll(new TblSupplierDaoImpl().getAllActiveSuppliers());
+			break;
+		case SERVICE_EVENT_MAPPING:
+			rows.addAll(new TblServiceDaoImpl().getAllActiveServices());
 		}
 		return rows;
 	}

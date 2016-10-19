@@ -22,6 +22,7 @@ public class SimulationLog extends Thread implements Serializable {
 
 	public static final boolean MAROM = true;
 	public static final boolean RAKIA = false;
+	private static boolean isInitialized = false;
 
 	private static final long serialVersionUID = 1L;
 	/**
@@ -148,10 +149,14 @@ public class SimulationLog extends Thread implements Serializable {
 			marom = new TeamLog("Marom", service_logs, initDiff);
 			rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
 			
+			isInitialized = true;
 			System.out.println("SimulationLog: SimulationLog is initalized.");
 		}
 	}
-
+	
+	public static boolean isInitialized(){
+		return isInitialized;
+	}
 	/**
 	 * Sets he round of the service log, updates the round of the team logs.
 	 * 
@@ -259,7 +264,7 @@ public class SimulationLog extends Thread implements Serializable {
 			// System.out.println();
 		} catch (IndexOutOfBoundsException e) {
 			System.out
-					.println("SimulationLog: getTeamProfits problem line 202");
+					.println("SimulationLog: getTeamProfits problem line 267");
 		}
 		return profits;
 
@@ -337,9 +342,9 @@ public class SimulationLog extends Thread implements Serializable {
 	 * Stops the log. Puts end times to both teams' services.
 	 * 
 	 */
-	public void stopLogs() {
-		marom.stop();
-		rakia.stop();
+	public void stopLogs(SimulationTime endTime) {
+		marom.stop(endTime);
+		rakia.stop(endTime);
 	}
 
 	/**
@@ -407,7 +412,7 @@ public class SimulationLog extends Thread implements Serializable {
 	public List<JSONObject> getEventsForHomeScreen(int round) {
 		List<JSONObject> eventList = new ArrayList<JSONObject>();
 
-		if (time_cis != null) {
+		if (time_events != null) {
 			for (Map.Entry<SimulationTime, HashSet<String>> round_events : time_events
 					.entrySet()) {
 				JSONObject row = new JSONObject();

@@ -3,6 +3,7 @@ package com.servlet;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -192,7 +193,10 @@ public class HomeController extends HttpServlet {
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog
 					.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
-				response.getWriter().write(toStream(solutionQueue.poll()));
+				PrintWriter out = response.getWriter();
+				out.write(toStream(solutionQueue.poll()));
+				out.flush();
+				out.close();
 			}
 			break;
 		case "profitStream":
@@ -393,7 +397,8 @@ public class HomeController extends HttpServlet {
 
 		// encoding must be set to UTF-8
 		response.setCharacterEncoding("UTF-8");
-
+		
+		response.addHeader("Cache-Control", "no-cache");
 	}
 
 	/**
@@ -484,8 +489,8 @@ public class HomeController extends HttpServlet {
 		}
 
 		String streamMessage = String.join("\n", rows);
-		streamMessage += "\n\n";
-
+		streamMessage += "\r\n";
+		
 		return streamMessage;
 	}
 }

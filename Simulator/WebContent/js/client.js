@@ -318,14 +318,14 @@ function checkSimulator() {
 // sends the purchase to the server
 function buySolution() {
 
-	var ci_id = $('#questionId').val();
+	var question_id = $('#questionId').val();
 	$.ajax({
 		url : "ClientController",
 		dataType : "json",
 		data : {
 			action : "buySolution",
 			team : team,
-			ci_id : ci_id
+			question_id : question_id
 		},
 		success : function(msg) {
 			// shows success message

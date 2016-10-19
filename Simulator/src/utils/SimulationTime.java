@@ -103,7 +103,19 @@ public class SimulationTime implements Serializable {
 		}
 		return false;
 	}
-
+	
+	public int getRemainingTime(){
+		return getRoundTime() - getRunTimeInRound();
+	}
+	
+	private int getRoundTime(){
+		return getSessionTime() * sessions_in_round;
+	}
+	
+	private int getSessionTime(){
+		return run_time + pause_time;
+	}
+	
 	private static int getRoundRunTime() {
 		return run_time * sessions_in_round;
 	}

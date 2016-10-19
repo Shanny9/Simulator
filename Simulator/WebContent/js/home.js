@@ -705,9 +705,9 @@ function incrementClock() {
 			console.log("finished");
 			$('#main-time').html("00:00:00");
 			clearInterval(clockInterval);
-			solutionEventSource
-					.removeEventListener('message', solutionListener);
-			profitEventSource.removeEventListener('message', profitListener);
+//			solutionEventSource
+//					.removeEventListener('message', solutionListener);
+//			profitEventSource.removeEventListener('message', profitListener);
 		}
 	}
 }

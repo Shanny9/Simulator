@@ -108,7 +108,8 @@ public class ClientController extends HttpServlet {
 			team = request.getParameter("team");
 			question_id = Byte.valueOf(request.getParameter("question_id"));
 			time = ClockIncrementor.getSimRunTime();
-			int solution = Integer.valueOf(request.getParameter("solution"));
+			String sol_string = request.getParameter("solution");
+			int solution = (sol_string == null)?0 :Integer.valueOf(sol_string);
 			boolean isSolved = SimulationLog.getInstance().checkSolution(courseName, team,question_id,time,solution,isBaught);
 			JSONObject result = new JSONObject();
 			result.put("message", isSolved);

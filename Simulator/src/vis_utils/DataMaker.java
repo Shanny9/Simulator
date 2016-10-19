@@ -41,9 +41,10 @@ public class DataMaker {
 		return DataMaker.settings;
 	}
 	
-	public static JSONObject getGeneralData(int round){
+	public static JSONObject getGeneralData(String courseName){
 		JSONObject obj = new JSONObject();
-				
+		
+		int round = Collections.max(FilesUtils.openSettings(courseName).getRoundsDone());
 		obj.put("incidents",LogUtils.getIncidentsInRound().get(round));
 		obj.put("services", new TblServiceDaoImpl().getActiveServiceCount());
 		obj.put("cis", new TblCIDaoImpl().getActiveCICount());

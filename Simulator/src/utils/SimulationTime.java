@@ -33,7 +33,19 @@ public class SimulationTime implements Serializable {
 		isInitialized = true;
 	}
 
-	public SimulationTime(int time) {
+	public SimulationTime(int round, int session, int timeInSession) {
+		checkInitialized();
+		if (round > 0 && session > 0 && timeInSession >= 0) {
+			int t = (round - 1) * getRoundRunTime() + (session - 1)
+					* run_time + timeInSession;
+			
+			if (notNegative(t) && !isTooBig(t)) {
+				this.time = t;
+			}
+		}
+	}
+
+	private void checkInitialized() {
 		if (!isInitialized) {
 			try {
 				throw new Exception(
@@ -42,6 +54,10 @@ public class SimulationTime implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public SimulationTime(int time) {
+		checkInitialized();
 		if (notNegative(time) && !isTooBig(time)) {
 			this.time = time;
 		}
@@ -63,8 +79,8 @@ public class SimulationTime implements Serializable {
 	private boolean isTooBig(int timeToCheck) {
 		if (timeToCheck > 3600 * 24) {
 			try {
-				System.err.println(
-						"SimulationTime: Time cannot exceed one day ("
+				System.err
+						.println("SimulationTime: Time cannot exceed one day ("
 								+ timeToCheck + " > " + 3600 * 24 + ").");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -74,9 +90,11 @@ public class SimulationTime implements Serializable {
 
 		if (timeToCheck > totalSimulationRunTime) {
 			try {
-				System.err.println(
-						"SimulationTime: Time cannot exceed the simulation's duration ("
-								+ timeToCheck + " > " + totalSimulationRunTime
+				System.err
+						.println("SimulationTime: Time cannot exceed the simulation's duration ("
+								+ timeToCheck
+								+ " > "
+								+ totalSimulationRunTime
 								+ ").");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -86,7 +104,7 @@ public class SimulationTime implements Serializable {
 		return false;
 	}
 
-	private int getRoundRunTime() {
+	private static int getRoundRunTime() {
 		return run_time * sessions_in_round;
 	}
 
@@ -101,8 +119,8 @@ public class SimulationTime implements Serializable {
 	public int getSessionInRound() {
 		return (getRunTimeInRound() / run_time) + 1;
 	}
-	
-	public int getSession(){
+
+	public int getSession() {
 		return (getRunTime() / run_time) + 1;
 	}
 
@@ -113,9 +131,9 @@ public class SimulationTime implements Serializable {
 	public int getRunTimeInRound() {
 		return time - ((getRound() - 1) * getRoundRunTime());
 	}
-	
-	public int getTimeUntilSessionEnds(){
-		return run_time - getRunTimeInRound() % run_time; 
+
+	public int getTimeUntilSessionEnds() {
+		return run_time - getRunTimeInRound() % run_time;
 	}
 
 	public int getTimeIncludingBreaks() {

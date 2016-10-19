@@ -2,7 +2,7 @@
  * 
  */
 var finishRound;
-var solutionsData = new Object();
+var priceList = new Object();
 var clockInterval;
 var isRunTime = false;
 var showTime;
@@ -44,9 +44,9 @@ $(document).ready(
 
 			// when a key released in the ci field - updates if the menus could
 			// toggle
-			$("#ciId").on('keyup', function() {
+			$("#questionId").on('keyup', function() {
 				// checks if ci field is empty
-				if ($('#ciId').val() == "") {
+				if ($('#questionId').val() == "") {
 					// disables toggle
 					$(".collapse-menu").removeAttr('data-toggle');
 				} else {
@@ -60,8 +60,8 @@ $(document).ready(
 					.click(
 							function() {
 								// checks if ci field is empty
-								if ($("#ciId").val() == "") {
-									$("#noCiId").slideToggle("slow")
+								if ($("#questionId").val() == "") {
+									$("#noQuestionId").slideToggle("slow")
 											.delay(2000).slideToggle("slow");
 									return;
 								}
@@ -71,14 +71,14 @@ $(document).ready(
 										"aria-expanded") != 'true';
 								if (willExpand) {
 									// locks the ci field
-									$('#ciId').attr('readonly', 'readonly');
+									$('#questionId').attr('readonly', 'readonly');
 									// empties the solution filed
 									$('#solutionID').val("");
 									// disables the submit button
 									$('#submitSol').attr('disabled');
 								} else {
 									// unlocks the ci field
-									$('#ciId').removeAttr('readonly');
+									$('#questionId').removeAttr('readonly');
 								}
 							});
 
@@ -86,8 +86,8 @@ $(document).ready(
 			$("#purchaseMenu").click(
 					function() {
 						// checks if ci field is empty
-						if ($("#ciId").val() == "") {
-							$("#noCiId").slideToggle("slow").delay(2000)
+						if ($("#questionId").val() == "") {
+							$("#noQuestionId").slideToggle("slow").delay(2000)
 									.slideToggle("slow");
 							return;
 						}
@@ -96,12 +96,12 @@ $(document).ready(
 						var willExpand = $("#purchaseMenu").attr(
 								"aria-expanded") != 'true';
 						if (willExpand) {
-							// locks the ci field
-							$('#ciId').attr('readonly', 'readonly');
+							// locks the question field
+							$('#questionId').attr('readonly', 'readonly');
 							showPrice();
 						} else {
-							// unlocks the ci field
-							$('#ciId').removeAttr('readonly');
+							// unlocks the question field
+							$('#questionId').removeAttr('readonly');
 						}
 					});
 
@@ -128,10 +128,10 @@ $(document).ready(
 						setTimeout(function() {
 							// collapses the menu
 							$('.panel-collapse.in').collapse('hide');
-							// empties the ci field
-							$('#ciId').val("");
-							// unlocks the ci field
-							$('#ciId').removeAttr('readonly');
+							// empties the question field
+							$('#questionId').val("");
+							// unlocks the question field
+							$('#questionId').removeAttr('readonly');
 							// disables solve menu to toggle
 							$("#solveMenu").removeAttr('data-toggle');
 						}, 3000);
@@ -139,6 +139,7 @@ $(document).ready(
 					});
 
 			$("#buy").click(buySolution);
+			getPriceList();
 			checkSimulator();
 		});
 
@@ -154,12 +155,12 @@ function run(isRun) {
 }
 
 function showPrice() {
-	var ci_id = $('#ciId').val();
+	var question_id = $('#questionId').val();
 	var currencyTag = "";
 	var cost;
-	$.each(solutionsData, function(i, item) {
-		if (ci_id == item.ci_id) {
-			cost = item.solution_cost;
+	$.each(priceList, function(i, item) {
+		if (question_id == item.question) {
+			cost = item.cost;
 			switch (item.currency) {
 			case "NIS":
 				currencyTag = 'ils';
@@ -239,11 +240,11 @@ function getTime() {
 			var remainingClock = data.remainingClock;
 			showTime = Math.floor(remainingClock + latency);
 			elapsedTime = Math.floor(data.elapsedClock + latency);
-			
+
 			currentRound = data["round"];
 			console.log(currentRound);
 			finishRound = settings["roundTime"] * (currentRound + 1);
-			
+
 			console.log("remainingClock " + remainingClock);
 			console.log("elapsed time " + elapsedTime);
 			console.log("latency: " + latency);
@@ -254,17 +255,36 @@ function getTime() {
 	});
 }
 
+// get the prices of the questions
+function getPriceList() {
+
+	$.ajax({
+		url : "ClientController",
+		data : {
+			action : "getPriceList",
+		},
+		dataType : "json",
+		async : false,
+		success : function(msg) {
+			priceList = msg;
+		},
+		error : function(e) {
+			console.log("js:getPriceList: Error in getPriceList.");
+		}
+	});
+}
+
 // sends the solution to the server
 function sendSolution() {
-	var ci_id = $('#ciId').val();
+	var question_id = $('#questionId').val();
 	var sol = $('#solutionID').val();
 	$.ajax({
 		url : "ClientController?action=sendSolution",
 		dataType : "json",
-		async: false,
+		async : false,
 		data : {
 			team : team,
-			ci_id : ci_id,
+			question_id : question_id,
 			solution : sol,
 		},
 		success : function(msg) {
@@ -298,7 +318,7 @@ function checkSimulator() {
 // sends the purchase to the server
 function buySolution() {
 
-	var ci_id = $('#ciId').val();
+	var ci_id = $('#questionId').val();
 	$.ajax({
 		url : "ClientController",
 		dataType : "json",
@@ -315,9 +335,9 @@ function buySolution() {
 				// collapses the menu
 				$('.panel-collapse.in').collapse('hide');
 				// empties the ci field
-				$('#ciId').val("");
+				$('#questionId').val("");
 				// unlocks the ci field
-				$('#ciId').removeAttr('readonly');
+				$('#questionId').removeAttr('readonly');
 				// disables solve menu to toggle
 				$("#solveMenu").removeAttr('data-toggle');
 			}, 1000);
@@ -330,9 +350,9 @@ function buySolution() {
 				// collapses the menu
 				$('.panel-collapse.in').collapse('hide');
 				// empties the ci field
-				$('#ciId').val("");
+				$('#questionId').val("");
 				// unlocks the ci field
-				$('#ciId').removeAttr('readonly');
+				$('#questionId').removeAttr('readonly');
 				// disables solve menu to toggle
 				$("#solveMenu").removeAttr('data-toggle');
 			}, 1000);

@@ -15,6 +15,7 @@ import log.Settings;
 public class TimerManager implements ServletContextListener {
 
 	private static ScheduledExecutorService scheduler;
+	private static Settings settings;
 	private static ClockIncrementor ci;
 	private static LogManager lm;
 
@@ -27,15 +28,19 @@ public class TimerManager implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent event) {
 		scheduler.shutdownNow();
 	}
-
-	public static void startSimulator(Settings settings, int round) {
-
+	
+	public static void initializeSimulator(Settings settings, int round){
+		TimerManager.settings = settings;
+		
 		ci = ClockIncrementor.getInstance();
 		ClockIncrementor.initialize(settings,round);
 
 		lm = LogManager.getInstance();
 		LogManager.initialize(settings);
 		LogManager.setRound(round);
+	}
+	
+	public static void startSimulator() {
 
 		runNTimes(ci, settings.getRoundTime(), 0, 1, TimeUnit.SECONDS,
 				scheduler);

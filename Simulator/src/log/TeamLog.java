@@ -151,11 +151,11 @@ public class TeamLog implements Serializable {
 					.getCISolutionCost(ci_id);
 			double profitToSet = getProfit(time) - solutionCost;
 			setProfit(time, profitToSet);
-			 System.out.println("Team " + teamName + ": solution baught at " +
-			 time.toString() + "seconds.");
+//			 System.out.println("Team " + teamName + ": solution baught at " +
+//			 time.toString() + ".");
 		} else{
-			System.out.println("Team " + teamName + ": solution solved at " +
-					 time.toString() + "seconds.");
+//			System.out.println("Team " + teamName + ": solution solved at " +
+//					 time.toString() + ".");
 		}
 		return;
 	}
@@ -278,11 +278,10 @@ public class TeamLog implements Serializable {
 	 * @param time
 	 *            Current time
 	 */
-	public void stop() {
+	public void stop(SimulationTime endTime) {
 		// sets the end time of the round in all the service logs' ArrayList of
 		// times.
-		SimulationTime endTime = SimulationLog.getInstance().getSettings()
-				.getRoundRunTimeEnd(round);
+		
 		if (service_logs != null) {
 			for (ServiceLog service : service_logs.values()) {
 				service.stop(endTime);

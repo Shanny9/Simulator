@@ -70,6 +70,10 @@ public class ServiceLog implements Serializable {
 		addTime(time);
 		diff = ((isUp()) ? (fixed_income - fixed_cost)
 				: (-fixed_cost - down_cost));
+		
+		System.out.println("service " + service_id + " is "
+				+ ((isUp() ? "up." : "down.")));
+
 	}
 
 	private void addTime(SimulationTime time) {
@@ -287,20 +291,20 @@ public class ServiceLog implements Serializable {
 	public double getProfit() {
 		return getRevenue() - getExpense();
 	}
-	
+
 	/**
 	 * @return The total profit of the service.
 	 */
-	public double getExpense(){
+	public double getExpense() {
 		double fixed_expense = getRoundDuration() * getFixed_cost();
 		double varinet_expense = getTotalDownTime() * getDown_cost();
 		return fixed_expense + varinet_expense + purchase_cost;
 	}
-	
+
 	/**
 	 * @return The total revenue of the service.
 	 */
-	public double getRevenue(){
+	public double getRevenue() {
 		return getTotalUpTime() * getFixed_income();
 	}
 

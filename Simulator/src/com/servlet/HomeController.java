@@ -82,7 +82,7 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
-		if (action == null){
+		if (action == null) {
 			return;
 		}
 		switch (action) {
@@ -98,22 +98,25 @@ public class HomeController extends HttpServlet {
 					try {
 						((HttpSession) session).invalidate();
 					} catch (IllegalStateException ise) {
-						System.out.println("Session "+((HttpSession) session).getId()+" is invalid now.");
+						System.out.println("Session "
+								+ ((HttpSession) session).getId()
+								+ " is invalid now.");
 					}
 					getServletContext().setAttribute("isLogged",
 							request.getSession());
 					request.getSession().setAttribute("isLogged", "1");
-					if(au == 1)
+					if (au == 1)
 						request.getSession().setAttribute("type", "Admin");
 					else
 						request.getSession().setAttribute("type", "Operator");
 					response.sendRedirect("opening.jsp");
-					System.out.println("New Session "+request.getSession().getId()+" was stored.");
+					System.out.println("New Session "
+							+ request.getSession().getId() + " was stored.");
 				}
 				// response.sendRedirect("login.jsp");
 				else {
 					request.getSession().setAttribute("isLogged", "1");
-					if(au == 1)
+					if (au == 1)
 						request.getSession().setAttribute("type", "Admin");
 					else
 						request.getSession().setAttribute("type", "Operator");
@@ -139,7 +142,7 @@ public class HomeController extends HttpServlet {
 			break;
 		case "getTimeToWait":
 			JSONObject json = new JSONObject();
-			json.put("timeToWait",  ClockIncrementor.getRemainingRoundTime());
+			json.put("timeToWait", ClockIncrementor.getRemainingRoundTime());
 			response.getWriter().print(json);
 			break;
 		case "isAlive":
@@ -153,7 +156,7 @@ public class HomeController extends HttpServlet {
 		case "startSimulator":
 			if (settings != null) {
 				if (!ClockIncrementor.isRunning()) {
-					TimerManager.startSimulator(settings, round);
+					TimerManager.startSimulator();
 					response.getWriter().print("OK");
 				} else {
 					System.err
@@ -168,19 +171,23 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
+			if (SimulationLog.isInitialized()){
 			response.getWriter().print(
 					SimulationLog.getInstance().getEventsForHomeScreen(round));
+			}
 			break;
 		case "getSolutionHistory":
+			if (SimulationLog.isInitialized()){
 			response.getWriter().write(
 					gson.toJson(SimulationLog.getInstance()
 							.getSolutionHistory()));
+			}
 			break;
 		case "solutionStream":
-			if (!ClockIncrementor.isRunning()) {
+			if (!ClockIncrementor.isRunning() || !SimulationLog.isInitialized()) {
 				return;
 			}
-
+			
 			prepareResponseToStream(response);
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog
 					.getInstance().getSolutionQueue();
@@ -231,7 +238,7 @@ public class HomeController extends HttpServlet {
 
 			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
-		case "checkSettings": //checks the max/min number incident in session
+		case "checkSettings": // checks the max/min number incident in session
 			String courseNameCheck = request.getParameter("courseName");
 			int roundsCheck = Integer.valueOf(request
 					.getParameter("numOfRounds"));
@@ -243,9 +250,11 @@ public class HomeController extends HttpServlet {
 			int initCapitalCheck = Integer.valueOf(request
 					.getParameter("initCapital"));
 
-			Settings setCheck = new Settings(courseNameCheck, roundsCheck, runTimeCheck, pauseTimeCheck,
-					sessionsPerRoundCheck, initCapitalCheck);
-			SimulationTime.initialize(runTimeCheck, pauseTimeCheck, sessionsPerRoundCheck, roundsCheck);
+			Settings setCheck = new Settings(courseNameCheck, roundsCheck,
+					runTimeCheck, pauseTimeCheck, sessionsPerRoundCheck,
+					initCapitalCheck);
+			SimulationTime.initialize(runTimeCheck, pauseTimeCheck,
+					sessionsPerRoundCheck, roundsCheck);
 			String msg = DBValidator.checkSettings(setCheck);
 			response.setContentType("text/html");
 			response.getWriter().print(msg); // msg == "" means all OK.
@@ -257,13 +266,17 @@ public class HomeController extends HttpServlet {
 			response.getOutputStream().print(courseExists);
 			break;
 		case "getTeamScores":
-			int maromScore = SimulationLog.getInstance().getTeam(SimulationLog.MAROM).getScore();
-			int rakiaScore = SimulationLog.getInstance().getTeam(SimulationLog.RAKIA).getScore();
-			JSONObject scores = new JSONObject();
-			scores.put("marom", maromScore);
-			scores.put("rakia", rakiaScore);
-			response.getWriter().print(scores);
-		break;
+			if (SimulationLog.isInitialized()) {
+				int maromScore = SimulationLog.getInstance()
+						.getTeam(SimulationLog.MAROM).getScore();
+				int rakiaScore = SimulationLog.getInstance()
+						.getTeam(SimulationLog.RAKIA).getScore();
+				JSONObject scores = new JSONObject();
+				scores.put("marom", maromScore);
+				scores.put("rakia", rakiaScore);
+				response.getWriter().print(scores);
+			}
+			break;
 		case "getRounds":
 			int tot_rounds = FilesUtils.openSettings(
 					request.getParameter("directory")).getRounds();
@@ -288,35 +301,30 @@ public class HomeController extends HttpServlet {
 					selectedCourseName);
 			getServletContext().setAttribute("selectedRound", round);
 			response.sendRedirect("index.jsp");
-			break;
 			
-/*		case "generateIncidentFlowFile":
-			String cName = request.getParameter("form-courseName");
-			ReportGenerator.generateTable(cName);
-//			RequestDispatcher rd = request.getRequestDispatcher("DownloadServlet");
-//			rd.forward(request,response);
-			
-			//Download
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			//TODO: set paths in context no here
-			String filename = "workbook.xls";
-			String filepath = "";
-			response.setContentType("APPLICATION/OCTET-STREAM");
-			response.setHeader("Content-Disposition", "attachment; filename=\""
-					+ filename + "\"");
-
-			FileInputStream fileInputStream = new FileInputStream(filepath
-					+ filename);
-
-			int index;
-			while ((index = fileInputStream.read()) != -1) {
-				out.write(index);
-			}
-			fileInputStream.close();
-			out.close();
+			TimerManager.initializeSimulator(settings, round);
 			break;
-*/
+
+		/*
+		 * case "generateIncidentFlowFile": String cName =
+		 * request.getParameter("form-courseName");
+		 * ReportGenerator.generateTable(cName); // RequestDispatcher rd =
+		 * request.getRequestDispatcher("DownloadServlet"); //
+		 * rd.forward(request,response);
+		 * 
+		 * //Download response.setContentType("text/html"); PrintWriter out =
+		 * response.getWriter(); //TODO: set paths in context no here String
+		 * filename = "workbook.xls"; String filepath = "";
+		 * response.setContentType("APPLICATION/OCTET-STREAM");
+		 * response.setHeader("Content-Disposition", "attachment; filename=\"" +
+		 * filename + "\"");
+		 * 
+		 * FileInputStream fileInputStream = new FileInputStream(filepath +
+		 * filename);
+		 * 
+		 * int index; while ((index = fileInputStream.read()) != -1) {
+		 * out.write(index); } fileInputStream.close(); out.close(); break;
+		 */
 		case "deleteCourse":
 			try {
 				response.setContentType("text/html");
@@ -392,11 +400,12 @@ public class HomeController extends HttpServlet {
 	 * uses utils.PasswordAuthentication to verify password from the client
 	 * 
 	 * @param response
-	 * @return 1 - Admin login, 2 - Marom, 3 - Rakia, 4 - Operator, 0 - None (invalid details)
+	 * @return 1 - Admin login, 2 - Marom, 3 - Rakia, 4 - Operator, 0 - None
+	 *         (invalid details)
 	 */
 	protected int authenticate(HttpServletRequest request) {
 		int result = 0;
-		String type="";
+		String type = "";
 		char[] user = request.getParameter("form-username").toCharArray();
 		// System.out.println("HomeController: username= " +
 		// request.getParameter("form-username"));
@@ -410,20 +419,20 @@ public class HomeController extends HttpServlet {
 		PasswordAuthentication au = new PasswordAuthentication(); // default
 																	// cost is
 																	// 16
-		for(TblUser u: users){
-			if(au.authenticate(user, u.getUsername())
-					&& au.authenticate(pass, u.getPassword())){
+		for (TblUser u : users) {
+			if (au.authenticate(user, u.getUsername())
+					&& au.authenticate(pass, u.getPassword())) {
 				type = u.getType();
 			}
 		}
-		switch(type){
+		switch (type) {
 		case "Admin":
 			result = 1;
 			break;
 		case "Operator":
 			result = 4;
 			break;
-		case "": //Team
+		case "": // Team
 			// Marom
 			if (String.valueOf(user).equals("Marom")
 					&& String.valueOf(pass).equals("m"))
@@ -441,7 +450,7 @@ public class HomeController extends HttpServlet {
 			}
 			break;
 		}
-		
+
 		users = null;
 		emptyChar(pass);
 		emptyChar(user);

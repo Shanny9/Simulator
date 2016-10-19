@@ -25,7 +25,6 @@ public class LogManager implements Runnable {
 	 */
 	public static void initialize(Settings setings) {
 		SimulationLog.getInstance().initialize(setings);
-		elapsed_time = new SimulationTime(0);
 		isRunning = false;
 	}
 
@@ -36,6 +35,7 @@ public class LogManager implements Runnable {
 	 */
 	public static void setRound(int round) {
 		SimulationLog.getInstance().setRound(round);
+		elapsed_time = new SimulationTime(round, 1, 0);
 	}
 
 	/**
@@ -90,12 +90,16 @@ public class LogManager implements Runnable {
 		if (!isRunning) {
 			return;
 		}
+		
+		SimulationLog simLog = SimulationLog.getInstance();
+		int round = simLog.getRound();
+		Settings sett = simLog.getSettings();
+		SimulationTime endTime = sett.getRoundRunTimeEnd(round);
 
-		isRunning = false;
-		SimulationLog.getInstance().stopLogs();
+		pauseLog(endTime, false);
+		simLog.stopLogs(endTime);
 		System.out.println("LogManager: Log stopped");
-		FilesUtils.saveLog(SimulationLog.getInstance().getSettings()
-				.getCourseName(), SimulationLog.getInstance().getRound());
+		FilesUtils.saveLog(sett.getCourseName(), round);
 	}
 
 	/**
@@ -113,6 +117,8 @@ public class LogManager implements Runnable {
 					.containsKey(elapsed_time)) {
 				HashSet<Byte> ci_ids = SimulationLog.getInstance()
 						.getIncidents().get(elapsed_time);
+				System.out
+						.println(elapsed_time.toString() + ": cis: " + ci_ids);
 				SimulationLog.getInstance().incidentsStarted(ci_ids,
 						elapsed_time);
 			}

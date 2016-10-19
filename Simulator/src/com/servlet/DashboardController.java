@@ -66,8 +66,8 @@ public class DashboardController extends HttpServlet {
 		
 		switch (action) {
 		case "getHeaderData":
-			Integer roundHeader = Integer.parseInt(request.getParameter("round"));
-			response.getWriter().print(DataMaker.getGeneralData(roundHeader));
+			String courseHeader = request.getParameter("course");
+			response.getWriter().print(DataMaker.getGeneralData(courseHeader));
 			break;
 		case "getPieData":
 			response.getWriter().print(DataMaker.getTeamMT(course, 1));

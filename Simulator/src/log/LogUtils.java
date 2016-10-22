@@ -309,7 +309,6 @@ public class LogUtils {
 			System.out.println("round events is not null: "+round_events);
 			return round_events;
 		}*/
-
 		round_events = new HashMap<>();
 		try {
 			PreparedStatement pstmt = DBUtility.getConnection()

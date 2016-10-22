@@ -166,9 +166,9 @@ public class SimulationLog extends Thread implements Serializable {
 	public void setRound(int currentRound) {
 		round = currentRound;
 		
-		if (time_events == null) {
+//		if (time_events == null) {
 			time_events = LogUtils.getRoundEvents(currentRound);
-		}
+//		}
 		
 		marom.setRound(currentRound);
 		rakia.setRound(currentRound);

@@ -126,22 +126,28 @@ public class TeamLog implements Serializable {
 	 * @param isBought
 	 *            indicates if the incident was bought or not.
 	 */
-	synchronized void incidentSolved(byte ci_id, SimulationTime time,
+	synchronized HashSet<Byte> incidentSolved(byte ci_id, SimulationTime time,
 			boolean isBought) {
 
 		if (isFinished) {
-			return;
+			return null;
 		}
 				
 		incident_logs.get(ci_id).close(time);
-
+		
 		HashSet<Byte> affectedServices = SimulationLog.getInstance()
 				.getAffectingCis().get(ci_id);
-
-		if (affectedServices != null) {
+		
+		HashSet<Byte> affectedServicesDown = new HashSet<>();
+		
+		if (affectedServices != null) {			
+			System.out.println(time.toString() + ": team = " + teamName + "ci_id= " + ci_id +".\nAffected services: " + affectedServices + "\n");
 			for (Byte service_id : affectedServices) {
-				diff += service_logs.get(service_id)
-						.ciUpdate(ci_id, true, time);
+				ServiceLog sl = service_logs.get(service_id);
+				if (!sl.isUp()){
+					affectedServicesDown.add(service_id);
+				}
+				diff += sl.ciUpdate(ci_id, true, time);
 			}
 		}
 		
@@ -157,7 +163,17 @@ public class TeamLog implements Serializable {
 //			System.out.println("Team " + teamName + ": solution solved at " +
 //					 time.toString() + ".");
 		}
-		return;
+		
+		HashSet<Byte> servicesFixed = new HashSet<>();
+		if (affectedServices != null) {
+			for (Byte service_id : affectedServices) {
+				ServiceLog sl = service_logs.get(service_id);
+				if (sl.isUp() && affectedServicesDown.contains(service_id)){
+					servicesFixed.add(service_id);
+				}
+			}
+		}
+		return servicesFixed;
 	}
 
 	/**
@@ -372,8 +388,8 @@ public class TeamLog implements Serializable {
 		return this.score;
 	}
 	
-	void increaseScore(){
-		this.score++;
+	void increaseScore(int num){
+		this.score+=num;
 	}
 
 	public HashMap<Byte, IncidentLog> getClosedIncidentLogs() {

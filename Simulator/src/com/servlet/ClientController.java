@@ -86,14 +86,15 @@ public class ClientController extends HttpServlet {
 		// get the action
 		String action = request.getParameter("action");
 		boolean isBaught = false;
-		if (action == null){
+		if (action == null || action.isEmpty()) {
 			return;
 		}
 		switch (action) {
 		case "getPriceList":
 			JSONArray questionCosts = new JSONArray();
-			HashMap<Byte, SolutionElement> solutions  = LogUtils.getCiSolutions();
-			for (SolutionElement sol : solutions.values()){
+			HashMap<Byte, SolutionElement> solutions = LogUtils
+					.getCiSolutions();
+			for (SolutionElement sol : solutions.values()) {
 				JSONObject questionCost = new JSONObject();
 				questionCost.put("question", sol.getQuestion_id());
 				questionCost.put("cost", sol.getSolution_cost());
@@ -105,11 +106,30 @@ public class ClientController extends HttpServlet {
 		case "buySolution":
 			isBaught = true;
 		case "sendSolution":
+			int question_id = 0;
+			int solution = 0;
+
+			if (!isBaught){
+				try{
+					solution = Integer.valueOf(request.getParameter("solution"));
+				} catch (NumberFormatException e){
+					// solution is not an int
+					return;
+				}
+			}
+			
+			try {
+				question_id = Integer.valueOf(request
+						.getParameter("question_id"));
+			} catch (NumberFormatException e) {
+				// question id is not an int
+				return;
+			}
+
 			team = request.getParameter("team");
-			question_id = Byte.valueOf(request.getParameter("question_id"));
 			time = ClockIncrementor.getSimRunTime();
-			int solution = Integer.valueOf(request.getParameter("solution"));
-			boolean isSolved = SimulationLog.getInstance().checkSolution(courseName, team,question_id,time,solution,isBaught);
+			boolean isSolved = SimulationLog.getInstance().checkSolution(
+					courseName, team, question_id, time, solution, isBaught);
 			JSONObject result = new JSONObject();
 			result.put("message", isSolved);
 			response.getWriter().print(result);
@@ -138,7 +158,7 @@ public class ClientController extends HttpServlet {
 			}
 			response.getWriter().print(false);
 			break;
-			
+
 		case "pauseOrResume":
 			while (log.SimulationLog.getServerPaused() == log.SimulationLog
 					.getClientPaused()) {

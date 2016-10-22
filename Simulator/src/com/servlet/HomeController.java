@@ -82,7 +82,7 @@ public class HomeController extends HttpServlet {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		String action = request.getParameter("action");
-		if (action == null) {
+		if (action == null || action.isEmpty()) {
 			return;
 		}
 		switch (action) {
@@ -171,23 +171,24 @@ public class HomeController extends HttpServlet {
 			response.getWriter().print(gson.toJson(settings));
 			break;
 		case "getEvents":
-			if (SimulationLog.isInitialized()){
-			response.getWriter().print(
-					SimulationLog.getInstance().getEventsForHomeScreen(round));
+			if (SimulationLog.isInitialized()) {
+				response.getWriter().print(
+						SimulationLog.getInstance().getEventsForHomeScreen(
+								round));
 			}
 			break;
 		case "getSolutionHistory":
-			if (SimulationLog.isInitialized()){
-			response.getWriter().write(
-					gson.toJson(SimulationLog.getInstance()
-							.getSolutionHistory()));
+			if (SimulationLog.isInitialized()) {
+				response.getWriter().write(
+						gson.toJson(SimulationLog.getInstance()
+								.getSolutionHistory()));
 			}
 			break;
 		case "solutionStream":
 			if (!ClockIncrementor.isRunning() || !SimulationLog.isInitialized()) {
 				return;
 			}
-			
+
 			prepareResponseToStream(response);
 			LinkedList<SolutionLog> solutionQueue = log.SimulationLog
 					.getInstance().getSolutionQueue();
@@ -215,30 +216,36 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "newCourse":
+			try {
+				String courseName = request.getParameter("form-courseName");
+				int rounds = Integer.valueOf(request
+						.getParameter("form-numOfRounds"));
+				int runTime = Integer.valueOf(request
+						.getParameter("form-runTime"));
+				int pauseTime = Integer.valueOf(request
+						.getParameter("form-pauseTime"));
+				int sessionsPerRound = Integer.valueOf(request
+						.getParameter("form-sessions"));
+				int initCapital = Integer.valueOf(request
+						.getParameter("form-initCapital"));
 
-			String courseName = request.getParameter("form-courseName");
-			int rounds = Integer.valueOf(request
-					.getParameter("form-numOfRounds"));
-			int runTime = Integer.valueOf(request.getParameter("form-runTime"));
-			int pauseTime = Integer.valueOf(request
-					.getParameter("form-pauseTime"));
-			int sessionsPerRound = Integer.valueOf(request
-					.getParameter("form-sessions"));
-			int initCapital = Integer.valueOf(request
-					.getParameter("form-initCapital"));
+				Settings set = new Settings(courseName, rounds, runTime,
+						pauseTime, sessionsPerRound, initCapital);
+				if (courseName != null) {
+					FilesUtils.saveSettings(set);
+					SimulationTester st = SimulationTester.getInstance();
+					SimulationTester.initialize(set);
+					new Thread(st).start();
+				}
 
-			Settings set = new Settings(courseName, rounds, runTime, pauseTime,
-					sessionsPerRound, initCapital);
-			if (courseName != null) {
-				FilesUtils.saveSettings(set);
-				SimulationTester st = SimulationTester.getInstance();
-				SimulationTester.initialize(set);
-				new Thread(st).start();
+				response.sendRedirect("newCourse.jsp?action=OK");
+			} catch (NumberFormatException e) {
+				// one of the parameters is invalid
+				return;
 			}
-
-			response.sendRedirect("newCourse.jsp?action=OK");
 			break;
 		case "checkSettings": // checks the max/min number incident in session
+			try{
 			String courseNameCheck = request.getParameter("courseName");
 			int roundsCheck = Integer.valueOf(request
 					.getParameter("numOfRounds"));
@@ -258,6 +265,10 @@ public class HomeController extends HttpServlet {
 			String msg = DBValidator.checkSettings(setCheck);
 			response.setContentType("text/html");
 			response.getWriter().print(msg); // msg == "" means all OK.
+			} catch (NumberFormatException e){
+				// one of the parameters is invalid
+				return;
+			}
 			break;
 		case "checkLog":
 			boolean courseExists = (FilesUtils.openSettings(request
@@ -288,7 +299,12 @@ public class HomeController extends HttpServlet {
 
 		case "selectCourse":
 			selectedCourseName = request.getParameter("form-courseName");
-			round = Integer.valueOf(request.getParameter("form-round"));
+			try{
+				round = Integer.valueOf(request.getParameter("form-round"));
+			} catch (NumberFormatException e){
+				// round is not an integer
+				return;
+			}
 
 			settings = FilesUtils.openSettings(selectedCourseName);
 			request.getSession().setAttribute("selectedCourseName",
@@ -301,7 +317,7 @@ public class HomeController extends HttpServlet {
 					selectedCourseName);
 			getServletContext().setAttribute("selectedRound", round);
 			response.sendRedirect("index.jsp");
-			
+
 			TimerManager.initializeSimulator(settings, round);
 			break;
 
@@ -406,10 +422,16 @@ public class HomeController extends HttpServlet {
 	protected int authenticate(HttpServletRequest request) {
 		int result = 0;
 		String type = "";
-		char[] user = request.getParameter("form-username").toCharArray();
-		// System.out.println("HomeController: username= " +
-		// request.getParameter("form-username"));
-		char[] pass = request.getParameter("form-password").toCharArray();
+		char[] user = null;
+		char[] pass = null;
+		if (request.getParameter("form-username") == null
+				|| request.getParameter("form-password") == null) {
+			return 0;
+		}
+
+		user = request.getParameter("form-username").toCharArray();
+		pass = request.getParameter("form-password").toCharArray();
+
 		request.removeAttribute("form-password"); // for security
 		request.removeAttribute("form-username");
 

@@ -3,17 +3,26 @@ package log;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import com.daoImpl.TblServiceDaoImpl;
+import com.model.TblService;
+
 public class SolutionLog implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String team;
-	private HashSet<String> events;
+	private HashSet<String> events = new HashSet<>();
+	private static TblServiceDaoImpl serviceDaoImpl = new TblServiceDaoImpl();
 	
-	public SolutionLog(String courseName, String team, byte ci_id){
+	public SolutionLog(String courseName, String team, HashSet<Byte> servicesFixed){
 		this.team = team;
-		this.events = SimulationLog.getInstance().getCiEvents(ci_id);
+		for (Byte service_id : servicesFixed){
+			TblService service = serviceDaoImpl.getServiceById(service_id);
+			if (service != null){
+				this.events.add(String.valueOf(service.getEventId()));
+			}
+		}
 	}
 	
 	/**

@@ -41,7 +41,6 @@ public class LogUtils {
 	private static HashMap<SimulationTime, HashSet<Byte>> time_cis;
 	private static HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	private static HashMap<Byte, SolutionElement> cis_solutions;
-	private static HashMap<Byte, HashSet<String>> ci_events;
 	private static HashMap<Integer, Integer> incidents_in_round;
 	private static HashMap<Integer, Byte> question_ci;
 
@@ -55,7 +54,6 @@ public class LogUtils {
 		LogUtils.time_cis = getTimeCis();
 		LogUtils.cis_time = getCisTime();
 		LogUtils.cis_solutions = getCiSolutions();
-		LogUtils.ci_events = getCiEvents();
 		LogUtils.incidents_in_round = getIncidentsInRound();
 		LogUtils.question_ci = getQuestionsCis();
 	}
@@ -350,31 +348,6 @@ public class LogUtils {
 						rs.getString("priorityName"));
 			}
 			return servicePriority;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static HashMap<Byte, HashSet<String>> getCiEvents() {
-		if (ci_events != null) {
-			return ci_events;
-		}
-
-		ci_events = new HashMap<>();
-		try {
-			Statement stmt = DBUtility.getConnection().createStatement();
-			ResultSet rs = stmt.executeQuery(Queries.ci_events);
-			while (rs.next()) {
-				byte ci_id = rs.getByte("ci_id");
-				HashSet<String> events = ci_events.get(ci_id);
-				if (events == null) {
-					events = new HashSet<>();
-				}
-				events.add(rs.getString("event_id"));
-				ci_events.put(ci_id, events);
-			}
-			return ci_events;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

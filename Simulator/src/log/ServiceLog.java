@@ -235,9 +235,12 @@ public class ServiceLog implements Serializable {
 	synchronized double ciUpdate(byte ci_id, boolean isUp, SimulationTime time) {
 		double oldDiff = diff;
 		if (isUp) {
-			// if all CIs ARE DOWN, updates service status
+			// if all CIs ARE UP, updates service status
 			if (this.cisDown.remove(ci_id) && cisDown.size() == 0) {
+				System.out.println(time.toString() + ": service = " + service_id + ". All CIs are up.");
 				updateStatus(time);
+			} else{
+				System.out.println(time.toString() + ": service = " + service_id + ". CIs " + cisDown + " are still down.\n");
 			}
 		} else {
 			// if all CIs WERE DOWN, updates service status

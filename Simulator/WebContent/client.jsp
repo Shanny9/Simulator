@@ -93,7 +93,7 @@
 					<div class="col-sm-6 col-sm-offset-3 form-box">
 						<div class="form-top">
 							<div class="form-top-left">
-								<h3>Solve or purchase solution</h3>
+								<h3>Solve</h3>
 							</div>
 							<input type="number" pattern="[0-9]*" name="Question ID"
 								placeholder="Q #" class="form-username form-control"
@@ -112,7 +112,7 @@
 									<div id="collapse1" class="panel-collapse collapse">
 										<div class="panel-body">
 											<input type="number" pattern="[0-9]*" name="solutionID"
-												placeholder="Solution #" class="form-username form-control"
+												placeholder="Solution" class="form-username form-control"
 												id="solutionID">
 											<button id="submitSol" disabled="disabled"
 												class="btn btn-green">Submit Solution</button>

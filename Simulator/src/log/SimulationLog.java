@@ -34,10 +34,6 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	/**
-	 * key = ci_id, value = set of events
-	 */
-	private HashMap<Byte,HashSet<String>> cis_events;
-	/**
 	 * The simulation's map of CIs and their affected services (key=ci_id,
 	 * value=set of affected services)
 	 */
@@ -48,8 +44,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	private HashMap<Byte, HashSet<Byte>> affected_services;
 	/**
-	 * The simulation's incidents and their events (key = time, value=set
-	 * of events)
+	 * The simulation's incidents and their events (key = time, value=set of
+	 * events)
 	 */
 	private HashMap<SimulationTime, HashSet<String>> time_events;
 
@@ -57,8 +53,8 @@ public class SimulationLog extends Thread implements Serializable {
 	 * The simulation's CI price list (key=ci_id, value=solution cost)
 	 */
 	private HashMap<Byte, Double> ciSolCosts;
-	
-	private HashMap<Integer,Byte> question_ci;
+
+	private HashMap<Integer, Byte> question_ci;
 	/**
 	 * The simulation's live queue of current solutions
 	 */
@@ -114,12 +110,8 @@ public class SimulationLog extends Thread implements Serializable {
 		if (cis_time == null) {
 			cis_time = LogUtils.getCisTime();
 		}
-		
-		if (cis_events == null){
-			cis_events = LogUtils.getCiEvents();
-		}
-		
-		if (question_ci == null){
+
+		if (question_ci == null) {
 			question_ci = LogUtils.getQuestionsCis();
 		}
 		if (marom == null || rakia == null) {
@@ -148,15 +140,16 @@ public class SimulationLog extends Thread implements Serializable {
 
 			marom = new TeamLog("Marom", service_logs, initDiff);
 			rakia = new TeamLog("Rakia", service_logs_copy, initDiff);
-			
+
 			isInitialized = true;
 			System.out.println("SimulationLog: SimulationLog is initalized.");
 		}
 	}
-	
-	public static boolean isInitialized(){
+
+	public static boolean isInitialized() {
 		return isInitialized;
 	}
+
 	/**
 	 * Sets he round of the service log, updates the round of the team logs.
 	 * 
@@ -284,13 +277,6 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	HashMap<Byte, HashSet<Byte>> getAffectedServices() {
 		return affected_services;
-	}
-
-	/**
-	 * @return The events of the ci
-	 */
-	HashSet<String> getCiEvents(byte ci_id) {
-		return cis_events.get(ci_id);
 	}
 
 	/**
@@ -469,9 +455,9 @@ public class SimulationLog extends Thread implements Serializable {
 		return getTeam(team).getMTRS();
 	}
 
-	public boolean checkSolution(String courseName, String team, int question_id, SimulationTime time,
-			int solution, boolean isBought) {
-	
+	public boolean checkSolution(String courseName, String team,
+			int question_id, SimulationTime time, int solution, boolean isBought) {
+
 		boolean isSolved = false;
 		boolean temConst = getTeamConst(team);
 		TeamLog teamLog = getTeam(temConst);
@@ -480,20 +466,23 @@ public class SimulationLog extends Thread implements Serializable {
 			return false;
 		}
 		Byte ci_id = question_ci.get(question_id);
-		if (ci_id == null){
-			// the question does not exist 
+		if (ci_id == null) {
+			// the question does not exist
+			System.err.println(time.toString() + ": team = " + team + "question_id= " + question_id + ". ci_id= " + ci_id +". The question does not exist.\n");
 			return false;
 		}
-		
+
 		boolean is_open = teamLog.isIncidentOpen(ci_id, time);
 		if (!is_open) {
 			// ci is up
+			System.err.println(time.toString() + ": team = " + team + "question_id= " + question_id + ". ci_id= " + ci_id +". The CI is already up.\n");
 			return false;
 		}
-		
+
 		if (isBought) {
 			isSolved = true;
 		} else {
+			// check correctness of the solution
 			SolutionElement sol = LogUtils.getCiSolutions().get(ci_id);
 			if (sol == null) {
 				// should not happen
@@ -503,16 +492,22 @@ public class SimulationLog extends Thread implements Serializable {
 					.getSolution_rakia();
 			isSolved = solution == real_solution;
 		}
-		
-		if (!isSolved){
+
+		if (!isSolved) {
 			return false;
 		}
 		
-		teamLog.incidentSolved(ci_id, time, isBought);
-		teamLog.increaseScore();
-		SolutionLog sol = new SolutionLog(courseName, team, ci_id);
-		solutionQueue.offer(sol);
-		solutionHistory.add(sol);
+		System.out.print(time.toString() + ": team = " + team + ". question_id= " + question_id + ". ci_id= " + ci_id +". Incident solved! ");
+		HashSet<Byte> servicesFixed = teamLog.incidentSolved(ci_id, time, isBought);
+		teamLog.increaseScore(servicesFixed.size());
+		
+		if (!servicesFixed.isEmpty()){
+			System.out.println("Service fixed: " + servicesFixed);
+			SolutionLog sol = new SolutionLog(courseName, team, servicesFixed);
+			solutionQueue.offer(sol);
+			solutionHistory.add(sol);
+		}
+		
 		return true;
 	}
 }

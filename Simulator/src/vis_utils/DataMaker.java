@@ -42,6 +42,8 @@ public class DataMaker {
 	}
 	
 	public static JSONObject getGeneralData(String courseName){
+		
+		getSettings(courseName);
 		JSONObject obj = new JSONObject();
 		
 		int round = Collections.max(FilesUtils.openSettings(courseName).getRoundsDone());

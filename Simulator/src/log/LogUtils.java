@@ -304,8 +304,9 @@ public class LogUtils {
 	 */
 	public static HashMap<SimulationTime, HashSet<String>> getRoundEvents(
 			int round) {
-
+		System.out.println("Getting round events for round "+round);
 		if (round_events != null) {
+			System.out.println("round events is not null: "+round_events);
 			return round_events;
 		}
 
@@ -328,6 +329,7 @@ public class LogUtils {
 			}
 		} catch (SQLException e) {
 		}
+		System.out.println("-End of the function, events: "+round_events);
 		return round_events;
 	}
 

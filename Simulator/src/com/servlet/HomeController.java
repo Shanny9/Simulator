@@ -173,6 +173,7 @@ public class HomeController extends HttpServlet {
 			break;
 		case "getEvents":
 			if (SimulationLog.isInitialized()){
+				System.out.println("HomeController round is "+round);
 			response.getWriter().print(
 					SimulationLog.getInstance().getEventsForHomeScreen(round));
 			}

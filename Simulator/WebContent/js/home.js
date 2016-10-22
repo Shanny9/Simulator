@@ -736,11 +736,7 @@ Number.prototype.toHHMMSS = function() {
 };
 
 var connection = true;
-window
-		.setInterval(
-				function() {
-					$
-							.ajax({
+window.setInterval(function() {$.ajax({
 								cache : false,
 								dataType : 'text',
 								url : "HomeController",
@@ -749,14 +745,14 @@ window
 								},
 								timeout : 1000,
 								success : function(data) {
-									if (!connection) {
+									if (!connection  && isSimulatorStarted && !isFinishedRound) {
 										clockInterval = setInterval(
 												incrementClock, 1000);
 										connection = true;
 									}
 								},
 								error : function(xhr, ajaxOptions, thrownError) {
-									if (connection) {
+									if (connection  && isSimulatorStarted && !isFinishedRound) {
 										notifyMe(
 												"Connection Lost",
 												"",

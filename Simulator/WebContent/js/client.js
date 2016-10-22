@@ -39,6 +39,7 @@ $(document).ready(
 					'focus', function() {
 						$(this).removeClass('input-error');
 					});
+			getTime(); //for function run(..), setting the current round, for disable purchase rounds 1-2.
 			setPauseSource();
 			run(isRunTime);
 
@@ -150,7 +151,11 @@ function setPauseSource() {
 
 function run(isRun) {
 
-	disablePurchase(!isRun);
+	console.log(currentRound);
+	if(currentRound == 1 || currentRound == 2)
+		disablePurchase(true);
+	else
+		disablePurchase(!isRun);
 	disableSolve(!isRun);
 }
 
@@ -181,9 +186,10 @@ function showPrice() {
 function incrementClock() {
 
 	/*
-	 * // Disable purchasing during rounds 1 and 2. if(currentRound > 1)
+	 * // Disable purchasing during rounds 1 and 2. if(currentRound == 1 ||currentRound == 2)
 	 * disablePurchase(true); else disablePurchase(false);
 	 */
+
 
 	$('#main-time').html(showTime.toHHMMSS());
 	showTime = (showTime - 1);
@@ -192,7 +198,10 @@ function incrementClock() {
 	if ((elapsedTime + settings["runTime"]) % (settings["sessionTime"]) == 0) {
 		// finished pause time
 		showTime = settings["runTime"];
-		disablePurchase(false);
+		if(currentRound == 1 || currentRound == 2)
+			disablePurchase(true);
+		else
+			disablePurchase(false);
 		disableSolve(false);
 
 	} else if (elapsedTime % (settings["sessionTime"]) == 0) {
@@ -234,7 +243,6 @@ function getTime() {
 		async : false,
 		success : function(data) {
 			isRunTime = data.isRunTime;
-			run(isRunTime);
 			var latency = Math
 					.round((((new Date).getTime() - start) / 2) / 1000);
 			var remainingClock = data.remainingClock;
@@ -242,7 +250,7 @@ function getTime() {
 			elapsedTime = Math.floor(data.elapsedClock + latency);
 
 			currentRound = data["round"];
-			console.log(currentRound);
+			run(isRunTime); // have to be called after current round is set
 			finishRound = settings["roundTime"] * (currentRound + 1);
 
 			console.log("remainingClock " + remainingClock);

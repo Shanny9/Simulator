@@ -1,8 +1,7 @@
 package log;
 
 import java.io.Serializable;
-
-import com.model.TblIncidentPK;
+import java.util.ArrayList;
 
 import utils.SimulationTime;
 
@@ -17,23 +16,18 @@ public class IncidentLog implements Serializable {
 	 */
 	private byte ci_id;
 	/**
-	 * The time when incident occurs
+	 * The times of the incident log
 	 */
-	private int start_time;
-	/**
-	 * The time when the incident is solved
-	 */
-	private int end_time;
-
+	private ArrayList<Integer> times;
 
 	/**
 	 * @param start_time
 	 * @param ci_id
 	 */
-	public IncidentLog(TblIncidentPK inc_pk) {
+	public IncidentLog(byte ci_id) {
 		super();
-		this.ci_id = inc_pk.getCiId();
-		this.start_time = inc_pk.getTime();
+		this.ci_id = ci_id;
+		this.times = new ArrayList<>();
 	}
 
 	/**
@@ -41,32 +35,6 @@ public class IncidentLog implements Serializable {
 	 */
 	public byte getCiId() {
 		return ci_id;
-	}
-
-	/**
-	 * @return The start_time
-	 */
-	SimulationTime getStartTime() {
-		return new SimulationTime(start_time);
-	}
-
-	/**
-	 * @return The end_time
-	 */
-	SimulationTime getEndTime() {
-		return new SimulationTime(end_time);
-	}
-
-	/**
-	 * Closes the incident if it is open.
-	 * 
-	 * @param time
-	 *            The time to close the incident
-	 */
-	void close(SimulationTime time) {
-		if (isOpen(time)) {
-			this.end_time = time.getRunTime();
-		}
 	}
 
 	/**
@@ -78,7 +46,9 @@ public class IncidentLog implements Serializable {
 	 *         {@code false}.
 	 */
 	boolean isOpen(SimulationTime time) {
-		return time.after(start_time) && end_time == 0;
+		return times.size() % 2 != 0 /* is down */
+				/* after last incident */
+				&& time.after(times.get(times.size() - 1)) ;
 	}
 
 	/**
@@ -88,7 +58,7 @@ public class IncidentLog implements Serializable {
 	 *         {@code false}.
 	 */
 	boolean isOpen() {
-		return end_time == 0;
+		return times.size() % 2 != 0;
 	}
 
 	/**
@@ -97,11 +67,26 @@ public class IncidentLog implements Serializable {
 	 * @return The duration of the incident.
 	 */
 	public int getDuration() {
-		return end_time - start_time;
+		int sum = 0;
+		for (int index = 1; index < times.size(); index += 2) {
+			sum += times.get(index) - times.get(index - 1);
+		}
+		return sum;
+	}
+	
+	public void open(SimulationTime time) {
+		if (!isOpen(time)) {
+			times.add(time.getRunTime());
+		}
+	}
+	
+	public void close(SimulationTime time) {
+		if (isOpen(time)) {
+			times.add(time.getRunTime());
+		}
 	}
 
 	public String toString() {
-		return "ci id=" + ci_id + ", start_time= " + start_time
-				+ ", end_time= " + end_time;
+		return "ci id=" + ci_id + ", times= " + times;
 	}
 }

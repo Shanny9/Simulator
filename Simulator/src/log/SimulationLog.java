@@ -158,22 +158,9 @@ public class SimulationLog extends Thread implements Serializable {
 	 */
 	public void setRound(int currentRound) {
 		round = currentRound;
-
 		time_events = LogUtils.getRoundEvents(currentRound);
-
 		marom.setRound(currentRound);
 		rakia.setRound(currentRound);
-
-		// initializes incident logs
-		HashMap<Byte, IncidentLog> incident_logs_current_round = LogUtils
-				.getIncidentLogsOfRound(round);
-
-		@SuppressWarnings("unchecked")
-		HashMap<Byte, IncidentLog> incident_logs_current_round_copy = (HashMap<Byte, IncidentLog>) LogUtils
-				.copy(incident_logs_current_round);
-
-		marom.setIncidentLogs(incident_logs_current_round);
-		rakia.setIncidentLogs(incident_logs_current_round_copy);
 
 		System.out.println("SimulationLog: round is set to " + currentRound
 				+ ".");
@@ -466,14 +453,14 @@ public class SimulationLog extends Thread implements Serializable {
 		Byte ci_id = question_ci.get(question_id);
 		if (ci_id == null) {
 			// the question does not exist
-			System.err.println(time.toString() + ": team = " + team + "question_id= " + question_id + ". ci_id= " + ci_id +". The question does not exist.\n");
+			System.err.println(time.toString() + ": team = " + team + ". question_id= " + question_id + ". ci_id= " + ci_id +". The question does not exist.\n");
 			return false;
 		}
 
 		boolean is_open = teamLog.isIncidentOpen(ci_id, time);
 		if (!is_open) {
 			// ci is up
-			System.err.println(time.toString() + ": team = " + team + "question_id= " + question_id + ". ci_id= " + ci_id +". The CI is already up.\n");
+			System.err.println(time.toString() + ": team = " + team + ". question_id= " + question_id + ". ci_id= " + ci_id +". The CI is already up.\n");
 			return false;
 		}
 

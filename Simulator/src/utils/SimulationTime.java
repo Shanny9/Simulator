@@ -3,7 +3,7 @@ package utils;
 import java.io.Serializable;
 
 public class SimulationTime implements Serializable {
-
+ 
 	/**
 	 * 
 	 */

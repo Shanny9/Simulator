@@ -17,7 +17,7 @@ import utils.SolutionElement;
 
 import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblService;
-
+ 
 public class SimulationLog extends Thread implements Serializable {
 
 	public static final boolean MAROM = true;

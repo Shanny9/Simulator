@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import log.LogManager;
 import log.Settings;
-
+ 
 public class ClockIncrementor implements Runnable {
 	/**
 	 * Indicates whether the {@code ClockIncrementor} is running.

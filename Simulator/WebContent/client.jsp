@@ -80,7 +80,7 @@
 				<div class="row">
 					<div class="col-sm-8 col-sm-offset-2 text">
 						<h1>
-							<strong>DANBERT</strong> ITIL Simulator
+							<strong>DANBERT</strong><br> ITIL Simulator
 						</h1>
 					</div>
 					<br>

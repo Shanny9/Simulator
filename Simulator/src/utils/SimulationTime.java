@@ -36,9 +36,9 @@ public class SimulationTime implements Serializable {
 	public SimulationTime(int round, int session, int timeInSession) {
 		checkInitialized();
 		if (round > 0 && session > 0 && timeInSession >= 0) {
-			int t = (round - 1) * getRoundRunTime() + (session - 1)
-					* run_time + timeInSession;
-			
+			int t = (round - 1) * getRoundRunTime() + (session - 1) * run_time
+					+ timeInSession;
+
 			if (notNegative(t) && !isTooBig(t)) {
 				this.time = t;
 			}
@@ -103,29 +103,25 @@ public class SimulationTime implements Serializable {
 		}
 		return false;
 	}
-	
-	public int getRemainingTime(){
+
+	public int getRemainingTime() {
 		return getRoundTime() - getRunTimeInRound();
 	}
-	
-	private int getRoundTime(){
+
+	private int getRoundTime() {
 		return getSessionTime() * sessions_in_round;
 	}
-	
-	private int getSessionTime(){
+
+	private int getSessionTime() {
 		return run_time + pause_time;
 	}
-	
+
 	private static int getRoundRunTime() {
 		return run_time * sessions_in_round;
 	}
 
 	public int getRound() {
-		if (time == 0) {
-			return 1;
-		}
-		int roundRunTime = getRoundRunTime();
-		return time / roundRunTime + ((time % roundRunTime == 0) ? 0 : 1);
+		return (int) Math.ceil(time / getRoundRunTime() + 1);
 	}
 
 	public int getSessionInRound() {
@@ -142,6 +138,7 @@ public class SimulationTime implements Serializable {
 
 	public int getRunTimeInRound() {
 		return time - ((getRound() - 1) * getRoundRunTime());
+
 	}
 
 	public int getTimeUntilSessionEnds() {

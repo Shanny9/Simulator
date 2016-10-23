@@ -173,4 +173,47 @@ public class TblDepartmentDaoImpl implements TblDepartmentDao {
 		return count;
 	}
 
+	@Override
+	public List<TblDepartment> getDepartmentByDivision(String divisionName) {
+		List<TblDepartment> departments = new ArrayList<TblDepartment>();
+
+		String query = "SELECT * FROM tblDepartment WHERE division_name = '"+divisionName+"'";
+
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblDepartment department = new TblDepartment();
+				department.setDivisionName(rs.getString("division_name"));
+				department.setDepartmentName(rs.getString("department_name"));
+				department.setActive(rs.getBoolean("isActive"));
+				department.setShortName(rs.getString("shortName"));
+				departments.add(department);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return departments;
+	}
+
+	@Override
+	public List<TblDepartment> getAllDistinctDepartments() {
+		List<TblDepartment> departments = new ArrayList<TblDepartment>();
+
+		String query = "SELECT DISTINCT division_name FROM tblDepartment";
+
+		try {
+			Statement stmt = DBUtility.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				TblDepartment department = new TblDepartment();
+				department.setDivisionName(rs.getString("division_name"));
+				departments.add(department);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return departments;
+	}
+
 }

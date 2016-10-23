@@ -76,17 +76,29 @@ var catagory3 = new Object();
 var titles1 = new Array();
 var titles2 = new Array();
 function divideLegend(catagories, titles){
-	var length = Math.floor((Object.keys(catagories).length)/2);
-	var remain = (Object.keys(catagories).length)%2;
+	
+	var fullLength = Object.keys(catagories).length;
+	Object.keys(catagories).forEach(function(key,index) {
+		if(catagories[key] == "#8d8d8d"){ // defines which color to skip and not show at the legend. (services color)
+			fullLength--; // do not count services for legend length
+		} 
+
+	});
+	
+	var length = Math.floor((fullLength)/2);
+	var remain = (fullLength)%2;
+	var i = -1;
 	Object.keys(catagories).forEach(function(key,index) {
 		if(catagories[key] == "#8d8d8d"){ // defines which color to skip and not show at the legend. (services color)
 			return true;
-		} 
+		}
+		else
+			i++; // index without services. for index with services use var "index"
 	    // key: the name of the object key
 	    // index: the ordinal position of the key within the object 		
-			if(index >= 0 && index < length)
+			if(i >= 0 && i < length)
 				catagory1[key] = catagories[key];
-			if(index >= length && index<( (length*2) + (remain) ))
+			if(i >= length && i<( (length*2) + (remain) ))
 				catagory2[key] = catagories[key];
 	/*		if(index >= length*2 && index<( (length*3) + (length%3) ))
 				catagory3[key] = catagories[key];*/
@@ -212,7 +224,7 @@ function setVisualization(round, service, team, isDrawLegend){
 	/* Legend Divided */
 	/* Hover Titles */
 	if(isDrawLegend){
-		getTitles();
+//		getTitles(); // for hover: delete this from being a comment and arrange the get titles method on server side
 		divideLegend(colors, titles);
 	}
 

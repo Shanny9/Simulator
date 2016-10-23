@@ -135,8 +135,17 @@ public class DataController extends HttpServlet {
 						"divisionName", "divisionName");
 				break;
 			case "department":
-				optionArr = toOptionArray(daoDepartment.getAllDepartments(),
-						"departmentName", "departmentName");
+				if(request.getParameter("divisionName") == null)
+					optionArr = toOptionArray(daoDepartment.getAllDepartments(),
+							"departmentName", "departmentName");
+				else
+					optionArr = toOptionArray(daoDepartment.getDepartmentByDivision(request.getParameter("divisionName")),
+							"departmentName", "departmentName");
+				break;
+				/* gets only distincts division names that have department, for service dep table */
+			case "divisionForService":
+				optionArr = toOptionArray(daoDepartment.getAllDistinctDepartments(),
+						"divisionName", "divisionName");
 				break;
 			case "service":
 				optionArr = toOptionArray(daoService.getAllServices(),

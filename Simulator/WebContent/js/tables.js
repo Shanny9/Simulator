@@ -1242,7 +1242,7 @@ function serviceTable(){
 					list : true,
 					edit : true,
 					create : true,
-					options: 'DataController?options=division'
+					options: 'DataController?options=divisionForService' 
 				},
 				departmentName : {
 					title : 'Department Name',
@@ -1251,7 +1251,18 @@ function serviceTable(){
 					list : true,
 					edit : true,
 					create : true,
-					options: 'DataController?options=department'
+					dependsOn: 'divisionName',
+                    options: function (data) {
+                        if (data.source == 'list') {
+                            //Return url of all depart. for optimization. 
+                            //This method is called for each row on the table and jTable caches options based on this url.
+                            return 'DataController?options=department';
+                        }
+ 
+                        //This code runs when user opens edit/create form or changes country combobox on an edit/create form.
+                        //data.source == 'edit' || data.source == 'create'
+                        return 'DataController?options=department&divisionName=' + data.dependedValues.divisionName;
+                    }
 				},
 
 				isActive : {
@@ -1730,15 +1741,6 @@ function departmentTable(){
 	          ]
 	    },
 		fields : {
-			departmentName : {
-				title : 'Department Name',
-//				width : '30%',
-				key : true,
-				list : true,
-				edit : true,
-				create : true,
-				inputClass: 'validate[required,maxSize[50]]'
-			},
 			divisionName : {
 				title : 'Division Name',
 				key : true,
@@ -1747,6 +1749,15 @@ function departmentTable(){
 				edit : true,
 				create : true,
 				options:  'DataController?options=division'
+			},
+			departmentName : {
+				title : 'Department Name',
+//				width : '30%',
+				key : true,
+				list : true,
+				edit : true,
+				create : true,
+				inputClass: 'validate[required,maxSize[50]]'
 			},
 			shortName : {
 				title : 'Shortened Name',

@@ -133,7 +133,7 @@ function setBarChartPerTeam(serviceId) {
 var mtrsPieData = new Array();
 function getMTRSPieData(team, round, service) {
 	// first range must start at 0
-	var labels = [ "0-9", "9-18", "18-27", "27-36" , "36-45" ];
+	var labels = [ "0-50", "50-100", "100-200", "200-400"];
 	$.ajax({
 		url : "DashboardController",
 		data : {
@@ -159,7 +159,7 @@ function getMTRSPieData(team, round, service) {
 
 function setMTRSpie(team, round, service) {
 	getMTRSPieData(team, round, service);
-	var labels = [ "0-9", "9-18", "18-27", "27-36" , "36-45" ];
+	var labels = [ "0-50", "50-100", "100-200", "200-400"];
 	var tempData = [ 20, 30, 40, 80 ];
 	/*
 	 * var options = { legend : true, responsive : false };

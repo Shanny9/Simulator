@@ -785,7 +785,7 @@ public class DataMaker {
 		}
 
 		void addValue(int val) {
-			if (rangeCountAL != null) {
+			if (rangeCountAL == null) {
 				return;
 			}
 
@@ -940,7 +940,7 @@ public class DataMaker {
 							.getString("division_name");
 					String department_name = (isAbbreviated) ? rs
 							.getString("department_shortName") : rs
-							.getString("division_name");
+							.getString("department_name");
 					String service_name = (isAbbreviated) ? rs
 							.getString("service_code") : rs
 							.getString("service_name");

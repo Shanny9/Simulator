@@ -87,6 +87,8 @@ var solutionEventSource;
  * Listens to solutions sent from the servlet and updates the color of the
  * event.
  */
+var connection = true;
+
 var solutionListener = function(e) {
 
 	var data = JSON.parse(e.data);
@@ -491,7 +493,7 @@ function getSettings() {
  */
 function startSimulator() {
 
-	if (isSimulatorStarted) {
+	if (isSimulatorStarted  && connection) {
 		return;
 	}
 
@@ -658,7 +660,7 @@ function incrementClock() {
 
 	showEventsInTime();
 	elapsedTime++;
-	console.log("incrementClock: elapsed time=" + elapsedRunTime);
+	console.log("incrementClock: elapsed time=" + elapsedRunTime.toHHMMSS());
 
 	if (isRunTime) {
 		runPercentage = (settings["runTime"] - showTime)
@@ -735,7 +737,6 @@ Number.prototype.toHHMMSS = function() {
 	return time;
 };
 
-var connection = true;
 window.setInterval(function() {$.ajax({
 								cache : false,
 								dataType : 'text',
@@ -746,8 +747,8 @@ window.setInterval(function() {$.ajax({
 								timeout : 1000,
 								success : function(data) {
 									if (!connection  && isSimulatorStarted && !isFinishedRound) {
-										clockInterval = setInterval(
-												incrementClock, 1000);
+										//TODO: replace or fix
+										startSimulator();
 										connection = true;
 									}
 								},

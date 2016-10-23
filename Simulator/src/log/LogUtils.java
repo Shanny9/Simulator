@@ -33,7 +33,6 @@ public class LogUtils {
 	private static HashMap<Byte, HashSet<Byte>> dbAffectedServices;
 	private static HashMap<Byte, Double> ciSolCosts;
 	private static HashMap<Byte, Double> serviceCosts;
-	// private static Collection<IncidentLog> incidentLogs;
 	private static HashMap<SimulationTime, HashSet<String>> round_events;
 	private static HashMap<Byte, String> servicePriority;
 	private static HashMap<SimulationTime, HashSet<Byte>> time_cis;
@@ -47,7 +46,6 @@ public class LogUtils {
 		LogUtils.dbAffectedServices = getDBAffectedServices();
 		LogUtils.ciSolCosts = getCISolCosts();
 		LogUtils.serviceCosts = getServiceDownTimeCosts();
-		// LogUtils.incidentLogs = getIncidentLogs();
 		LogUtils.servicePriority = getServicePriorities();
 		LogUtils.time_cis = getTimeCis();
 		LogUtils.cis_time = getCisTime();

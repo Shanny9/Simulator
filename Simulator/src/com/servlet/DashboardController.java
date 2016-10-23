@@ -110,7 +110,7 @@ public class DashboardController extends HttpServlet {
 			response.getWriter().print(DataMaker.getBizUnits(true, true,(byte)0));
 			break;
 		case "getBizUnitsTitles":
-			response.getWriter().print(DataMaker.getBizUnits(false, false,(byte)0));
+			response.getWriter().print(DataMaker.getBizUnits(true, false,(byte)0));
 			break;
 		case "generateITBudgetBreakdown":
 			Integer roundBudget = Integer.parseInt(request

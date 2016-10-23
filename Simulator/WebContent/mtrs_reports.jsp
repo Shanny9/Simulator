@@ -172,7 +172,7 @@ li {
 					</div>
 					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
 						<span class="count_top"><i class="fa fa-asterisk"></i>
-							Rounds Number</span>
+							Round</span>
 						<div id="hRoundsNum" class="count"></div>
 <!-- 						<span class="count_bottom"><i class="green"><i
 								class="fa fa-sort-asc"></i>3% </i> From last Week</span> -->

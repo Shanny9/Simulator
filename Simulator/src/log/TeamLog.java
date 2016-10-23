@@ -103,10 +103,11 @@ public class TeamLog implements Serializable {
 
 		this.profits = new ArrayList<>(Collections.nCopies(duration+1, 0d));
 		setProfit(new SimulationTime(0), init_capital);
-	}
-
-	void setIncidentLogs(HashMap<Byte, IncidentLog> inc_logs) {
-		this.incident_logs.putAll(inc_logs);
+		
+		HashSet<Byte> cis = LogUtils.getCisInRound(round);
+		for (Byte ci_id : cis){
+			incident_logs.put(ci_id,new IncidentLog(ci_id));
+		}
 	}
 
 	/**
@@ -209,10 +210,11 @@ public class TeamLog implements Serializable {
 		if (isFinished) {
 			return;
 		}
-		
+				
 		HashSet<Byte> affectedServices = new HashSet<>();
 		for (Byte ci_id : ci_ids){
 			if (ci_id != null){
+				incident_logs.get(ci_id).open(time);
 				affectedServices.addAll(SimulationLog.getInstance().getAffectingCis().get(ci_id));
 			}
 		}
@@ -378,10 +380,6 @@ public class TeamLog implements Serializable {
 	 */
 	public ArrayList<Double> getProfits() {
 		return this.profits;
-	}
-
-	HashMap<Byte, IncidentLog> getIncident_logs() {
-		return this.incident_logs;
 	}
 	
 	public int getScore(){

@@ -43,10 +43,10 @@ $(document).ready(
 			setPauseSource();
 			run(isRunTime);
 
-			// when a key released in the ci field - updates if the menus could
+			// when a key released in the question field - updates if the menus could
 			// toggle
 			$("#questionId").on('keyup', function() {
-				// checks if ci field is empty
+				// checks if question field is empty
 				if ($('#questionId').val() == "") {
 					// disables toggle
 					$(".collapse-menu").removeAttr('data-toggle');
@@ -60,7 +60,7 @@ $(document).ready(
 			$("#solveMenu")
 					.click(
 							function() {
-								// checks if ci field is empty
+								// checks if question field is empty
 								if ($("#questionId").val() == "") {
 									$("#noQuestionId").slideToggle("slow")
 											.delay(2000).slideToggle("slow");
@@ -109,7 +109,7 @@ $(document).ready(
 			// when a key released in the solution field - updates if the submit
 			// button will be enabled
 			$("#solutionID").on('keyup', function() {
-				if ($('#solutionID').val() != "") {
+				if ($('#questionId').val() != "") {
 					$('#submitSol').removeAttr('disabled');
 				} else {
 					$('#submitSol').attr('disabled');

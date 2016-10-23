@@ -26,7 +26,6 @@ import org.json.simple.JSONObject;
 import utils.DepartmentService;
 import utils.Queries;
 
-import com.daoImpl.TblCIDaoImpl;
 import com.daoImpl.TblServiceDaoImpl;
 import com.jdbc.DBUtility;
 import com.model.TblService;
@@ -41,15 +40,16 @@ public class DataMaker {
 		return DataMaker.settings;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static JSONObject getGeneralData(String courseName){
 		
 		getSettings(courseName);
 		JSONObject obj = new JSONObject();
 		
 		int round = Collections.max(FilesUtils.openSettings(courseName).getRoundsDone());
-		obj.put("incidents",LogUtils.getIncidentsInRound().get(round));
-		obj.put("services", new TblServiceDaoImpl().getActiveServiceCount());
-		obj.put("cis", new TblCIDaoImpl().getActiveCICount());
+		obj.put("incidents",LogUtils.getIncidentCountInRound().get(round));
+		obj.put("cis", LogUtils.getCICountInRound(round));
+		obj.put("services", LogUtils.getServiceCountInRound(round));
 		obj.put("rounds", settings.getRounds());
 		obj.put("round_time", settings.getRoundTime());
 		obj.put("rounds_done", settings.getRoundsDone().size());

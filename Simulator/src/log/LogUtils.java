@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +26,6 @@ import com.jdbc.DBUtility;
 import com.model.TblCI;
 import com.model.TblCMDB;
 import com.model.TblIncident;
-import com.model.TblIncidentPK;
 
 public class LogUtils {
 
@@ -35,13 +33,13 @@ public class LogUtils {
 	private static HashMap<Byte, HashSet<Byte>> dbAffectedServices;
 	private static HashMap<Byte, Double> ciSolCosts;
 	private static HashMap<Byte, Double> serviceCosts;
-	private static Collection<IncidentLog> incidentLogs;
+	// private static Collection<IncidentLog> incidentLogs;
 	private static HashMap<SimulationTime, HashSet<String>> round_events;
 	private static HashMap<Byte, String> servicePriority;
 	private static HashMap<SimulationTime, HashSet<Byte>> time_cis;
 	private static HashMap<Byte, HashSet<SimulationTime>> cis_time;
 	private static HashMap<Byte, SolutionElement> cis_solutions;
-	private static HashMap<Integer, Integer> incidents_in_round;
+	private static HashMap<Integer, Integer> incident_count_in_round;
 	private static HashMap<Integer, Byte> question_ci;
 
 	public static void runAll() {
@@ -49,12 +47,12 @@ public class LogUtils {
 		LogUtils.dbAffectedServices = getDBAffectedServices();
 		LogUtils.ciSolCosts = getCISolCosts();
 		LogUtils.serviceCosts = getServiceDownTimeCosts();
-		LogUtils.incidentLogs = getIncidentLogs();
+		// LogUtils.incidentLogs = getIncidentLogs();
 		LogUtils.servicePriority = getServicePriorities();
 		LogUtils.time_cis = getTimeCis();
 		LogUtils.cis_time = getCisTime();
 		LogUtils.cis_solutions = getCiSolutions();
-		LogUtils.incidents_in_round = getIncidentsInRound();
+		LogUtils.incident_count_in_round = getIncidentCountInRound();
 		LogUtils.question_ci = getQuestionsCis();
 	}
 
@@ -203,51 +201,62 @@ public class LogUtils {
 		return null;
 	}
 
-	/**
-	 * @param round
-	 *            the current round
-	 * @return empty incident logs for the current round
-	 */
-	static HashMap<Byte, IncidentLog> getIncidentLogsOfRound(int round) {
+	// /**
+	// * @param round
+	// * the current round
+	// * @return empty incident logs for the current round
+	// */
+	// static HashMap<Byte, IncidentLog> getIncidentLogsOfRound(int round) {
+	//
+	// if (incidentLogs == null) {
+	// incidentLogs = getIncidentLogs();
+	// }
+	//
+	// HashMap<Byte, IncidentLog> incidentLogsOfRound = new HashMap<>();
+	// for (IncidentLog inc_log : incidentLogs) {
+	// if (round == 0 || round == inc_log.getStartTime().getRound()) {
+	// IncidentLog log_to_put = incidentLogsOfRound.get(inc_log.getCiId());
+	// if (log_to_put == null){
+	// log_to_put = inc_log;
+	// } else{
+	// // gets the first log of the incident
+	// SimulationTime inc_log_time = inc_log.getStartTime();
+	// SimulationTime log_to_put_time = log_to_put.getStartTime();
+	// log_to_put = (inc_log_time.before(log_to_put_time))? inc_log :
+	// log_to_put;
+	// }
+	// incidentLogsOfRound.put(inc_log.getCiId(), log_to_put);
+	// }
+	// }
+	// return incidentLogsOfRound;
+	// }
 
-		if (incidentLogs == null) {
-			incidentLogs = getIncidentLogs();
-		}
-
-		HashMap<Byte, IncidentLog> incidentLogsOfRound = new HashMap<>();
-		for (IncidentLog inc_log : incidentLogs) {
-			if (round == 0 || round == inc_log.getStartTime().getRound()) {
-				incidentLogsOfRound.put(inc_log.getCiId(), inc_log);
-			}
-		}
-		return incidentLogsOfRound;
-	}
-
-	/**
-	 * Note that 'incidentLog' does not have a unique id (a CI can have multiple
-	 * logs.).
-	 * 
-	 * @return empty incident logs for the entire course.
-	 */
-	static Collection<IncidentLog> getIncidentLogs() {
-
-		if (incidentLogs != null) {
-			return incidentLogs;
-		}
-
-		incidentLogs = new ArrayList<>();
-		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
-				.getAllActiveIncidents();
-		for (TblIncident inc : incidents) {
-			byte ci_id = inc.getCiId();
-			int time = inc.getIncidentTime();
-			TblIncidentPK inc_pk = new TblIncidentPK();
-			inc_pk.setCiId(ci_id);
-			inc_pk.setTime(time);
-			incidentLogs.add(new IncidentLog(inc_pk));
-		}
-		return incidentLogs;
-	}
+	// /**
+	// * Note that 'incidentLog' does not have a unique id (a CI can have
+	// multiple
+	// * logs.).
+	// *
+	// * @return empty incident logs for the entire course.
+	// */
+	// static Collection<IncidentLog> getIncidentLogs() {
+	//
+	// if (incidentLogs != null) {
+	// return incidentLogs;
+	// }
+	//
+	// incidentLogs = new ArrayList<>();
+	// Collection<TblIncident> incidents = new TblIncidentDaoImpl()
+	// .getAllActiveIncidents();
+	// for (TblIncident inc : incidents) {
+	// byte ci_id = inc.getCiId();
+	// int time = inc.getIncidentTime();
+	// TblIncidentPK inc_pk = new TblIncidentPK();
+	// inc_pk.setCiId(ci_id);
+	// inc_pk.setTime(time);
+	// incidentLogs.add(new IncidentLog(inc_pk));
+	// }
+	// return incidentLogs;
+	// }
 
 	/**
 	 * @return Incidnets (key=time, value=set of cis)
@@ -355,23 +364,54 @@ public class LogUtils {
 		return null;
 	}
 
-	public static HashMap<Integer, Integer> getIncidentsInRound() {
-		if (incidents_in_round != null) {
-			return incidents_in_round;
+	public static HashMap<Integer, Integer> getIncidentCountInRound() {
+		if (incident_count_in_round != null) {
+			return incident_count_in_round;
 		}
 
-		incidents_in_round = new HashMap<>();
+		incident_count_in_round = new HashMap<>();
 		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
 				.getAllActiveIncidents();
 		for (TblIncident inc : incidents) {
 			int round = inc.getSimulationTime().getRound();
-			Integer count = incidents_in_round.get(round);
+			Integer count = incident_count_in_round.get(round);
 			if (count == null) {
 				count = 0;
 			}
-			incidents_in_round.put(round, ++count);
+			incident_count_in_round.put(round, ++count);
 		}
-		return incidents_in_round;
+		return incident_count_in_round;
+	}
+
+	public static int getCICountInRound(int round) {
+		return getCisInRound(round).size();
+	}
+
+	public static HashSet<Byte> getCisInRound(int round) {
+
+		HashSet<Byte> cis_in_round = new HashSet<>();
+		Collection<TblIncident> incidents = new TblIncidentDaoImpl()
+				.getAllActiveIncidents();
+		for (TblIncident inc : incidents) {
+			if (inc.getSimulationTime().getRound() == round) {
+				cis_in_round.add(inc.getCiId());
+			}
+		}
+		return cis_in_round;
+	}
+	
+	public static int getServiceCountInRound(int round) {
+		return getServicesInRound(round).size();
+	}
+
+	public static HashSet<Byte> getServicesInRound(int round) {
+
+		HashSet<Byte> services_in_round = new HashSet<>();
+		Collection<Byte> cis = getCisInRound(round);
+		for (byte ci : cis) {
+			services_in_round.addAll(getDBAffectingCIs().get(ci));
+		}
+		return services_in_round;
 	}
 
 	/**

@@ -69,7 +69,7 @@ li {
 		response.sendRedirect("selectCourse_reports.jsp");
 	}
 	else{
-		if(sessionCourse == null){
+		if(sessionCourse == null || (sessionCourse != null && requestCourse != null) ){
 			session.setAttribute("selectedCourseName", requestCourse);
 		}
 %>

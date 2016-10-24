@@ -1264,7 +1264,6 @@ function serviceTable(){
                         return 'DataController?options=department&divisionName=' + data.dependedValues.divisionName;
                     }
 				},
-
 				isActive : {
 					title : 'Active?',
 					width : '25%',

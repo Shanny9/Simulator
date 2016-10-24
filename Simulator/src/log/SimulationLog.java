@@ -17,7 +17,7 @@ import utils.SolutionElement;
 
 import com.daoImpl.TblServiceDaoImpl;
 import com.model.TblService;
-
+ 
 public class SimulationLog extends Thread implements Serializable {
 
 	public static final boolean MAROM = true;
@@ -387,7 +387,7 @@ public class SimulationLog extends Thread implements Serializable {
 			for (Map.Entry<SimulationTime, HashSet<String>> round_events : time_events
 					.entrySet()) {
 				JSONObject row = new JSONObject();
-				row.put("time", round_events.getKey().getRunTime());
+				row.put("time", round_events.getKey().getRunTimeInRound());
 				row.put("session", round_events.getKey().getSessionInRound());
 				JSONArray events = new JSONArray();
 				events.addAll(round_events.getValue());

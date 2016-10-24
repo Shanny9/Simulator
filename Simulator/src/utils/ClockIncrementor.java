@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import log.LogManager;
 import log.Settings;
-
+ 
 public class ClockIncrementor implements Runnable {
 	/**
 	 * Indicates whether the {@code ClockIncrementor} is running.
@@ -84,12 +84,11 @@ public class ClockIncrementor implements Runnable {
 	 *         {@code session (boolean)}</li>
 	 */
 	public static HashMap<String, Object> getClocks() {
-
 		HashMap<String, Object> clocks = new HashMap<>();
 		clocks.put("elapsedClock",
 				elapsedTime + (current_round - 1) * settings.getRoundTime());
 		clocks.put("remainingClock", remainingTime);
-		clocks.put("elapsedRunTime", elapsedRunTime.getRunTime());
+		clocks.put("elapsedRunTime", elapsedRunTime.getRunTimeInRound());
 		clocks.put("isRunTime", isRunTime);
 		clocks.put("round", current_round);
 		clocks.put("session", current_session);
@@ -137,7 +136,7 @@ public class ClockIncrementor implements Runnable {
 	 */
 	private static void initVariables() {
 		elapsedTime = 0;
-		elapsedRunTime = new SimulationTime(current_round,1,0);
+		elapsedRunTime = new SimulationTime(current_round, 1, 0);
 		remainingTime = settings.getPauseTime();
 		isRunTime = false;
 	}
@@ -187,7 +186,7 @@ public class ClockIncrementor implements Runnable {
 	public static boolean isRunTime() {
 		return isRunTime;
 	}
-	
+
 	public static int getRemainingRoundTime() {
 		return elapsedRunTime.getRemainingTime();
 	}

@@ -64,18 +64,18 @@ li {
 <%
 
 	String requestCourse = request.getParameter("form-courseName");
-	Object sessionCourse = session.getAttribute("selectedCourseName");
+	Object sessionCourse = session.getAttribute("selectedCourseReports");
 	if (requestCourse == null && sessionCourse == null) {
 		response.sendRedirect("selectCourse_reports.jsp");
 	}
 	else{
 		if(sessionCourse == null || (sessionCourse != null && requestCourse != null) ){
-			session.setAttribute("selectedCourseName", requestCourse);
+			session.setAttribute("selectedCourseReports", requestCourse);
 		}
 %>
 
 <script type="text/javascript">
-				var courseName = '<%=session.getAttribute("selectedCourseName")%>';
+				var courseName = '<%=session.getAttribute("selectedCourseReports")%>';
 
 	console.log("Course Selected: " + courseName);
 </script>

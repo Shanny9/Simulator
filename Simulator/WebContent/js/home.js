@@ -748,6 +748,7 @@ window.setInterval(function() {$.ajax({
 								success : function(data) {
 									if (!connection  && isSimulatorStarted && !isFinishedRound) {
 										//TODO: replace or fix
+										//window.location.href = window.location.pathname + window.location.search + window.location.hash;
 										startSimulator();
 										connection = true;
 									}

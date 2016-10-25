@@ -196,6 +196,7 @@ public class HomeController extends HttpServlet {
 					.getInstance().getSolutionQueue();
 			if (!solutionQueue.isEmpty()) {
 				PrintWriter out = response.getWriter();
+//				System.out.println("SolutionQueue: " + solutionQueue.peek() + ". message =\n" + toStream(solutionQueue.peek()));
 				out.write(toStream(solutionQueue.poll()));
 				out.flush();
 				out.close();
@@ -512,7 +513,7 @@ public class HomeController extends HttpServlet {
 		}
 
 		String streamMessage = String.join("\n", rows);
-		streamMessage += "\r\n";
+		streamMessage += "\n\n";
 		
 		return streamMessage;
 	}

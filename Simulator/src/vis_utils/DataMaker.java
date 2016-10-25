@@ -31,13 +31,9 @@ import com.jdbc.DBUtility;
 import com.model.TblService;
 
 public class DataMaker {
-	private static Settings settings;
 
-	private static Settings getSettings(String courseName) {
-		if (DataMaker.settings == null) {
-			DataMaker.settings = FilesUtils.openSettings(courseName);
-		}
-		return DataMaker.settings;
+	private static Settings getSettings(String courseName) {		
+		return FilesUtils.openSettings(courseName);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -45,14 +41,14 @@ public class DataMaker {
 		
 		getSettings(courseName);
 		JSONObject obj = new JSONObject();
-		
+		Settings sett = DataMaker.getSettings(courseName);
 		int round = Collections.max(FilesUtils.openSettings(courseName).getRoundsDone());
 		obj.put("incidents",LogUtils.getIncidentCountInRound().get(round));
 		obj.put("cis", LogUtils.getCICountInRound(round));
 		obj.put("services", LogUtils.getServiceCountInRound(round));
-		obj.put("rounds", settings.getRounds());
-		obj.put("round_time", settings.getRoundTime());
-		obj.put("rounds_done", settings.getRoundsDone().size());
+		obj.put("rounds", sett.getRounds());
+		obj.put("round_time", sett.getRoundTime());
+		obj.put("rounds_done", sett.getRoundsDone().size());
 		return obj;
 	}
 	
@@ -395,7 +391,7 @@ public class DataMaker {
 		JSONArray mtbfAvgRakia = new JSONArray();
 
 		boolean firstIteration = true;
-		if (rounds != null && services != null) {
+		if (rounds != null && services != null && services.size() > 0) {
 			for (int r : rounds) {
 
 				// quits calculation of unselected rounds
@@ -416,7 +412,7 @@ public class DataMaker {
 							service.getServiceId()).getMTBF();
 					double mtbfRakia = rakia.getService_log(
 							service.getServiceId()).getMTBF();
-
+					
 					roundMTBFMarom.add(mtbfMarom);
 					roundMTBFRakia.add(mtbfRakia);
 
@@ -424,6 +420,7 @@ public class DataMaker {
 						labels.add(service.getServiceName());
 					}
 				}
+				
 				mtbfAllRoundsMarom.add(roundMTBFMarom);
 				mtbfAllRoundsRakia.add(roundMTBFRakia);
 				firstIteration = false;

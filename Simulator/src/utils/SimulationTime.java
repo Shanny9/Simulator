@@ -116,7 +116,7 @@ public class SimulationTime implements Serializable {
 		return run_time + pause_time;
 	}
 
-	private static int getRoundRunTime() {
+	public static int getRoundRunTime() {
 		return run_time * sessions_in_round;
 	}
 

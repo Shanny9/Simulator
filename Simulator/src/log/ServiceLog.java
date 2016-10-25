@@ -70,27 +70,26 @@ public class ServiceLog implements Serializable {
 		addTime(time);
 		diff = ((isUp()) ? (fixed_income - fixed_cost)
 				: (-fixed_cost - down_cost));
-		
+
 		System.out.println("service " + service_id + " is "
 				+ ((isUp() ? "up." : "down.")));
 
 	}
 
 	private void addTime(SimulationTime time) {
+		
+		int timeToAdd = (time.getRunTimeInRound() == 0) ? SimulationTime
+				.getRoundRunTime() : time.getRunTimeInRound();
 
-		try {
-			if (times.size() > 0 && time.before(getRoundDuration())) {
-				throw new Exception("addTime exception: time ( " + time
-						+ " ) is smaller than last time ( "
-						+ getRoundDuration() + " )");
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (times == null || times.size() == 0
+				|| timeToAdd <= times.get(times.size() - 1)) {
+			// should not happen
+			return;
 		}
-
-		times.add(time.getRunTime());
+		
+		times.add(timeToAdd);
+		System.out.println("ServiceLog: service_id: " + service_id
+				+ ". times= " + times + "\n");
 	}
 
 	/**
@@ -193,17 +192,21 @@ public class ServiceLog implements Serializable {
 	 */
 	int getTotalDownTime() {
 
-		if (times.size() == 2) {
-			// no failures
-			return 0;
-		}
+		if (times != null && times.size() > 1) {
+			if (times.size() == 2) {
+				// no failures
+				return 0;
+			}
 
-		int totalDownTime = 0;
-		for (int index = 2; index < times.size(); index += 2) {
-			totalDownTime += times.get(index) - times.get(index - 1);
-		}
+			int totalDownTime = 0;
+			for (int index = 2; index < times.size(); index += 2) {
+				totalDownTime += times.get(index) - times.get(index - 1);
+			}
 
-		return totalDownTime;
+			return totalDownTime;
+		}
+		// should not happen
+		return 0;
 	}
 
 	/**
@@ -237,10 +240,13 @@ public class ServiceLog implements Serializable {
 		if (isUp) {
 			// if all CIs ARE UP, updates service status
 			if (this.cisDown.remove(ci_id) && cisDown.size() == 0) {
-				System.out.println(time.toString() + ": service = " + service_id + ". All CIs are up.");
+				System.out.println(time.toString() + ": service = "
+						+ service_id + ". All CIs are up.");
 				updateStatus(time);
-			} else{
-				System.out.println(time.toString() + ": service = " + service_id + ". CIs " + cisDown + " are still down.\n");
+			} else {
+				System.out.println(time.toString() + ": service = "
+						+ service_id + ". CIs " + cisDown
+						+ " are still down.\n");
 			}
 		} else {
 			// if all CIs WERE DOWN, updates service status

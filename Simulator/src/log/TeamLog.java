@@ -413,19 +413,17 @@ public class TeamLog implements Serializable {
 	 */
 	double getMTRS() {
 		int trs = 0;
-		int failures = 0;
 
 		if (service_logs != null) {
 			for (ServiceLog sl : service_logs.values()) {
-				trs += sl.getTotalDownTime();
-				failures += sl.getNumOfFailures();
+				trs += sl.getMTRS();
+			}
+
+			if (service_logs.size() > 0) {
+				return (double) trs / service_logs.size();
 			}
 		}
-
-		if (failures == 0) {
-			return 0;
-		}
-		return (double) trs / failures;
+		return 0;
 	}
 
 	/**
@@ -438,9 +436,10 @@ public class TeamLog implements Serializable {
 			for (ServiceLog sl : service_logs.values()) {
 				tbf += sl.getMTBF();
 			}
-		}
-		if (service_logs.size() > 0) {
-			return (double) tbf / service_logs.size();
+
+			if (service_logs.size() > 0) {
+				return (double) tbf / service_logs.size();
+			}
 		}
 		return 0.d;
 	}

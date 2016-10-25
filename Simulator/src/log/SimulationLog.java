@@ -439,7 +439,7 @@ public class SimulationLog extends Thread implements Serializable {
 	public double getMTRS(boolean team) {
 		return getTeam(team).getMTRS();
 	}
-
+	
 	public boolean checkSolution(String courseName, String team,
 			int question_id, SimulationTime time, int solution, boolean isBought) {
 

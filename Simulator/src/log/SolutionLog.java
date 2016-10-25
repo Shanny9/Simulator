@@ -38,4 +38,13 @@ public class SolutionLog implements Serializable{
 	public HashSet<String> getEvents(){
 		return events;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SolutionLog [team=" + team + ", events=" + events + "]";
+	}
+	
 }

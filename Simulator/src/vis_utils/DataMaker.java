@@ -34,10 +34,7 @@ public class DataMaker {
 	private static Settings settings;
 
 	private static Settings getSettings(String courseName) {
-		if (DataMaker.settings == null) {
-			DataMaker.settings = FilesUtils.openSettings(courseName);
-		}
-		return DataMaker.settings;
+			return FilesUtils.openSettings(courseName);
 	}
 	
 	@SuppressWarnings("unchecked")

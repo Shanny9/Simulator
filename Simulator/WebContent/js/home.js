@@ -1,4 +1,4 @@
-﻿/**
+﻿﻿/**
  * The elapsed RUN TIME from the beginning of the round.
  */
 var elapsedRunTime = 0;

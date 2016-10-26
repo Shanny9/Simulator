@@ -32,8 +32,8 @@ import com.model.TblService;
 
 public class DataMaker {
 
-	private static Settings getSettings(String courseName) {		
-		return FilesUtils.openSettings(courseName);
+	private static Settings getSettings(String courseName) {
+			return FilesUtils.openSettings(courseName);
 	}
 	
 	@SuppressWarnings("unchecked")

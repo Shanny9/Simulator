@@ -25,10 +25,6 @@ public class TblService implements Activable, Serializable {
 
 	private String serviceName;
 
-	private String supplierLevel2;
-
-	private String supplierLevel3;
-
 	private String urgency;
 	
 	private int event_id;
@@ -108,22 +104,6 @@ public class TblService implements Activable, Serializable {
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
-	}
-
-	public String getSupplierLevel2() {
-		return this.supplierLevel2;
-	}
-
-	public void setSupplierLevel2(String supplierLevel2) {
-		this.supplierLevel2 = supplierLevel2;
-	}
-
-	public String getSupplierLevel3() {
-		return this.supplierLevel3;
-	}
-
-	public void setSupplierLevel3(String supplierLevel3) {
-		this.supplierLevel3 = supplierLevel3;
 	}
 	
 	public int getEventId() {

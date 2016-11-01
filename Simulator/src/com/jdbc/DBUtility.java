@@ -13,6 +13,12 @@ public class DBUtility {
 	private static final String schema = "SIMULATOR";
 	private static final String username = "ts2016";
 	private static final String password = "n227u31";
+	
+//	private static final String server = "10.100.102.5";
+//	private static final String port = "3306";
+//	private static final String schema = "SIMULATOR";
+//	private static final String username = "root";
+//	private static final String password = "danbert";
 
 	public synchronized static Connection getConnection() {
 		if (connection != null) {

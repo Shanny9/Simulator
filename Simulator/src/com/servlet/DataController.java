@@ -1095,16 +1095,6 @@ public class DataController extends HttpServlet {
 						ser.setServiceName(name);
 					}
 
-					if (request.getParameter("supplierLevel2") != null) {
-						String level2 = request.getParameter("supplierLevel2");
-						ser.setSupplierLevel2(level2);
-					}
-
-					if (request.getParameter("supplierLevel3") != null) {
-						String level3 = request.getParameter("supplierLevel3");
-						ser.setSupplierLevel3(level3);
-					}
-
 					if (request.getParameter("urgency") != null) {
 						String urgency = request.getParameter("urgency");
 						ser.setUrgency(urgency);

@@ -112,11 +112,12 @@ public class LogManager implements Runnable {
 		if (isRunning) {
 			// occurs every second
 			elapsed_time.increment();
-
-			if (SimulationLog.getInstance().getIncidents()
-					.containsKey(elapsed_time)) {
-				HashSet<Byte> ci_ids = SimulationLog.getInstance()
-						.getIncidents().get(elapsed_time);
+			System.out.println(elapsed_time);
+			
+			HashSet<Byte> ci_ids = SimulationLog.getInstance()
+					.getIncidents().get(elapsed_time);
+			
+			if (ci_ids != null) {
 				System.out
 						.println(elapsed_time.toString() + ": cis: " + ci_ids);
 				SimulationLog.getInstance().incidentsStarted(ci_ids,

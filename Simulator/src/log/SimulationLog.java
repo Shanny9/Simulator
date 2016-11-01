@@ -319,21 +319,6 @@ public class SimulationLog extends Thread implements Serializable {
 	}
 
 	/**
-	 * Checks if the given incident in the given time is open
-	 * 
-	 * @param team
-	 *            The team that the check refers to
-	 * @param ci_id
-	 *            The incident to be checked
-	 * @param time
-	 *            The time to be checked
-	 * @return True if the incident is open. False otherwise.
-	 */
-	public boolean checkIncident(boolean team, byte ci_id, SimulationTime time) {
-		return getTeam(team).isIncidentOpen(ci_id, time);
-	}
-
-	/**
 	 * @return The incidents (key=start_time, value=HashSet of ci_ids)
 	 */
 	public HashMap<SimulationTime, HashSet<Byte>> getIncidents() {

@@ -33,8 +33,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setString(2, service.getServiceCode());
 		pStmt.setString(3, service.getServiceName());
 		pStmt.setBoolean(4, service.getIsTechnical());
-		pStmt.setString(5, service.getSupplierLevel2());
-		pStmt.setString(6, service.getSupplierLevel3());
 		pStmt.setDouble(7, service.getFixedCost());
 		pStmt.setDouble(8, service.getFixedIncome());
 		pStmt.setBoolean(9, service.isActive());
@@ -66,8 +64,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 		pStmt.setString(2, service.getServiceCode());
 		pStmt.setString(3, service.getServiceName());
 		pStmt.setBoolean(4, service.getIsTechnical());
-		pStmt.setString(5, service.getSupplierLevel2());
-		pStmt.setString(6, service.getSupplierLevel3());
 		pStmt.setDouble(7, service.getFixedCost());
 		pStmt.setDouble(8, service.getFixedIncome());
 		pStmt.setBoolean(9, service.isActive());
@@ -101,8 +97,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
-				service.setSupplierLevel2(rs.getString("supplier_level2"));
-				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
 				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
@@ -132,8 +126,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
-				service.setSupplierLevel2(rs.getString("supplier_level2"));
-				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
 				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
@@ -163,8 +155,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
-				service.setSupplierLevel2(rs.getString("supplier_level2"));
-				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
 				service.setEventId(rs.getInt("event_id"));
 				services.add(service);
@@ -195,8 +185,6 @@ public class TblServiceDaoImpl implements TblServiceDao {
 				service.setServiceId(rs.getByte("service_id"));
 				service.setServiceCode(rs.getString("service_code"));
 				service.setServiceName(rs.getString("service_name"));
-				service.setSupplierLevel2(rs.getString("supplier_level2"));
-				service.setSupplierLevel3(rs.getString("supplier_level3"));
 				service.setUrgency(rs.getString("urgency"));
 				service.setEventId(rs.getInt("event_id"));
 			}
